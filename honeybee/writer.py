@@ -10,18 +10,15 @@ class Writer(object):
     """Writer class.
     
     This class is a place holder for adding writers from new plugins. See
-    honeybee_radiance for an example.
-
-    def radiance(self, face):
-        # your code for generating radiance string.
-        # keep in mind that vertices can be a list for Face or a list of list for
-        # PolyFace 
-        return rad_string
+    honeybee_energy._extend_honeybee for an example.
     """
 
-    def __init__(self):
+    def __init__(self, geo_type, name, vertices, properties):
         """Writer."""
-        pass
+        self.geo_type = geo_type  # Face, PolyFace, etc
+        self.name = name
+        self.vertices = vertices
+        self.properties = properties
     
     def __repr__(self):
         return 'FaceWriter'

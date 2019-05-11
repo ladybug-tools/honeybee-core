@@ -21,7 +21,9 @@ class Face(object):
         self.name = name
         self._vertices = vertices
         self._properties = Properties(face_type)
-        self._writer = Writer()
+        self._writer = Writer(
+            self.__class__.__name__, self.name, self.vertices, self.properties
+        )
 
     @property
     def name(self):

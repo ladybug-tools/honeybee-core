@@ -1,34 +1,5 @@
 """Face Properties."""
-
-
-class Types(object):
-    """Face types."""
-
-    def __init__(self):
-        pass
-
-    @property
-    def wall(self):
-        return 'Wall'
-
-    @property
-    def roof_ceiling(self):
-        return 'RoofCeiling'
-
-    @property
-    def floor(self):
-        return 'Floor'
-
-    @property
-    def airwall(self):
-        return 'AirWall'
-
-    @property
-    def shading(self):
-        return 'Shading'
-
-    def __contains__(self, value):
-        return value in ['Wall', 'RoofCeiling', 'Floor', 'AirWall', 'Shading']
+from .facetype import Types
 
 
 class Properties(object):
@@ -63,4 +34,4 @@ class Properties(object):
 
     def __repr__(self):
         """Properties representation."""
-        return 'FaceProperties:%s' % str(self.face_type)
+        return 'FaceProperties:%s' % str(self.face_type.name)
