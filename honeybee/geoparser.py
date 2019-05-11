@@ -1,8 +1,6 @@
 """Geometry parser.
 
-Note for developers:
-
-Use this class to extend honeybee's geometry parsing for new plugins.
+NOTE: Use this class to extend honeybee's geometry parsing for new plugins.
 """
 
 

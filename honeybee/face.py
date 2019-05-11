@@ -8,19 +8,7 @@ import re
 
 
 class Face(object):
-    """A single planar face.
-
-    Properties:
-        name: Face name.
-        vertices: A flattened list of 3 or more vertices.
-        face_type: Face type (e.g. wall, floor).
-        name_original: Original name input by user.
-        properties: Face properties object including radiance and energy properties.
-        to: Face writer object to simulation engines.
-    
-    classmethods:
-        from_geometry: Create a Face from a geometry generated from a 3rd party CAD tool.
-    """
+    """A single planar face."""
 
     def __init__(self, name, vertices, face_type=None):
         """A single planar face.
@@ -48,12 +36,22 @@ class Face(object):
     @property
     def name_original(self):
         """Original input name by user.
-        
+
         If there is no illegal characters in name then name and name_original will be the
         same. Legal characters are ., A-Z, a-z, 0-9, _ and -. Invalid characters are
         removed from the original name for compatability with simulation engines.
         """
         return self._name_original
+
+    @property
+    def vertices(self):
+        """List of vertices."""
+        return self._vertices
+
+    @property
+    def face_type(self):
+        """Face type."""
+        return self._properties.face_type
 
     @classmethod
     def from_geometry(cls, geometry, source, face_type=None, parameters=None):
@@ -63,7 +61,7 @@ class Face(object):
         to install the plugin library (e.g. honeybee_grasshopper or honeybee_dynamo)
         in order to use this method.
 
-        Args:
+        args:
             geometry: Input geometry.
             source: Source software that is used to create this geometry
                 (e.g. rhino, revit).
