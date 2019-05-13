@@ -19,11 +19,16 @@ class Face(object):
 
         """
         self.name = name
+        # _parent will be set when the Face is added to a Zone
+        # in case of aperture it will be added when aperture is added to a Face.
+        self._parent = None
         self._vertices = vertices
         self._properties = Properties(face_type)
         self._writer = Writer(
-            self.__class__.__name__, self.name, self.vertices, self.properties
+            self.__class__.__name__, self.name, self.vertices, self.parent,
+            self.properties
         )
+        self._apertures = []
 
     @property
     def name(self):
@@ -54,6 +59,16 @@ class Face(object):
     def face_type(self):
         """Face type."""
         return self._properties.face_type
+
+    @property
+    def apertures(self):
+        """List of apertures."""
+        return self._apertures
+
+    @property
+    def parent(self):
+        """Parent zone."""
+        return self._parent
 
     @classmethod
     def from_geometry(cls, geometry, source, face_type=None, parameters=None):
@@ -99,3 +114,36 @@ class Face(object):
         face.to.radiance(face) -> Radiance string.
         """
         return self._writer
+
+    @property
+    def to_dict(self):
+        base = {
+            'type': self.__class__.__name__,
+            'name': self.name,
+            'name_original': self.name_original,
+            'vertices': self.vertices,
+            'properties': self.properties.to_dict
+        }
+
+        if self.parent:
+            base['parent'] = {'name': self.parent.name}
+
+        if self.apertures:
+            base['apertures'] = [ap.to_dict for ap in self.apertures]
+
+        return base
+
+
+    def add_aperture(self, aperture):
+        """Add an aperture to face."""
+        # TODO(): Do some research on best practices for Two-Way Association referencing
+        # I remember that I saw a number of discussions which proposed using weakref to
+        # avoid issues with Python's garbage collection
+        aperture.parent = self
+        self._apertures.append(aperture)
+
+    def ToString(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return 'Face:%s' % self.name_original

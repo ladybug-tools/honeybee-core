@@ -13,11 +13,12 @@ class Writer(object):
     honeybee_energy._extend_honeybee for an example.
     """
 
-    def __init__(self, geo_type, name, vertices, properties):
+    def __init__(self, geo_type, name, vertices, parent, properties):
         """Writer."""
         self.geo_type = geo_type  # Face, PolyFace, etc
         self.name = name
         self.vertices = vertices
+        self.parent = parent
         self.properties = properties
     
     def __repr__(self):

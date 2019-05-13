@@ -28,6 +28,23 @@ class Properties(object):
         assert value in self.TYPES, '{} is not a valid type.'.format(value)
         self._face_type = value
 
+    @property
+    def to_dict(self):
+        exclude = ['to_dict']
+        base = {
+            'type': 'FaceProperties',
+            'face_type': self.face_type.name
+        }
+        attr = [
+            atr for atr in dir(self) if not atr.startswith('_') and atr not in exclude
+        ]
+        for atr in attr:
+            var = getattr(self, atr)
+            if not hasattr(var, 'to_dict'):
+                continue
+            base.update(var.to_dict)
+        return base
+
     def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
