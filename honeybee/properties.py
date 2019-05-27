@@ -1,5 +1,5 @@
 """Face Properties."""
-from .facetype import Types
+from .facetype import face_types
 
 
 class Properties(object):
@@ -11,7 +11,7 @@ class Properties(object):
     prop.radiance -> RadianceProperties
     prop.energy -> EnergyProperties
     """
-    TYPES = Types()
+    TYPES = face_types
 
     # TODO(): face_type should be required. I will update this after Face class is
     # updated to support type based on normal direction.

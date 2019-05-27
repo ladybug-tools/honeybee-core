@@ -1,6 +1,6 @@
 """test Face class."""
 from honeybee.face import Face
-from honeybee.properties import Types
+from honeybee.properties import face_types as Types
 import pytest
 
 

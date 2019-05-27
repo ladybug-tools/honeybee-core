@@ -30,31 +30,38 @@ class Shading(_FaceType):
     pass
 
 
-class Types(object):
+class _Types(object):
     """Face types."""
 
     def __init__(self):
-        pass
+        self._wall = Wall()
+        self._roof_ceiling = RoofCeiling()
+        self._floor = Floor()
+        self._air_wall = AirWall()
+        self._shading = Shading()
 
     @property
     def wall(self):
-        return Wall()
+        return self._wall
 
     @property
     def roof_ceiling(self):
-        return RoofCeiling()
+        return self._roof_ceiling
 
     @property
     def floor(self):
-        return Floor()
+        return self._floor
 
     @property
     def airwall(self):
-        return AirWall()
+        return self._air_wall
 
     @property
     def shading(self):
-        return Shading()
+        return self._shading
 
     def __contains__(self, value):
         return isinstance(value, _FaceType)
+
+
+face_types = _Types()
