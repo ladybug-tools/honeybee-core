@@ -2,7 +2,7 @@
 """Honeybee Face."""
 from .geoparser import GeoParser
 from .properties import Properties
-from .writer import Writer
+import honeybee.writer as writer
 
 import re
 
@@ -24,10 +24,7 @@ class Face(object):
         self._parent = None
         self._vertices = vertices
         self._properties = Properties(face_type)
-        self._writer = Writer(
-            self.__class__.__name__, self.name, self.vertices, self.parent,
-            self.properties
-        )
+        self._writer = writer
         self._apertures = []
 
     @property
@@ -111,6 +108,7 @@ class Face(object):
 
         Use this method to access Writer class to write the face in different formats.
 
+        face.to.idf(face) -> idf string.
         face.to.radiance(face) -> Radiance string.
         """
         return self._writer
