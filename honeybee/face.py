@@ -1,8 +1,10 @@
 # coding: utf-8
 """Honeybee Face."""
-from .geoparser import GeoParser
 from .properties import Properties
+from .facetype import get_type_from_normal
 import honeybee.writer as writer
+from ladybug_geometry.geometry3d.face import Face3D
+from ladybug_geometry.geometry3d.pointvector import Point3D
 
 import re
 
@@ -10,19 +12,23 @@ import re
 class Face(object):
     """A single planar face."""
 
-    def __init__(self, name, vertices, face_type=None):
+    def __init__(self, name, geometry, face_type=None):
         """A single planar face.
         Args:
             name: Face name.
-            vertices: A flattened list of 3 or more vertices.
+            geometry: A ladybug-geometry Face3D.
             face_type: Face type (e.g. wall, floor).
 
         """
         self.name = name
+        assert isinstance(geometry, Face3D), \
+            'Expected ladybug_geometry Face3D not {}'.format(type(geometry))
+        self._geometry = geometry
         # _parent will be set when the Face is added to a Zone
         # in case of aperture it will be added when aperture is added to a Face.
         self._parent = None
-        self._vertices = vertices
+        # get face type based on normal if face_type is not provided
+        face_type = face_type or get_type_from_normal(geometry.normal)
         self._properties = Properties(face_type)
         self._writer = writer
         self._apertures = []
@@ -50,7 +56,7 @@ class Face(object):
     @property
     def vertices(self):
         """List of vertices."""
-        return self._vertices
+        return self._geometry.vertices
 
     @property
     def face_type(self):
@@ -68,31 +74,16 @@ class Face(object):
         return self._parent
 
     @classmethod
-    def from_geometry(cls, geometry, source, face_type=None, parameters=None):
-        """Create a Face from a geometry.
-
-        This method is useful for creating a face from Ladybug Tools plugins. You need
-        to install the plugin library (e.g. honeybee_grasshopper or honeybee_dynamo)
-        in order to use this method.
+    def from_vertices(cls, name, vertices, face_type=None):
+        """Create a Face from vertices.
 
         args:
-            geometry: Input geometry.
-            source: Source software that is used to create this geometry
-                (e.g. rhino, revit).
-            parameters: Optional user parameters that can be used by parser.
+            name: Face name.
+            vertices: A flattened list of 3 or more vertices as (x, y, z).
+            face_type: Face type (e.g. wall, floor).
         """
-        geo_parser = GeoParser()
-        try:
-            parser = geo_parser.getattr(source.lower())
-        except AttributeError:
-            raise AttributeError(
-                'Failed to find parser for {0}.\nDid you misspell the source name?'
-                '\nIf the name is spelled correctly did you install honeybee_{0} '
-                'library?'.format(source)
-            )
-        else:
-            vertices = parser(geometry, parameters)
-            return cls(vertices, face_type)
+        geometry = Face3D.from_vertices([Point3D(*v) for v in vertices])
+        return cls(name, geometry, face_type)
 
     @property
     def properties(self):

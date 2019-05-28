@@ -13,10 +13,8 @@ class Properties(object):
     """
     TYPES = face_types
 
-    # TODO(): face_type should be required. I will update this after Face class is
-    # updated to support type based on normal direction.
-    def __init__(self, face_type=None):
-        self.face_type = face_type or self.TYPES.wall
+    def __init__(self, face_type):
+        self.face_type = face_type
 
     @property
     def face_type(self):
