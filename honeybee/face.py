@@ -7,6 +7,7 @@ from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.pointvector import Point3D
 
 import re
+import weakref
 
 
 class Face(object):
@@ -125,11 +126,8 @@ class Face(object):
 
     def add_aperture(self, aperture):
         """Add an aperture to face."""
-        # TODO(): Do some research on best practices for Two-Way Association referencing
-        # I remember that I saw a number of discussions which proposed using weakref to
-        # avoid issues with Python's garbage collection
-        aperture.parent = self
-        self._apertures.append(aperture)
+        aperture._parent = self
+        self._apertures.append(weakref.proxy(aperture))
 
     def ToString(self):
         return self.__repr__()
