@@ -51,5 +51,5 @@ def test_surface():
     assert bc.sun_exposure_idf == 'NoSun'
     assert bc.wind_exposure == False
     assert bc.wind_exposure_idf == 'NoWind'
-    assert bc.boundary_condition_object == face
+    assert bc.boundary_condition_object.name == face.name
     assert bc.boundary_condition_object_idf == face.name
