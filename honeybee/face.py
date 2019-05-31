@@ -13,13 +13,13 @@ import weakref
 class Face(object):
     """A single planar face."""
 
-    def __init__(self, name, geometry, face_type=None):
+    def __init__(self, name, geometry, face_type=None, boundary_condition=None):
         """A single planar face.
         Args:
             name: Face name.
             geometry: A ladybug-geometry Face3D.
             face_type: Face type (e.g. wall, floor).
-
+            boundary_condition: Face boundary condition (Outdoors, Ground, etc.)
         """
         self.name = name
         assert isinstance(geometry, Face3D), \
@@ -30,7 +30,7 @@ class Face(object):
         self._parent = None
         # get face type based on normal if face_type is not provided
         face_type = face_type or get_type_from_normal(geometry.normal)
-        self._properties = Properties(face_type)
+        self._properties = Properties(face_type, boundary_condition)
         self._writer = writer
         self._apertures = []
 
@@ -64,6 +64,19 @@ class Face(object):
         """Face type."""
         return self._properties.face_type
 
+    @face_type.setter
+    def face_type(self, f_type):
+        self._properties.face_type = f_type
+
+    @property
+    def boundary_condition(self):
+        """Face type."""
+        return self._properties.boundary_condition
+
+    @boundary_condition.setter
+    def boundary_condition(self, bc):
+        self._properties.boundary_condition = bc
+    
     @property
     def apertures(self):
         """List of apertures."""
@@ -75,7 +88,7 @@ class Face(object):
         return self._parent
 
     @classmethod
-    def from_vertices(cls, name, vertices, face_type=None):
+    def from_vertices(cls, name, vertices, face_type=None, boundary_condition=None):
         """Create a Face from vertices.
 
         args:
@@ -84,7 +97,7 @@ class Face(object):
             face_type: Face type (e.g. wall, floor).
         """
         geometry = Face3D.from_vertices([Point3D(*v) for v in vertices])
-        return cls(name, geometry, face_type)
+        return cls(name, geometry, face_type, boundary_condition)
 
     @property
     def properties(self):
@@ -105,21 +118,28 @@ class Face(object):
         """
         return self._writer
 
-    @property
-    def to_dict(self):
+    def to_dict(self, included_prop=None):
+        """Return Face as a dictionary.
+        
+        args:
+            included_prop: Use properties filter to filter keys that must be included in
+            output dictionary. For example ['energy'] will include 'energy' key if
+            available in properties to_dict. By default all the keys will be included.
+            To exclude all the keys from plugins use an empty list.
+        """
         base = {
             'type': self.__class__.__name__,
             'name': self.name,
             'name_original': self.name_original,
-            'vertices': self.vertices,
-            'properties': self.properties.to_dict
+            'vertices': [{'x': ver.x, 'y': ver.y, 'z': ver.z} for ver in self.vertices],
+            'properties': self.properties.to_dict(included_prop)
         }
 
         if self.parent:
             base['parent'] = {'name': self.parent.name}
 
         if self.apertures:
-            base['apertures'] = [ap.to_dict for ap in self.apertures]
+            base['apertures'] = [ap.to_dict(included_prop) for ap in self.apertures]
 
         return base
 

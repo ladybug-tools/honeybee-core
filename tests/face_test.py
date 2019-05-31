@@ -1,6 +1,7 @@
 """test Face class."""
 from honeybee.face import Face
 from honeybee.properties import face_types as Types
+from honeybee.boundarycondition import boundary_conditions
 import pytest
 
 
@@ -29,3 +30,34 @@ def test_type_from_vertices():
 
     ff = Face.from_vertices('floor', vertices_floor)
     assert ff.properties.face_type == ff.properties.TYPES.floor
+
+
+def test_default_boundary_condition():
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    face = Face.from_vertices('wall', vertices)
+    assert face.boundary_condition == boundary_conditions.outdoors
+
+
+def test_set_boundary_condition():
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    face = Face.from_vertices('wall', vertices, Types.wall, boundary_conditions.ground)
+    assert face.boundary_condition == boundary_conditions.ground
+
+    face.boundary_condition = boundary_conditions.outdoors
+    assert face.boundary_condition == boundary_conditions.outdoors
+
+
+def test_to_dict():
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    face = Face.from_vertices('wall', vertices, Types.wall, boundary_conditions.ground)
+    
+    fd = face.to_dict([])
+    assert fd['type'] == 'Face'
+    assert fd['name'] == 'wall'
+    assert 'vertices' in fd
+    assert len(fd['vertices']) == len(vertices)
+    assert 'properties' in fd
+    assert fd['properties']['type'] == 'FaceProperties'
+    assert fd['properties']['face_type'] == 'Wall'
+    assert fd['properties']['boundary_condition']['name'] == 'Ground'
+    assert fd['properties']['boundary_condition']['bc_object'] == ''
