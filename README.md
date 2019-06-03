@@ -16,14 +16,10 @@ daylight ([RADIANCE](https://radiance-online.org//)) and energy analysis
 ([EnergyPlus](https://energyplus.net/)/[OpenStudio](https://www.openstudio.net/)).
 
 This repository is the main repository for Honeybee core libraries. To extend the
-functionalities of this library you should install available Honeybee plugin or write
-your own. See [here](https://github.com/ladybug-tools/honeybee-plugin) to get started
-with writing your first plugin.
+functionalities of this library you should install available Honeybee extensions or write
+your own. See [here](https://github.com/ladybug-tools/honeybee-extension) to get started
+with writing your first extension.
 
-See [here](https://github.com/ladybug-tools/honeybee-plugin) to get started
-with writing your first plugin.
+Here are a number of available extensions for Honeybee:
 
-Here are a number of available plugins for Honeybee:
-- [honeybee-radiance](https://github.com/ladybug-tools/honeybee-radiance): Adds Radiance functionalities to Honeybee.
-- [honeybee-grasshopper](https://github.com/ladybug-tools/honeybee-grasshopper): Adds functionalities to convert Rhino/Grasshopper geometry to Honeybee geometry.
-- [honeybee-dynamo](https://github.com/ladybug-tools/honeybee-dynamo): Adds functionalities to convert Dynamo geometry to Honeybee geometry.
+- [honeybee-energy](https://github.com/ladybug-tools/honeybee-energy): Adds Energy simulation to Honeybee.
