@@ -60,8 +60,13 @@ class Properties(object):
             var = getattr(self, atr)
             if not hasattr(var, 'to_dict'):
                 continue
-            base.update(var.to_dict())
-        
+            try:
+                base.update(var.to_dict())
+            except Exception as e:
+                raise Exception(
+                    'Failed to convert {} to a dict: {}'.format(var, e)
+                )
+
         if 'energy' in base:
             base['boundary_condition'] = self.boundary_condition.to_dict(full=True)
         else:
