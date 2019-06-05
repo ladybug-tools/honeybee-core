@@ -96,7 +96,7 @@ class Face(object):
             vertices: A flattened list of 3 or more vertices as (x, y, z).
             face_type: Face type (e.g. wall, floor).
         """
-        geometry = Face3D.from_vertices([Point3D(*v) for v in vertices])
+        geometry = Face3D([Point3D(*v) for v in vertices])
         return cls(name, geometry, face_type, boundary_condition)
 
     @property
