@@ -16,7 +16,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/ladybug-tools/honeybee-core",
     packages=setuptools.find_packages(exclude=["tests"]),
-    install_requires=["ladybug-geometry"],
+    install_requires=["lbt-ladybug", "ladybug-geometry"],
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.6",
