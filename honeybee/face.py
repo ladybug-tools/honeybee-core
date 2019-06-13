@@ -2,6 +2,7 @@
 """Honeybee Face."""
 from .properties import Properties
 from .facetype import get_type_from_normal
+from .typing import valid_string
 import honeybee.writer as writer
 from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.pointvector import Point3D
@@ -12,6 +13,7 @@ import weakref
 
 class Face(object):
     """A single planar face."""
+    _name_descr = 'honeybee face name'
 
     def __init__(self, name, geometry, face_type=None, boundary_condition=None):
         """A single planar face.
@@ -41,7 +43,7 @@ class Face(object):
 
     @name.setter
     def name(self, value):
-        self._name = re.sub(r'[^.A-Za-z0-9_-]', '', value)
+        self._name = valid_string(value, self._name_descr)
         self._name_original = value
 
     @property
@@ -76,7 +78,7 @@ class Face(object):
     @boundary_condition.setter
     def boundary_condition(self, bc):
         self._properties.boundary_condition = bc
-    
+
     @property
     def apertures(self):
         """List of apertures."""
@@ -120,7 +122,7 @@ class Face(object):
 
     def to_dict(self, included_prop=None):
         """Return Face as a dictionary.
-        
+
         args:
             included_prop: Use properties filter to filter keys that must be included in
             output dictionary. For example ['energy'] will include 'energy' key if
