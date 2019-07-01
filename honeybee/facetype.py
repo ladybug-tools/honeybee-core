@@ -1,34 +1,59 @@
-"""Energy Types."""
+"""Face Types."""
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 import math
 
 
 class _FaceType(object):
+    __slots__ = ()
+
     @property
     def name(self):
         return self.__class__.__name__
+
+    def to_dict(self):
+        """ApertureType as a dictionary."""
+        ap_type_dict = {
+            'type': self.name}
+        return ap_type_dict
+
+    def ToString(self):
+        return self.__repr__()
+
+    def __eq__(self, other):
+        return self.__class__ == other.__class__
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __repr__(self):
         return self.name
 
 
 class Wall(_FaceType):
+    """Type for walls."""
+    __slots__ = ()
     pass
 
 
 class RoofCeiling(_FaceType):
+    """Type for roofs and ceilings."""
+    __slots__ = ()
     pass
 
 
 class Floor(_FaceType):
+    """Type for floors."""
+    __slots__ = ()
     pass
 
 
 class AirWall(_FaceType):
-    pass
+    """Type for virtual partitions between Rooms.
 
-
-class Shading(_FaceType):
+    Note that the use of the word 'Wall' in AirWall does not limit the application
+    of this type to vertical faces. It can be applied to any face between two Rooms.
+    """
+    __slots__ = ()
     pass
 
 
@@ -40,7 +65,6 @@ class _Types(object):
         self._roof_ceiling = RoofCeiling()
         self._floor = Floor()
         self._air_wall = AirWall()
-        self._shading = Shading()
 
     @property
     def wall(self):
@@ -55,12 +79,8 @@ class _Types(object):
         return self._floor
 
     @property
-    def airwall(self):
+    def air_wall(self):
         return self._air_wall
-
-    @property
-    def shading(self):
-        return self._shading
 
     def __contains__(self, value):
         return isinstance(value, _FaceType)
@@ -77,18 +97,15 @@ def get_type_from_normal(normal_vector, roof_angle=30, floor_angle=150):
     Angles larger than floor angle will be set to floor.
 
     args:
-        normal_vector: Normal vector as a ladybug Vector3D.
-        roof_angle: Cutting angle for roof from Z axis (default: 30).
-        floor_angle: Cutting angle for floor from Z axis (default: 150).
-    
-    returns:
-        face type.
-    """
+        normal_vector: Normal vector as a ladybug_geometry Vector3D.
+        roof_angle: Cutting angle for roof from Z axis in degrees (default: 30).
+        floor_angle: Cutting angle for floor from Z axis in degrees (default: 150).
 
-    roof_angle = math.radians(roof_angle)
-    floor_angle = math.radians(floor_angle)
+    Returns:
+        Face type instance.
+    """
     z_axis = Vector3D(0, 0, 1)
-    angle = z_axis.angle(normal_vector)
+    angle = math.degrees(z_axis.angle(normal_vector))
     if angle < roof_angle:
         return face_types.roof_ceiling
     elif roof_angle <= angle < floor_angle:

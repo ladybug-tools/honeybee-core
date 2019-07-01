@@ -51,7 +51,8 @@ def valid_ep_string(value, input_name=''):
     and ensuring the name is not longer than 100 characters.
     """
     try:
-        val = re.sub(r'[^.\sA-Za-z0-9_-]', '', value)
+        val = ''.join(i for i in value if ord(i) < 128)  # strip out non-ascii
+        val = re.sub(r'[,;!\n\t]', '', val)  # strip out E+ special characters
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
             input_name, type(value), value))
@@ -130,6 +131,7 @@ def list_with_length(value, length=3, item_type=float, input_name=''):
 
 wrapper = '"' if os.name == 'nt' else '\''
 """String wrapper."""
+
 
 def normpath(value):
     """Normalize path eliminating double slashes, etc and put it in quotes if needed."""
