@@ -8,6 +8,7 @@ on their own but should have a host object.
 
 class _Properties(object):
     """Base class for all Properties classes."""
+    _do_not_duplicate = ('host', 'ToString', 'to_dict', 'duplicate_extension_attr')
 
     def __init__(self, host):
         """Initialize properties.
@@ -31,12 +32,13 @@ class _Properties(object):
                 the duplicate object will be derived.
         """
         attr = [atr for atr in dir(self)
-                if not atr.startswith('_') and atr != 'host']
+                if not atr.startswith('_') and atr not in
+                self._do_not_duplicate]
 
         for atr in attr:
             var = getattr(original_properties, atr)
             try:
-                setattr(self, atr, var.duplicate(self.host))
+                setattr(self, '_' + atr, var.duplicate(self.host))
             except AttributeError:
                 pass  # it is not an attribute that can be duplicated
 
