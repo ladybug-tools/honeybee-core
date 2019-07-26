@@ -1,11 +1,11 @@
 # coding: utf-8
 """Honeybee Room."""
+from ._basewithshade import _BaseWithShade
 from .properties import RoomProperties
 from .face import Face
-from .shade import Shade
 from .facetype import get_type_from_normal, Wall, Floor
 from .boundarycondition import get_bc_from_position, Outdoors, Surface
-from .typing import valid_string, float_in_range
+from .typing import float_in_range
 import honeybee.writer as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
@@ -16,12 +16,12 @@ from ladybug_geometry.geometry3d.polyface import Polyface3D
 import math
 
 
-class Room(object):
+class Room(_BaseWithShade):
     """A volume enclosed by faces, representing a single room or space.
 
     Properties:
         name
-        name_original
+        display_name
         faces
         indoor_shades
         outdoor_shades
@@ -34,8 +34,7 @@ class Room(object):
         exterior_aperture_area
         average_floor_height
     """
-    __slots__ = ('_name', '_name_original', '_geometry', '_faces',
-                 '_indoor_shades', '_outdoor_shades', '_properties')
+    __slots__ = ('_geometry', '_faces')
 
     def __init__(self, name, faces, tolerance=None, angle_tolerance=None):
         """A volume enclosed by faces, representing a single room or space.
@@ -60,9 +59,7 @@ class Room(object):
                 Default is None, which makes no attempt to evaluate whether the Room
                 volume is closed.
         """
-        # process the name
-        self._name = valid_string(name, 'honeybee room name')
-        self._name_original = name
+        _BaseWithShade.__init__(self, name)  # process the name
 
         # process the zone volume geometry
         if not isinstance(faces, tuple):
@@ -89,12 +86,25 @@ class Room(object):
             self._faces = faces
             self._geometry = room_polyface
 
-        # initialize empty lists for room-assigned shading
-        self._indoor_shades = []
-        self._outdoor_shades = []
-
         # initialize properties for extensions
         self._properties = RoomProperties(self)
+
+    @classmethod
+    def from_dict(cls, data):
+        """Initialize an Room from a dictionary.
+
+        Args:
+            data: A dictionary representation of an Room object.
+        """
+        # check the type of dictionary
+        assert data['type'] == 'Room', 'Expected Room dictionary. ' \
+            'Got {}.'.format(data['type'])
+
+        room = Room(data['name'], [Face.from_dict(f_dict) for f_dict in data['faces']])
+        if 'display_name' in data and data['display_name'] is not None:
+            room._display_name = data['display_name']
+        room._recover_shades_from_dict(data)
+        return room
 
     @classmethod
     def from_polyface3d(cls, name, polyface, roof_angle=30, floor_angle=150,
@@ -163,35 +173,9 @@ class Room(object):
         return room
 
     @property
-    def name(self):
-        """The room name (including only legal characters)."""
-        return self._name
-
-    @property
-    def name_original(self):
-        """Original input name by user.
-
-        If there are no illegal characters in name then name and name_original will
-        be the same. Legal characters are ., A-Z, a-z, 0-9, _ and -.
-        Invalid characters are automatically removed from the original name for
-        compatability with simulation engines.
-        """
-        return self._name_original
-
-    @property
     def faces(self):
         """Tuple of all honeybee Faces making up this room volume."""
         return self._faces
-
-    @property
-    def indoor_shades(self):
-        """Tuple of all indoor shades assigned to this room."""
-        return tuple(self._indoor_shades)
-
-    @property
-    def outdoor_shades(self):
-        """Tuple of all outdoor shades assigned to this room."""
-        return tuple(self._outdoor_shades)
 
     @property
     def geometry(self):
@@ -299,56 +283,6 @@ class Room(object):
                 areas += face.area
         return orientations / areas if areas != 0 else None
 
-    def clear_shades(self):
-        """Remove all indoor and outdoor shades assigned to this room."""
-        self.clear_indoor_shades()
-        self.clear_outdoor_shades()
-
-    def clear_indoor_shades(self):
-        """Remove all indoor shades assigned to this room."""
-        for shade in self._indoor_shades:
-            shade._parent = None
-        self._indoor_shades = []
-
-    def clear_outdoor_shades(self):
-        """Remove all outdoor shades assigned to this room."""
-        for shade in self._outdoor_shades:
-            shade._parent = None
-        self._outdoor_shades = []
-
-    def add_indoor_shade(self, shade):
-        """Add a Shade object to be added to the indoor of this room.
-
-        Indoor Shade objects can be used to represent furniture, the interior
-        part of light shelves, etc.
-        For representing finely detailed objects like blinds or roller shades,
-        it may be more apprpriate to model them as materials assigned to
-        Aperture properties (like Radiance or Energy materials).
-
-        Args:
-            shade: A Shade object to add to the indoors of this room.
-        """
-        assert isinstance(shade, Shade), \
-            'Expected Shade for indoor_shade. Got {}.'.format(type(shade))
-        shade._parent = self
-        self._indoor_shades.append(shade)
-
-    def add_outdoor_shade(self, shade):
-        """Add an Shade object to the outdoor of this room.
-
-        Exterior Shade objects can be used to represent overhangs, fins, etc.
-        For representing larger shade objects like trees or other buildings,
-        it may be more appropriate to add them to the Model as standalone shades
-        without a specific parent Room since they can shade multiple Rooms at once.
-
-        Args:
-            shade: A shade face to add to the outdoors of this room.
-        """
-        assert isinstance(shade, Shade), \
-            'Expected Shade for outdoor_shade. Got {}.'.format(type(shade))
-        shade._parent = self
-        self._outdoor_shades.append(shade)
-
     def generate_grid(self, x_dim, y_dim=None, offset=1.0):
         """Get a list of gridded Mesh3D objects offset from the floors of this room.
 
@@ -385,10 +319,7 @@ class Room(object):
         """
         for face in self._faces:
             face.move(moving_vec)
-        for ishd in self._indoor_shades:
-            ishd.move(moving_vec)
-        for oshd in self._outdoor_shades:
-            oshd.move(moving_vec)
+        self.move_shades(moving_vec)
         if self._geometry is not None:
             self._geometry = self.geometry.move(moving_vec)
 
@@ -403,10 +334,7 @@ class Room(object):
         """
         for face in self._faces:
             face.rotate(axis, angle, origin)
-        for ishd in self._indoor_shades:
-            ishd.rotate(axis, angle, origin)
-        for oshd in self._outdoor_shades:
-            oshd.rotate(axis, angle, origin)
+        self.rotate_shades(axis, angle, origin)
         if self._geometry is not None:
             self._geometry = self.geometry.rotate(axis, math.radians(angle), origin)
 
@@ -420,28 +348,20 @@ class Room(object):
         """
         for face in self._faces:
             face.rotate_xy(angle, origin)
-        for ishd in self._indoor_shades:
-            ishd.rotate_xy(angle, origin)
-        for oshd in self._outdoor_shades:
-            oshd.rotate_xy(angle, origin)
+        self.rotate_xy_shades(angle, origin)
         if self._geometry is not None:
             self._geometry = self.geometry.rotate_xy(math.radians(angle), origin)
 
     def reflect(self, plane):
-        """Reflect this Room across a plane with the input normal vector and origin.
+        """Reflect this Room across a plane.
 
         Args:
             plane: A ladybug_geometry Plane across which the object will
                 be reflected.
         """
-        assert isinstance(plane, Plane), \
-            'Expected ladybug_geometry Plane. Got {}.'.format(type(plane))
         for face in self._faces:
             face.reflect(plane)
-        for ishd in self._indoor_shades:
-            ishd.reflect(plane)
-        for oshd in self._outdoor_shades:
-            oshd.reflect(plane)
+        self.reflect_shades(plane)
         if self._geometry is not None:
             self._geometry = self.geometry.reflect(plane.n, plane.o)
 
@@ -455,10 +375,7 @@ class Room(object):
         """
         for face in self._faces:
             face.scale(factor, origin)
-        for ishd in self._indoor_shades:
-            ishd.scale(factor, origin)
-        for oshd in self._outdoor_shades:
-            oshd.scale(factor, origin)
+        self.scale_shades(factor, origin)
         if self._geometry is not None:
             self._geometry = self.geometry.scale(factor, origin)
 
@@ -486,7 +403,7 @@ class Room(object):
         if raise_exception:
             raise ValueError(
                 'Room "{}" is not closed to within {} tolerance and {} angle '
-                'tolerance.'.format(self.name_original, tolerance, angle_tolerance))
+                'tolerance.'.format(self.display_name, tolerance, angle_tolerance))
         return False
 
     def check_planar(self, tolerance, raise_exception=True):
@@ -506,16 +423,14 @@ class Room(object):
             for ap in face._apertures:
                 if not ap.check_planar(tolerance, raise_exception):
                     return False
+                if not ap._check_planar_shades(tolerance, raise_exception):
+                    return False
             for dr in face._doors:
                 if not dr.check_planar(tolerance, raise_exception):
                     return False
-        for ishd in self._indoor_shades:
-            if not ishd.check_planar(tolerance, raise_exception):
+            if not face._check_planar_shades(tolerance, raise_exception):
                 return False
-        for oshd in self._outdoor_shades:
-            if not oshd.check_planar(tolerance, raise_exception):
-                return False
-        return True
+        return self._check_planar_shades(tolerance, raise_exception)
 
     def check_self_intersecting(self, raise_exception=True):
         """Check that no edges of the Room's geometry components self-intersect.
@@ -532,16 +447,14 @@ class Room(object):
             for ap in face._apertures:
                 if not ap.check_self_intersecting(raise_exception):
                     return False
+                if not ap._check_self_intersecting_shades(raise_exception):
+                    return False
             for dr in face._doors:
                 if not dr.check_self_intersecting(raise_exception):
                     return False
-        for ishd in self._indoor_shades:
-            if not ishd.check_self_intersecting(raise_exception):
+            if not face._check_self_intersecting_shades(raise_exception):
                 return False
-        for oshd in self._outdoor_shades:
-            if not oshd.check_self_intersecting(raise_exception):
-                return False
-        return True
+        return self._check_self_intersecting_shades(raise_exception)
 
     def check_non_zero(self, tolerance=0.0001, raise_exception=True):
         """Check that the Room's geometry components are above a "zero" area tolerance.
@@ -561,16 +474,14 @@ class Room(object):
             for ap in face._apertures:
                 if not ap.check_non_zero(tolerance, raise_exception):
                     return False
+                if not ap._check_non_zero_shades(tolerance, raise_exception):
+                    return False
             for dr in face._doors:
                 if not dr.check_non_zero(tolerance, raise_exception):
                     return False
-        for ishd in self._indoor_shades:
-            if not ishd.check_non_zero(tolerance, raise_exception):
+            if not face._check_non_zero_shades(tolerance, raise_exception):
                 return False
-        for oshd in self._outdoor_shades:
-            if not oshd.check_non_zero(tolerance, raise_exception):
-                return False
-        return True
+        return self._check_non_zero_shades(tolerance, raise_exception)
 
     @staticmethod
     def solve_adjcency(rooms, tolerance):
@@ -595,11 +506,6 @@ class Room(object):
                 pass  # we have reached the end of the list of zones
 
     @property
-    def properties(self):
-        """Room properties, including Radiance, Energy and other properties."""
-        return self._properties
-
-    @property
     def to(self):
         """Room writer object.
 
@@ -616,45 +522,27 @@ class Room(object):
         """Return Room as a dictionary.
 
         Args:
-            abridged: Boolean to note whether the full dictionary describing the
-                object should be returned (False) or just an abridged version (True).
-                Default: False.
+            abridged: Boolean to note whether the extension properties of the
+                object (ie. construciton sets) should be included in detail
+                (False) or just referenced by name (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
-                included. To exclude all the keys from plugins use an empty list.
+                included. To exclude all the keys from extensions use an empty list.
         """
-        base = {
-            'type': self.__class__.__name__,
-            'name': self.name,
-            'name_original': self.name_original,
-            'properties': self.properties.to_dict(abridged, included_prop)
-        }
+        base = {'type': 'Room'}
+        base['name'] = self.name
+        base['display_name'] = self.display_name
+        base['properties'] = self.properties.to_dict(abridged, included_prop)
+
         base['faces'] = [f.to_dict(abridged, included_prop) for f in self._faces]
-        if self._indoor_shades != []:
-            base['indoor_shades'] = \
-                [shd.to_dict(abridged, included_prop) for shd in self._indoor_shades]
-        else:
-            base['indoor_shades'] = None
-        if self._outdoor_shades != []:
-            base['outdoor_shades'] = \
-                [shd.to_dict(abridged, included_prop) for shd in self._outdoor_shades]
-        else:
-            base['outdoor_shades'] = None
+        self._add_shades_to_dict(base, abridged, included_prop)
         return base
 
-    def duplicate(self):
-        """Get a copy of this object."""
-        return self.__copy__()
-
     def __copy__(self):
-        new_r = Room(self.name_original, tuple(face.duplicate() for face in self._faces))
-        new_r._indoor_shades = [ishd.duplicate() for ishd in self._indoor_shades]
-        new_r._outdoor_shades = [oshd.duplicate() for oshd in self._outdoor_shades]
-        for ishd in new_r._indoor_shades:
-            ishd._parent = new_r
-        for oshd in new_r._outdoor_shades:
-            oshd._parent = new_r
+        new_r = Room(self.name, tuple(face.duplicate() for face in self._faces))
+        new_r._display_name = self.display_name
+        self._duplicate_child_shades(new_r)
         new_r._geometry = self._geometry
         new_r._properties.duplicate_extension_attr(self._properties)
         return new_r
@@ -668,8 +556,5 @@ class Room(object):
     def __iter__(self):
         return iter(self._faces)
 
-    def ToString(self):
-        return self.__repr__()
-
     def __repr__(self):
-        return 'Room: %s' % self.name_original
+        return 'Room: %s' % self.display_name

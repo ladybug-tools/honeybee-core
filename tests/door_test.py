@@ -16,7 +16,7 @@ def test_door_init():
     str(door)  # test the string representation
 
     assert door.name == 'TestDoor'
-    assert door.name_original == 'Test Door'
+    assert door.display_name == 'Test Door'
     assert isinstance(door.geometry, Face3D)
     assert len(door.vertices) == 4
     assert door.upper_left_vertices[0] == Point3D(1, 0, 3)
@@ -35,7 +35,7 @@ def test_door_from_vertices():
     door = Door.from_vertices('Test Door', pts)
 
     assert door.name == 'TestDoor'
-    assert door.name_original == 'Test Door'
+    assert door.display_name == 'Test Door'
     assert isinstance(door.geometry, Face3D)
     assert len(door.vertices) == 4
     assert door.upper_left_vertices[0] == Point3D(1, 0, 3)
@@ -261,10 +261,9 @@ def test_to_dict():
     drd = dr.to_dict()
     assert drd['type'] == 'Door'
     assert drd['name'] == 'RectangleDoor'
-    assert drd['name_original'] == 'Rectangle Door'
+    assert drd['display_name'] == 'Rectangle Door'
     assert 'geometry' in drd
     assert len(drd['geometry']['boundary']) == len(vertices)
     assert 'properties' in drd
     assert drd['properties']['type'] == 'DoorProperties'
     assert drd['boundary_condition']['type'] == 'Outdoors'
-    assert drd['parent'] is None

@@ -1,3 +1,4 @@
+# coding: utf-8
 """Extension properties for Model, Room, Face, Shade, Aperture, Door.
 
 These objects hold all attributes assigned by extensions like honeybee-radiance
@@ -32,8 +33,7 @@ class _Properties(object):
                 the duplicate object will be derived.
         """
         attr = [atr for atr in dir(self)
-                if not atr.startswith('_') and atr not in
-                self._do_not_duplicate]
+                if not atr.startswith('_') and atr not in self._do_not_duplicate]
 
         for atr in attr:
             var = getattr(original_properties, atr)
@@ -73,7 +73,7 @@ class _Properties(object):
 class ModelProperties(_Properties):
     """Honeybee Model Properties.
 
-    Model properties. This class will be extended by plugins.
+    Model properties. This class will be extended by extensions.
 
     Usage:
         model = Model('New Elementary School', list_of_rooms)
@@ -92,9 +92,43 @@ class ModelProperties(_Properties):
         base = {
             'type': 'ModelProperties'
         }
+        if include is not None:
+            attr = include
+        else:
+            attr = [atr for atr in dir(self)
+                    if not atr.startswith('_') and atr != 'host']
 
-        base = self._add_extension_attr_to_dict(base, False, include)
+        for atr in attr:
+            var = getattr(self, atr)
+            if not hasattr(var, 'to_dict'):
+                continue
+            try:
+                base.update(var.to_dict())  # no abridged dictionary for model
+            except Exception as e:
+                raise Exception(
+                    'Failed to convert {} to a dict: {}'.format(var, e))
         return base
+
+    def apply_properties_from_dict(self, data):
+        """Apply extension properties from a Model dictionary to the host Model.
+
+        Args:
+            data: A dictionary representation of an entire honeybee-core Model.
+        """
+        attr = [atr for atr in dir(self)
+                if not atr.startswith('_') and atr not in self._do_not_duplicate]
+
+        for atr in attr:
+            if atr not in data['properties']:
+                continue
+            var = getattr(self, atr)
+            if not hasattr(var, 'apply_properties_from_dict'):
+                continue
+            try:
+                var.apply_properties_from_dict(data)
+            except Exception as e:
+                raise Exception(
+                    'Failed to apply {} properties to the Model: {}'.format(atr, e))
 
     def __repr__(self):
         """Properties representation."""
@@ -104,7 +138,7 @@ class ModelProperties(_Properties):
 class RoomProperties(_Properties):
     """Honeybee Room Properties.
 
-    Room properties. This class will be extended by plugins.
+    Room properties. This class will be extended by extensions.
 
     Usage:
         room = Room('Bedroom', geometry)
@@ -123,9 +157,8 @@ class RoomProperties(_Properties):
             include: A list of keys to be included in dictionary.
                 If None all the available keys will be included.
         """
-        base = {
-            'type': 'RoomProperties'
-        }
+        base = {'type': 'RoomProperties'} if not abridged else \
+            {'type': 'RoomPropertiesAbridged'}
 
         base = self._add_extension_attr_to_dict(base, abridged, include)
         return base
@@ -138,7 +171,7 @@ class RoomProperties(_Properties):
 class FaceProperties(_Properties):
     """Honeybee Face Properties.
 
-    Face properties. This class will be extended by plugins.
+    Face properties. This class will be extended by extensions.
 
     Usage:
         face = Face('South Bedroom Wall', geometry)
@@ -157,21 +190,20 @@ class FaceProperties(_Properties):
             include: A list of keys to be included in dictionary besides Face type
                 and boundary_condition. If None all the available keys will be included.
         """
-        base = {
-            'type': 'FaceProperties',
-        }
+        base = {'type': 'FaceProperties'} if not abridged else \
+            {'type': 'FacePropertiesAbridged'}
         base = self._add_extension_attr_to_dict(base, abridged, include)
         return base
 
     def __repr__(self):
         """Properties representation."""
-        return 'FaceProperties: {}'.format(self.host.name_original)
+        return 'FaceProperties: {}'.format(self.host.display_name)
 
 
 class ShadeProperties(_Properties):
     """Honeybee Shade Properties.
 
-    Shade properties. This class will be extended by plugins.
+    Shade properties. This class will be extended by extensions.
 
     Usage:
         shade = Shade('Deep Overhang', geometry)
@@ -190,22 +222,21 @@ class ShadeProperties(_Properties):
             include: A list of keys to be included in dictionary.
                 If None all the available keys will be included.
         """
-        base = {
-            'type': 'ShadeProperties'
-        }
+        base = {'type': 'ShadeProperties'} if not abridged else \
+            {'type': 'ShadePropertiesAbridged'}
 
         base = self._add_extension_attr_to_dict(base, abridged, include)
         return base
 
     def __repr__(self):
         """Properties representation."""
-        return 'ShadeProperties: {}'.format(self.host.name_original)
+        return 'ShadeProperties: {}'.format(self.host.display_name)
 
 
 class ApertureProperties(_Properties):
     """Honeybee Aperture Properties.
 
-    Aperture properties. This class will be extended by plugins.
+    Aperture properties. This class will be extended by extensions.
 
     Usage:
         aperture = Aperture('Window to My Soul', geometry)
@@ -224,22 +255,21 @@ class ApertureProperties(_Properties):
             include: A list of keys to be included in dictionary.
                 If None all the available keys will be included.
         """
-        base = {
-            'type': 'ApertureProperties',
-        }
+        base = {'type': 'ApertureProperties'} if not abridged else \
+            {'type': 'AperturePropertiesAbridged'}
 
         base = self._add_extension_attr_to_dict(base, abridged, include)
         return base
 
     def __repr__(self):
         """Properties representation."""
-        return 'ApertureProperties: {}'.format(self.host.name_original)
+        return 'ApertureProperties: {}'.format(self.host.display_name)
 
 
 class DoorProperties(_Properties):
     """Honeybee Door Properties.
 
-    Door properties. This class will be extended by plugins.
+    Door properties. This class will be extended by extensions.
 
     Usage:
         door = Door('Front Door', geometry)
@@ -258,12 +288,12 @@ class DoorProperties(_Properties):
             include: A list of keys to be included in dictionary.
                 If None all the available keys will be included.
         """
-        base = {
-            'type': 'DoorProperties'
-        }
+        base = {'type': 'DoorProperties'} if not abridged else \
+            {'type': 'DoorPropertiesAbridged'}
+
         base = self._add_extension_attr_to_dict(base, abridged, include)
         return base
 
     def __repr__(self):
         """Properties representation."""
-        return 'DoorProperties: {}'.format(self.host.name_original)
+        return 'DoorProperties: {}'.format(self.host.display_name)

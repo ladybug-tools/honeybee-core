@@ -1,23 +1,25 @@
 # coding: utf-8
 """Honeybee Door."""
+from ._base import _Base
 from .properties import DoorProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
-from .typing import valid_string
 import honeybee.writer as writer
 
 from ladybug_geometry.geometry3d.pointvector import Point3D
-from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
 import math
 
 
-class Door(object):
-    """A single planar door in a honeybee Face.
+class Door(_Base):
+    """A single planar Door in a Face.
 
     Properties:
         name
-        name_original
+        display_name
+        boundary_condition
+        parent
+        has_parent
         geometry
         vertices
         upper_left_vertices
@@ -26,15 +28,11 @@ class Door(object):
         center
         area
         perimeter
-        boundary_condition
-        parent
-        has_parent
     """
-    __slots__ = ('_name', '_name_original', '_geometry', '_parent',
-                 '_boundary_condition', '_properties')
+    __slots__ = ('_geometry', '_parent', '_boundary_condition')
 
     def __init__(self, name, geometry, boundary_condition=None):
-        """A single planar door in a honeybee Face.
+        """A single planar Door in a Face.
 
         Args:
             name: Door name. Must be < 100 characters.
@@ -42,9 +40,7 @@ class Door(object):
             boundary_condition: Boundary condition object (Outdoors, Surface, etc.).
                 Default: Outdoors.
         """
-        # process the name
-        self._name = valid_string(name, 'honeybee door name')
-        self._name_original = name
+        _Base.__init__(self, name)  # process the name
 
         # process the geometry
         assert isinstance(geometry, Face3D), \
@@ -57,6 +53,30 @@ class Door(object):
 
         # initialize properties for extensions
         self._properties = DoorProperties(self)
+
+    @classmethod
+    def from_dict(cls, data):
+        """Initialize an Door from a dictionary.
+
+        Args:
+            data: A dictionary representation of an Door object.
+        """
+        # check the type of dictionary
+        assert data['type'] == 'Door', 'Expected Door dictionary. ' \
+            'Got {}.'.format(data['type'])
+
+        if data['boundary_condition']['type'] == 'Outdoors':
+            boundary_condition = Outdoors.from_dict(data['boundary_condition'])
+        elif data['boundary_condition']['type'] == 'Surface':
+            boundary_condition = Surface.from_dict(data['boundary_condition'], True)
+        else:
+            raise ValueError(
+                'Boundary condition "{}" is not supported for Door.'.format(
+                    data['boundary_condition']['type']))
+        door = cls(data['name'], Face3D.from_dict(data['geometry']), boundary_condition)
+        if 'display_name' in data and data['display_name'] is not None:
+            door._display_name = data['display_name']
+        return door
 
     @classmethod
     def from_vertices(cls, name, vertices, boundary_condition=None):
@@ -72,20 +92,30 @@ class Door(object):
         return cls(name, geometry, boundary_condition)
 
     @property
-    def name(self):
-        """The door name (including only legal characters)."""
-        return self._name
+    def boundary_condition(self):
+        """Boundary condition of this door."""
+        return self._boundary_condition
+
+    @boundary_condition.setter
+    def boundary_condition(self, value):
+        if not isinstance(value, Outdoors):
+            if isinstance(value, Surface):
+                assert len(value.boundary_condition_objects) == 3, 'Surface boundary ' \
+                    'condition for Door must have 3 boundary_condition_objects.'
+            else:
+                raise ValueError('Door only supports Outdoor or Surface boundary '
+                                 'condition. Got {}'.format(type(value)))
+        self._boundary_condition = value
 
     @property
-    def name_original(self):
-        """Original input name by user.
+    def parent(self):
+        """Parent Face if assigned. None if not assigned."""
+        return self._parent
 
-        If there are no illegal characters in name then name and name_original will
-        be the same. Legal characters are ., A-Z, a-z, 0-9, _ and -.
-        Invalid characters are automatically removed from the original name for
-        compatability with simulation engines.
-        """
-        return self._name_original
+    @property
+    def has_parent(self):
+        """Boolean noting whether this Door has a parent Face."""
+        return self._parent is not None
 
     @property
     def geometry(self):
@@ -140,28 +170,6 @@ class Door(object):
         """The perimeter of the door."""
         return self._geometry.perimeter
 
-    @property
-    def boundary_condition(self):
-        """Boundary condition of this door."""
-        return self._boundary_condition
-
-    @boundary_condition.setter
-    def boundary_condition(self, value):
-        assert isinstance(value, (Outdoors, Surface)), \
-            'Door boundary condition must be Outdoors or Surface. ' \
-            'Got {}'.format(type(value))
-        self._boundary_condition = value
-
-    @property
-    def parent(self):
-        """Parent Face if assigned. None if not assigned."""
-        return self._parent
-
-    @property
-    def has_parent(self):
-        """Boolean noting whether this Door has a parent Face."""
-        return self._parent is not None
-
     def set_adjacency(self, other_door):
         """Set this door to be adjacent to another (and vice versa).
 
@@ -176,8 +184,8 @@ class Door(object):
         """
         assert isinstance(other_door, Door), \
             'Expected Door. Got {}.'.format(type(other_door))
-        self.boundary_condition = Surface(other_door)
-        other_door.boundary_condition = Surface(self)
+        self._boundary_condition = boundary_conditions.surface(other_door, True)
+        other_door._boundary_condition = boundary_conditions.surface(self, True)
 
     def move(self, moving_vec):
         """Move this Door along a vector.
@@ -210,14 +218,12 @@ class Door(object):
         self._geometry = self.geometry.rotate_xy(math.radians(angle), origin)
 
     def reflect(self, plane):
-        """Reflect this Door across a plane with the input normal vector and origin.
+        """Reflect this Door across a plane.
 
         Args:
             plane: A ladybug_geometry Plane across which the object will
                 be reflected.
         """
-        assert isinstance(plane, Plane), \
-            'Expected ladybug_geometry Plane. Got {}.'.format(type(plane))
         self._geometry = self.geometry.reflect(plane.n, plane.o)
 
     def scale(self, factor, origin=None):
@@ -243,7 +249,7 @@ class Door(object):
             return self.geometry.validate_planarity(tolerance, raise_exception)
         except ValueError as e:
             raise ValueError('Door "{}" is not planar.\n{}'.format(
-                self.name_original, e))
+                self.display_name, e))
 
     def check_self_intersecting(self, raise_exception=True):
         """Check whether the edges of the Door intersect one another (like a bowtwie).
@@ -255,7 +261,7 @@ class Door(object):
         if self.geometry.is_self_intersecting:
             if raise_exception:
                 raise ValueError('Door "{}" has self-intersecting edges.'.format(
-                    self.name_original))
+                    self.display_name))
             return False
         return True
 
@@ -273,14 +279,9 @@ class Door(object):
             if raise_exception:
                 raise ValueError(
                     'Door "{}" geometry is too small. Area must be at least {}. '
-                    'Got {}.'.format(self.name_original, tolerance, self.area))
+                    'Got {}.'.format(self.display_name, tolerance, self.area))
             return False
         return True
-
-    @property
-    def properties(self):
-        """Door properties, including Radiance, Energy and other properties."""
-        return self._properties
 
     @property
     def to(self):
@@ -292,49 +293,42 @@ class Door(object):
             door.to.idf(door) -> idf string.
             door.to.radiance(door) -> Radiance string.
         """
-        raise NotImplementedError('Door does not yet support writing to files.')
+        raise NotImplementedError('Door does not support writing to files.')
         return writer
 
     def to_dict(self, abridged=False, included_prop=None):
         """Return Door as a dictionary.
 
         Args:
-            abridged: Boolean to note whether the full dictionary describing the
-                object should be returned (False) or just an abridged version (True).
-                Default: False.
+            abridged: Boolean to note whether the extension properties of the
+                object (ie. materials, construcitons) should be included in detail
+                (False) or just referenced by name (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
-                included. To exclude all the keys from plugins use an empty list.
+                included. To exclude all the keys from extensions use an empty list.
         """
-        base = {
-            'type': self.__class__.__name__,
-            'name': self.name,
-            'name_original': self.name_original,
-            'geometry': self._geometry.to_dict(),
-            'properties': self.properties.to_dict(abridged, included_prop)
-        }
+        base = {'type': 'Door'}
+        base['name'] = self.name
+        base['display_name'] = self.display_name
+        base['properties'] = self.properties.to_dict(abridged, included_prop)
+
         if 'energy' in base['properties']:
+            base['geometry'] = self._geometry.to_dict(False, True)  # enforce upper-left
+        else:
+            base['geometry'] = self._geometry.to_dict(False)
+
+        if isinstance(self.boundary_condition, Outdoors) and 'energy' in base['properties']:
             base['boundary_condition'] = self.boundary_condition.to_dict(full=True)
         else:
-            base['boundary_condition'] = self.boundary_condition.to_dict(full=False)
-        if self.parent:
-            base['parent'] = self.parent.name
-        else:
-            base['parent'] = None
+            base['boundary_condition'] = self.boundary_condition.to_dict()
         return base
 
-    def duplicate(self):
-        """Get a copy of this object."""
-        return self.__copy__()
-
-    def ToString(self):
-        return self.__repr__()
-
     def __copy__(self):
-        new_door = Door(self.name_original, self.geometry, self.boundary_condition)
+        new_door = Door(self.name, self.geometry, self.boundary_condition)
+        new_door._display_name = self.display_name
         new_door._properties.duplicate_extension_attr(self._properties)
         return new_door
 
     def __repr__(self):
-        return 'Door: %s' % self.name_original
+        return 'Door: %s' % self.display_name

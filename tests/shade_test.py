@@ -15,7 +15,7 @@ def test_shade_init():
     str(shade)  # test the string representation
 
     assert shade.name == 'TestShade'
-    assert shade.name_original == 'Test Shade'
+    assert shade.display_name == 'Test Shade'
     assert isinstance(shade.geometry, Face3D)
     assert len(shade.vertices) == 4
     assert shade.upper_left_vertices[0] == Point3D(1, 0, 3)
@@ -32,7 +32,7 @@ def test_shade_from_vertices():
     shade = Shade.from_vertices('Test Shade', pts)
 
     assert shade.name == 'TestShade'
-    assert shade.name_original == 'Test Shade'
+    assert shade.display_name == 'Test Shade'
     assert isinstance(shade.geometry, Face3D)
     assert len(shade.vertices) == 4
     assert shade.upper_left_vertices[0] == Point3D(1, 0, 3)
@@ -256,9 +256,8 @@ def test_to_dict():
     drd = dr.to_dict()
     assert drd['type'] == 'Shade'
     assert drd['name'] == 'RectangleShade'
-    assert drd['name_original'] == 'Rectangle Shade'
+    assert drd['display_name'] == 'Rectangle Shade'
     assert 'geometry' in drd
     assert len(drd['geometry']['boundary']) == len(vertices)
     assert 'properties' in drd
     assert drd['properties']['type'] == 'ShadeProperties'
-    assert drd['parent'] is None
