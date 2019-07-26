@@ -1,5 +1,6 @@
-"""test Zone class."""
+"""Test Room class."""
 from honeybee.face import Face
+from honeybee.shade import Shade
 from honeybee.room import Room
 from honeybee.boundarycondition import boundary_conditions, Surface
 
@@ -31,7 +32,7 @@ def test_init():
 
     str(room)  # test the string representation of the room
     assert room.name == 'ZoneSHOE_BOX920980'
-    assert room.name_original == 'Zone: SHOE_BOX [920980]'
+    assert room.display_name == 'Zone: SHOE_BOX [920980]'
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 8
     assert len(room) == 6
@@ -102,7 +103,7 @@ def test_init_coplanar():
 
     str(room)  # test the string representation of the room
     assert room.name == 'ZoneSHOE_BOX920980'
-    assert room.name_original == 'Zone: SHOE_BOX [920980]'
+    assert room.display_name == 'Zone: SHOE_BOX [920980]'
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 12
     assert len(room) == 8
@@ -126,7 +127,7 @@ def test_polyface3d_init_from_polyface():
     room = Room.from_polyface3d('Donut Zone', polyface)
 
     assert room.name == 'DonutZone'
-    assert room.name_original == 'Donut Zone'
+    assert room.display_name == 'Donut Zone'
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 16
     assert len(room) == 10
@@ -146,7 +147,7 @@ def test_init_from_box():
     room = Room.from_box('Zone: SHOE_BOX [920980]', 5, 10, 3, 90, Point3D(0, 0, 3))
 
     assert room.name == 'ZoneSHOE_BOX920980'
-    assert room.name_original == 'Zone: SHOE_BOX [920980]'
+    assert room.display_name == 'Zone: SHOE_BOX [920980]'
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 8
     assert len(room) == 6
@@ -189,24 +190,26 @@ def test_apertures_and_shades():
     room = Room.from_box('ShoeBoxZone', 5, 10, 3)
     south_face = room[3]
     south_face.apertures_by_ratio(0.5, 0.01)
-    room.add_outdoor_shade(south_face.overhang(0.5, indoor=False))
-    room.add_indoor_shade(south_face.overhang(0.5, indoor=True))
+    table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
+    room.add_indoor_shade(Shade('Table', table_geo))
+    tree_canopy_geo = Face3D.from_regular_polygon(6, 2, Plane(o=Point3D(5, -3, 4)))
+    room.add_outdoor_shade(Shade('Tree Canopy', tree_canopy_geo))
 
     assert room.exterior_aperture_area == pytest.approx(7.5, rel=1e-3)
     assert len(room.indoor_shades) == 1
     assert len(room.outdoor_shades) == 1
     assert room.indoor_shades[0].parent == room
     assert room.outdoor_shades[0].parent == room
-    room.clear_indoor_shades()
+    room.remove_indoor_shades()
     assert len(room.indoor_shades) == 0
-    room.clear_outdoor_shades()
+    room.remove_outdoor_shades()
     assert len(room.outdoor_shades) == 0
 
-    room.add_outdoor_shade(south_face.overhang(0.5, indoor=False))
-    room.add_indoor_shade(south_face.overhang(0.5, indoor=True))
+    room.add_indoor_shade(Shade('Table', table_geo))
+    room.add_outdoor_shade(Shade('Tree Canopy', tree_canopy_geo))
     assert len(room.indoor_shades) == 1
     assert len(room.outdoor_shades) == 1
-    room.clear_shades()
+    room.remove_shades()
     assert len(room.indoor_shades) == 0
     assert len(room.outdoor_shades) == 0
 
@@ -220,6 +223,10 @@ def test_generate_grid():
     assert len(mesh_grid.faces) == 200
 
     room = Room.from_box('ShoeBoxZone', 5, 10, 3, 90)
+    mesh_grid = room.generate_grid(1)[0]
+    assert len(mesh_grid.faces) == 50
+
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3, 45)
     mesh_grid = room.generate_grid(1)[0]
     assert len(mesh_grid.faces) == 50
 
@@ -463,10 +470,10 @@ def test_to_dict():
     rd = room.to_dict()
     assert rd['type'] == 'Room'
     assert rd['name'] == 'ShoeBoxZone'
-    assert rd['name_original'] == 'Shoe Box Zone'
+    assert rd['display_name'] == 'Shoe Box Zone'
     assert 'faces' in rd
     assert len(rd['faces']) == 6
-    assert rd['indoor_shades'] is None
-    assert rd['outdoor_shades'] is None
+    assert 'indoor_shades' not in rd
+    assert 'outdoor_shades' not in rd
     assert 'properties' in rd
     assert rd['properties']['type'] == 'RoomProperties'

@@ -1,22 +1,23 @@
 # coding: utf-8
 """Honeybee Shade."""
+from ._base import _Base
 from .properties import ShadeProperties
-from .typing import valid_string
 import honeybee.writer as writer
 
 from ladybug_geometry.geometry3d.pointvector import Point3D
-from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
 import math
 
 
-class Shade(object):
+class Shade(_Base):
     """A single planar shade.
 
     Properties:
         name
-        name_original
+        display_name
+        parent
+        has_parent
         geometry
         vertices
         upper_left_vertices
@@ -24,10 +25,8 @@ class Shade(object):
         center
         area
         perimeter
-        parent
-        has_parent
     """
-    __slots__ = ('_name', '_name_original', '_geometry', '_parent', '_properties')
+    __slots__ = ('_geometry', '_parent')
 
     def __init__(self, name, geometry):
         """A single planar shade.
@@ -36,9 +35,7 @@ class Shade(object):
             name: Shade name. Must be < 100 characters.
             geometry: A ladybug-geometry Face3D.
         """
-        # process the name
-        self._name = valid_string(name, 'honeybee face name')
-        self._name_original = name
+        _Base.__init__(self, name)  # process the name
 
         # process the geometry
         assert isinstance(geometry, Face3D), \
@@ -48,6 +45,22 @@ class Shade(object):
 
         # initialize properties for extensions
         self._properties = ShadeProperties(self)
+
+    @classmethod
+    def from_dict(cls, data):
+        """Initialize an Shade from a dictionary.
+
+        Args:
+            data: A dictionary representation of an Shade object.
+        """
+        # check the type of dictionary
+        assert data['type'] == 'Shade', 'Expected Shade dictionary. ' \
+            'Got {}.'.format(data['type'])
+
+        shade = cls(data['name'], Face3D.from_dict(data['geometry']))
+        if 'display_name' in data and data['display_name'] is not None:
+            shade._display_name = data['display_name']
+        return shade
 
     @classmethod
     def from_vertices(cls, name, vertices):
@@ -65,20 +78,14 @@ class Shade(object):
         return cls(name, geometry)
 
     @property
-    def name(self):
-        """The shade name (including only legal characters)."""
-        return self._name
+    def parent(self):
+        """Parent Room if assigned. None if not assigned."""
+        return self._parent
 
     @property
-    def name_original(self):
-        """Original input name by user.
-
-        If there are no illegal characters in name then name and name_original will
-        be the same. Legal characters are ., A-Z, a-z, 0-9, _ and -.
-        Invalid characters are automatically removed from the original name for
-        compatability with simulation engines.
-        """
-        return self._name_original
+    def has_parent(self):
+        """Boolean noting whether this Shade has a parent Room."""
+        return self._parent is not None
 
     @property
     def geometry(self):
@@ -123,16 +130,6 @@ class Shade(object):
         """The perimeter of the shade."""
         return self._geometry.perimeter
 
-    @property
-    def parent(self):
-        """Parent Room if assigned. None if not assigned."""
-        return self._parent
-
-    @property
-    def has_parent(self):
-        """Boolean noting whether this Shade has a parent Room."""
-        return self._parent is not None
-
     def move(self, moving_vec):
         """Move this Shade along a vector.
 
@@ -164,14 +161,12 @@ class Shade(object):
         self._geometry = self.geometry.rotate_xy(math.radians(angle), origin)
 
     def reflect(self, plane):
-        """Reflect this Shade across a plane with the input normal vector and origin.
+        """Reflect this Shade across a plane.
 
         Args:
             plane: A ladybug_geometry Plane across which the object will
                 be reflected.
         """
-        assert isinstance(plane, Plane), \
-            'Expected ladybug_geometry Plane. Got {}.'.format(type(plane))
         self._geometry = self.geometry.reflect(plane.n, plane.o)
 
     def scale(self, factor, origin=None):
@@ -197,7 +192,7 @@ class Shade(object):
             return self.geometry.validate_planarity(tolerance, raise_exception)
         except ValueError as e:
             raise ValueError('Shade "{}" is not planar.\n{}'.format(
-                self.name_original, e))
+                self.display_name, e))
 
     def check_self_intersecting(self, raise_exception=True):
         """Check whether the edges of the Shade intersect one another (like a bowtwie).
@@ -209,7 +204,7 @@ class Shade(object):
         if self.geometry.is_self_intersecting:
             if raise_exception:
                 raise ValueError('Shade "{}" has self-intersecting edges.'.format(
-                    self.name_original))
+                    self.display_name))
             return False
         return True
 
@@ -227,14 +222,9 @@ class Shade(object):
             if raise_exception:
                 raise ValueError(
                     'Shade "{}" geometry is too small. Area must be at least {}. '
-                    'Got {}.'.format(self.name_original, tolerance, self.area))
+                    'Got {}.'.format(self.display_name, tolerance, self.area))
             return False
         return True
-
-    @property
-    def properties(self):
-        """Shade properties, including Radiance, Energy and other properties."""
-        return self._properties
 
     @property
     def to(self):
@@ -253,38 +243,29 @@ class Shade(object):
         """Return Shade as a dictionary.
 
         Args:
-            abridged: Boolean to note whether the full dictionary describing the
-                object should be returned (False) or just an abridged version (True).
-                Default: False.
+            abridged: Boolean to note whether the extension properties of the
+                object (ie. materials, transmittance schedule) should be included in
+                detail (False) or just referenced by name (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
-                included. To exclude all the keys from plugins use an empty list.
+                included. To exclude all the keys from extensions use an empty list.
         """
-        base = {
-            'type': self.__class__.__name__,
-            'name': self.name,
-            'name_original': self.name_original,
-            'geometry': self._geometry.to_dict(),
-            'properties': self.properties.to_dict(abridged, included_prop)
-        }
-        if self.parent:
-            base['parent'] = self.parent.name
+        base = {'type': 'Shade'}
+        base['name'] = self.name
+        base['display_name'] = self.display_name
+        base['properties'] = self.properties.to_dict(abridged, included_prop)
+        if 'energy' in base['properties']:
+            base['geometry'] = self._geometry.to_dict(False, True)  # enforce upper-left
         else:
-            base['parent'] = None
+            base['geometry'] = self._geometry.to_dict(False)
         return base
 
-    def duplicate(self):
-        """Get a copy of this object."""
-        return self.__copy__()
-
-    def ToString(self):
-        return self.__repr__()
-
     def __copy__(self):
-        new_shade = Shade(self.name_original, self.geometry)
+        new_shade = Shade(self.name, self.geometry)
+        new_shade._display_name = self.display_name
         new_shade._properties.duplicate_extension_attr(self._properties)
         return new_shade
 
     def __repr__(self):
-        return 'Shade: %s' % self.name_original
+        return 'Shade: %s' % self.display_name

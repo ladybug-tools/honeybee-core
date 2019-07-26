@@ -18,7 +18,7 @@ def test_aperture_init():
     str(aperture)  # test the string representation
 
     assert aperture.name == 'TestWindow'
-    assert aperture.name_original == 'Test Window'
+    assert aperture.display_name == 'Test Window'
     assert isinstance(aperture.geometry, Face3D)
     assert len(aperture.vertices) == 4
     assert aperture.upper_left_vertices[0] == Point3D(5, 0, 3)
@@ -38,7 +38,7 @@ def test_aperture_from_vertices():
     aperture = Aperture.from_vertices('Test Window', pts)
 
     assert aperture.name == 'TestWindow'
-    assert aperture.name_original == 'Test Window'
+    assert aperture.display_name == 'Test Window'
     assert isinstance(aperture.geometry, Face3D)
     assert len(aperture.vertices) == 4
     assert aperture.upper_left_vertices[0] == Point3D(5, 0, 3)
@@ -76,12 +76,12 @@ def test_aperture_overhang():
     aperture_1 = Aperture('Rectangle Window', Face3D(pts_1))
     aperture_2 = Aperture('Good Triangle Window', Face3D(pts_2))
     aperture_3 = Aperture('Bad Triangle Window', Face3D(pts_3))
-    overhang_1 = aperture_1.overhang(1, tolerance=0.01)
-    overhang_2 = aperture_2.overhang(1, tolerance=0.01)
-    overhang_3 = aperture_3.overhang(1, tolerance=0.01)
-    assert isinstance(overhang_1, Shade)
-    assert isinstance(overhang_2, Shade)
-    assert overhang_3 is None
+    aperture_1.overhang(1, tolerance=0.01)
+    aperture_2.overhang(1, tolerance=0.01)
+    aperture_3.overhang(1, tolerance=0.01)
+    assert isinstance(aperture_1.outdoor_shades[0], Shade)
+    assert isinstance(aperture_2.outdoor_shades[0], Shade)
+    assert len(aperture_3.outdoor_shades) == 0
 
 
 def test_aperture_fin():
@@ -90,14 +90,13 @@ def test_aperture_fin():
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 3))
     aperture_1 = Aperture('Rectangle Window', Face3D(pts_1))
     aperture_2 = Aperture('Triangle Window', Face3D(pts_2))
-    right_fin_1 = aperture_1.right_fin(1, tolerance=0.01)
-    right_fin_2 = aperture_2.right_fin(1, tolerance=0.01)
-    left_fin_1 = aperture_1.left_fin(1, tolerance=0.01)
-    left_fin_2 = aperture_2.left_fin(1, tolerance=0.01)
-    assert isinstance(right_fin_1, Shade)
-    assert right_fin_2 is None
-    assert isinstance(left_fin_1, Shade)
-    assert left_fin_2 is None
+    aperture_1.right_fin(1, tolerance=0.01)
+    aperture_2.right_fin(1, tolerance=0.01)
+    aperture_1.left_fin(1, tolerance=0.01)
+    aperture_2.left_fin(1, tolerance=0.01)
+    assert len(aperture_1.outdoor_shades) == 2
+    assert isinstance(aperture_1.outdoor_shades[0], Shade)
+    assert len(aperture_2.outdoor_shades) == 0
 
 
 def test_aperture_extruded_border():
@@ -107,29 +106,27 @@ def test_aperture_extruded_border():
     aperture_1 = Aperture('Rectangle Window', Face3D(pts_1))
     aperture_2 = Aperture('Triangle Window', Face3D(pts_2))
 
-    border_1_out = aperture_1.extruded_border(0.1)
-    border_2_out = aperture_2.extruded_border(0.1)
-    border_1_in = aperture_1.extruded_border(0.1, True)
-    border_2_in = aperture_2.extruded_border(0.1, True)
+    aperture_1.extruded_border(0.1)
+    aperture_2.extruded_border(0.1)
+    aperture_1.extruded_border(0.1, True)
+    aperture_2.extruded_border(0.1, True)
 
-    assert len(border_1_out) == 4
-    assert border_1_out[0].center.y > 0
-    assert len(border_2_out) == 3
-    assert border_2_out[0].center.y > 0
-    assert len(border_1_in) == 4
-    assert border_1_in[0].center.y < 0
-    assert len(border_2_in) == 3
-    assert border_2_in[0].center.y < 0
+    assert len(aperture_1.shades) == 8
+    assert aperture_1.outdoor_shades[0].center.y > 0
+    assert len(aperture_2.shades) == 6
+    assert aperture_2.outdoor_shades[0].center.y > 0
+    assert aperture_1.indoor_shades[0].center.y < 0
+    assert aperture_2.indoor_shades[0].center.y < 0
 
 
 def test_aperture_louvers_by_distance_between():
     """Test the creation of a louvers_by_distance_between for Aperture objects."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
     aperture = Aperture('Rectangle Window', Face3D(pts_1))
-    louvers = aperture.louvers_by_distance_between(0.5, 0.2, 0.1)
+    aperture.louvers_by_distance_between(0.5, 0.2, 0.1)
 
-    assert len(louvers) == 6
-    for louver in louvers:
+    assert len(aperture.outdoor_shades) == 6
+    for louver in aperture.outdoor_shades:
         assert isinstance(louver, Shade)
         assert louver.area == 5 * 0.2
 
@@ -331,11 +328,10 @@ def test_to_dict():
     ad = ap.to_dict()
     assert ad['type'] == 'Aperture'
     assert ad['name'] == 'RectangleWindow'
-    assert ad['name_original'] == 'Rectangle Window'
+    assert ad['display_name'] == 'Rectangle Window'
     assert 'geometry' in ad
     assert len(ad['geometry']['boundary']) == len(vertices)
     assert 'properties' in ad
     assert ad['properties']['type'] == 'ApertureProperties'
-    assert ad['aperture_type']['type'] == 'Window'
+    assert ad['aperture_type'] == 'Window'
     assert ad['boundary_condition']['type'] == 'Outdoors'
-    assert ad['parent'] is None

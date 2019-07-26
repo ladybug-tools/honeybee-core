@@ -19,7 +19,7 @@ def test_init():
     face = Face('Wall: SIM_INT_AIR [920980]', Face3D(vertices))
 
     assert face.name == 'WallSIM_INT_AIR920980'
-    assert face.name_original == 'Wall: SIM_INT_AIR [920980]'
+    assert face.display_name == 'Wall: SIM_INT_AIR [920980]'
     assert isinstance(face.geometry, Face3D)
     assert len(face.vertices) == 4
     assert face.upper_left_vertices[0] == Point3D(0, 0, 3)
@@ -151,7 +151,7 @@ def test_add_remove_door():
     assert face.punched_geometry.area == 96
     assert face.check_doors_valid(0.01, 1)
 
-    face.clear_doors()
+    face.remove_doors()
     assert len(face.doors) == 0
     assert len(face.punched_vertices) == 4
     assert face.punched_geometry.area == 100
@@ -174,7 +174,7 @@ def test_add_remove_doors():
     assert face.punched_geometry.area == 92
     assert face.check_doors_valid(0.01, 1)
 
-    face.clear_doors()
+    face.remove_doors()
     assert len(face.doors) == 0
     assert len(face.punched_vertices) == 4
     assert face.punched_geometry.area == 100
@@ -196,7 +196,7 @@ def test_add_remove_aperture():
     assert face.punched_geometry.area == 96
     assert face.check_apertures_valid(0.01, 1)
 
-    face.clear_apertures()
+    face.remove_apertures()
     assert len(face.apertures) == 0
     assert len(face.punched_vertices) == 4
     assert face.punched_geometry.area == 100
@@ -219,7 +219,7 @@ def test_add_remove_apertures():
     assert face.punched_geometry.area == 92
     assert face.check_apertures_valid(0.01, 1)
 
-    face.clear_apertures()
+    face.remove_apertures()
     assert len(face.apertures) == 0
     assert len(face.punched_vertices) == 4
     assert face.punched_geometry.area == 100
@@ -244,7 +244,7 @@ def test_add_remove_sub_faces():
     assert face.punched_geometry.area == 92
     assert face.check_sub_faces_valid(0.01, 1)
 
-    face.clear_sub_faces()
+    face.remove_sub_faces()
     assert len(face.apertures) == 0
     assert len(face.punched_vertices) == 4
     assert face.punched_geometry.area == 100
@@ -273,7 +273,7 @@ def test_sub_faces_invalid():
     face.add_aperture(invalid_aperture_1)
     with pytest.raises(ValueError):
         face.check_apertures_valid(0.01, 1)
-    face.clear_apertures()
+    face.remove_apertures()
 
     face.add_aperture(invalid_aperture_2)
     with pytest.raises(ValueError):
@@ -357,22 +357,22 @@ def test_face_overhang():
     face_1 = Face('Rectangle Face', Face3D(pts_1))
     face_2 = Face('Good Triangle Face', Face3D(pts_2))
     face_3 = Face('Bad Triangle Face', Face3D(pts_3))
-    overhang_1 = face_1.overhang(1, tolerance=0.01)
-    overhang_2 = face_2.overhang(1, tolerance=0.01)
-    overhang_3 = face_3.overhang(1, tolerance=0.01)
-    assert isinstance(overhang_1, Shade)
-    assert isinstance(overhang_2, Shade)
-    assert overhang_3 is None
+    face_1.overhang(1, tolerance=0.01)
+    face_2.overhang(1, tolerance=0.01)
+    face_3.overhang(1, tolerance=0.01)
+    assert isinstance(face_1.outdoor_shades[0], Shade)
+    assert isinstance(face_2.outdoor_shades[0], Shade)
+    assert len(face_3.outdoor_shades) == 0
 
 
 def test_face_louvers_by_distance_between():
     """Test the creation of a louvers_by_distance_between for Face objects."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
-    aperture = Face('Rectangle Face', Face3D(pts_1))
-    louvers = aperture.louvers_by_distance_between(0.5, 0.2, 0.1)
+    face = Face('Rectangle Face', Face3D(pts_1))
+    face.louvers_by_distance_between(0.5, 0.2, 0.1)
 
-    assert len(louvers) == 6
-    for louver in louvers:
+    assert len(face.outdoor_shades) == 6
+    for louver in face.outdoor_shades:
         assert isinstance(louver, Shade)
         assert louver.area == 5 * 0.2
 
@@ -575,10 +575,10 @@ def test_to_dict():
     fd = face.to_dict()
     assert fd['type'] == 'Face'
     assert fd['name'] == 'testwall'
-    assert fd['name_original'] == 'test wall'
+    assert fd['display_name'] == 'test wall'
     assert 'geometry' in fd
     assert len(fd['geometry']['boundary']) == len(vertices)
     assert 'properties' in fd
     assert fd['properties']['type'] == 'FaceProperties'
-    assert fd['face_type']['type'] == 'Wall'
+    assert fd['face_type'] == 'Wall'
     assert fd['boundary_condition']['type'] == 'Ground'

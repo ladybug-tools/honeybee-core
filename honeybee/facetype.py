@@ -1,20 +1,18 @@
 """Face Types."""
 from ladybug_geometry.geometry3d.pointvector import Vector3D
+import re
 import math
 
 
 class _FaceType(object):
     __slots__ = ()
 
+    def __init__(self):
+        pass
+
     @property
     def name(self):
         return self.__class__.__name__
-
-    def to_dict(self):
-        """ApertureType as a dictionary."""
-        ap_type_dict = {
-            'type': self.name}
-        return ap_type_dict
 
     def ToString(self):
         return self.__repr__()
@@ -57,7 +55,7 @@ class AirWall(_FaceType):
     pass
 
 
-class _Types(object):
+class _FaceTypes(object):
     """Face types."""
 
     def __init__(self):
@@ -82,11 +80,24 @@ class _Types(object):
     def air_wall(self):
         return self._air_wall
 
+    def by_name(self, face_type_name):
+        """Get an Face Type instance from its name.
+
+        Args:
+            face_type_name: A text string for the face type (eg. "Window").
+        """
+        attr_name = re.sub('(?<!^)(?=[A-Z])', '_', face_type_name).lower()
+        try:
+            return getattr(self, attr_name)
+        except AttributeError:
+            raise AttributeError('Face Type "{}" is not supported by this '
+                                 'installation of honeybee.'.format(face_type_name))
+
     def __contains__(self, value):
         return isinstance(value, _FaceType)
 
 
-face_types = _Types()
+face_types = _FaceTypes()
 
 
 def get_type_from_normal(normal_vector, roof_angle=30, floor_angle=150):
