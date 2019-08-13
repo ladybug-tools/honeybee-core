@@ -117,6 +117,9 @@ class Face(_BaseWithShade):
             for dr in face._doors:
                 dr._parent = face
         face._recover_shades_from_dict(data)
+
+        if data['properties']['type'] == 'FaceProperties':
+            face.properties._load_extension_attr_from_dict(data['properties'])
         return face
 
     @classmethod
@@ -803,7 +806,7 @@ class Face(_BaseWithShade):
                 raised if a vertex does not lie within the object's plane.
         """
         try:
-            return self.geometry.validate_planarity(tolerance, raise_exception)
+            return self.geometry.check_planar(tolerance, raise_exception)
         except ValueError as e:
             raise ValueError('Face "{}" is not planar.\n{}'.format(
                 self.display_name, e))
@@ -906,7 +909,7 @@ class Face(_BaseWithShade):
             dr._parent = new_f
         self._duplicate_child_shades(new_f)
         new_f._punched_geometry = self._punched_geometry
-        new_f._properties.duplicate_extension_attr(self._properties)
+        new_f._properties._duplicate_extension_attr(self._properties)
         return new_f
 
     def __repr__(self):

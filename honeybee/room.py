@@ -104,6 +104,9 @@ class Room(_BaseWithShade):
         if 'display_name' in data and data['display_name'] is not None:
             room._display_name = data['display_name']
         room._recover_shades_from_dict(data)
+
+        if data['properties']['type'] == 'RoomProperties':
+            room.properties._load_extension_attr_from_dict(data['properties'])
         return room
 
     @classmethod
@@ -544,7 +547,7 @@ class Room(_BaseWithShade):
         new_r._display_name = self.display_name
         self._duplicate_child_shades(new_r)
         new_r._geometry = self._geometry
-        new_r._properties.duplicate_extension_attr(self._properties)
+        new_r._properties._duplicate_extension_attr(self._properties)
         return new_r
 
     def __len__(self):

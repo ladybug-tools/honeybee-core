@@ -9,7 +9,7 @@ on their own but should have a host object.
 
 class _Properties(object):
     """Base class for all Properties classes."""
-    _do_not_duplicate = ('host', 'ToString', 'to_dict', 'duplicate_extension_attr')
+    _do_not_duplicate = ('host', 'to_dict', 'ToString')
 
     def __init__(self, host):
         """Initialize properties.
@@ -25,7 +25,7 @@ class _Properties(object):
         """Get the object hosting these properties."""
         return self._host
 
-    def duplicate_extension_attr(self, original_properties):
+    def _duplicate_extension_attr(self, original_properties):
         """Duplicate the attributes added by extensions.
 
         Args:
@@ -37,10 +37,13 @@ class _Properties(object):
 
         for atr in attr:
             var = getattr(original_properties, atr)
+            if not hasattr(var, 'duplicate'):
+                continue
             try:
                 setattr(self, '_' + atr, var.duplicate(self.host))
-            except AttributeError:
-                pass  # it is not an attribute that can be duplicated
+            except Exception as e:
+                raise Exception(
+                    'Failed to duplicate {}: {}'.format(var, e))
 
     def _add_extension_attr_to_dict(self, base, abridged, include):
         """Add attributes for extensions to the base dict."""
@@ -48,7 +51,7 @@ class _Properties(object):
             attr = include
         else:
             attr = [atr for atr in dir(self)
-                    if not atr.startswith('_') and atr != 'host']
+                    if not atr.startswith('_') and atr not in self._do_not_duplicate]
 
         for atr in attr:
             var = getattr(self, atr)
@@ -60,6 +63,21 @@ class _Properties(object):
                 raise Exception(
                     'Failed to convert {} to a dict: {}'.format(var, e))
         return base
+
+    def _load_extension_attr_from_dict(self, property_dict):
+        """Get attributes for extensions from a dictionary of the properties."""
+        attr = [atr for atr in dir(self)
+                if not atr.startswith('_') and atr not in self._do_not_duplicate]
+
+        for atr in attr:
+            var = getattr(self, atr)
+            if not hasattr(var, 'from_dict'):
+                continue
+            try:
+                setattr(self, '_' + atr, var.__class__.from_dict(
+                    property_dict[atr], self.host))
+            except KeyError:
+                pass  # the property_dict possesses no properties for that extension
 
     def ToString(self):
         """Overwrite .NET ToString method."""

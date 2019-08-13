@@ -60,6 +60,9 @@ class Shade(_Base):
         shade = cls(data['name'], Face3D.from_dict(data['geometry']))
         if 'display_name' in data and data['display_name'] is not None:
             shade._display_name = data['display_name']
+
+        if data['properties']['type'] == 'ShadeProperties':
+            shade.properties._load_extension_attr_from_dict(data['properties'])
         return shade
 
     @classmethod
@@ -189,7 +192,7 @@ class Shade(_Base):
                 raised if a vertex does not lie within the object's plane.
         """
         try:
-            return self.geometry.validate_planarity(tolerance, raise_exception)
+            return self.geometry.check_planar(tolerance, raise_exception)
         except ValueError as e:
             raise ValueError('Shade "{}" is not planar.\n{}'.format(
                 self.display_name, e))
@@ -264,7 +267,7 @@ class Shade(_Base):
     def __copy__(self):
         new_shade = Shade(self.name, self.geometry)
         new_shade._display_name = self.display_name
-        new_shade._properties.duplicate_extension_attr(self._properties)
+        new_shade._properties._duplicate_extension_attr(self._properties)
         return new_shade
 
     def __repr__(self):
