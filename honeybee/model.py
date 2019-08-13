@@ -776,7 +776,7 @@ class Model(_Base):
         new_aps = []
         for i, ap_face in enumerate(new_ap_geo):
             new_ap = Aperture('{}..{}'.format(original_ap.display_name, i),
-                              ap_face, original_ap.type)
+                              ap_face, None, original_ap.is_operable)
             new_ap._properties = original_ap._properties  # transfer extension properties
             if original_ap.has_parent:
                 new_ap._parent = original_ap.parent
@@ -928,7 +928,7 @@ class Model(_Base):
             [door.duplicate() for door in self._orphaned_doors],
             self.north_angle)
         new_model._display_name = self.display_name
-        new_model._properties.duplicate_extension_attr(self._properties)
+        new_model._properties._duplicate_extension_attr(self._properties)
         return new_model
 
     def __repr__(self):

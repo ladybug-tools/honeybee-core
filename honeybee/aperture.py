@@ -2,7 +2,6 @@
 """Honeybee Aperture."""
 from ._basewithshade import _BaseWithShade
 from .properties import ApertureProperties
-from .aperturetype import aperture_types
 from .boundarycondition import boundary_conditions, Outdoors, Surface
 from .shade import Shade
 import honeybee.writer as writer
@@ -19,8 +18,8 @@ class Aperture(_BaseWithShade):
     Properties:
         name
         display_name
-        type
         boundary_condition
+        is_operable
         indoor_shades
         outdoor_shades
         parent
@@ -34,18 +33,18 @@ class Aperture(_BaseWithShade):
         area
         perimeter
     """
-    TYPES = aperture_types
-    __slots__ = ('_geometry', '_parent', '_type', '_boundary_condition')
+    __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_operable')
 
-    def __init__(self, name, geometry, type=None, boundary_condition=None):
+    def __init__(self, name, geometry, boundary_condition=None, is_operable=False):
         """A single planar aperture in a face.
 
         Args:
             name: Aperture name. Must be < 100 characters.
             geometry: A ladybug-geometry Face3D.
-            type: Aperture type. Default: Window
             boundary_condition: Boundary condition object (Outdoors, Surface).
                 Default: Outdoors.
+            is_operable: Boolean to note whether the Aperture can be opened for
+                ventilation. Default: False
         """
         _BaseWithShade.__init__(self, name)  # process the name
 
@@ -55,9 +54,9 @@ class Aperture(_BaseWithShade):
         self._geometry = geometry
         self._parent = None  # _parent will be set when the Aperture is added to a Face
 
-        # process the type and boundary condition
-        self.type = type or aperture_types.window
+        # process the boundary condition and type
         self.boundary_condition = boundary_condition or boundary_conditions.outdoors
+        self.is_operable = is_operable
 
         # initialize properties for extensions
         self._properties = ApertureProperties(self)
@@ -73,7 +72,7 @@ class Aperture(_BaseWithShade):
         assert data['type'] == 'Aperture', 'Expected Aperture dictionary. ' \
             'Got {}.'.format(data['type'])
 
-        ap_type = aperture_types.by_name(data['aperture_type'])
+        is_operable = data['is_operable'] if 'is_operable' in data else False
         if data['boundary_condition']['type'] == 'Outdoors':
             boundary_condition = Outdoors.from_dict(data['boundary_condition'])
         elif data['boundary_condition']['type'] == 'Surface':
@@ -83,35 +82,29 @@ class Aperture(_BaseWithShade):
                 'Boundary condition "{}" is not supported for Apertures.'.format(
                     data['boundary_condition']['type']))
         aperture = cls(data['name'], Face3D.from_dict(data['geometry']),
-                       ap_type, boundary_condition)
+                       boundary_condition, is_operable)
         if 'display_name' in data and data['display_name'] is not None:
             aperture._display_name = data['display_name']
         aperture._recover_shades_from_dict(data)
+
+        if data['properties']['type'] == 'ApertureProperties':
+            aperture.properties._load_extension_attr_from_dict(data['properties'])
         return aperture
 
     @classmethod
-    def from_vertices(cls, name, vertices, type=None, boundary_condition=None):
+    def from_vertices(cls, name, vertices, boundary_condition=None, is_operable=False):
         """Create an Aperture from vertices with each vertex as an iterable of 3 floats.
 
         Args:
             name: Aperture name. Must be < 100 characters.
             vertices: A flattened list of 3 or more vertices as (x, y, z).
-            type: Aperture type. Default: Window
             boundary_condition: Boundary condition object (eg. Outdoors, Surface).
                 Default: Outdoors.
+            is_operable: Boolean to note whether the Aperture can be opened for
+                natrual ventilation. Default: False
         """
         geometry = Face3D(tuple(Point3D(*v) for v in vertices))
-        return cls(name, geometry, type, boundary_condition)
-
-    @property
-    def type(self):
-        """Object for Type of Aperture (ie. Window)."""
-        return self._type
-
-    @type.setter
-    def type(self, value):
-        assert value in self.TYPES, '{} is not a valid aperture type.'.format(value)
-        self._type = value
+        return cls(name, geometry, boundary_condition, is_operable)
 
     @property
     def boundary_condition(self):
@@ -128,6 +121,19 @@ class Aperture(_BaseWithShade):
                 raise ValueError('Aperture only supports Outdoor or Surface boundary '
                                  'condition. Got {}'.format(type(value)))
         self._boundary_condition = value
+
+    @property
+    def is_operable(self):
+        """Boolean to note whether the Aperture can be opened for ventilation."""
+        return self._is_operable
+
+    @is_operable.setter
+    def is_operable(self, value):
+        try:
+            self._is_operable = bool(value)
+        except TypeError:
+            raise TypeError(
+                'Expected boolean for Aperture.is_operable. Got {}.'.format(value))
 
     @property
     def parent(self):
@@ -206,6 +212,8 @@ class Aperture(_BaseWithShade):
         """
         assert isinstance(other_aperture, Aperture), \
             'Expected Aperture. Got {}.'.format(type(other_aperture))
+        assert other_aperture.is_operable is self.is_operable, \
+            'Adjacent apertures must have matching is_operable properties.'
         self._boundary_condition = boundary_conditions.surface(other_aperture, True)
         other_aperture._boundary_condition = boundary_conditions.surface(self, True)
 
@@ -458,7 +466,7 @@ class Aperture(_BaseWithShade):
                 raised if a vertex does not lie within the object's plane.
         """
         try:
-            return self.geometry.validate_planarity(tolerance, raise_exception)
+            return self.geometry.check_planar(tolerance, raise_exception)
         except ValueError as e:
             raise ValueError('Aperture "{}" is not planar.\n{}'.format(
                 self.display_name, e))
@@ -530,7 +538,7 @@ class Aperture(_BaseWithShade):
         else:
             base['geometry'] = self._geometry.to_dict(False)
 
-        base['aperture_type'] = self.type.name
+        base['is_operable'] = self.is_operable
         if isinstance(self.boundary_condition, Outdoors) and 'energy' in base['properties']:
             base['boundary_condition'] = self.boundary_condition.to_dict(full=True)
         else:
@@ -539,10 +547,11 @@ class Aperture(_BaseWithShade):
         return base
 
     def __copy__(self):
-        new_ap = Aperture(self.name, self.geometry, self.type, self.boundary_condition)
+        new_ap = Aperture(self.name, self.geometry, self.boundary_condition,
+                          self.is_operable)
         new_ap._display_name = self.display_name
         self._duplicate_child_shades(new_ap)
-        new_ap._properties.duplicate_extension_attr(self._properties)
+        new_ap._properties._duplicate_extension_attr(self._properties)
         return new_ap
 
     def __repr__(self):

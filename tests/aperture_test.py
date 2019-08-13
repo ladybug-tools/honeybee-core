@@ -2,7 +2,6 @@
 from honeybee.aperture import Aperture
 from honeybee.shade import Shade
 from honeybee.boundarycondition import Outdoors
-from honeybee.aperturetype import Window
 
 from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.plane import Plane
@@ -28,7 +27,7 @@ def test_aperture_init():
     assert aperture.area == 15
     assert aperture.perimeter == 16
     assert isinstance(aperture.boundary_condition, Outdoors)
-    assert isinstance(aperture.type, Window)
+    assert not aperture.is_operable
     assert not aperture.has_parent
 
 
@@ -48,7 +47,7 @@ def test_aperture_from_vertices():
     assert aperture.area == 15
     assert aperture.perimeter == 16
     assert isinstance(aperture.boundary_condition, Outdoors)
-    assert isinstance(aperture.type, Window)
+    assert aperture.is_operable is False
     assert not aperture.has_parent
 
 
@@ -333,5 +332,5 @@ def test_to_dict():
     assert len(ad['geometry']['boundary']) == len(vertices)
     assert 'properties' in ad
     assert ad['properties']['type'] == 'ApertureProperties'
-    assert ad['aperture_type'] == 'Window'
+    assert not ad['is_operable']
     assert ad['boundary_condition']['type'] == 'Outdoors'
