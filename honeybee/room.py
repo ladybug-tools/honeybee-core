@@ -23,6 +23,7 @@ class Room(_BaseWithShade):
         name
         display_name
         faces
+        indoor_furniture
         indoor_shades
         outdoor_shades
         geometry
@@ -181,6 +182,16 @@ class Room(_BaseWithShade):
         return self._faces
 
     @property
+    def indoor_furniture(self):
+        """Array of all indoor furniture Shade objects assigned to this Room.
+
+        Note that this property is identical to the indoor_shades property but
+        it is provided here under an alternate name to make it clear that indoor
+        furniture objects should be added here to the Room.
+        """
+        return tuple(self._indoor_shades)
+
+    @property
     def geometry(self):
         """A ladybug_geometry Polyface3D object representing the room."""
         if self._geometry is None:
@@ -285,6 +296,28 @@ class Room(_BaseWithShade):
                 orientations += face.horizontal_orientation(north_vector) * face.area
                 areas += face.area
         return orientations / areas if areas != 0 else None
+
+    def remove_indoor_furniture(self):
+        """Remove all indoor furniture assigned to this Room.
+
+        Note that this method is identical to the remove_indoor_shade method but
+        it is provided here under an alternate name to make it clear that indoor
+        furniture objects should be added here to the Room.
+        """
+        self.remove_indoor_shade()
+
+    def add_indoor_furniture(self, shade):
+        """Add a Shade object representing furniture to the Room.
+
+        Note that this method is identical to the add_indoor_shade method but
+        it is provided here under an alternate name to make it clear that indoor
+        furniture objects should be added here to the Room.
+
+        Args:
+            shade: A Shade object to add to the indoors of this Room, representing
+                furniture, desks, partitions, etc.
+        """
+        self.add_indoor_shade(shade)
 
     def generate_grid(self, x_dim, y_dim=None, offset=1.0):
         """Get a list of gridded Mesh3D objects offset from the floors of this room.
