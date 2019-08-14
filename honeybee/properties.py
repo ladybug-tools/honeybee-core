@@ -42,8 +42,9 @@ class _Properties(object):
             try:
                 setattr(self, '_' + atr, var.duplicate(self.host))
             except Exception as e:
-                raise Exception(
-                    'Failed to duplicate {}: {}'.format(var, e))
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to duplicate {}: {}'.format(var, e))
 
     def _add_extension_attr_to_dict(self, base, abridged, include):
         """Add attributes for extensions to the base dict."""
@@ -60,8 +61,9 @@ class _Properties(object):
             try:
                 base.update(var.to_dict(abridged))
             except Exception as e:
-                raise Exception(
-                    'Failed to convert {} to a dict: {}'.format(var, e))
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to convert {} to a dict: {}'.format(var, e))
         return base
 
     def _load_extension_attr_from_dict(self, property_dict):
@@ -123,8 +125,9 @@ class ModelProperties(_Properties):
             try:
                 base.update(var.to_dict())  # no abridged dictionary for model
             except Exception as e:
-                raise Exception(
-                    'Failed to convert {} to a dict: {}'.format(var, e))
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to convert {} to a dict: {}'.format(var, e))
         return base
 
     def apply_properties_from_dict(self, data):
@@ -145,6 +148,8 @@ class ModelProperties(_Properties):
             try:
                 var.apply_properties_from_dict(data)
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 raise Exception(
                     'Failed to apply {} properties to the Model: {}'.format(atr, e))
 

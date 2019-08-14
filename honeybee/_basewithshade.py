@@ -61,7 +61,8 @@ class _BaseWithShade(_Base):
     def add_outdoor_shade(self, shade):
         """Add a Shade object to the outdoor of this object.
 
-        Outdoor Shade objects can be used to represent overhangs, fins, etc.
+        Outdoor Shade objects can be used to represent balconies, outdoor furniture,
+        overhangs, light shelves, fins, the exterior part of mullions, etc.
         For representing larger shade objects like trees or other buildings,
         it may be more appropriate to add them to the Model as orphaned_shades
         without a specific parent object.
@@ -78,9 +79,9 @@ class _BaseWithShade(_Base):
         """Add a Shade object to be added to the indoor of this object.
 
         Indoor Shade objects can be used to represent furniture, the interior
-        part of light shelves, etc.
+        portion of light shelves, the interior part of mullions, etc.
         For representing finely detailed objects like blinds or roller shades,
-        it may be more apprpriate to model them as materials assigned to
+        it may be more appropriate to model them as materials assigned to
         Aperture properties (like Radiance materials or Energy constructions).
 
         Args:
