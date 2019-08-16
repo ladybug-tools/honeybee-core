@@ -81,20 +81,23 @@ class _FaceTypes(object):
         return self._air_wall
 
     def by_name(self, face_type_name):
-        """Get an Face Type instance from its name.
+        """Get a Face Type instance from its name.
 
         Args:
-            face_type_name: A text string for the face type (eg. "Window").
+            face_type_name: A text string for the face type (eg. "Wall").
         """
         attr_name = re.sub('(?<!^)(?=[A-Z])', '_', face_type_name).lower()
         try:
             return getattr(self, attr_name)
         except AttributeError:
-            raise AttributeError('Face Type "{}" is not supported by this '
-                                 'installation of honeybee.'.format(face_type_name))
+            raise AttributeError(
+                'Face Type "{}" is not supported.'.format(face_type_name))
 
     def __contains__(self, value):
         return isinstance(value, _FaceType)
+
+    def __repr__(self):
+        return 'Face Types:\nWall\nRoofCeiling\nFloor\nAirWall'
 
 
 face_types = _FaceTypes()
