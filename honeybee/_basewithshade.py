@@ -59,7 +59,7 @@ class _BaseWithShade(_Base):
         self._indoor_shades = []
 
     def add_outdoor_shade(self, shade):
-        """Add a Shade object to the outdoor of this object.
+        """Add a Shade object to the outdoors of this object.
 
         Outdoor Shade objects can be used to represent balconies, outdoor furniture,
         overhangs, light shelves, fins, the exterior part of mullions, etc.
@@ -68,7 +68,7 @@ class _BaseWithShade(_Base):
         without a specific parent object.
 
         Args:
-            shade: A shade face to add to the outdoors of this object.
+            shade: A Shade object to add to the outdoors of this object.
         """
         assert isinstance(shade, Shade), \
             'Expected Shade for outdoor_shade. Got {}.'.format(type(shade))
@@ -76,7 +76,7 @@ class _BaseWithShade(_Base):
         self._outdoor_shades.append(shade)
 
     def add_indoor_shade(self, shade):
-        """Add a Shade object to be added to the indoor of this object.
+        """Add a Shade object to be added to the indoors of this object.
 
         Indoor Shade objects can be used to represent furniture, the interior
         portion of light shelves, the interior part of mullions, etc.
@@ -91,6 +91,24 @@ class _BaseWithShade(_Base):
             'Expected Shade for indoor_shade. Got {}.'.format(type(shade))
         shade._parent = self
         self._indoor_shades.append(shade)
+
+    def add_outdoor_shades(self, shades):
+        """Add a list of Shade objects to the outdoors of this object.
+
+        Args:
+            shades: A list of Shade objects to add to the outdoors of this object.
+        """
+        for shade in shades:
+            self.add_outdoor_shade(shade)
+
+    def add_indoor_shades(self, shades):
+        """Add a list of Shade objects to the indoors of this object.
+
+        Args:
+            shades: A list of Shade objects to add to the indoors of this object.
+        """
+        for shade in shades:
+            self.add_indoor_shade(shade)
 
     def move_shades(self, moving_vec):
         """Move all indoor and outdoor shades assigned to this object along a vector.

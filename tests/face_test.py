@@ -363,6 +363,8 @@ def test_face_overhang():
     assert isinstance(face_1.outdoor_shades[0], Shade)
     assert isinstance(face_2.outdoor_shades[0], Shade)
     assert len(face_3.outdoor_shades) == 0
+    assert face_1.outdoor_shades[0].has_parent
+    assert face_2.outdoor_shades[0].has_parent
 
 
 def test_face_louvers_by_distance_between():
@@ -375,6 +377,7 @@ def test_face_louvers_by_distance_between():
     for louver in face.outdoor_shades:
         assert isinstance(louver, Shade)
         assert louver.area == 5 * 0.2
+        assert louver.has_parent
 
 
 def test_move():

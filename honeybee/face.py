@@ -607,9 +607,9 @@ class Face(_BaseWithShade):
         for i, shade_geo in enumerate(shade_faces):
             louvers.append(Shade(shd_name_base.format(self.display_name, i), shade_geo))
         if indoor:
-            self._indoor_shades.extend(louvers)
+            self.add_indoor_shades(louvers)
         else:
-            self._outdoor_shades.extend(louvers)
+            self.add_outdoor_shades(louvers)
 
     def louvers_by_distance_between(
             self, distance, depth, offset=0, angle=0, contour_vector=Vector3D(0, 0, 1),
@@ -649,9 +649,9 @@ class Face(_BaseWithShade):
         for i, shade_geo in enumerate(shade_faces):
             louvers.append(Shade(shd_name_base.format(self.display_name, i), shade_geo))
         if indoor:
-            self._indoor_shades.extend(louvers)
+            self.add_indoor_shades(louvers)
         else:
-            self._outdoor_shades.extend(louvers)
+            self.add_outdoor_shades(louvers)
 
     def move(self, moving_vec):
         """Move this Face along a vector.
