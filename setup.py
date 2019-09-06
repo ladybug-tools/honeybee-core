@@ -1,6 +1,5 @@
 import re
 import setuptools
-import sys
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -10,16 +9,22 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="honeybee-core",
-    use_scm_version = True,
+    use_scm_version=True,
     setup_requires=['setuptools_scm'],
     author="Ladybug Tools",
     author_email="info@ladybug.tools",
-    description="Honeybee is a Python library to create, run and visualize the results of environmental simulation. See plugins (e.g. honeybee_radiance) for specific simulation type.",
+    description="Honeybee is a Python library to create, run and visualize the results of environmental simulation. See extensions (e.g. honeybee_radiance) for specific simulation type.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ladybug-tools/honeybee-core",
     packages=setuptools.find_packages(exclude=["tests"]),
     install_requires=requirements,
+    extra_requires={
+        'cli': ['click>=5.1']
+    },
+    entry_points={
+        "console_scripts": ["honeybee = honeybee.cli:main"]
+    },
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.6",
