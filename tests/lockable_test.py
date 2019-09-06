@@ -13,7 +13,6 @@ def test_simple_class():
 
     foo = Foo()
     foo.bar = 20
-    print(hasattr(foo, '__slots__'))
 
     foo.lock()
     with pytest.raises(AttributeError):
