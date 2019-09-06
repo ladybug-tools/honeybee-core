@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Descriptor that for locking and unlocking an object, preventing attrbute setting."""
+"""Descriptor that for locking and unlocking an object, preventing attribute setting."""
 from functools import wraps
 from inspect import getmro
 

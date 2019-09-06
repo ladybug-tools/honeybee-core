@@ -2,7 +2,7 @@
 import sys
 import importlib
 import pkgutil
-from honeybee.logging import get_logger
+from honeybee.logutil import get_logger
 
 
 logger = get_logger(__name__)
