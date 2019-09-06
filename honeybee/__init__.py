@@ -2,7 +2,10 @@
 import sys
 import importlib
 import pkgutil
-import logging
+from honeybee.logging import get_logger
+
+
+logger = get_logger(__name__)
 
 #  find and import honeybee extensions
 #  this is a critical step to add additional functionalities to honeybee core library.
@@ -13,7 +16,6 @@ for finder, name, ispkg in pkgutil.iter_modules():
     try:
         extensions[name] = importlib.import_module(name)
     except Exception:
-        print(
-            'Failed to import {0}!'
-            ' To see full error message try `import {0}`'.format(name)
-        )
+        logger.exception('Failed to import {0}!'.format(name))
+    else:
+        logger.info('Successfully imported Honeybee plugin: {}'.format(name))

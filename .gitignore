@@ -12,3 +12,4 @@ tox.ini
 /.cache
 /.vscode
 .eggs
+honeybee.log

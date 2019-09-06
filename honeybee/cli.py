@@ -54,13 +54,10 @@ except ImportError:
     raise ImportError(
         'click module is not installed. Try `pip install honeybee-core[cli]` command.'
     )
-import importlib
-import sys
-import logging
-import honeybee
 
-# use this logger for logging inside this file and all the extensions
-_logger = logging.getLogger(__name__)
+# TODO: Comment out and use for logging once we are adding commands to this file.
+# import logging
+# logger = logging.getLogger(__name__)
 
 @click.group()
 @click.version_option()
@@ -72,7 +69,6 @@ def main():
 def viz():
     """Check if honeybee is flying!"""
     click.echo('viiiiiiiiiiiiizzzzzzzzz!')
-
 
 if __name__ == "__main__":
     main()
