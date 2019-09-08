@@ -4,6 +4,12 @@ Command Line Interface (CLI) entry point for honeybee and honeybee extensions.
 Use this file only to add command related to honeybee-core. For adding extra commands
 from each extention see below.
 
+Note:
+
+    Do not import this module in your code directly unless you are extending the command
+    line interface. For running the commands execute them from the command line or as a
+    subprocess (e.g. ``subprocess.call(['honeybee', 'viz'])``)
+
 Honeybee is using click (https://click.palletsprojects.com/en/7.x/) for creating the CLI.
 You can extend the command line interface from inside each extention by following these
 steps:
