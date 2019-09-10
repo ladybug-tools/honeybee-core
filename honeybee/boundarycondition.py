@@ -66,7 +66,8 @@ class Outdoors(_BoundaryCondition):
         assert isinstance(wind_exposure, bool), \
             'Input wind_exposure must be a Boolean. Got {}.'.format(type(wind_exposure))
         self._wind_exposure = wind_exposure
-        if view_factor.lower() == 'autocalculate' or view_factor == '':
+        if isinstance(view_factor, str) and \
+                (view_factor.lower() == 'autocalculate' or view_factor == ''):
             self._view_factor = 'autocalculate'
         else:
             self._view_factor = float_in_range(
@@ -105,7 +106,7 @@ class Outdoors(_BoundaryCondition):
     @property
     def sun_exposure_idf(self):
         """Text string for sun exposure, which is write-able into an IDF."""
-        return 'NoSun' if not self.wind_exposure else 'SunExposed'
+        return 'NoSun' if not self.sun_exposure else 'SunExposed'
 
     @property
     def wind_exposure_idf(self):
