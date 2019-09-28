@@ -28,9 +28,15 @@ class _Properties(object):
     def _duplicate_extension_attr(self, original_properties):
         """Duplicate the attributes added by extensions.
 
+        This method should be called within the duplicate or __copy__ methods of
+        each honeybee-core geometry object after the core object has been duplicated.
+        This method only needs to be called on the new (duplicated) core object and
+        the extension properties of the original core object should be passed to
+        this method as the original_properties.
+
         Args:
-            original_properties: The original property object from which
-                the duplicate object will be derived.
+            original_properties: The properties object of the original core
+                object from which the duplicate was derived.
         """
         attr = [atr for atr in dir(self)
                 if not atr.startswith('_') and atr not in self._do_not_duplicate]
@@ -47,7 +53,28 @@ class _Properties(object):
                 raise Exception('Failed to duplicate {}: {}'.format(var, e))
 
     def _add_extension_attr_to_dict(self, base, abridged, include):
-        """Add attributes for extensions to the base dict."""
+        """Add attributes for extensions to the base dictionary.
+
+        This method should be called within the to_dict method of each honeybee-core
+        geometry object.
+
+        Args:
+            base: The dictionary of the core object without any extension attributes.
+                This method will add extension attributes to this dictionary. For
+                example, energy properties will appear under base['properties']['energy'].
+            abridged: Boolean to note whether the attributes of the extensions should
+                be abridged (True) or full (False). For example, if a Room's energy
+                properties are abridged, the program_type attribute under the energy
+                properties dictionary will just be the name of the program_type. If
+                it is full (not abridged), the program_type will be a complete
+                dictionary following the ProgramType schema. Abridged dictionaries
+                should be used within the Model.to_dict but full dictionaries should
+                be used within the to_dict methods of individual objects.
+            include: List of properties to filter keys that must be included in
+                output dictionary. For example ['energy'] will include 'energy' key if
+                available in properties to_dict. By default all the keys will be
+                included. To exclude all the keys from extensions use an empty list.
+        """
         if include is not None:
             attr = include
         else:
@@ -67,7 +94,19 @@ class _Properties(object):
         return base
 
     def _load_extension_attr_from_dict(self, property_dict):
-        """Get attributes for extensions from a dictionary of the properties."""
+        """Get attributes for extensions from a dictionary of the properties.
+
+        This method should be called within the from_dict method of each honeybee-core
+        geometry object. Specifically, this method should be called on the core
+        object after it has been created from a dictionary but lacks any of the
+        extension attributes in the dictionary.
+
+        Args:
+            property_dict: A dictionary of properties for the object (ie.
+                FaceProperties, RoomProperties). These will be used to load
+                attributes from the dictionary and assign them to the object on
+                which this method is called.
+        """
         attr = [atr for atr in dir(self)
                 if not atr.startswith('_') and atr not in self._do_not_duplicate]
 

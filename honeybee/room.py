@@ -50,7 +50,7 @@ class Room(_BaseWithShade):
             name: Room name. Must be < 100 characters.
             faces: A list or tuple of honeybee Face objects that together form the
                 closed volume of a room.
-            tolerance: tolerance: The maximum difference between x, y, and z values
+            tolerance: The maximum difference between x, y, and z values
                 at which vertices of adjacent facesare considered equivalent. This is
                 used in determining whether the faces form a closed volume. Default
                 is None, which makes no attempt to evaluate whether the Room volume
