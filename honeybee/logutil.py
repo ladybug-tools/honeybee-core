@@ -37,8 +37,9 @@ def _get_log_level(level):
     level = _name_to_level.get(level)
     return level or logging.INFO
 
+
 def get_logger(name, filename='honeybee.log', file_log_level='DEBUG',
-        console_log_level='WARNING'):
+               console_log_level='WARNING'):
     """Get a logger to be used for each module.
 
     Args:
