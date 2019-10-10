@@ -124,7 +124,7 @@ def test_adjacent_zone_model():
     room_north[1].add_door(door)
     aperture = Aperture('Front Aperture', Face3D(aperture_verts))
     room_north[1].add_aperture(aperture)
-    Room.solve_adjcency([room_south, room_north], 0.01)
+    Room.solve_adjacency([room_south, room_north], 0.01)
 
     model = Model('Two Room House', [room_south, room_north])
 
@@ -462,7 +462,7 @@ def test_check_duplicate_room_names():
     room_south = Room.from_box('Zone1', 5, 5, 3, origin=Point3D(0, 0, 0))
     room_north = Room.from_box('Zone1', 5, 5, 3, origin=Point3D(0, 5, 0))
     room_south[3].apertures_by_ratio(0.4, 0.01)
-    Room.solve_adjcency([room_south, room_north], 0.01)
+    Room.solve_adjacency([room_south, room_north], 0.01)
 
     model_1 = Model('South House', [room_south])
     model_2 = Model('North House', [room_north])
@@ -545,7 +545,7 @@ def test_check_missing_adjacencies():
     room_south[1].apertures_by_ratio(0.4, 0.01)
     room_south[3].apertures_by_ratio(0.4, 0.01)
     room_north[3].apertures_by_ratio(0.4, 0.01)
-    Room.solve_adjcency([room_south, room_north], 0.01)
+    Room.solve_adjacency([room_south, room_north], 0.01)
 
     model_1 = Model('South House', [room_south])
     model_2 = Model('North House', [room_north])
@@ -577,7 +577,7 @@ def test_check_all_air_walls_adjacent():
     with pytest.raises(ValueError):
         model.check_all_air_walls_adjacent(True)
 
-    Room.solve_adjcency([room_south, room_north], 0.01)
+    Room.solve_adjacency([room_south, room_north], 0.01)
     assert model.check_all_air_walls_adjacent(False)
 
 
