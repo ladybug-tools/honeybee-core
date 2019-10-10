@@ -95,7 +95,7 @@ class Room(_BaseWithShade):
         """Initialize an Room from a dictionary.
 
         Args:
-            data: A dictionary representation of an Room object.
+            data: A dictionary representation of a Room object.
         """
         # check the type of dictionary
         assert data['type'] == 'Room', 'Expected Room dictionary. ' \
@@ -520,7 +520,7 @@ class Room(_BaseWithShade):
         return self._check_non_zero_shades(tolerance, raise_exception)
 
     @staticmethod
-    def solve_adjcency(rooms, tolerance):
+    def solve_adjacency(rooms, tolerance):
         """Solve for all adjacencies between a list of input rooms.
 
         Args:

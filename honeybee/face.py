@@ -509,9 +509,9 @@ class Face(_BaseWithShade):
         are_sub_faces_valid() method can be used afterwards to check this.
 
         Args:
-            width: Aperture width. Aperture will be centered along.
-            height: Aperture height.
-            sill_height: Sill height (default: 1).
+            width: A number for the Aperture width.
+            height: A number for the Aperture height.
+            sill_height: A number for the sill height. Default: 1.
             aperture_name: Optional name for the aperture. If None, the default name
                 will follow the convention "[face_name]_Glz[count]" where [count]
                 is one more than the current numer of apertures in the face.
@@ -557,19 +557,19 @@ class Face(_BaseWithShade):
             indoor: Boolean for whether the overhang should be generated facing the
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
-            tolerance: An optional value to return None if the overhang has a length less
+            tolerance: An optional value to not add the overhang if it has a length less
                 than the tolerance. Default is 0, which will always yeild an overhang.
             base_name: Optional base name for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
         """
         if base_name is None:
             base_name = 'InOverhang' if indoor else 'OutOverhang'
-        self.louvers_by_number(1, depth, angle=angle, indoor=indoor,
-                               tolerance=tolerance, base_name=base_name)
+        self.louvers_by_count(1, depth, angle=angle, indoor=indoor,
+                              tolerance=tolerance, base_name=base_name)
 
-    def louvers_by_number(self, louver_count, depth, offset=0, angle=0,
-                          contour_vector=Vector3D(0, 0, 1), flip_start_side=False,
-                          indoor=False, tolerance=0, base_name=None):
+    def louvers_by_count(self, louver_count, depth, offset=0, angle=0,
+                         contour_vector=Vector3D(0, 0, 1), flip_start_side=False,
+                         indoor=False, tolerance=0, base_name=None):
         """Add a series of louvered Shade objects over this Face.
 
         Args:
@@ -625,7 +625,7 @@ class Face(_BaseWithShade):
                 Default is 0 for no rotation.
             contour_vector: A Vector3D for the direction along which contours
                 are generated. Default is Z-Axis, which generates horizontal louvers.
-            flip_side: Boolean to note whether the side the louvers start from
+            flip_start_side: Boolean to note whether the side the louvers start from
                 should be flipped. Default is False to have contours on top or right.
                 Setting to True will start contours on the bottom or left.
             indoor: Boolean for whether louvers should be generated facing the

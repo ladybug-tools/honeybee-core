@@ -234,8 +234,8 @@ class Aperture(_BaseWithShade):
         """
         if base_name is None:
             base_name = 'InOverhang' if indoor else 'OutOverhang'
-        self.louvers_by_number(1, depth, angle=angle, indoor=indoor,
-                               tolerance=tolerance, base_name=base_name)
+        self.louvers_by_count(1, depth, angle=angle, indoor=indoor,
+                              tolerance=tolerance, base_name=base_name)
 
     def right_fin(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
         """Add a single vertical fin on the right side of this Aperture.
@@ -254,8 +254,8 @@ class Aperture(_BaseWithShade):
         """
         if base_name is None:
             base_name = 'InRightFin' if indoor else 'OutRightFin'
-        self.louvers_by_number(1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
-                               indoor=indoor, tolerance=tolerance, base_name=base_name)
+        self.louvers_by_count(1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
+                              indoor=indoor, tolerance=tolerance, base_name=base_name)
 
     def left_fin(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
         """Add a single vertical fin on the left side of this Aperture.
@@ -274,9 +274,9 @@ class Aperture(_BaseWithShade):
         """
         if base_name is None:
             base_name = 'InLeftFin' if indoor else 'OutLeftFin'
-        self.louvers_by_number(1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
-                               flip_start_side=True, indoor=indoor,
-                               tolerance=tolerance, base_name=base_name)
+        self.louvers_by_count(1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
+                              flip_start_side=True, indoor=indoor,
+                              tolerance=tolerance, base_name=base_name)
 
     def extruded_border(self, depth, indoor=False, base_name=None):
         """Add a series of Shade objects to this Aperture that form an extruded border.
@@ -315,9 +315,9 @@ class Aperture(_BaseWithShade):
         else:
             self.add_outdoor_shades(extrusion)
 
-    def louvers_by_number(self, louver_count, depth, offset=0, angle=0,
-                          contour_vector=Vector3D(0, 0, 1), flip_start_side=False,
-                          indoor=False, tolerance=0, base_name=None):
+    def louvers_by_count(self, louver_count, depth, offset=0, angle=0,
+                         contour_vector=Vector3D(0, 0, 1), flip_start_side=False,
+                         indoor=False, tolerance=0, base_name=None):
         """Add a series of louvered Shade objects covering this Aperture.
 
         Args:
