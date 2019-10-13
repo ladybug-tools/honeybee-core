@@ -23,25 +23,25 @@ class Face(_BaseWithShade):
     """A single planar face.
 
     Properties:
-        name
-        display_name
-        type
-        boundary_condition
-        apertures
-        doors
-        indoor_shades
-        outdoor_shades
-        parent
-        has_parent
-        geometry
-        punched_geometry
-        vertices
-        punched_vertices
-        upper_left_vertices
-        normal
-        center
-        area
-        perimeter
+        * name
+        * display_name
+        * type
+        * boundary_condition
+        * apertures
+        * doors
+        * indoor_shades
+        * outdoor_shades
+        * parent
+        * has_parent
+        * geometry
+        * punched_geometry
+        * vertices
+        * punched_vertices
+        * upper_left_vertices
+        * normal
+        * center
+        * area
+        * perimeter
     """
     TYPES = face_types
     __slots__ = ('_geometry', '_parent', '_punched_geometry',
@@ -141,7 +141,7 @@ class Face(_BaseWithShade):
 
     @property
     def type(self):
-        """Object for Type of Face (ie. Wall, Floor, Roof)."""
+        """Get or set an object for Type of Face (ie. Wall, Floor, Roof)."""
         return self._type
 
     @type.setter
@@ -154,7 +154,8 @@ class Face(_BaseWithShade):
 
     @property
     def boundary_condition(self):
-        """Object for the Face Boundary Condition (ie. Outdoors, Ground, etc.)."""
+        """Get or set the boundary condition of the Face. (ie. Outdoors, Ground, etc.).
+        """
         return self._boundary_condition
 
     @boundary_condition.setter
@@ -168,27 +169,27 @@ class Face(_BaseWithShade):
 
     @property
     def apertures(self):
-        """List of apertures in this Face."""
+        """Get a list of apertures in this Face."""
         return tuple(self._apertures)
 
     @property
     def doors(self):
-        """List of doors in this Face."""
+        """Get a list of doors in this Face."""
         return tuple(self._doors)
 
     @property
     def parent(self):
-        """Parent Room if assigned. None if not assigned."""
+        """Get the parent Room if assigned. None if not assigned."""
         return self._parent
 
     @property
     def has_parent(self):
-        """Boolean noting whether this Face has a parent Room."""
+        """Get a boolean noting whether this Face has a parent Room."""
         return self._parent is not None
 
     @property
     def geometry(self):
-        """A ladybug_geometry Face3D object representing the Face.
+        """Get a ladybug_geometry Face3D object representing the Face.
 
         Note that this Face3D only represents the parent face and does not have any
         holes cut in it for apertures or doors.
@@ -197,7 +198,7 @@ class Face(_BaseWithShade):
 
     @property
     def punched_geometry(self):
-        """A ladybug_geometry Face3D object with holes cut in it for apertures and doors.
+        """Get a ladybug_geometry Face3D object with holes cut in it for apertures and doors.
         """
         if self._punched_geometry is None:
             _sub_faces = tuple(sub_f.geometry for sub_f in self._apertures + self._doors)
@@ -210,7 +211,7 @@ class Face(_BaseWithShade):
 
     @property
     def vertices(self):
-        """List of vertices for the face (in counter-clockwise order).
+        """Get a list of vertices for the face (in counter-clockwise order).
 
         Note that these vertices only represent the outer boundary of the face
         and do not account for holes cut in the face by apertures or doors.
@@ -219,7 +220,7 @@ class Face(_BaseWithShade):
 
     @property
     def punched_vertices(self):
-        """List of vertices with holes cut in it for apertures and doors.
+        """Get a list of vertices with holes cut in it for apertures and doors.
 
         Note that some vertices will be repeated since the vertices effectively
         trace out a single boundary around the whole shape, winding inward to cut
@@ -229,7 +230,7 @@ class Face(_BaseWithShade):
 
     @property
     def upper_left_vertices(self):
-        """List of vertices starting from the upper-left corner.
+        """Get a list of vertices starting from the upper-left corner.
 
         This property obeys the same rules as the vertices property but always starts
         from the upper-left-most vertex.  This property should be used when exporting to
@@ -239,13 +240,13 @@ class Face(_BaseWithShade):
 
     @property
     def normal(self):
-        """A ladybug_geometry Vector3D for the direction in which the face is pointing.
+        """Get a ladybug_geometry Vector3D for the direction in which the face is pointing.
         """
         return self._geometry.normal
 
     @property
     def center(self):
-        """A ladybug_geometry Point3D for the center of the face.
+        """Get a ladybug_geometry Point3D for the center of the face.
 
         Note that this is the center of the bounding rectangle around this geometry
         and not the area centroid.
@@ -254,16 +255,17 @@ class Face(_BaseWithShade):
 
     @property
     def area(self):
-        """The area of the face."""
+        """Get the area of the face."""
         return self._geometry.area
 
     @property
     def perimeter(self):
-        """The perimeter of the face. This includes the length of holes in the face."""
+        """Get the perimeter of the face. This includes the length of holes in the face.
+        """
         return self._geometry.perimeter
 
     def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
-        """A number between 0 and 360 for the orientation of the face in degrees.
+        """Get a number between 0 and 360 for the orientation of the face in degrees.
 
         0 = North, 90 = East, 180 = South, 270 = West
 
@@ -275,7 +277,7 @@ class Face(_BaseWithShade):
             north_vector.angle_clockwise(Vector2D(self.normal.x, self.normal.y)))
 
     def cardinal_direction(self, north_vector=Vector2D(0, 1)):
-        """Text description for the cardinal direction that the face is pointing.
+        """Get text description for the cardinal direction that the face is pointing.
 
         Will be one of the following: ('North', 'East', 'South', 'West')
 

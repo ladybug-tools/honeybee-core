@@ -585,3 +585,15 @@ def test_to_dict():
     assert fd['properties']['type'] == 'FaceProperties'
     assert fd['face_type'] == 'Wall'
     assert fd['boundary_condition']['type'] == 'Ground'
+
+
+def test_to_from_dict():
+    """Test the to/from dict of Face objects."""
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    face = Face.from_vertices('test wall', vertices, face_types.wall,
+                              boundary_conditions.ground)
+
+    face_dict = face.to_dict()
+    new_face = Face.from_dict(face_dict)
+    assert isinstance(new_face, Face)
+    assert new_face.to_dict() == face_dict

@@ -5,7 +5,7 @@ from .properties import RoomProperties
 from .face import Face
 from .facetype import get_type_from_normal, Wall, Floor
 from .boundarycondition import get_bc_from_position, Outdoors, Surface
-from .typing import float_in_range
+from .typing import float_in_range, int_in_range
 import honeybee.writer as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
@@ -20,22 +20,23 @@ class Room(_BaseWithShade):
     """A volume enclosed by faces, representing a single room or space.
 
     Properties:
-        name
-        display_name
-        faces
-        indoor_furniture
-        indoor_shades
-        outdoor_shades
-        geometry
-        center
-        volume
-        floor_area
-        exposed_area
-        exterior_wall_area
-        exterior_aperture_area
-        average_floor_height
+        * name
+        * display_name
+        * faces
+        * multiplier
+        * indoor_furniture
+        * indoor_shades
+        * outdoor_shades
+        * geometry
+        * center
+        * volume
+        * floor_area
+        * exposed_area
+        * exterior_wall_area
+        * exterior_aperture_area
+        * average_floor_height
     """
-    __slots__ = ('_geometry', '_faces')
+    __slots__ = ('_geometry', '_faces', '_multiplier')
 
     def __init__(self, name, faces, tolerance=None, angle_tolerance=None):
         """A volume enclosed by faces, representing a single room or space.
@@ -87,8 +88,8 @@ class Room(_BaseWithShade):
             self._faces = faces
             self._geometry = room_polyface
 
-        # initialize properties for extensions
-        self._properties = RoomProperties(self)
+        self._multiplier = 1  # default value that can be overridden later
+        self._properties = RoomProperties(self)  # properties for extensions
 
     @classmethod
     def from_dict(cls, data):
@@ -104,6 +105,8 @@ class Room(_BaseWithShade):
         room = Room(data['name'], [Face.from_dict(f_dict) for f_dict in data['faces']])
         if 'display_name' in data and data['display_name'] is not None:
             room._display_name = data['display_name']
+        if 'multiplier' in data and data['multiplier'] is not None:
+            room._multiplier = data['multiplier']
         room._recover_shades_from_dict(data)
 
         if data['properties']['type'] == 'RoomProperties':
@@ -178,8 +181,27 @@ class Room(_BaseWithShade):
 
     @property
     def faces(self):
-        """Tuple of all honeybee Faces making up this room volume."""
+        """Get a tuple of all honeybee Faces making up this room volume."""
         return self._faces
+
+    @property
+    def multiplier(self):
+        """Get or set an integer noting how many times this Room is repeated.
+
+        Multipliers are used to speed up the calculation when similar Rooms are
+        repeated more than once. Essentially, a given simulation with the
+        Room is run once and then the result is mutliplied by the multiplier.
+        This means that the "repetition" isn't in a particualr direction (it's
+        essentially in the exact same location) and this comes with some
+        inaccuracy. However, this error might not be too large if the Rooms
+        are similar enough and it can often be worth it since it can greatly
+        speed up the calculation.
+        """
+        return self._multiplier
+
+    @multiplier.setter
+    def multiplier(self, value):
+        self._multiplier = int_in_range(value, 1, input_name='room multiplier')
 
     @property
     def indoor_furniture(self):
@@ -193,7 +215,7 @@ class Room(_BaseWithShade):
 
     @property
     def geometry(self):
-        """A ladybug_geometry Polyface3D object representing the room."""
+        """Get a ladybug_geometry Polyface3D object representing the room."""
         if self._geometry is None:
             self._geometry = Polyface3D.from_faces(
                 tuple(face.geometry for face in self._faces))
@@ -201,7 +223,7 @@ class Room(_BaseWithShade):
 
     @property
     def center(self):
-        """A ladybug_geometry Point3D for the center of the room.
+        """Get a ladybug_geometry Point3D for the center of the room.
 
         Note that this is the center of the bounding box around the room geometry
         and not the volume centroid.
@@ -210,7 +232,7 @@ class Room(_BaseWithShade):
 
     @property
     def volume(self):
-        """The volume of the room.
+        """Get the volume of the room.
 
         Note that, if this room faces do not form a closed solid (with all face normals
         pointing outward), the value of this property will not be accurate.
@@ -219,12 +241,12 @@ class Room(_BaseWithShade):
 
     @property
     def floor_area(self):
-        """The combined area of all room floor faces."""
+        """Get the combined area of all room floor faces."""
         return sum([face.area for face in self._faces if isinstance(face.type, Floor)])
 
     @property
     def exposed_area(self):
-        """The combined area of all room faces with outdoor boundary conditions.
+        """Get the combined area of all room faces with outdoor boundary conditions.
 
         Useful for estimating infiltration, often expressed as a flow per
         unit exposed envelope area.
@@ -234,7 +256,7 @@ class Room(_BaseWithShade):
 
     @property
     def exterior_wall_area(self):
-        """The combined area of all exterior walls on the room.
+        """Get the combined area of all exterior walls on the room.
 
         Useful for calculating glazing ratios.
         """
@@ -247,7 +269,7 @@ class Room(_BaseWithShade):
 
     @property
     def exterior_aperture_area(self):
-        """The combined area of all exterior apertures on the room.
+        """Get the combined area of all exterior apertures on the room.
 
         Useful for calculating glazing ratios.
         """
@@ -259,7 +281,7 @@ class Room(_BaseWithShade):
 
     @property
     def average_floor_height(self):
-        """The height of the room floor averaged over all floor faces in the room.
+        """Get the height of the room floor averaged over all floor faces in the room.
 
         Will be None if the room posseses no floors. Resulting value is weighted by
         the area of each of the floor faces.
@@ -278,7 +300,7 @@ class Room(_BaseWithShade):
         return False
 
     def average_orientation(self, north_vector=Vector2D(0, 1)):
-        """A number between 0 and 360 for the average orientation of exposed walls.
+        """Get a number between 0 and 360 for the average orientation of exposed walls.
 
         0 = North, 90 = East, 180 = South, 270 = West.  Wil be None if the zone has
         no exterior walls. Resulting value is weighted by the area of each of the
@@ -570,14 +592,16 @@ class Room(_BaseWithShade):
         base['name'] = self.name
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
-
         base['faces'] = [f.to_dict(abridged, included_prop) for f in self._faces]
         self._add_shades_to_dict(base, abridged, included_prop)
+        if self.multiplier != 1:
+            base['multiplier'] = self.multiplier
         return base
 
     def __copy__(self):
         new_r = Room(self.name, tuple(face.duplicate() for face in self._faces))
         new_r._display_name = self.display_name
+        new_r._multiplier = self.multiplier
         self._duplicate_child_shades(new_r)
         new_r._geometry = self._geometry
         new_r._properties._duplicate_extension_attr(self._properties)

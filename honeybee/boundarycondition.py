@@ -13,26 +13,26 @@ class _BoundaryCondition(object):
 
     @property
     def name(self):
-        """Name of the boundary condition (ie. 'Outdoors', 'Ground')."""
+        """Get the name of the boundary condition (ie. 'Outdoors', 'Ground')."""
         return self.__class__.__name__
 
     @property
     def view_factor(self):
-        """The view factor to the ground."""
+        """Get the view factor to the ground."""
         return 'autocalculate'
 
     @property
     def sun_exposure_idf(self):
-        """Text string for sun exposure, which is write-able into an IDF."""
+        """Get a text string for sun exposure, which is write-able into an IDF."""
         return 'NoSun'
 
     @property
     def wind_exposure_idf(self):
-        """Text string for wind exposure, which is write-able into an IDF."""
+        """ Get a text string for wind exposure, which is write-able into an IDF."""
         return 'NoWind'
 
     def to_dict(self):
-        """Get boundary condition as a dictionary."""
+        """Get the boundary condition as a dictionary."""
         return {'type': self.name}
 
     def ToString(self):
@@ -90,31 +90,31 @@ class Outdoors(_BoundaryCondition):
 
     @property
     def sun_exposure(self):
-        """A boolean noting whether the boundary is exposed to sun."""
+        """Get a boolean noting whether the boundary is exposed to sun."""
         return self._sun_exposure
 
     @property
     def wind_exposure(self):
-        """A boolean noting whether the boundary is exposed to wind."""
+        """Get a boolean noting whether the boundary is exposed to wind."""
         return self._wind_exposure
 
     @property
     def view_factor(self):
-        """The view factor to the ground as a number or 'autocalculate'."""
+        """Get the view factor to the ground as a number or 'autocalculate'."""
         return self._view_factor
 
     @property
     def sun_exposure_idf(self):
-        """Text string for sun exposure, which is write-able into an IDF."""
+        """Get a text string for sun exposure, which is write-able into an IDF."""
         return 'NoSun' if not self.sun_exposure else 'SunExposed'
 
     @property
     def wind_exposure_idf(self):
-        """Text string for wind exposure, which is write-able into an IDF."""
+        """Get a text string for wind exposure, which is write-able into an IDF."""
         return 'NoWind' if not self.wind_exposure else 'WindExposed'
 
     def to_dict(self, full=False):
-        """Get boundary condition as a dictionary.
+        """Get the boundary condition as a dictionary.
 
         Args:
             full: Set to True to get the full dictionary which includes energy
@@ -198,7 +198,7 @@ class Surface(_BoundaryCondition):
 
     @property
     def boundary_condition_objects(self):
-        """A tuple of up to 3 object names that are adjacent to this one.
+        """Get a tuple of up to 3 object names that are adjacent to this one.
 
         The first object is always the one that is immediately adjacet and is of
         the same object type (Face, Aperture, Door).
@@ -212,11 +212,11 @@ class Surface(_BoundaryCondition):
 
     @property
     def boundary_condition_object(self):
-        """The name of the object adjacent to this one."""
+        """Get the name of the object adjacent to this one."""
         return self._boundary_condition_objects[0]
 
     def to_dict(self):
-        """Get boundary condition as a dictionary.
+        """Get the boundary condition as a dictionary.
 
         Args:
             full: Set to True to get the full dictionary which includes energy

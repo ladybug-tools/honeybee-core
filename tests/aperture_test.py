@@ -339,3 +339,14 @@ def test_to_dict():
     assert ad['properties']['type'] == 'ApertureProperties'
     assert not ad['is_operable']
     assert ad['boundary_condition']['type'] == 'Outdoors'
+
+
+def test_to_from_dict():
+    """Test the to/from dict of Aperture objects."""
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    ap = Aperture.from_vertices('Rectangle Window', vertices)
+
+    ap_dict = ap.to_dict()
+    new_ap = Aperture.from_dict(ap_dict)
+    assert isinstance(new_ap, Aperture)
+    assert new_ap.to_dict() == ap_dict

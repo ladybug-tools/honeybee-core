@@ -15,20 +15,20 @@ class Door(_Base):
     """A single planar Door in a Face.
 
     Properties:
-        name
-        display_name
-        boundary_condition
-        is_glass
-        parent
-        has_parent
-        geometry
-        vertices
-        upper_left_vertices
-        triangulated_mesh3d
-        normal
-        center
-        area
-        perimeter
+        * name
+        * display_name
+        * boundary_condition
+        * is_glass
+        * parent
+        * has_parent
+        * geometry
+        * vertices
+        * upper_left_vertices
+        * triangulated_mesh3d
+        * normal
+        * center
+        * area
+        * perimeter
     """
     __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_glass')
 
@@ -104,7 +104,7 @@ class Door(_Base):
 
     @property
     def boundary_condition(self):
-        """Boundary condition of this door."""
+        """Get or set the boundary condition of this door."""
         return self._boundary_condition
 
     @boundary_condition.setter
@@ -120,7 +120,7 @@ class Door(_Base):
 
     @property
     def is_glass(self):
-        """Boolean to note whether this object is a glass door."""
+        """Get or set a boolean to note whether this object is a glass door."""
         return self._is_glass
 
     @is_glass.setter
@@ -133,27 +133,27 @@ class Door(_Base):
 
     @property
     def parent(self):
-        """Parent Face if assigned. None if not assigned."""
+        """Get the parent Face if assigned. None if not assigned."""
         return self._parent
 
     @property
     def has_parent(self):
-        """Boolean noting whether this Door has a parent Face."""
+        """Get a boolean noting whether this Door has a parent Face."""
         return self._parent is not None
 
     @property
     def geometry(self):
-        """A ladybug_geometry Face3D object representing the door."""
+        """Get a ladybug_geometry Face3D object representing the door."""
         return self._geometry
 
     @property
     def vertices(self):
-        """List of vertices for the door (in counter-clockwise order)."""
+        """Get a list of vertices for the door (in counter-clockwise order)."""
         return self._geometry.vertices
 
     @property
     def upper_left_vertices(self):
-        """List of vertices starting from the upper-left corner.
+        """Get a list of vertices starting from the upper-left corner.
 
         This property should be used when exporting to EnergyPlus / OpenStudio.
         """
@@ -161,7 +161,7 @@ class Door(_Base):
 
     @property
     def triangulated_mesh3d(self):
-        """A ladybug_geometry Mesh3D of the door geometry composed of triangles.
+        """Get a ladybug_geometry Mesh3D of the door geometry composed of triangles.
 
         In EnergyPlus / OpenStudio workflows, this property is used to subdivide
         the door when it has more than 4 vertices. This is necessary since
@@ -171,13 +171,13 @@ class Door(_Base):
 
     @property
     def normal(self):
-        """A ladybug_geometry Vector3D for the direction the door is pointing.
+        """Get a ladybug_geometry Vector3D for the direction the door is pointing.
         """
         return self._geometry.normal
 
     @property
     def center(self):
-        """A ladybug_geometry Point3D for the center of the door.
+        """Get a ladybug_geometry Point3D for the center of the door.
 
         Note that this is the center of the bounding rectangle around this geometry
         and not the area centroid.
@@ -186,12 +186,12 @@ class Door(_Base):
 
     @property
     def area(self):
-        """The area of the door."""
+        """Get the area of the door."""
         return self._geometry.area
 
     @property
     def perimeter(self):
-        """The perimeter of the door."""
+        """Get the perimeter of the door."""
         return self._geometry.perimeter
 
     def set_adjacency(self, other_door):
@@ -345,7 +345,8 @@ class Door(_Base):
             base['geometry'] = self._geometry.to_dict(False)
 
         base['is_glass'] = self.is_glass
-        if isinstance(self.boundary_condition, Outdoors) and 'energy' in base['properties']:
+        if isinstance(self.boundary_condition, Outdoors) and \
+                'energy' in base['properties']:
             base['boundary_condition'] = self.boundary_condition.to_dict(full=True)
         else:
             base['boundary_condition'] = self.boundary_condition.to_dict()

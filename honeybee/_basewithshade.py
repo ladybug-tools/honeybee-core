@@ -8,11 +8,12 @@ class _BaseWithShade(_Base):
     """A base class for all objects that can have Shades nested on them.
 
     Properties:
-        name
-        display_name
-        geometry
-        outdoor_shades
-        indoor_shades
+        * name
+        * display_name
+        * geometry
+        * outdoor_shades
+        * indoor_shades
+        * shades
     """
     __slots__ = ('_outdoor_shades', '_indoor_shades')
 
@@ -28,17 +29,17 @@ class _BaseWithShade(_Base):
 
     @property
     def outdoor_shades(self):
-        """Array of all outdoor shades assigned to this object."""
+        """Get an array of all outdoor shades assigned to this object."""
         return tuple(self._outdoor_shades)
 
     @property
     def indoor_shades(self):
-        """Array of all indoor shades assigned to this object."""
+        """Get an array of all indoor shades assigned to this object."""
         return tuple(self._indoor_shades)
 
     @property
     def shades(self):
-        """Array of all shades (both indoor and outdoor) assigned to this object."""
+        """Get an array of all shades (indoor + outdoor) assigned to this object."""
         return self._outdoor_shades + self._indoor_shades
 
     def remove_shades(self):

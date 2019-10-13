@@ -33,6 +33,7 @@ def test_init():
     str(room)  # test the string representation of the room
     assert room.name == 'ZoneSHOE_BOX920980'
     assert room.display_name == 'Zone: SHOE_BOX [920980]'
+    assert room.multiplier == 1
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 8
     assert len(room) == 6
@@ -183,6 +184,21 @@ def test_average_orientation():
 
     assert room.average_orientation() == 180
     assert room.average_orientation(Vector2D(1, 0)) == 90
+
+
+def test_room_multiplier():
+    """Test the room multiplier."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.5, 0.01)
+
+    room.multiplier = 5
+    assert room.multiplier == 5
+    room_dup = room.duplicate()
+    assert room_dup.multiplier == 5
+    room_dict = room.to_dict()
+    assert 'multiplier' in room_dict
+    assert room_dict['multiplier'] == 5
 
 
 def test_apertures_and_shades():
@@ -479,3 +495,13 @@ def test_to_dict():
     assert 'outdoor_shades' not in rd
     assert 'properties' in rd
     assert rd['properties']['type'] == 'RoomProperties'
+
+
+def test_to_from_dict():
+    """Test the to/from dict of Room objects."""
+    room = Room.from_box('Shoe Box Zone', 5, 10, 3)
+
+    room_dict = room.to_dict()
+    new_room = Room.from_dict(room_dict)
+    assert isinstance(new_room, Room)
+    assert new_room.to_dict() == room_dict
