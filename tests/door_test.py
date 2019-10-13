@@ -267,3 +267,14 @@ def test_to_dict():
     assert 'properties' in drd
     assert drd['properties']['type'] == 'DoorProperties'
     assert drd['boundary_condition']['type'] == 'Outdoors'
+
+
+def test_to_from_dict():
+    """Test the to/from dict of Door objects."""
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    dr = Door.from_vertices('Rectangle Door', vertices)
+
+    dr_dict = dr.to_dict()
+    new_dr = Door.from_dict(dr_dict)
+    assert isinstance(new_dr, Door)
+    assert new_dr.to_dict() == dr_dict

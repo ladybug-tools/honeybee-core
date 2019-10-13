@@ -251,13 +251,24 @@ def test_check_non_zero():
 def test_to_dict():
     """Test the shade to_dict method."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    dr = Shade.from_vertices('Rectangle Shade', vertices)
+    shd = Shade.from_vertices('Rectangle Shade', vertices)
 
-    drd = dr.to_dict()
-    assert drd['type'] == 'Shade'
-    assert drd['name'] == 'RectangleShade'
-    assert drd['display_name'] == 'Rectangle Shade'
-    assert 'geometry' in drd
-    assert len(drd['geometry']['boundary']) == len(vertices)
-    assert 'properties' in drd
-    assert drd['properties']['type'] == 'ShadeProperties'
+    shdd = shd.to_dict()
+    assert shdd['type'] == 'Shade'
+    assert shdd['name'] == 'RectangleShade'
+    assert shdd['display_name'] == 'Rectangle Shade'
+    assert 'geometry' in shdd
+    assert len(shdd['geometry']['boundary']) == len(vertices)
+    assert 'properties' in shdd
+    assert shdd['properties']['type'] == 'ShadeProperties'
+
+
+def test_to_from_dict():
+    """Test the to/from dict of Shade objects."""
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    shd = Shade.from_vertices('Rectangle Shade', vertices)
+
+    shd_dict = shd.to_dict()
+    new_shd = Shade.from_dict(shd_dict)
+    assert isinstance(new_shd, Shade)
+    assert new_shd.to_dict() == shd_dict

@@ -14,17 +14,17 @@ class Shade(_Base):
     """A single planar shade.
 
     Properties:
-        name
-        display_name
-        parent
-        has_parent
-        geometry
-        vertices
-        upper_left_vertices
-        normal
-        center
-        area
-        perimeter
+        * name
+        * display_name
+        * parent
+        * has_parent
+        * geometry
+        * vertices
+        * upper_left_vertices
+        * normal
+        * center
+        * area
+        * perimeter
     """
     __slots__ = ('_geometry', '_parent')
 
@@ -82,27 +82,27 @@ class Shade(_Base):
 
     @property
     def parent(self):
-        """Parent Room if assigned. None if not assigned."""
+        """Get the parent Room if assigned. None if not assigned."""
         return self._parent
 
     @property
     def has_parent(self):
-        """Boolean noting whether this Shade has a parent Room."""
+        """Get a boolean noting whether this Shade has a parent Room."""
         return self._parent is not None
 
     @property
     def geometry(self):
-        """A ladybug_geometry Face3D object representing the Shade."""
+        """Get a ladybug_geometry Face3D object representing the Shade."""
         return self._geometry
 
     @property
     def vertices(self):
-        """List of vertices for the shade (in counter-clockwise order)."""
+        """Get a list of vertices for the shade (in counter-clockwise order)."""
         return self._geometry.vertices
 
     @property
     def upper_left_vertices(self):
-        """List of vertices starting from the upper-left corner.
+        """Get a list of vertices starting from the upper-left corner.
 
         This property should be used when exporting to EnergyPlus / OpenStudio.
         """
@@ -110,13 +110,13 @@ class Shade(_Base):
 
     @property
     def normal(self):
-        """A ladybug_geometry Vector3D for the direction the shade is pointing.
+        """Get a ladybug_geometry Vector3D for the direction the shade is pointing.
         """
         return self._geometry.normal
 
     @property
     def center(self):
-        """A ladybug_geometry Point3D for the center of the shade.
+        """Get a ladybug_geometry Point3D for the center of the shade.
 
         Note that this is the center of the bounding rectangle around this geometry
         and not the area centroid.
@@ -125,12 +125,12 @@ class Shade(_Base):
 
     @property
     def area(self):
-        """The area of the shade."""
+        """Get the area of the shade."""
         return self._geometry.area
 
     @property
     def perimeter(self):
-        """The perimeter of the shade."""
+        """Get the perimeter of the shade."""
         return self._geometry.perimeter
 
     def move(self, moving_vec):

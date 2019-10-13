@@ -22,19 +22,19 @@ class Model(_Base):
     """A collection of Rooms, Faces, Shades, Apertures, and Doors representing a model.
 
     Properties:
-        name
-        display_name
-        north_angle
-        north_vector
-        rooms
-        faces
-        shades
-        apertures
-        doors
-        orphaned_faces
-        orphaned_shades
-        orphaned_apertures
-        orphaned_doors
+        * name
+        * display_name
+        * north_angle
+        * north_vector
+        * rooms
+        * faces
+        * shades
+        * apertures
+        * doors
+        * orphaned_faces
+        * orphaned_shades
+        * orphaned_apertures
+        * orphaned_doors
     """
     __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
                  '_orphaned_doors', '_north_angle', '_north_vector')
@@ -186,18 +186,18 @@ class Model(_Base):
 
     @property
     def rooms(self):
-        """A list of all Room objects in the model."""
+        """Get a list of all Room objects in the model."""
         return tuple(self._rooms)
 
     @property
     def faces(self):
-        """A list of all Face objects in the model."""
+        """Get a list of all Face objects in the model."""
         child_faces = [face for room in self._rooms for face in room._faces]
         return child_faces + self._orphaned_faces
 
     @property
     def shades(self):
-        """A list of all Shade objects in the model."""
+        """Get a list of all Shade objects in the model."""
         child_shades = []
         for room in self._rooms:
             child_shades.extend(room.shades)
@@ -215,7 +215,7 @@ class Model(_Base):
 
     @property
     def apertures(self):
-        """A list of all Aperture objects in the model."""
+        """Get a list of all Aperture objects in the model."""
         child_apertures = []
         for room in self._rooms:
             for face in room._faces:
@@ -226,7 +226,7 @@ class Model(_Base):
 
     @property
     def doors(self):
-        """A list of all Door objects in the model."""
+        """Get a list of all Door objects in the model."""
         child_doors = []
         for room in self._rooms:
             for face in room._faces:
@@ -237,22 +237,22 @@ class Model(_Base):
 
     @property
     def orphaned_faces(self):
-        """A list of all Face objects without parent Rooms in the model."""
+        """Get a list of all Face objects without parent Rooms in the model."""
         return tuple(self._orphaned_faces)
 
     @property
     def orphaned_shades(self):
-        """A list of all Shade objects without parent Rooms in the model."""
+        """Get a list of all Shade objects without parent Rooms in the model."""
         return tuple(self._orphaned_shades)
 
     @property
     def orphaned_apertures(self):
-        """A list of all Aperture objects without parent Faces in the model."""
+        """Get a list of all Aperture objects without parent Faces in the model."""
         return tuple(self._orphaned_apertures)
 
     @property
     def orphaned_doors(self):
-        """A list of all Door objects without parent Faces in the model."""
+        """Get a list of all Door objects without parent Faces in the model."""
         return tuple(self._orphaned_doors)
 
     def add_model(self, other_model):

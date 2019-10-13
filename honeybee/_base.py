@@ -33,7 +33,7 @@ class _Base(object):
 
     @property
     def display_name(self):
-        """Original input name by user.
+        """Get the original input name by user.
 
         If there are no illegal characters in name then name and display_name will
         be the same. Legal characters are ., A-Z, a-z, 0-9, _ and -.
@@ -44,7 +44,7 @@ class _Base(object):
 
     @property
     def properties(self):
-        """Object properties, including Radiance, Energy and other properties."""
+        """Get object properties, including Radiance, Energy and other properties."""
         return self._properties
 
     def duplicate(self):
