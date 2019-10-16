@@ -573,7 +573,6 @@ class Room(_BaseWithShade):
             room.to.idf(room) -> idf string.
             room.to.radiance(room) -> Radiance string.
         """
-        raise NotImplementedError('Room does not yet support writing to files.')
         return writer
 
     def to_dict(self, abridged=False, included_prop=None):

@@ -514,7 +514,6 @@ class Aperture(_BaseWithShade):
             aperture.to.idf(aperture) -> idf string.
             aperture.to.radiance(aperture) -> Radiance string.
         """
-        raise NotImplementedError('Aperture does not yet support writing to files.')
         return writer
 
     def to_dict(self, abridged=False, included_prop=None):

@@ -319,7 +319,6 @@ class Door(_Base):
             door.to.idf(door) -> idf string.
             door.to.radiance(door) -> Radiance string.
         """
-        raise NotImplementedError('Door does not support writing to files.')
         return writer
 
     def to_dict(self, abridged=False, included_prop=None):

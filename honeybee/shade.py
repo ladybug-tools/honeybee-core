@@ -239,7 +239,6 @@ class Shade(_Base):
             shade.to.idf(shade) -> idf string.
             shade.to.radiance(shade) -> Radiance string.
         """
-        raise NotImplementedError('Shade does not yet support writing to files.')
         return writer
 
     def to_dict(self, abridged=False, included_prop=None):

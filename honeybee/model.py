@@ -839,7 +839,6 @@ class Model(_Base):
             model.to.idf(model) -> idf string.
             model.to.radiance(model) -> Radiance string.
         """
-        raise NotImplementedError('Model does not yet support writing to files.')
         return writer
 
     def to_dict(self, included_prop=None, triangulate_sub_faces=False):
