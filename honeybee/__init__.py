@@ -1,5 +1,4 @@
 """Honeybee core library."""
-import sys
 import importlib
 import pkgutil
 from honeybee.logutil import get_logger
