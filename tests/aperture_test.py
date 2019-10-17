@@ -350,3 +350,12 @@ def test_to_from_dict():
     new_ap = Aperture.from_dict(ap_dict)
     assert isinstance(new_ap, Aperture)
     assert new_ap.to_dict() == ap_dict
+
+
+def test_writer():
+    """Test the Aperture writer object."""
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    ap = Aperture.from_vertices('Rectangle Window', vertices)
+
+    writers = [mod for mod in dir(ap.to) if not mod.startswith('_')]
+    assert len(writers) == 0

@@ -797,3 +797,12 @@ def test_to_from_dict_methods():
     assert len(new_model.orphaned_shades) == 0
     assert len(new_model.orphaned_apertures) == 0
     assert len(new_model.orphaned_doors) == 0
+
+
+def test_writer():
+    """Test the Model writer object."""
+    room = Room.from_box('Tiny House Zone', 5, 10, 3)
+    model = Model('Tiny House', [room])
+
+    writers = [mod for mod in dir(model.to) if not mod.startswith('_')]
+    assert len(writers) == 0

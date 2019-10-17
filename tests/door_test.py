@@ -278,3 +278,12 @@ def test_to_from_dict():
     new_dr = Door.from_dict(dr_dict)
     assert isinstance(new_dr, Door)
     assert new_dr.to_dict() == dr_dict
+
+
+def test_writer():
+    """Test the Door writer object."""
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    door = Door.from_vertices('Rectangle Door', vertices)
+
+    writers = [mod for mod in dir(door.to) if not mod.startswith('_')]
+    assert len(writers) == 0

@@ -272,3 +272,12 @@ def test_to_from_dict():
     new_shd = Shade.from_dict(shd_dict)
     assert isinstance(new_shd, Shade)
     assert new_shd.to_dict() == shd_dict
+
+
+def test_writer():
+    """Test the Shade writer object."""
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    shd = Shade.from_vertices('Rectangle Shade', vertices)
+
+    writers = [mod for mod in dir(shd.to) if not mod.startswith('_')]
+    assert len(writers) == 0

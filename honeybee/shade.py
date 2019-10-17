@@ -2,7 +2,7 @@
 """Honeybee Shade."""
 from ._base import _Base
 from .properties import ShadeProperties
-import honeybee.writer as writer
+import honeybee.writer.shade as writer
 
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.face import Face3D

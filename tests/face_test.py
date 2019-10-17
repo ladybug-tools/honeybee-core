@@ -597,3 +597,13 @@ def test_to_from_dict():
     new_face = Face.from_dict(face_dict)
     assert isinstance(new_face, Face)
     assert new_face.to_dict() == face_dict
+
+
+def test_writer():
+    """Test the Face writer object."""
+    vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
+    face = Face.from_vertices('test wall', vertices, face_types.wall,
+                              boundary_conditions.ground)
+
+    writers = [mod for mod in dir(face.to) if not mod.startswith('_')]
+    assert len(writers) == 0

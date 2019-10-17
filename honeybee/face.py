@@ -9,7 +9,7 @@ from .shade import Shade
 from .aperture import Aperture
 from .door import Door
 import honeybee.boundarycondition as hbc
-import honeybee.writer as writer
+import honeybee.writer.face as writer
 
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
