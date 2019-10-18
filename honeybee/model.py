@@ -10,7 +10,7 @@ from .door import Door
 from .typing import float_in_range
 from .boundarycondition import Surface
 from .facetype import AirWall
-import honeybee.writer as writer
+import honeybee.writer.model as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.face import Face3D

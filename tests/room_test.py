@@ -505,3 +505,11 @@ def test_to_from_dict():
     new_room = Room.from_dict(room_dict)
     assert isinstance(new_room, Room)
     assert new_room.to_dict() == room_dict
+
+
+def test_writer():
+    """Test the Room writer object."""
+    room = Room.from_box('Shoe Box Zone', 5, 10, 3)
+
+    writers = [mod for mod in dir(room.to) if not mod.startswith('_')]
+    assert len(writers) == 0

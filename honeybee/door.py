@@ -3,7 +3,7 @@
 from ._base import _Base
 from .properties import DoorProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
-import honeybee.writer as writer
+import honeybee.writer.door as writer
 
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.face import Face3D

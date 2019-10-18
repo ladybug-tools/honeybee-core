@@ -6,7 +6,7 @@ from .face import Face
 from .facetype import get_type_from_normal, Wall, Floor
 from .boundarycondition import get_bc_from_position, Outdoors, Surface
 from .typing import float_in_range, int_in_range
-import honeybee.writer as writer
+import honeybee.writer.room as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D

@@ -4,7 +4,7 @@ from ._basewithshade import _BaseWithShade
 from .properties import ApertureProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
 from .shade import Shade
-import honeybee.writer as writer
+import honeybee.writer.aperture as writer
 
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.face import Face3D
