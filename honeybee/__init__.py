@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 #  this is a critical step to add additional functionalities to honeybee core library.
 extensions = {}
 for finder, name, ispkg in pkgutil.iter_modules():
-    if not name.startswith('honeybee_'):
+    if not name.startswith('honeybee_') or name.count('_') > 1:
         continue
     try:
         extensions[name] = importlib.import_module(name)
