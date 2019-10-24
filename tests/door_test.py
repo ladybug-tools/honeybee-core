@@ -286,4 +286,5 @@ def test_writer():
     door = Door.from_vertices('Rectangle Door', vertices)
 
     writers = [mod for mod in dir(door.to) if not mod.startswith('_')]
-    assert len(writers) == 0
+    for writer in writers:
+        assert callable(getattr(door.to, writer))

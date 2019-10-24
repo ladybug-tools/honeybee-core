@@ -4,9 +4,9 @@
 
 def model_extension_dicts(data, extension_key, room_ext_dicts=[], face_ext_dicts=[],
                           shade_ext_dicts=[], aperture_ext_dicts=[], door_ext_dicts=[]):
-    """Get all Model property dictioanires of an extension organized by geometry type.
+    """Get all Model property dictionaries of an extension organized by geometry type.
 
-    Note that the order in which dictaionaries appear in the output lists is the
+    Note that the order in which dictionaries appear in the output lists is the
     same order as the geometry objects appear when requested from the model.
     For example, the shade_ext_dicts align with the model.shades.
 

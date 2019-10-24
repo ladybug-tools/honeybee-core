@@ -512,4 +512,5 @@ def test_writer():
     room = Room.from_box('Shoe Box Zone', 5, 10, 3)
 
     writers = [mod for mod in dir(room.to) if not mod.startswith('_')]
-    assert len(writers) == 0
+    for writer in writers:
+        assert callable(getattr(room.to, writer))

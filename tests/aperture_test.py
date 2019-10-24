@@ -358,4 +358,5 @@ def test_writer():
     ap = Aperture.from_vertices('Rectangle Window', vertices)
 
     writers = [mod for mod in dir(ap.to) if not mod.startswith('_')]
-    assert len(writers) == 0
+    for writer in writers:
+        assert callable(getattr(ap.to, writer))
