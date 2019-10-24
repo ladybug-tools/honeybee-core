@@ -280,4 +280,5 @@ def test_writer():
     shd = Shade.from_vertices('Rectangle Shade', vertices)
 
     writers = [mod for mod in dir(shd.to) if not mod.startswith('_')]
-    assert len(writers) == 0
+    for writer in writers:
+        assert callable(getattr(shd.to, writer))

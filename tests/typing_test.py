@@ -1,4 +1,4 @@
-"""test Face class."""
+"""Test the typing functions."""
 from honeybee.typing import valid_string, valid_rad_string, valid_ep_string, \
     float_in_range, int_in_range, float_positive, int_positive, \
     tuple_with_length, list_with_length, normpath
