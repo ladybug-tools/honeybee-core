@@ -384,43 +384,58 @@ class Face(_BaseWithShade):
             other_face: Another Face object to be set adjacent to this one.
             tolerance: The minimum distance between the center of two aperture
                 geometries at which they are condsidered adjacent. Default: 0.
+
+        Returns:
+            adjacent_apertures -- A list of tuples with each tuple containing 2 objects
+                for Apertures paired in the process of solving adjacency.
+            adjacent_doors -- A list of tuples with each tuple containing 2 objects
+                for Doors paired in the process of solving adjacency.
         """
         # check the inputs and the ability of the faces to be adjacent
         assert isinstance(other_face, Face), \
             'Expected honeybee Face. Got {}.'.format(type(other_face))
+
         # set the boundary conditions of the faces
         self._boundary_condition = boundary_conditions.surface(other_face)
         other_face._boundary_condition = boundary_conditions.surface(self)
+
         # set the apertures to be adjacent to one another
         assert len(self._apertures) == len(other_face._apertures), \
             'Number of apertures does not match between {} and {}.'.format(
                 self.name, other_face.name)
+        adjacent_apertures = []
         if len(self._apertures) > 0:
             found_adjacencies = 0
             for aper_1 in self._apertures:
                 for aper_2 in other_face._apertures:
                     if aper_1.center.distance_to_point(aper_2.center) <= tolerance:
                         aper_1.set_adjacency(aper_2)
+                        adjacent_apertures.append((aper_1, aper_2))
                         found_adjacencies += 1
                         break
             assert len(self._apertures) == found_adjacencies, \
                 'Not all apertures of {} were found to be adjacent to apertures in {}.' \
                 '\nTry increasing the tolerance.'.format(self.name, other_face.name)
+
         # set the doors to be adjacent to one another
         assert len(self._doors) == len(other_face._doors), \
             'Number of doors does not match between {} and {}.'.format(
                 self.name, other_face.name)
+        adjacent_doors = []
         if len(self._doors) > 0:
             found_adjacencies = 0
             for door_1 in self._doors:
                 for door_2 in other_face._doors:
                     if door_1.center.distance_to_point(door_2.center) <= tolerance:
                         door_1.set_adjacency(door_2)
+                        adjacent_doors.append((door_1, door_2))
                         found_adjacencies += 1
                         break
             assert len(self._doors) == found_adjacencies, \
                 'Not all doors of {} were found to be adjacent to doors in {}.' \
                 '\nTry increasing the tolerance.'.format(self.name, other_face.name)
+
+        return adjacent_apertures, adjacent_doors
 
     def apertures_by_ratio(self, ratio, tolerance=0):
         """Add apertures to this Face given a ratio of aperture area to facea area.
