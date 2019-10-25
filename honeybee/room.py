@@ -549,7 +549,24 @@ class Room(_BaseWithShade):
             rooms: A list of rooms for which adjacencies will be solved.
             tolerance: The minimum difference between the coordinate values of two
                 faces at which they can be considered centered adjacent.
+
+        Returns:
+            adjacent_faces -- A list of tuples with each tuple containing 2 objects for
+                Faces paired in the process of solving adjacency. This data can be
+                used to assign custom properties to the new adjacent Faces (like
+                making all adjacencies an AirWall face type or assigning custom
+                materials/construcitons).
+            adjacent_apertures -- A list of tuples with each tuple containing 2 objects
+                for Apertures paired in the process of solving adjacency.
+            adjacent_doors -- A list of tuples with each tuple containing 2 objects
+                for Doors paired in the process of solving adjacency.
         """
+        # lists of adjacencies to track
+        adjacent_faces = []
+        adjacent_apertures = []
+        adjacent_doors = []
+
+        # solve all adjacencies between rooms
         for i, room_1 in enumerate(rooms):
             try:
                 for room_2 in rooms[i + 1:]:
@@ -558,10 +575,15 @@ class Room(_BaseWithShade):
                             if not isinstance(face_2.boundary_condition, Surface):
                                 if face_1.geometry.is_centered_adjacent(
                                         face_2.geometry, tolerance):
-                                    face_1.set_adjacency(face_2)
+                                    adj_aps, adj_drs = face_1.set_adjacency(face_2)
+                                    adjacent_faces.append((face_1, face_2))
+                                    adjacent_apertures.extend(adj_aps)
+                                    adjacent_doors.extend(adj_drs)
                                     break
             except IndexError:
                 pass  # we have reached the end of the list of zones
+
+        return adjacent_faces, adjacent_apertures, adjacent_doors
 
     @property
     def to(self):
