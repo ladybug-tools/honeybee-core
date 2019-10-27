@@ -34,6 +34,33 @@ If you want to also include the command line interface try:
 To check if Honeybee command line is installed correctly try `honeybee viz` and you
 should get a `viiiiiiiiiiiiizzzzzzzzz!` back in response! :bee:
 
-# Documentation
 
-[API documentation](https://www.ladybug.tools/honeybee-core/docs/)
+# [API Documentation](https://www.ladybug.tools/honeybee-core/docs/)
+
+
+## Local Development
+1. Clone this repo locally
+```console
+git clone git@github.com:ladybug-tools/honeybee-core.git
+
+# or
+
+git clone https://github.com/ladybug-tools/honeybee-core.git
+```
+2. Install dependencies:
+```console
+cd honeybee-core
+pip install -r dev-requirements.txt
+pip install -r requirements.txt
+```
+
+3. Run Tests:
+```console
+python -m pytests tests/
+```
+
+4. Generate Documentation:
+```console
+sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee
+sphinx-build -b html ./docs ./docs/_build/docs
+```
