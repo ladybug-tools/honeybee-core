@@ -133,7 +133,7 @@ class Room(_BaseWithShade):
             'Expected ladybug_geometry Polyface3D. Got {}'.format(type(polyface))
         faces = []
         for i, face in enumerate(polyface.faces):
-            faces.append(Face('{}_Face{}'.format(name, i), face,
+            faces.append(Face('{}..Face{}'.format(name, i), face,
                               get_type_from_normal(face.normal, roof_angle, floor_angle),
                               get_bc_from_position(face.boundary, ground_depth)))
         room = cls(name, faces)
