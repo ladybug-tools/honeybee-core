@@ -42,3 +42,19 @@ def test_air_wall():
     str(air_type_1)  # test the string representation
     assert air_type_1 == air_type_2
     assert air_type_1 != face_types.wall
+
+
+def test_face_type_by_name():
+    """Test the face type by_name method."""
+    assert isinstance(face_types.by_name('Wall'), Wall)
+    assert isinstance(face_types.by_name('wall'), Wall)
+    assert isinstance(face_types.by_name('WALL'), Wall)
+
+    assert isinstance(face_types.by_name('AirWall'), AirWall)
+    assert isinstance(face_types.by_name('air_wall'), AirWall)
+    assert isinstance(face_types.by_name('AIRWALL'), AirWall)
+
+    with pytest.raises(ValueError):
+        face_types.by_name('Not_a_face_type')
+    with pytest.raises(ValueError):
+        face_types.by_name('walls')

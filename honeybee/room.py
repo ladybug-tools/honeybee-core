@@ -127,7 +127,7 @@ class Room(_BaseWithShade):
             floor_angle: Cutting angle for floor from Z axis in degrees. Default: 150.
             ground_depth: The Z value above which faces are considered Outdoors
                 instead of Ground. Faces will have a Ground boundary condition if
-                their center point lies at or below this value. Default: 0.
+                all of their vertices lie at or below this value. Default: 0.
         """
         assert isinstance(polyface, Polyface3D), \
             'Expected ladybug_geometry Polyface3D. Got {}'.format(type(polyface))

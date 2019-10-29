@@ -63,6 +63,7 @@ class _FaceTypes(object):
         self._roof_ceiling = RoofCeiling()
         self._floor = Floor()
         self._air_wall = AirWall()
+        self._type_name_dict = None
 
     @property
     def wall(self):
@@ -83,21 +84,39 @@ class _FaceTypes(object):
     def by_name(self, face_type_name):
         """Get a Face Type instance from its name.
 
+        This method will correct for capitalization as well as the presence of
+        spaces and underscores.
+
         Args:
             face_type_name: A text string for the face type (eg. "Wall").
         """
-        attr_name = re.sub('(?<!^)(?=[A-Z])', '_', face_type_name).lower()
+        if self._type_name_dict is None:
+            self._build_type_name_dict()
         try:
-            return getattr(self, attr_name)
-        except AttributeError:
-            raise AttributeError(
-                'Face Type "{}" is not supported.'.format(face_type_name))
+            return self._type_name_dict[re.sub(r'[\s_]', '', face_type_name.lower())]
+        except KeyError:
+            raise ValueError(
+                '"{}" is not a valid face type name.\nChoose from the following'
+                ': {}'.format(face_type_name, list(self._type_name_dict.keys())))
+    
+    def _build_type_name_dict(self):
+        """Build a dictionary that can be used to lookup boundary conditions by name."""
+        attr = [atr for atr in dir(self) if not atr.startswith('_')]
+        clean_attr = [re.sub(r'[\s_]', '', atr.lower()) for atr in attr]
+        self._type_name_dict = {}
+        for atr_name, atr in zip(clean_attr, attr):
+            try:
+                full_attr = getattr(self, '_' + atr)
+                self._type_name_dict[atr_name] = full_attr
+            except AttributeError:
+                pass  # callable method that has no static default object
 
     def __contains__(self, value):
         return isinstance(value, _FaceType)
 
     def __repr__(self):
-        return 'Face Types:\nWall\nRoofCeiling\nFloor\nAirWall'
+        attr = [atr for atr in dir(self) if not atr.startswith('_') and atr != 'by_name']
+        return 'Face Types:\n{}'.format('\n'.join(attr))
 
 
 face_types = _FaceTypes()
