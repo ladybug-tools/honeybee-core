@@ -1,5 +1,5 @@
 """test Face class."""
-from honeybee.boundarycondition import boundary_conditions, Outdoors, Surface
+from honeybee.boundarycondition import boundary_conditions, Outdoors, Surface, Ground
 from honeybee.room import Room
 
 import pytest
@@ -87,3 +87,21 @@ def test_surface_to_dict():
     face_bc_dict = face_bc.to_dict()
     assert face_bc_dict['type'] == 'Surface'
     assert face_bc_dict['boundary_condition_objects'] == face_adj_names
+
+
+def test_boundary_condition_by_name():
+    """Test the boundary condition by_name method."""
+    assert isinstance(bcs.by_name('Outdoors'), Outdoors)
+    assert isinstance(bcs.by_name('outdoors'), Outdoors)
+    assert isinstance(bcs.by_name('OUTDOORS'), Outdoors)
+
+    assert isinstance(bcs.by_name('Ground'), Ground)
+    assert isinstance(bcs.by_name('ground'), Ground)
+    assert isinstance(bcs.by_name('GROUND'), Ground)
+
+    with pytest.raises(ValueError):
+        bcs.by_name('Not_a_BC')
+    with pytest.raises(ValueError):
+        bcs.by_name('surface')
+    with pytest.raises(ValueError):
+        bcs.by_name('Outdoor')

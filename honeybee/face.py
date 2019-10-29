@@ -59,8 +59,8 @@ class Face(_BaseWithShade):
                 Wall = oriented vertically within +/- 60 degrees
                 Floor = pointing downward within 30 degrees
             boundary_condition: Face boundary condition (Outdoors, Ground, etc.)
-                Default is Outdoors unless the center of the input geometry lies
-                below the XY plane, in which case it will be set to Ground.
+                Default is Outdoors unless all vertices of the geometry lie
+                below the below the XY plane, in which case it will be set to Ground.
         """
         _BaseWithShade.__init__(self, name)  # process the name
 

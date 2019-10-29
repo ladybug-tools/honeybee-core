@@ -1,6 +1,8 @@
 """Boundary Condition for Face, Aperture, Door."""
 from .typing import float_in_range, tuple_with_length
 
+import re
+
 
 class _BoundaryCondition(object):
     """Base boundary condition class."""
@@ -249,17 +251,58 @@ class _BoundaryConditions(object):
     def __init__(self):
         self._outdoors = Outdoors()
         self._ground = Ground()
+        self._bc_name_dict = None
 
     @property
     def outdoors(self):
+        """Default outdoor boundary condition."""
         return self._outdoors
 
     @property
     def ground(self):
+        """Default ground boundary condition."""
         return self._ground
 
     def surface(self, other_object, sub_face=False):
+        """Get a Surface boundary condition.
+        
+        Args:
+            other_object: The other object that is adjacent to the one that will
+                bear this Surface boundary condition.
+            sub_face: Boolean to note whether 
+        """
         return Surface.from_other_object(other_object, sub_face)
+    
+    def by_name(self, bc_name):
+        """Get a boundary condition object instance by its name.
+
+        This method will correct for capitalization as well as the presence of
+        spaces and underscores. Note that this method only works for boundary
+        conditions with all of their inputs defaulted.
+
+        Args:
+            bc_name: A boundary condition name.
+        """
+        if self._bc_name_dict is None:
+            self._build_bc_name_dict()
+        try:
+            return self._bc_name_dict[re.sub(r'[\s_]', '', bc_name.lower())]
+        except KeyError:
+            raise ValueError(
+                '"{}" is not a valid boundary condition name.\nChoose from the '
+                'following: {}'.format(bc_name, list(self._bc_name_dict.keys())))
+    
+    def _build_bc_name_dict(self):
+        """Build a dictionary that can be used to lookup boundary conditions by name."""
+        attr = [atr for atr in dir(self) if not atr.startswith('_')]
+        clean_attr = [re.sub(r'[\s_]', '', atr.lower()) for atr in attr]
+        self._bc_name_dict = {}
+        for atr_name, atr in zip(clean_attr, attr):
+            try:
+                full_attr = getattr(self, '_' + atr)
+                self._bc_name_dict[atr_name] = full_attr
+            except AttributeError:
+                pass  # callable method that has no static default object
 
     def __contains__(self, value):
         return isinstance(value, _BoundaryCondition)
