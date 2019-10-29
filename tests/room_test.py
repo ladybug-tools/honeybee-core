@@ -453,15 +453,15 @@ def test_solve_adjacency():
     assert room_south[1].boundary_condition == boundary_conditions.outdoors
     assert room_north[3].boundary_condition == boundary_conditions.outdoors
 
-    adj_faces, adj_aps, adj_drs = Room.solve_adjacency([room_south, room_north], 0.01)
+    adj_info = Room.solve_adjacency([room_south, room_north], 0.01)
 
     assert isinstance(room_south[1].boundary_condition, Surface)
     assert isinstance(room_north[3].boundary_condition, Surface)
     assert room_south[1].boundary_condition.boundary_condition_object == room_north[3].name
     assert room_north[3].boundary_condition.boundary_condition_object == room_south[1].name
-    assert len(adj_faces) == 1
-    assert len(adj_aps) == 0
-    assert len(adj_drs) == 0
+    assert len(adj_info['adjacent_faces']) == 1
+    assert len(adj_info['adjacent_apertures']) == 0
+    assert len(adj_info['adjacent_doors']) == 0
 
 
 def test_solve_adjacency_aperture():
@@ -474,7 +474,7 @@ def test_solve_adjacency_aperture():
     assert room_south[1].apertures[0].boundary_condition == boundary_conditions.outdoors
     assert room_north[3].apertures[0].boundary_condition == boundary_conditions.outdoors
 
-    adj_faces, adj_aps, adj_drs = Room.solve_adjacency([room_south, room_north], 0.01)
+    adj_info = Room.solve_adjacency([room_south, room_north], 0.01)
 
     assert isinstance(room_south[1].apertures[0].boundary_condition, Surface)
     assert isinstance(room_north[3].apertures[0].boundary_condition, Surface)
@@ -482,9 +482,9 @@ def test_solve_adjacency_aperture():
         room_north[3].apertures[0].name
     assert room_north[3].apertures[0].boundary_condition.boundary_condition_object == \
         room_south[1].apertures[0].name
-    assert len(adj_faces) == 1
-    assert len(adj_aps) == 1
-    assert len(adj_drs) == 0
+    assert len(adj_info['adjacent_faces']) == 1
+    assert len(adj_info['adjacent_apertures']) == 1
+    assert len(adj_info['adjacent_doors']) == 0
 
 
 def test_to_dict():

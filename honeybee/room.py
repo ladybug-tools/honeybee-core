@@ -326,7 +326,7 @@ class Room(_BaseWithShade):
         it is provided here under an alternate name to make it clear that indoor
         furniture objects should be added here to the Room.
         """
-        self.remove_indoor_shade()
+        self.remove_indoor_shades()
 
     def add_indoor_furniture(self, shade):
         """Add a Shade object representing furniture to the Room.
@@ -551,20 +551,21 @@ class Room(_BaseWithShade):
                 faces at which they can be considered centered adjacent.
 
         Returns:
-            adjacent_faces -- A list of tuples with each tuple containing 2 objects for
-                Faces paired in the process of solving adjacency. This data can be
-                used to assign custom properties to the new adjacent Faces (like
-                making all adjacencies an AirWall face type or assigning custom
-                materials/construcitons).
-            adjacent_apertures -- A list of tuples with each tuple containing 2 objects
-                for Apertures paired in the process of solving adjacency.
-            adjacent_doors -- A list of tuples with each tuple containing 2 objects
-                for Doors paired in the process of solving adjacency.
+            dict: A dictionary of adjacency information with the following keys.
+
+                * adjacent_faces - A list of tuples with each tuple containing 2 objects
+                    for Faces paired in the process of solving adjacency. This data can
+                    be used to assign custom properties to the new adjacent Faces (like
+                    making all adjacencies an AirWall face type or assigning custom
+                    materials/construcitons).
+                * adjacent_apertures - A list of tuples with each tuple containing 2
+                    objects for Apertures paired in the process of solving adjacency.
+                * adjacent_doors - A list of tuples with each tuple containing 2 objects
+                    for Doors paired in the process of solving adjacency.
         """
         # lists of adjacencies to track
-        adjacent_faces = []
-        adjacent_apertures = []
-        adjacent_doors = []
+        adj_info = {'adjacent_faces': [], 'adjacent_apertures': [],
+                    'adjacent_doors': []}
 
         # solve all adjacencies between rooms
         for i, room_1 in enumerate(rooms):
@@ -575,15 +576,16 @@ class Room(_BaseWithShade):
                             if not isinstance(face_2.boundary_condition, Surface):
                                 if face_1.geometry.is_centered_adjacent(
                                         face_2.geometry, tolerance):
-                                    adj_aps, adj_drs = face_1.set_adjacency(face_2)
-                                    adjacent_faces.append((face_1, face_2))
-                                    adjacent_apertures.extend(adj_aps)
-                                    adjacent_doors.extend(adj_drs)
+                                    face_info = face_1.set_adjacency(face_2)
+                                    adj_info['adjacent_faces'].append((face_1, face_2))
+                                    adj_info['adjacent_apertures'].extend(
+                                        face_info['adjacent_apertures'])
+                                    adj_info['adjacent_doors'].extend(
+                                        face_info['adjacent_doors'])
                                     break
             except IndexError:
                 pass  # we have reached the end of the list of zones
-
-        return adjacent_faces, adjacent_apertures, adjacent_doors
+        return adj_info
 
     @property
     def to(self):
