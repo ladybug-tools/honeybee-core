@@ -179,7 +179,7 @@ def test_average_orientation():
     face_4 = Face('Face 4', Face3D(pts_4), boundary_condition=boundary_conditions.ground)
     face_5 = Face('Face 5', Face3D(pts_5), boundary_condition=boundary_conditions.ground)
     face_6 = Face('Face 6', Face3D(pts_6))
-    room = Room('PAssive Solar Earthship',
+    room = Room('Passive Solar Earthship',
                 [face_1, face_2, face_3, face_4, face_5, face_6], 0.01, 1)
 
     assert room.average_orientation() == 180
