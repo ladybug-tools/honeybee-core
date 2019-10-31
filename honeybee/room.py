@@ -52,7 +52,7 @@ class Room(_BaseWithShade):
             faces: A list or tuple of honeybee Face objects that together form the
                 closed volume of a room.
             tolerance: The maximum difference between x, y, and z values
-                at which vertices of adjacent facesare considered equivalent. This is
+                at which vertices of adjacent faces are considered equivalent. This is
                 used in determining whether the faces form a closed volume. Default
                 is None, which makes no attempt to evaluate whether the Room volume
                 is closed.
@@ -102,7 +102,7 @@ class Room(_BaseWithShade):
         assert data['type'] == 'Room', 'Expected Room dictionary. ' \
             'Got {}.'.format(data['type'])
 
-        room = Room(data['name'], [Face.from_dict(f_dict) for f_dict in data['faces']])
+        room = cls(data['name'], [Face.from_dict(f_dict) for f_dict in data['faces']])
         if 'display_name' in data and data['display_name'] is not None:
             room._display_name = data['display_name']
         if 'multiplier' in data and data['multiplier'] is not None:
@@ -440,13 +440,14 @@ class Room(_BaseWithShade):
     def check_solid(self, tolerance, angle_tolerance, raise_exception=True):
         """Check whether the Room is a closed solid to within the input tolerances.
 
-        tolerance: tolerance: The maximum difference between x, y, and z values
-            at which face vertices are considered equivalent. This is used in
-            determining whether the faces form a closed volume.
-        angle_tolerance: The max angle difference in degrees that vertices are
-            allowed to differ from one another in order to consider them colinear.
-        raise_exception: Boolean to note whether a ValueError should be raised
-            if the room geometry does not form a closed solid.
+        Args:
+            tolerance: tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. This is used in
+                determining whether the faces form a closed volume.
+            angle_tolerance: The max angle difference in degrees that vertices are
+                allowed to differ from one another in order to consider them colinear.
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if the room geometry does not form a closed solid.
         """
         if self._geometry is not None and self.geometry.is_solid:
             return True
@@ -571,6 +572,9 @@ class Room(_BaseWithShade):
         for i, room_1 in enumerate(rooms):
             try:
                 for room_2 in rooms[i + 1:]:
+                    if not Polyface3D.overlapping_bounding_boxes(
+                            room_1.geometry, room_2.geometry, tolerance):
+                        continue  # no overlap in bounding box; adjacency impossible
                     for face_1 in room_1._faces:
                         for face_2 in room_2._faces:
                             if not isinstance(face_2.boundary_condition, Surface):

@@ -890,10 +890,8 @@ class Face(_BaseWithShade):
         base['name'] = self.name
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
-        if 'energy' in base['properties']:
-            base['geometry'] = self._geometry.to_dict(False, True)  # enforce upper-left
-        else:
-            base['geometry'] = self._geometry.to_dict(False)
+        enforce_upper_left = True if 'energy' in base['properties'] else False
+        base['geometry'] = self._geometry.to_dict(False, enforce_upper_left)
 
         base['face_type'] = self.type.name
         if isinstance(self.boundary_condition, Outdoors) and 'energy' in base['properties']:
