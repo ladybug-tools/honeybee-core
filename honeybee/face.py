@@ -294,6 +294,27 @@ class Face(_BaseWithShade):
             return 'South'
         else:
             return 'West'
+    
+    def rename(self, prefix):
+        """Change the name of this object and all child objects by inserting a prefix.
+        
+        This is particularly useful in workflows where you duplicate and edit
+        a starting object and then want to combine it with the original object
+        into one Model (like making a model of repeated rooms) since all objects
+        within a Model must have unique names.
+
+        Args:
+            prefix: Text that will be inserted at the start of this object's
+                (and child objects') name and display_name. It is recommended
+                that this name be short to avoid maxing out the 100 allowable
+                characters for honeybee names.
+        """
+        self.name = '{}{}'.format(prefix, self.display_name)
+        for ap in self._apertures:
+            ap.rename(prefix)
+        for dr in self._doors:
+            dr.rename(prefix)
+        self._rename_shades(prefix)
 
     def remove_sub_faces(self):
         """Remove all apertures and doors from the face."""

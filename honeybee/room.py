@@ -318,6 +318,26 @@ class Room(_BaseWithShade):
                 orientations += face.horizontal_orientation(north_vector) * face.area
                 areas += face.area
         return orientations / areas if areas != 0 else None
+    
+    def rename(self, prefix):
+        """Change the name of this object and all child objects by inserting a prefix.
+        
+        This is particularly useful in workflows where you duplicate and edit
+        a starting object and then want to combine it with the original object
+        into one Model (like making a model of repeated rooms) since all objects
+        within a Model must have unique names.
+
+        Args:
+            prefix: Text that will be inserted at the start of this object's
+                (and child objects') name and display_name. It is recommended
+                that this name be short to avoid maxing out the 100 allowable
+                characters for honeybee names.
+        """
+        self.name = '{}{}'.format(prefix, self.display_name)
+        for face in self._faces:
+            face.rename(prefix)
+        self._rename_shades(prefix)
+
 
     def remove_indoor_furniture(self):
         """Remove all indoor furniture assigned to this Room.

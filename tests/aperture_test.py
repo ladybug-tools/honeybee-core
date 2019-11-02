@@ -67,6 +67,19 @@ def test_aperture_duplicate():
         assert pt != ap_2.vertices[i]
 
 
+def test_aperture_rename():
+    """Test the aperture rename method."""
+    pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
+    aperture = Aperture('Rectangle Window', Face3D(pts_1))
+    aperture.extruded_border(0.1)
+    prefix = 'New'
+    aperture.rename(prefix)
+
+    assert aperture.name.startswith(prefix)
+    for shd in aperture.shades:
+        assert shd.name.startswith(prefix)
+
+
 def test_aperture_overhang():
     """Test the creation of an overhang for Aperture objects."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
