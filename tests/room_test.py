@@ -186,6 +186,25 @@ def test_average_orientation():
     assert room.average_orientation(Vector2D(1, 0)) == 90
 
 
+def test_room_rename():
+    """Test the room rename method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.5, 0.01)
+    table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
+    room.add_indoor_shade(Shade('Table', table_geo))
+    prefix = 'New'
+    room.rename(prefix)
+
+    assert room.name.startswith(prefix)
+    for face in room.faces:
+        assert face.name.startswith(prefix)
+        for ap in face.apertures:
+            assert ap.name.startswith(prefix)
+    for shd in room.shades:
+        assert shd.name.startswith(prefix)
+
+
 def test_room_multiplier():
     """Test the room multiplier."""
     room = Room.from_box('ShoeBoxZone', 5, 10, 3)

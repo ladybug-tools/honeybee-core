@@ -198,6 +198,23 @@ class Aperture(_BaseWithShade):
     def perimeter(self):
         """Get the perimeter of the aperture."""
         return self._geometry.perimeter
+    
+    def rename(self, prefix):
+        """Change the name of this object and all child objects by inserting a prefix.
+        
+        This is particularly useful in workflows where you duplicate and edit
+        a starting object and then want to combine it with the original object
+        into one Model (like making a model of repeated rooms) since all objects
+        within a Model must have unique names.
+
+        Args:
+            prefix: Text that will be inserted at the start of this object's
+                (and child objects') name and display_name. It is recommended
+                that this name be short to avoid maxing out the 100 allowable
+                characters for honeybee names.
+        """
+        self.name = '{}{}'.format(prefix, self.display_name)
+        self._rename_shades(prefix)
 
     def set_adjacency(self, other_aperture):
         """Set this aperture to be adjacent to another.
@@ -285,8 +302,8 @@ class Aperture(_BaseWithShade):
         Args:
             depth: A number for the extrusion depth.
             indoor: Boolean for whether the extrusion should be generated facing the
-                opposite direction of the aperture normal (typically meaning
-                indoor geometry). Default: False.
+                opposite direction of the aperture normal and added to the Aperture's
+                indoor_shades instead of outdoor_shades. Default: False.
             base_name: Optional base name for the shade objects. If None, the default
                 is InBorder or OutBorder depending on whether indoor is True.
         """
