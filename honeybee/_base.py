@@ -47,7 +47,7 @@ class _Base(object):
         """Get object properties, including Radiance, Energy and other properties."""
         return self._properties
     
-    def rename(self, prefix):
+    def add_prefix(self, prefix):
         """Change the name of this object by inserting a prefix.
         
         This is particularly useful in workflows where you duplicate and edit
@@ -60,7 +60,7 @@ class _Base(object):
                 and display_name. It is recommended that this name be short to
                 avoid maxing out the 100 allowable characters for honeybee names.
         """
-        self.name = '{}{}'.format(prefix, self.display_name)
+        self.name = '{}_{}'.format(prefix, self.display_name)
 
     def duplicate(self):
         """Get a copy of this object."""

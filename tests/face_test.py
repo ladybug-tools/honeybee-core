@@ -135,15 +135,15 @@ def test_cardinal_direction():
     assert face_4.cardinal_direction() == 'East'
 
 
-def test_face_rename():
-    """Test the face rename method."""
+def test_face_add_prefix():
+    """Test the face add_prefix method."""
     face_face3d = Face3D.from_rectangle(10, 10, Plane(o=Point3D(0, 0, 3)))
     ap_face3d = Face3D.from_rectangle(2, 2, Plane(o=Point3D(2, 2, 3)))
     face = Face('Test_Roof', face_face3d)
     aperture = Aperture('Test_Skylight', ap_face3d)
     face.add_aperture(aperture)
     prefix = 'New'
-    face.rename(prefix)
+    face.add_prefix(prefix)
 
     assert face.name.startswith(prefix)
     for ap in face.apertures:
@@ -154,7 +154,7 @@ def test_face_rename():
     face = Face('Test_Roof', face_face3d)
     door = Door('Test_Trap_Door', ap_face3d)
     face.add_door(door)
-    face.rename(prefix)
+    face.add_prefix(prefix)
 
     for dr in face.doors:
         assert dr.name.startswith(prefix)

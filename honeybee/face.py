@@ -295,7 +295,7 @@ class Face(_BaseWithShade):
         else:
             return 'West'
     
-    def rename(self, prefix):
+    def add_prefix(self, prefix):
         """Change the name of this object and all child objects by inserting a prefix.
         
         This is particularly useful in workflows where you duplicate and edit
@@ -309,12 +309,12 @@ class Face(_BaseWithShade):
                 that this name be short to avoid maxing out the 100 allowable
                 characters for honeybee names.
         """
-        self.name = '{}{}'.format(prefix, self.display_name)
+        self.name = '{}_{}'.format(prefix, self.display_name)
         for ap in self._apertures:
-            ap.rename(prefix)
+            ap.add_prefix(prefix)
         for dr in self._doors:
-            dr.rename(prefix)
-        self._rename_shades(prefix)
+            dr.add_prefix(prefix)
+        self._add_prefix_shades(prefix)
 
     def remove_sub_faces(self):
         """Remove all apertures and doors from the face."""
@@ -463,6 +463,8 @@ class Face(_BaseWithShade):
     def apertures_by_ratio(self, ratio, tolerance=0):
         """Add apertures to this Face given a ratio of aperture area to facea area.
 
+        Note that this method removes any existing apertures on the Face.
+
         This method attempts to generate as few apertures as necessary to meet the ratio.
         Note that this method will remove all existing apertures and doors on this face.
 
@@ -494,6 +496,8 @@ class Face(_BaseWithShade):
                                      horizontal_separation, vertical_separation=0,
                                      tolerance=0):
         """Add apertures to this face given a ratio of aperture area to face area.
+
+        Note that this method removes any existing apertures on the Face.
 
         This function is virtually equivalent to the apertures_by_ratio method but
         any rectangular portions of this face will produce customizable rectangular
@@ -555,6 +559,9 @@ class Face(_BaseWithShade):
             aperture_name: Optional name for the aperture. If None, the default name
                 will follow the convention "[face_name]_Glz[count]" where [count]
                 is one more than the current numer of apertures in the face.
+        
+        Returns:
+            The new Aperture object that has been generated.
 
         Usage:
             room = Room.from_box(3.0, 6.0, 3.2, 180)
@@ -586,6 +593,7 @@ class Face(_BaseWithShade):
         aperture = Aperture(name, ap_face)
         aperture._parent = self
         self._apertures.append(aperture)
+        return aperture
 
     def overhang(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
         """Add an overhang to this Face.
@@ -601,11 +609,14 @@ class Face(_BaseWithShade):
                 than the tolerance. Default is 0, which will always yeild an overhang.
             base_name: Optional base name for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         if base_name is None:
             base_name = 'InOverhang' if indoor else 'OutOverhang'
-        self.louvers_by_count(1, depth, angle=angle, indoor=indoor,
-                              tolerance=tolerance, base_name=base_name)
+        return self.louvers_by_count(1, depth, angle=angle, indoor=indoor,
+                                     tolerance=tolerance, base_name=base_name)
 
     def louvers_by_count(self, louver_count, depth, offset=0, angle=0,
                          contour_vector=Vector3D(0, 0, 1), flip_start_side=False,
@@ -632,6 +643,9 @@ class Face(_BaseWithShade):
                 no matter how small.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         assert louver_count > 0, 'louver_count must be greater than 0.'
         angle = math.radians(angle)
@@ -650,6 +664,7 @@ class Face(_BaseWithShade):
             self.add_indoor_shades(louvers)
         else:
             self.add_outdoor_shades(louvers)
+        return louvers
 
     def louvers_by_distance_between(
             self, distance, depth, offset=0, angle=0, contour_vector=Vector3D(0, 0, 1),
@@ -676,6 +691,9 @@ class Face(_BaseWithShade):
                 no matter how small.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         angle = math.radians(angle)
         louvers = []
@@ -692,6 +710,7 @@ class Face(_BaseWithShade):
             self.add_indoor_shades(louvers)
         else:
             self.add_outdoor_shades(louvers)
+        return louvers
 
     def move(self, moving_vec):
         """Move this Face along a vector.

@@ -175,7 +175,7 @@ class _BaseWithShade(_Base):
         for ishd in self._indoor_shades:
             ishd.scale(factor, origin)
     
-    def _rename_shades(self, prefix):
+    def _add_prefix_shades(self, prefix):
         """Change the name of all child shades by inserting a prefix.
 
         Args:
@@ -183,9 +183,9 @@ class _BaseWithShade(_Base):
                 and display_name.
         """
         for shade in self._outdoor_shades:
-            shade.rename(prefix)
+            shade.add_prefix(prefix)
         for shade in self._indoor_shades:
-            shade.rename(prefix)
+            shade.add_prefix(prefix)
 
     def _check_planar_shades(self, tolerance, raise_exception=True):
         """Check that all of the child shades are planar."""

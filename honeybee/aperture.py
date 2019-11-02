@@ -199,7 +199,7 @@ class Aperture(_BaseWithShade):
         """Get the perimeter of the aperture."""
         return self._geometry.perimeter
     
-    def rename(self, prefix):
+    def add_prefix(self, prefix):
         """Change the name of this object and all child objects by inserting a prefix.
         
         This is particularly useful in workflows where you duplicate and edit
@@ -213,8 +213,8 @@ class Aperture(_BaseWithShade):
                 that this name be short to avoid maxing out the 100 allowable
                 characters for honeybee names.
         """
-        self.name = '{}{}'.format(prefix, self.display_name)
-        self._rename_shades(prefix)
+        self.name = '{}_{}'.format(prefix, self.display_name)
+        self._add_prefix_shades(prefix)
 
     def set_adjacency(self, other_aperture):
         """Set this aperture to be adjacent to another.
@@ -249,11 +249,14 @@ class Aperture(_BaseWithShade):
                 than the tolerance. Default is 0, which will always yeild an overhang.
             base_name: Optional base name for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         if base_name is None:
             base_name = 'InOverhang' if indoor else 'OutOverhang'
-        self.louvers_by_count(1, depth, angle=angle, indoor=indoor,
-                              tolerance=tolerance, base_name=base_name)
+        return self.louvers_by_count(1, depth, angle=angle, indoor=indoor,
+                                     tolerance=tolerance, base_name=base_name)
 
     def right_fin(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
         """Add a single vertical fin on the right side of this Aperture.
@@ -269,11 +272,15 @@ class Aperture(_BaseWithShade):
                 than the tolerance. Default is 0, which will always yeild a fin.
             base_name: Optional base name for the shade objects. If None, the default
                 is InRightFin or OutRightFin depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         if base_name is None:
             base_name = 'InRightFin' if indoor else 'OutRightFin'
-        self.louvers_by_count(1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
-                              indoor=indoor, tolerance=tolerance, base_name=base_name)
+        return self.louvers_by_count(
+            1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
+            indoor=indoor, tolerance=tolerance, base_name=base_name)
 
     def left_fin(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
         """Add a single vertical fin on the left side of this Aperture.
@@ -289,12 +296,16 @@ class Aperture(_BaseWithShade):
                 than the tolerance. Default is 0, which will always yeild a fin.
             base_name: Optional base name for the shade objects. If None, the default
                 is InLeftFin or OutLeftFin depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         if base_name is None:
             base_name = 'InLeftFin' if indoor else 'OutLeftFin'
-        self.louvers_by_count(1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
-                              flip_start_side=True, indoor=indoor,
-                              tolerance=tolerance, base_name=base_name)
+        return self.louvers_by_count(
+            1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
+            flip_start_side=True, indoor=indoor, tolerance=tolerance,
+            base_name=base_name)
 
     def extruded_border(self, depth, indoor=False, base_name=None):
         """Add a series of Shade objects to this Aperture that form an extruded border.
@@ -306,6 +317,9 @@ class Aperture(_BaseWithShade):
                 indoor_shades instead of outdoor_shades. Default: False.
             base_name: Optional base name for the shade objects. If None, the default
                 is InBorder or OutBorder depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         extru_vec = self.normal if indoor is False else self.normal.reverse()
         extru_vec = extru_vec * depth
@@ -332,6 +346,7 @@ class Aperture(_BaseWithShade):
             self.add_indoor_shades(extrusion)
         else:
             self.add_outdoor_shades(extrusion)
+        return extrusion
 
     def louvers_by_count(self, louver_count, depth, offset=0, angle=0,
                          contour_vector=Vector3D(0, 0, 1), flip_start_side=False,
@@ -358,6 +373,9 @@ class Aperture(_BaseWithShade):
                 no matter how small.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         assert louver_count > 0, 'louver_count must be greater than 0.'
         angle = math.radians(angle)
@@ -376,6 +394,7 @@ class Aperture(_BaseWithShade):
             self.add_indoor_shades(louvers)
         else:
             self.add_outdoor_shades(louvers)
+        return louvers
 
     def louvers_by_distance_between(
             self, distance, depth, offset=0, angle=0, contour_vector=Vector3D(0, 0, 1),
@@ -402,6 +421,9 @@ class Aperture(_BaseWithShade):
                 no matter how small.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
         """
         angle = math.radians(angle)
         louvers = []
@@ -419,6 +441,7 @@ class Aperture(_BaseWithShade):
             self.add_indoor_shades(louvers)
         else:
             self.add_outdoor_shades(louvers)
+        return louvers
 
     def move(self, moving_vec):
         """Move this Aperture along a vector.
