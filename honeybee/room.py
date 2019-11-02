@@ -319,7 +319,7 @@ class Room(_BaseWithShade):
                 areas += face.area
         return orientations / areas if areas != 0 else None
     
-    def rename(self, prefix):
+    def add_prefix(self, prefix):
         """Change the name of this object and all child objects by inserting a prefix.
         
         This is particularly useful in workflows where you duplicate and edit
@@ -333,10 +333,10 @@ class Room(_BaseWithShade):
                 that this name be short to avoid maxing out the 100 allowable
                 characters for honeybee names.
         """
-        self.name = '{}{}'.format(prefix, self.display_name)
+        self.name = '{}_{}'.format(prefix, self.display_name)
         for face in self._faces:
-            face.rename(prefix)
-        self._rename_shades(prefix)
+            face.add_prefix(prefix)
+        self._add_prefix_shades(prefix)
 
 
     def remove_indoor_furniture(self):
