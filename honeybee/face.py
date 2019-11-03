@@ -315,6 +315,10 @@ class Face(_BaseWithShade):
         for dr in self._doors:
             dr.add_prefix(prefix)
         self._add_prefix_shades(prefix)
+        if isinstance(self._boundary_condition, Surface):
+            new_bc_objs = ('{}_{}'.format(prefix, adj_name) for adj_name
+                           in self._boundary_condition._boundary_condition_objects)
+            self._boundary_condition = Surface(new_bc_objs, False)
 
     def remove_sub_faces(self):
         """Remove all apertures and doors from the face."""

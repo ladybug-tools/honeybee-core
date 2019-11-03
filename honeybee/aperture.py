@@ -6,6 +6,7 @@ from .boundarycondition import boundary_conditions, Outdoors, Surface
 from .shade import Shade
 import honeybee.writer.aperture as writer
 
+from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.face import Face3D
 
@@ -199,6 +200,37 @@ class Aperture(_BaseWithShade):
         """Get the perimeter of the aperture."""
         return self._geometry.perimeter
     
+    def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
+        """Get a number between 0 and 360 for the orientation of the aperture in degrees.
+
+        0 = North, 90 = East, 180 = South, 270 = West
+
+        Args:
+            north_vector: A ladybug_geometry Vector2D for the north direction.
+                Default is the Y-axis (0, 1).
+        """
+        return math.degrees(
+            north_vector.angle_clockwise(Vector2D(self.normal.x, self.normal.y)))
+
+    def cardinal_direction(self, north_vector=Vector2D(0, 1)):
+        """Get text description for the cardinal direction that the aperture is pointing.
+
+        Will be one of the following: ('North', 'East', 'South', 'West')
+
+        Args:
+            north_vector: A ladybug_geometry Vector2D for the north direction.
+                Default is the Y-axis (0, 1).
+        """
+        orient = self.horizontal_orientation(north_vector)
+        if orient <= 45 or orient > 315:
+            return 'North'
+        elif orient <= 135:
+            return 'East'
+        elif orient <= 225:
+            return 'South'
+        else:
+            return 'West'
+    
     def add_prefix(self, prefix):
         """Change the name of this object and all child objects by inserting a prefix.
         
@@ -215,6 +247,10 @@ class Aperture(_BaseWithShade):
         """
         self.name = '{}_{}'.format(prefix, self.display_name)
         self._add_prefix_shades(prefix)
+        if isinstance(self._boundary_condition, Surface):
+            new_bc_objs = ('{}_{}'.format(prefix, adj_name) for adj_name
+                           in self._boundary_condition._boundary_condition_objects)
+            self._boundary_condition = Surface(new_bc_objs, True)
 
     def set_adjacency(self, other_aperture):
         """Set this aperture to be adjacent to another.
