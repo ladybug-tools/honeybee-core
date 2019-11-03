@@ -315,7 +315,7 @@ class Aperture(_BaseWithShade):
         if base_name is None:
             base_name = 'InRightFin' if indoor else 'OutRightFin'
         return self.louvers_by_count(
-            1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
+            1, depth, angle=angle, contour_vector=Vector2D(1, 0),
             indoor=indoor, tolerance=tolerance, base_name=base_name)
 
     def left_fin(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
@@ -339,7 +339,7 @@ class Aperture(_BaseWithShade):
         if base_name is None:
             base_name = 'InLeftFin' if indoor else 'OutLeftFin'
         return self.louvers_by_count(
-            1, depth, angle=angle, contour_vector=Vector3D(1, 0, 0),
+            1, depth, angle=angle, contour_vector=Vector2D(1, 0),
             flip_start_side=True, indoor=indoor, tolerance=tolerance,
             base_name=base_name)
 
@@ -385,7 +385,7 @@ class Aperture(_BaseWithShade):
         return extrusion
 
     def louvers_by_count(self, louver_count, depth, offset=0, angle=0,
-                         contour_vector=Vector3D(0, 0, 1), flip_start_side=False,
+                         contour_vector=Vector2D(0, 1), flip_start_side=False,
                          indoor=False, tolerance=0, base_name=None):
         """Add a series of louvered Shade objects covering this Aperture.
 
@@ -396,8 +396,11 @@ class Aperture(_BaseWithShade):
                 Default is 0 for no offset.
             angle: A number for the for an angle to rotate the louvers in degrees.
                 Default is 0 for no rotation.
-            contour_vector: A Vector3D for the direction along which contours
-                are generated. Default is Z-Axis, which generates horizontal louvers.
+            contour_vector: A Vector2D for the direction along which contours
+                are generated. This 2D vector will be interpreted into a 3D vector
+                within the plane of this Aperture. (0, 1) will usually generate
+                horizontal contours in 3D space, (1, 0) will generate vertical
+                contours, and (1, 1) will generate diagonal contours. Default: (0, 1).
             flip_start_side: Boolean to note whether the side the louvers start from
                 should be flipped. Default is False to have louvers on top or right.
                 Setting to True will start contours on the bottom or left.
@@ -433,7 +436,7 @@ class Aperture(_BaseWithShade):
         return louvers
 
     def louvers_by_distance_between(
-            self, distance, depth, offset=0, angle=0, contour_vector=Vector3D(0, 0, 1),
+            self, distance, depth, offset=0, angle=0, contour_vector=Vector2D(0, 1),
             flip_start_side=False, indoor=False, tolerance=0, base_name=None):
         """Add a series of louvered Shade objects covering this Aperture.
 
@@ -444,8 +447,11 @@ class Aperture(_BaseWithShade):
                 Default is 0 for no offset.
             angle: A number for the for an angle to rotate the louvers in degrees.
                 Default is 0 for no rotation.
-            contour_vector: A Vector3D for the direction along which contours
-                are generated. Default is Z-Axis, which generates horizontal louvers.
+            contour_vector: A Vector2D for the direction along which contours
+                are generated. This 2D vector will be interpreted into a 3D vector
+                within the plane of this Aperture. (0, 1) will usually generate
+                horizontal contours in 3D space, (1, 0) will generate vertical
+                contours, and (1, 1) will generate diagonal contours. Default: (0, 1).
             flip_start_side: Boolean to note whether the side the louvers start from
                 should be flipped. Default is False to have contours on top or right.
                 Setting to True will start contours on the bottom or left.
