@@ -210,7 +210,7 @@ class Surface(_BoundaryCondition):
         the second object will be the parent Face of the sub-face and the third
         object will be the parent Room of the adjacent sub-face.
         """
-        return tuple(self._boundary_condition_objects)
+        return self._boundary_condition_objects
 
     @property
     def boundary_condition_object(self):
