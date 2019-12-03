@@ -915,7 +915,9 @@ class Model(_Base):
         return base
 
     def __add__(self, other):
-        self.add_model(other)
+        new_model = self.duplicate()
+        new_model.add_model(other)
+        return new_model
 
     def __copy__(self):
         new_model = Model(
