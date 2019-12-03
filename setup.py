@@ -19,7 +19,7 @@ setuptools.setup(
     url="https://github.com/ladybug-tools/honeybee-core",
     packages=setuptools.find_packages(exclude=["tests"]),
     install_requires=requirements,
-    extra_requires={
+    extras_require={
         'cli': ['click>=5.1']
     },
     entry_points={
