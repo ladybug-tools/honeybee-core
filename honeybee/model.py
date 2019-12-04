@@ -919,6 +919,10 @@ class Model(_Base):
         new_model.add_model(other)
         return new_model
 
+    def __iadd__(self, other):
+        self.add_model(other)
+        return self
+
     def __copy__(self):
         new_model = Model(
             self.name,
