@@ -126,10 +126,10 @@ def shade_extension_dicts(shade_list, extension_key, shade_ext_dicts=[]):
 
 def aperture_extension_dicts(aperture_list, extension_key, aperture_ext_dicts=[],
                              shade_ext_dicts=[]):
-    """Get all Shade property dictionaires of an extension organized by geometry type.
+    """Get all Aperture property dictionaires of an extension organized by geometry type.
 
     Args:
-        shade_list: A list of Shade dictionaries.
+        aperture_list: A list of Aperture dictionaries.
         extension_key: Text for the key of the extension (eg. "energy", "radiance").
 
     Returns:
@@ -146,10 +146,10 @@ def aperture_extension_dicts(aperture_list, extension_key, aperture_ext_dicts=[]
 
 
 def door_extension_dicts(door_list, extension_key, door_ext_dicts=[]):
-    """Get all Shade property dictionaires of an extension organized by geometry type.
+    """Get all Door property dictionaires of an extension organized by geometry type.
 
     Args:
-        shade_list: A list of Shade dictionaries.
+        door_list: A list of Door dictionaries.
         extension_key: Text for the key of the extension (eg. "energy", "radiance").
 
     Returns:
