@@ -302,7 +302,7 @@ class Room(_BaseWithShade):
     def average_orientation(self, north_vector=Vector2D(0, 1)):
         """Get a number between 0 and 360 for the average orientation of exposed walls.
 
-        0 = North, 90 = East, 180 = South, 270 = West.  Wil be None if the zone has
+        0 = North, 90 = East, 180 = South, 270 = West.  Will be None if the zone has
         no exterior walls. Resulting value is weighted by the area of each of the
         wall faces.
 

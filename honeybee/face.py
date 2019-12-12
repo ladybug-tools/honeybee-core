@@ -279,21 +279,21 @@ class Face(_BaseWithShade):
     def cardinal_direction(self, north_vector=Vector2D(0, 1)):
         """Get text description for the cardinal direction that the face is pointing.
 
-        Will be one of the following: ('North', 'East', 'South', 'West')
+        Will be one of the following: ('North', 'NorthEast', 'East', 'SouthEast',
+        'South', 'SouthWest', 'West', 'NorthWest').
 
         Args:
             north_vector: A ladybug_geometry Vector2D for the north direction.
                 Default is the Y-axis (0, 1).
         """
         orient = self.horizontal_orientation(north_vector)
-        if orient <= 45 or orient > 315:
-            return 'North'
-        elif orient <= 135:
-            return 'East'
-        elif orient <= 225:
-            return 'South'
-        else:
-            return 'West'
+        orient_text = ('North', 'NorthEast', 'East', 'SouthEast', 'South',
+                       'SouthWest', 'West', 'NorthWest')
+        angles = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
+        for i, ang in enumerate(angles):
+            if orient < ang:
+                return orient_text[i]
+        return orient_text[0]
     
     def add_prefix(self, prefix):
         """Change the name of this object and all child objects by inserting a prefix.
