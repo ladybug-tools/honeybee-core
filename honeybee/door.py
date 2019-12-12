@@ -5,6 +5,7 @@ from .properties import DoorProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
 import honeybee.writer.door as writer
 
+from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.face import Face3D
 
@@ -193,6 +194,37 @@ class Door(_Base):
     def perimeter(self):
         """Get the perimeter of the door."""
         return self._geometry.perimeter
+    
+    def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
+        """Get a number between 0 and 360 for the orientation of the door in degrees.
+
+        0 = North, 90 = East, 180 = South, 270 = West
+
+        Args:
+            north_vector: A ladybug_geometry Vector2D for the north direction.
+                Default is the Y-axis (0, 1).
+        """
+        return math.degrees(
+            north_vector.angle_clockwise(Vector2D(self.normal.x, self.normal.y)))
+
+    def cardinal_direction(self, north_vector=Vector2D(0, 1)):
+        """Get text description for the cardinal direction that the door is pointing.
+
+        Will be one of the following: ('North', 'NorthEast', 'East', 'SouthEast',
+        'South', 'SouthWest', 'West', 'NorthWest').
+
+        Args:
+            north_vector: A ladybug_geometry Vector2D for the north direction.
+                Default is the Y-axis (0, 1).
+        """
+        orient = self.horizontal_orientation(north_vector)
+        orient_text = ('North', 'NorthEast', 'East', 'SouthEast', 'South',
+                       'SouthWest', 'West', 'NorthWest')
+        angles = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
+        for i, ang in enumerate(angles):
+            if orient < ang:
+                return orient_text[i]
+        return orient_text[0]
     
     def add_prefix(self, prefix):
         """Change the name of this object by inserting a prefix.
