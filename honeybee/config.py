@@ -1,9 +1,9 @@
-"""Honeybee_energy configurations.
+"""Honeybee configurations.
 
 Import this into every module where access configurations are needed.
 
 Usage:
-    from honeybee_energy.config import folders
+    from honeybee.config import folders
     print(folders.python_exe_path)
     print(folders.default_simulation_folder)
     folders.default_simulation_folder = "C:/my_sim_folder"
@@ -14,7 +14,7 @@ import json
 
 
 class Folders(object):
-    """Honeybee_energy folders.
+    """Honeybee folders.
 
     Args:
         config_file: The path to the config.json file from which folders are loaded.
