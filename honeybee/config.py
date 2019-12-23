@@ -125,7 +125,7 @@ class Folders(object):
             try:
                 os.makedirs(sim_folder)
             except Exception as e:
-                raise IOError('Failed to create default simulation '
+                raise OSError('Failed to create default simulation '
                               'folder: %s\n%s' % (sim_folder, e))
         return sim_folder
 
