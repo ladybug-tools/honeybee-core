@@ -240,6 +240,7 @@ class Door(_Base):
                 avoid maxing out the 100 allowable characters for honeybee names.
         """
         self.name = '{}_{}'.format(prefix, self.display_name)
+        self.properties.add_prefix(prefix)
         if isinstance(self._boundary_condition, Surface):
             new_bc_objs = ('{}_{}'.format(prefix, adj_name) for adj_name
                            in self._boundary_condition._boundary_condition_objects)

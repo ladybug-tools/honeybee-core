@@ -334,6 +334,7 @@ class Room(_BaseWithShade):
                 characters for honeybee names.
         """
         self.name = '{}_{}'.format(prefix, self.display_name)
+        self.properties.add_prefix(prefix)
         for face in self._faces:
             face.add_prefix(prefix)
         self._add_prefix_shades(prefix)
