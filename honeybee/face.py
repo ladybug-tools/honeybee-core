@@ -310,6 +310,7 @@ class Face(_BaseWithShade):
                 characters for honeybee names.
         """
         self.name = '{}_{}'.format(prefix, self.display_name)
+        self.properties.add_prefix(prefix)
         for ap in self._apertures:
             ap.add_prefix(prefix)
         for dr in self._doors:

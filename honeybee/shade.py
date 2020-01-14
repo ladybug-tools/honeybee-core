@@ -147,6 +147,7 @@ class Shade(_Base):
                 avoid maxing out the 100 allowable characters for honeybee names.
         """
         self.name = '{}_{}'.format(prefix, self.display_name)
+        self.properties.add_prefix(prefix)
 
     def move(self, moving_vec):
         """Move this Shade along a vector.
