@@ -142,7 +142,7 @@ class Surface(_BoundaryCondition):
         Args:
             boundary_condition_objects: A list of up to 3 object names that are adjacent
                 to this one. The first object is always the one that is immediately
-                adjacet and is of the same object type (Face, Aperture, Door). When
+                adjacent and is of the same object type (Face, Aperture, Door). When
                 this boundary condition is applied to a Face, the second object in the
                 tuple will be the parent Room of the adjacent object. When the boundary
                 condition is applied to a sub-face (Door or Aperture), the second object

@@ -61,9 +61,12 @@ except ImportError:
         'click module is not installed. Try `pip install honeybee-core[cli]` command.'
     )
 
+from honeybee.cli.validate import validate
+
 # TODO: Comment out and use for logging once we are adding commands to this file.
 # import logging
 # logger = logging.getLogger(__name__)
+
 
 @click.group()
 @click.version_option()
@@ -75,6 +78,10 @@ def main():
 def viz():
     """Check if honeybee is flying!"""
     click.echo('viiiiiiiiiiiiizzzzzzzzz!')
+
+
+main.add_command(validate)
+
 
 if __name__ == "__main__":
     main()
