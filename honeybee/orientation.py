@@ -5,6 +5,9 @@ however many bins the user desires, though the most common arrangement is likely
 to be a list of 4 values for North, East South, and West.
 
 Usage:
+
+.. code-block:: python
+
     # list of constructions + materials to apply to faces of different orientations
     ep_constructions = [constr_north, constr_east, constr_south, constr_west]
     rad_materials = [mat_north, mat_east, mat_south, mat_west]

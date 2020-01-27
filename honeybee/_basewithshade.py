@@ -57,6 +57,7 @@ class _BaseWithShade(_Base):
         """Remove all indoor shades assigned to this object."""
         for shade in self._indoor_shades:
             shade._parent = None
+            shade._is_indoor = False
         self._indoor_shades = []
 
     def add_outdoor_shade(self, shade):
@@ -73,6 +74,7 @@ class _BaseWithShade(_Base):
         """
         assert isinstance(shade, Shade), \
             'Expected Shade for outdoor_shade. Got {}.'.format(type(shade))
+        assert shade.parent is None, 'Shade cannot have more than one parent object.'
         shade._parent = self
         self._outdoor_shades.append(shade)
 
@@ -90,7 +92,9 @@ class _BaseWithShade(_Base):
         """
         assert isinstance(shade, Shade), \
             'Expected Shade for indoor_shade. Got {}.'.format(type(shade))
+        assert shade.parent is None, 'Shade cannot have more than one parent object.'
         shade._parent = self
+        shade._is_indoor = True
         self._indoor_shades.append(shade)
 
     def add_outdoor_shades(self, shades):
@@ -252,6 +256,7 @@ class _BaseWithShade(_Base):
             self._indoor_shades = [Shade.from_dict(sh) for sh in data['indoor_shades']]
             for ishd in self._indoor_shades:
                 ishd._parent = self
+                ishd._is_indoor = True
 
     def _duplicate_child_shades(self, new_object):
         """Add duplicated child shades to a duplcated new_object."""
@@ -261,3 +266,4 @@ class _BaseWithShade(_Base):
             oshd._parent = new_object
         for ishd in new_object._indoor_shades:
             ishd._parent = new_object
+            ishd._is_indoor = True

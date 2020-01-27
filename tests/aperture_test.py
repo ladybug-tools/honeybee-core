@@ -89,13 +89,15 @@ def test_aperture_overhang():
     aperture_2 = Aperture('Good Triangle Window', Face3D(pts_2))
     aperture_3 = Aperture('Bad Triangle Window', Face3D(pts_3))
     aperture_1.overhang(1, tolerance=0.01)
-    aperture_2.overhang(1, tolerance=0.01)
+    aperture_2.overhang(1, indoor=True, tolerance=0.01)
     aperture_3.overhang(1, tolerance=0.01)
     assert isinstance(aperture_1.outdoor_shades[0], Shade)
-    assert isinstance(aperture_2.outdoor_shades[0], Shade)
+    assert isinstance(aperture_2.indoor_shades[0], Shade)
     assert len(aperture_3.outdoor_shades) == 0
     assert aperture_1.outdoor_shades[0].has_parent
-    assert aperture_2.outdoor_shades[0].has_parent
+    assert aperture_2.indoor_shades[0].has_parent
+    assert not aperture_1.outdoor_shades[0].is_indoor
+    assert aperture_2.indoor_shades[0].is_indoor
 
 
 def test_aperture_fin():
@@ -111,6 +113,7 @@ def test_aperture_fin():
     assert len(aperture_1.outdoor_shades) == 2
     assert isinstance(aperture_1.outdoor_shades[0], Shade)
     assert aperture_1.outdoor_shades[0].has_parent
+    assert not aperture_1.outdoor_shades[0].is_indoor
     assert len(aperture_2.outdoor_shades) == 0
 
 
@@ -129,10 +132,14 @@ def test_aperture_extruded_border():
     assert len(aperture_1.shades) == 8
     assert aperture_1.outdoor_shades[0].center.y > 0
     assert aperture_1.outdoor_shades[0].has_parent
+    assert all(not shd.is_indoor for shd in aperture_1.outdoor_shades)
+    assert all(shd.is_indoor for shd in aperture_1.indoor_shades)
     assert len(aperture_2.shades) == 6
     assert aperture_2.outdoor_shades[0].center.y > 0
     assert aperture_1.indoor_shades[0].center.y < 0
     assert aperture_2.indoor_shades[0].center.y < 0
+    assert all(not shd.is_indoor for shd in aperture_2.outdoor_shades)
+    assert all(shd.is_indoor for shd in aperture_2.indoor_shades)
 
 
 def test_aperture_louvers_by_distance_between():

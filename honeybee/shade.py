@@ -17,6 +17,7 @@ class Shade(_Base):
         * name
         * display_name
         * parent
+        * is_indoor
         * has_parent
         * geometry
         * vertices
@@ -26,7 +27,7 @@ class Shade(_Base):
         * area
         * perimeter
     """
-    __slots__ = ('_geometry', '_parent')
+    __slots__ = ('_geometry', '_parent', '_is_indoor')
 
     def __init__(self, name, geometry):
         """A single planar shade.
@@ -41,7 +42,8 @@ class Shade(_Base):
         assert isinstance(geometry, Face3D), \
             'Expected ladybug_geometry Face3D. Got {}'.format(type(geometry))
         self._geometry = geometry
-        self._parent = None  # _parent will be set when the Shade is added to a Room
+        self._parent = None  # _parent will be set when the Shade is added to an object
+        self._is_indoor = False  # this will be set by the _parent
 
         # initialize properties for extensions
         self._properties = ShadeProperties(self)
@@ -82,13 +84,25 @@ class Shade(_Base):
 
     @property
     def parent(self):
-        """Get the parent Room if assigned. None if not assigned."""
+        """Get the parent object if assigned. None if not assigned.
+        
+        The parent object can be either a Room, Face, Aperture or Door.
+        """
         return self._parent
 
     @property
     def has_parent(self):
-        """Get a boolean noting whether this Shade has a parent Room."""
+        """Get a boolean noting whether this Shade has a parent object."""
         return self._parent is not None
+    
+    @property
+    def is_indoor(self):
+        """Get a boolean for whether this Shade is on the indoors of its parent object.
+        
+        Note that, if there is no parent assigned to this Shade, this property will
+        be False.
+        """
+        return self._is_indoor
 
     @property
     def geometry(self):
@@ -252,6 +266,9 @@ class Shade(_Base):
         Use this method to access Writer class to write the shade in different formats.
 
         Usage:
+
+        .. code-block:: python
+
             shade.to.idf(shade) -> idf string.
             shade.to.radiance(shade) -> Radiance string.
         """

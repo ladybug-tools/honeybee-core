@@ -3,6 +3,9 @@
 Import this into every module where access configurations are needed.
 
 Usage:
+
+.. code-block:: python
+
     from honeybee.config import folders
     print(folders.python_exe_path)
     print(folders.default_simulation_folder)

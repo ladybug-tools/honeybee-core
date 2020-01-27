@@ -1,8 +1,9 @@
 # coding: utf-8
 """Honeybee Door."""
-from ._base import _Base
+from ._basewithshade import _BaseWithShade
 from .properties import DoorProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
+from .shade import Shade
 import honeybee.writer.door as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
@@ -12,7 +13,7 @@ from ladybug_geometry.geometry3d.face import Face3D
 import math
 
 
-class Door(_Base):
+class Door(_BaseWithShade):
     """A single planar Door in a Face.
 
     Properties:
@@ -20,6 +21,8 @@ class Door(_Base):
         * display_name
         * boundary_condition
         * is_glass
+        * indoor_shades
+        * outdoor_shades
         * parent
         * has_parent
         * geometry
@@ -44,7 +47,7 @@ class Door(_Base):
             is_glass: Boolean to note whether this object is a glass door as opposed
                 to an opaque door. Default: False.
         """
-        _Base.__init__(self, name)  # process the name
+        _BaseWithShade.__init__(self, name)  # process the name
 
         # process the geometry
         assert isinstance(geometry, Face3D), \
@@ -83,6 +86,7 @@ class Door(_Base):
                    boundary_condition, is_glass)
         if 'display_name' in data and data['display_name'] is not None:
             door._display_name = data['display_name']
+        door._recover_shades_from_dict(data)
 
         if data['properties']['type'] == 'DoorProperties':
             door.properties._load_extension_attr_from_dict(data['properties'])
@@ -241,6 +245,7 @@ class Door(_Base):
         """
         self.name = '{}_{}'.format(prefix, self.display_name)
         self.properties.add_prefix(prefix)
+        self._add_prefix_shades(prefix)
         if isinstance(self._boundary_condition, Surface):
             new_bc_objs = ('{}_{}'.format(prefix, adj_name) for adj_name
                            in self._boundary_condition._boundary_condition_objects)
@@ -257,7 +262,7 @@ class Door(_Base):
         methods are both suitable for this purpose.
 
         Args:
-            other_aperture: Another Aperture object to be set adjacent to this one.
+            other_door: Another Door object to be set adjacent to this one.
         """
         assert isinstance(other_door, Door), \
             'Expected Door. Got {}.'.format(type(other_door))
@@ -265,6 +270,46 @@ class Door(_Base):
             'Adjacent doors must have matching is_glass properties.'
         self._boundary_condition = boundary_conditions.surface(other_door, True)
         other_door._boundary_condition = boundary_conditions.surface(self, True)
+
+    def overhang(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
+        """Add a single overhang for this Door. Can represent entryway awnings.
+
+        Args:
+            depth: A number for the overhang depth.
+            angle: A number for the for an angle to rotate the overhang in degrees.
+                Positive numbers indicate a downward rotation while negative numbers
+                indicate an upward rotation. Default is 0 for no rotation.
+            indoor: Boolean for whether the overhang should be generated facing the
+                opposite direction of the aperture normal (typically meaning
+                indoor geometry). Default: False.
+            tolerance: An optional value to return None if the overhang has a length less
+                than the tolerance. Default is 0, which will always yeild an overhang.
+            base_name: Optional base name for the shade objects. If None, the default
+                is InOverhang or OutOverhang depending on whether indoor is True.
+        
+        Returns:
+            A list of the new Shade objects that have been generated.
+        """
+        # get a name for the shade
+        if base_name is None:
+            base_name = 'InOverhang' if indoor else 'OutOverhang'
+        shd_name_base = '{}_' + str(base_name) + '{}'
+
+        # create the shade geometry
+        angle = math.radians(angle)
+        dr_geo = self.geometry if indoor is False else self.geometry.flip()
+        shade_faces = dr_geo.countour_fins_by_number(
+            1, depth, 0, angle, Vector2D(0, 1), False, tolerance)
+
+        # create the Shade objects
+        overhang = []
+        for i, shade_geo in enumerate(shade_faces):
+            overhang.append(Shade(shd_name_base.format(self.display_name, i), shade_geo))
+        if indoor:
+            self.add_indoor_shades(overhang)
+        else:
+            self.add_outdoor_shades(overhang)
+        return overhang
 
     def move(self, moving_vec):
         """Move this Door along a vector.
@@ -274,6 +319,7 @@ class Door(_Base):
                 to move the face.
         """
         self._geometry = self.geometry.move(moving_vec)
+        self.move_shades(moving_vec)
 
     def rotate(self, axis, angle, origin):
         """Rotate this Door by a certain angle around an axis and origin.
@@ -285,6 +331,7 @@ class Door(_Base):
                 object will be rotated.
         """
         self._geometry = self.geometry.rotate(axis, math.radians(angle), origin)
+        self.rotate_shades(axis, angle, origin)
 
     def rotate_xy(self, angle, origin):
         """Rotate this Door counterclockwise in the world XY plane by a certain angle.
@@ -295,6 +342,7 @@ class Door(_Base):
                 object will be rotated.
         """
         self._geometry = self.geometry.rotate_xy(math.radians(angle), origin)
+        self.rotate_xy_shades(angle, origin)
 
     def reflect(self, plane):
         """Reflect this Door across a plane.
@@ -304,6 +352,7 @@ class Door(_Base):
                 be reflected.
         """
         self._geometry = self.geometry.reflect(plane.n, plane.o)
+        self.reflect_shades(plane)
 
     def scale(self, factor, origin=None):
         """Scale this Door by a factor from an origin point.
@@ -314,6 +363,7 @@ class Door(_Base):
                 to scale. If None, it will be scaled from the World origin (0, 0, 0).
         """
         self._geometry = self.geometry.scale(factor, origin)
+        self.scale_shades(factor, origin)
 
     def check_planar(self, tolerance, raise_exception=True):
         """Check whether all of the Door's vertices lie within the same plane.
@@ -369,6 +419,9 @@ class Door(_Base):
         Use this method to access Writer class to write the door in different formats.
 
         Usage:
+
+        .. code-block:: python
+
             door.to.idf(door) -> idf string.
             door.to.radiance(door) -> Radiance string.
         """
@@ -398,11 +451,13 @@ class Door(_Base):
             base['boundary_condition'] = self.boundary_condition.to_dict(full=True)
         else:
             base['boundary_condition'] = self.boundary_condition.to_dict()
+        self._add_shades_to_dict(base, abridged, included_prop)
         return base
 
     def __copy__(self):
         new_door = Door(self.name, self.geometry, self.boundary_condition, self.is_glass)
         new_door._display_name = self.display_name
+        self._duplicate_child_shades(new_door)
         new_door._properties._duplicate_extension_attr(self._properties)
         return new_door
 
