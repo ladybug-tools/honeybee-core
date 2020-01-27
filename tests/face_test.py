@@ -362,6 +362,18 @@ def test_apertures_by_ratio_rectangle():
     assert face.apertures[0].geometry.max.z - face.apertures[0].geometry.min.z == 2
 
 
+def test_apertures_by_width_height_rectangle():
+    """Test the adding of apertures by width/height."""
+    pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(10, 0, 3), Point3D(10, 0, 0))
+    face = Face('Test_Wall', Face3D(pts))
+    face.apertures_by_width_height_rectangle(2, 2, 0.5, 2.5, 0.01)
+
+    assert len(face.apertures) == 4
+    assert all(len(ap.geometry.vertices) == 4 for ap in face.apertures)
+    assert sum([ap.area for ap in face.apertures]) == pytest.approx(16, rel=1e-2)
+    assert face.punched_geometry.area == pytest.approx(30 - 16, rel=1e-2)
+
+
 def test_apertures_by_width_height():
     """Test the adding of apertures by width and height."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))

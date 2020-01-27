@@ -482,8 +482,11 @@ class Face(_BaseWithShade):
                 rectangle is made. It does not affect the ability to produce apertures.
 
         Usage:
+
+        .. code-block:: python
+
             room = Room.from_box(3.0, 6.0, 3.2, 180)
-            room[1].apertures_by_ratio(0.4)
+            room.faces[1].apertures_by_ratio(0.4)
         """
         assert 0 <= ratio < 1, 'Ratio must be between 0 and 1. Got {}'.format(ratio)
         self._acceptable_sub_face_check(Aperture)
@@ -530,8 +533,11 @@ class Face(_BaseWithShade):
                 considered a part of a rectangle.
 
         Usage:
+
+        .. code-block:: python
+
             room = Room.from_box(3.0, 6.0, 3.2, 180)
-            room[1].apertures_by_ratio_rectangle(0.4, 2, 0.9, 3)
+            room.faces[1].apertures_by_ratio_rectangle(0.4, 2, 0.9, 3)
         """
         assert 0 <= ratio <= 0.95, \
             'Ratio must be between 0 and 0.95. Got {}'.format(ratio)
@@ -548,14 +554,68 @@ class Face(_BaseWithShade):
             aperture._parent = self
             self._apertures.append(aperture)
 
+    def apertures_by_width_height_rectangle(self, aperture_height, aperture_width,
+                                            sill_height, horizontal_separation,
+                                            tolerance=0):
+        """Add repeating apertures to this face given the aperture width and height.
+
+        Note that this method removes any existing apertures on the Face.
+
+        Note that this method will effectively fill any rectangular portions of
+        this Face with apertures at the specified width, height and separation.
+        If no rectangluar portion of this Face can be identified, no apertures
+        will be added.
+
+        Args:
+            aperture_height: A number for the target height of the apertures.
+            aperture_width: A number for the target width of the apertures.
+            sill_height: A number for the target height above the bottom edge of
+                the rectangle to start the apertures. If the aperture_height
+                is too large for the sill_height to fit within the rectangle,
+                the aperture_height will take precedence.
+            horizontal_separation: A number for the target separation between
+                individual apertures centerlines.  If this number is larger than
+                the parent rectangle base, only one aperture will be produced.
+            tolerance: The maximum difference between point values for them to be
+                considered a part of a rectangle.
+
+        Usage:
+
+        .. code-block:: python
+
+            room = Room.from_box(5.0, 10.0, 3.2, 180)
+            room.faces[1].apertures_by_width_height_rectangle(1.5, 2, 0.8, 2.5)
+        """
+        assert  aperture_height > 0, \
+            'aperture_height must be above 0. Got {}'.format(aperture_height)
+        assert  aperture_width > 0, \
+            'aperture_width must be above 0. Got {}'.format(aperture_width)
+        assert  horizontal_separation > 0, \
+            'horizontal_separation must be above 0. Got {}'.format(horizontal_separation)
+        self._acceptable_sub_face_check(Aperture)
+        self.remove_sub_faces()
+        ap_faces = self._geometry.sub_faces_by_dimension_rectangle(
+            aperture_height, aperture_width, sill_height, horizontal_separation,
+            tolerance)
+        for i, ap_face in enumerate(ap_faces):
+            aperture = Aperture('{}_Glz{}'.format(self.display_name, i), ap_face)
+            aperture._parent = self
+            self._apertures.append(aperture)
+
     def aperture_by_width_height(self, width, height, sill_height=1,
                                  aperture_name=None):
-        """Add a single rectangular aperture to the center of this face.
+        """Add a single rectangular aperture to the center of this Face.
+
+        A rectangular window with the input width and height will always be added
+        by this method regardless of whether this parent Face contains a recongizable
+        rectangular portion or not. Furthermore, this method preserves any existing
+        apertures on the Face.
 
         While the resulting aperture will always be in the plane of this Face,
         this method will not check to ensure that the aperture has all of its
-        vertices completely within the boundary of this Face. The
-        are_sub_faces_valid() method can be used afterwards to check this.
+        vertices completely within the boundary of this Face or that it does not
+        intersect with other apertures in the Face. The are_sub_faces_valid()
+        method can be used afterwards to check this.
 
         Args:
             width: A number for the Aperture width.
@@ -569,6 +629,9 @@ class Face(_BaseWithShade):
             The new Aperture object that has been generated.
 
         Usage:
+
+        .. code-block:: python
+
             room = Room.from_box(3.0, 6.0, 3.2, 180)
             room[1].aperture_by_width_height(2, 2, .7)  # aperture in front
             room[2].aperture_by_width_height(4, 1.5, .5)  # aperture on right
@@ -606,7 +669,8 @@ class Face(_BaseWithShade):
         Args:
             depth: A number for the overhang depth.
             angle: A number for the for an angle to rotate the overhang in degrees.
-                Default is 0 for no rotation.
+                Positive numbers indicate a downward rotation while negative numbers
+                indicate an upward rotation. Default is 0 for no rotation.
             indoor: Boolean for whether the overhang should be generated facing the
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
@@ -634,7 +698,8 @@ class Face(_BaseWithShade):
             offset: A number for the distance to louvers from this Face.
                 Default is 0 for no offset.
             angle: A number for the for an angle to rotate the louvers in degrees.
-                Default is 0 for no rotation.
+                Positive numbers indicate a downward rotation while negative numbers
+                indicate an upward rotation. Default is 0 for no rotation.
             contour_vector: A Vector2D for the direction along which contours
                 are generated. This 2D vector will be interpreted into a 3D vector
                 within the plane of this Face. (0, 1) will usually generate
@@ -685,7 +750,8 @@ class Face(_BaseWithShade):
             offset: A number for the distance to louvers from this Face.
                 Default is 0 for no offset.
             angle: A number for the for an angle to rotate the louvers in degrees.
-                Default is 0 for no rotation.
+                Positive numbers indicate a downward rotation while negative numbers
+                indicate an upward rotation. Default is 0 for no rotation.
             contour_vector: A Vector2D for the direction along which contours
                 are generated. This 2D vector will be interpreted into a 3D vector
                 within the plane of this Face. (0, 1) will usually generate
@@ -920,6 +986,9 @@ class Face(_BaseWithShade):
         Use this method to access Writer class to write the face in other formats.
 
         Usage:
+
+        .. code-block:: python
+
             face.to.idf(face) -> idf string.
             face.to.radiance(face) -> Radiance string.
         """

@@ -24,6 +24,7 @@ def test_shade_init():
     assert shade.area == 3
     assert shade.perimeter == 8
     assert not shade.has_parent
+    assert not shade.is_indoor
 
 
 def test_shade_from_vertices():
@@ -41,6 +42,7 @@ def test_shade_from_vertices():
     assert shade.area == 3
     assert shade.perimeter == 8
     assert not shade.has_parent
+    assert not shade.is_indoor
 
 
 def test_shade_duplicate():

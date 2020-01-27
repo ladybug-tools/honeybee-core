@@ -278,7 +278,8 @@ class Aperture(_BaseWithShade):
         Args:
             depth: A number for the overhang depth.
             angle: A number for the for an angle to rotate the overhang in degrees.
-                Default is 0 for no rotation.
+                Positive numbers indicate a downward rotation while negative numbers
+                indicate an upward rotation. Default is 0 for no rotation.
             indoor: Boolean for whether the overhang should be generated facing the
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
@@ -396,7 +397,8 @@ class Aperture(_BaseWithShade):
             offset: A number for the distance to louvers from this aperture.
                 Default is 0 for no offset.
             angle: A number for the for an angle to rotate the louvers in degrees.
-                Default is 0 for no rotation.
+                Positive numbers indicate a downward rotation while negative numbers
+                indicate an upward rotation. Default is 0 for no rotation.
             contour_vector: A Vector2D for the direction along which contours
                 are generated. This 2D vector will be interpreted into a 3D vector
                 within the plane of this Aperture. (0, 1) will usually generate
@@ -447,7 +449,8 @@ class Aperture(_BaseWithShade):
             offset: A number for the distance to louvers from this aperture.
                 Default is 0 for no offset.
             angle: A number for the for an angle to rotate the louvers in degrees.
-                Default is 0 for no rotation.
+                Positive numbers indicate a downward rotation while negative numbers
+                indicate an upward rotation. Default is 0 for no rotation.
             contour_vector: A Vector2D for the direction along which contours
                 are generated. This 2D vector will be interpreted into a 3D vector
                 within the plane of this Aperture. (0, 1) will usually generate
@@ -594,6 +597,9 @@ class Aperture(_BaseWithShade):
         Use this method to access Writer class to write the aperture in other formats.
 
         Usage:
+
+        .. code-block:: python
+
             aperture.to.idf(aperture) -> idf string.
             aperture.to.radiance(aperture) -> Radiance string.
         """

@@ -378,6 +378,9 @@ class Room(_BaseWithShade):
                 the floor.
 
         Usage:
+
+        .. code-block:: python
+
             room = Room.from_box(3.0, 6.0, 3.2, 180)
             floor_mesh = room.generate_mesh_grid(0.5, 0.5, 1)
             test_points = floor_mesh[0].face_centroids
@@ -619,6 +622,9 @@ class Room(_BaseWithShade):
         Use this method to access Writer class to write the room in other formats.
 
         Usage:
+
+        .. code-block:: python
+
             room.to.idf(room) -> idf string.
             room.to.radiance(room) -> Radiance string.
         """

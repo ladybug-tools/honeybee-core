@@ -165,6 +165,9 @@ class ModelProperties(_Properties):
     Model properties. This class will be extended by extensions.
 
     Usage:
+
+    .. code-block:: python
+
         model = Model('New Elementary School', list_of_rooms)
         model.properties -> ModelProperties
         model.properties.radiance -> ModelRadianceProperties
@@ -233,6 +236,9 @@ class RoomProperties(_Properties):
     Room properties. This class will be extended by extensions.
 
     Usage:
+
+    .. code-block:: python
+
         room = Room('Bedroom', geometry)
         room.properties -> RoomProperties
         room.properties.radiance -> RoomRadianceProperties
@@ -278,6 +284,9 @@ class FaceProperties(_Properties):
     Face properties. This class will be extended by extensions.
 
     Usage:
+
+    .. code-block:: python
+
         face = Face('South Bedroom Wall', geometry)
         face.properties -> FaceProperties
         face.properties.radiance -> FaceRadianceProperties
@@ -322,6 +331,9 @@ class ShadeProperties(_Properties):
     Shade properties. This class will be extended by extensions.
 
     Usage:
+
+    .. code-block:: python
+
         shade = Shade('Deep Overhang', geometry)
         shade.properties -> ShadeProperties
         shade.properties.radiance -> ShadeRadianceProperties
@@ -367,6 +379,9 @@ class ApertureProperties(_Properties):
     Aperture properties. This class will be extended by extensions.
 
     Usage:
+
+    .. code-block:: python
+
         aperture = Aperture('Window to My Soul', geometry)
         aperture.properties -> ApertureProperties
         aperture.properties.radiance -> ApertureRadianceProperties
@@ -412,6 +427,9 @@ class DoorProperties(_Properties):
     Door properties. This class will be extended by extensions.
 
     Usage:
+
+    .. code-block:: python
+
         door = Door('Front Door', geometry)
         door.properties -> DoorProperties
         door.properties.radiance -> DoorRadianceProperties

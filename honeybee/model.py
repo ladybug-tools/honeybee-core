@@ -205,12 +205,18 @@ class Model(_Base):
                 child_shades.extend(face.shades)
                 for ap in face._apertures:
                     child_shades.extend(ap.shades)
+                for dr in face._doors:
+                    child_shades.extend(dr.shades)
         for face in self._orphaned_faces:
             child_shades.extend(face.shades)
             for ap in face._apertures:
                 child_shades.extend(ap.shades)
+            for dr in face._doors:
+                child_shades.extend(dr.shades)
         for ap in self._orphaned_apertures:
             child_shades.extend(ap.shades)
+        for dr in self._orphaned_doors:
+            child_shades.extend(dr.shades)
         return child_shades + self._orphaned_shades
 
     @property
@@ -285,7 +291,7 @@ class Model(_Base):
     def add_shade(self, obj):
         """Add an Shade object to the model."""
         assert isinstance(obj, Shade), 'Expected Shade. Got {}.'.format(type(obj))
-        assert not obj.has_parent, 'Shade "{}"" has a parent Room. Add the Room to '\
+        assert not obj.has_parent, 'Shade "{}"" has a parent object. Add the object to '\
             'the model instead of the Shade.'.format(obj.name)
         self._orphaned_shades.append(obj)
 
@@ -781,6 +787,14 @@ class Model(_Base):
             if original_ap.has_parent:
                 new_ap._parent = original_ap.parent
             new_aps.append(new_ap)
+        
+        # transfer over any child shades to the first triangulated object
+        if len(original_ap._indoor_shades) != 0:
+            new_shds = [shd.duplicate() for shd in original_ap._indoor_shades]
+            new_aps[0].add_indoor_shades(new_shds)
+        if len(original_ap._outdoor_shades) != 0:
+            new_shds = [shd.duplicate() for shd in original_ap._outdoor_shades]
+            new_aps[0].add_outdoor_shades(new_shds)
 
         # create the parent edit info
         parent_edit_info = [original_ap.name]
@@ -821,6 +835,14 @@ class Model(_Base):
                 new_dr._parent = original_dr.parent
             new_drs.append(new_dr)
 
+        # transfer over any child shades to the first triangulated object
+        if len(original_dr._indoor_shades) != 0:
+            new_shds = [shd.duplicate() for shd in original_dr._indoor_shades]
+            new_drs[0].add_indoor_shades(new_shds)
+        if len(original_dr._outdoor_shades) != 0:
+            new_shds = [shd.duplicate() for shd in original_dr._outdoor_shades]
+            new_drs[0].add_outdoor_shades(new_shds)
+
         # create the parent edit info
         parent_edit_info = [original_dr.name]
         if original_dr.has_parent:
@@ -836,6 +858,9 @@ class Model(_Base):
         Use this method to access Writer class to write the model in other formats.
 
         Usage:
+
+        .. code-block:: python
+
             model.to.idf(model) -> idf string.
             model.to.radiance(model) -> Radiance string.
         """

@@ -1,5 +1,6 @@
 """Test the Door class."""
 from honeybee.door import Door
+from honeybee.shade import Shade
 from honeybee.boundarycondition import Outdoors
 
 from ladybug_geometry.geometry3d.face import Face3D
@@ -46,6 +47,39 @@ def test_door_from_vertices():
     assert door.perimeter == 8
     assert isinstance(door.boundary_condition, Outdoors)
     assert not door.has_parent
+
+
+def test_door_add_prefix():
+    """Test the door add_prefix method."""
+    pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
+    door = Door.from_vertices('Test Door', pts)
+    door.overhang(1)
+    prefix = 'New'
+    door.add_prefix(prefix)
+
+    assert door.name.startswith(prefix)
+    for shd in door.shades:
+        assert shd.name.startswith(prefix)
+
+
+def test_door_overhang():
+    """Test the creation of an overhang for Door objects."""
+    pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
+    pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 3))
+    pts_3 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 0))
+    door_1 = Door('Rectangle Door', Face3D(pts_1))
+    door_2 = Door('Good Triangle Door', Face3D(pts_2))
+    door_3 = Door('Bad Triangle Door', Face3D(pts_3))
+    door_1.overhang(1, tolerance=0.01)
+    door_2.overhang(1, indoor=True, tolerance=0.01)
+    door_3.overhang(1, tolerance=0.01)
+    assert isinstance(door_1.outdoor_shades[0], Shade)
+    assert isinstance(door_2.indoor_shades[0], Shade)
+    assert len(door_3.outdoor_shades) == 0
+    assert door_1.outdoor_shades[0].has_parent
+    assert door_2.indoor_shades[0].has_parent
+    assert not door_1.outdoor_shades[0].is_indoor
+    assert door_2.indoor_shades[0].is_indoor
 
 
 def test_door_duplicate():
