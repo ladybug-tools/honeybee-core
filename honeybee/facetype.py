@@ -100,7 +100,7 @@ class _FaceTypes(object):
                 ': {}'.format(face_type_name, list(self._type_name_dict.keys())))
     
     def _build_type_name_dict(self):
-        """Build a dictionary that can be used to lookup boundary conditions by name."""
+        """Build a dictionary that can be used to lookup face types by name."""
         attr = [atr for atr in dir(self) if not atr.startswith('_')]
         clean_attr = [re.sub(r'[\s_]', '', atr.lower()) for atr in attr]
         self._type_name_dict = {}

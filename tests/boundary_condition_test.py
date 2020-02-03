@@ -1,6 +1,7 @@
 """test Face class."""
 from honeybee.boundarycondition import boundary_conditions, Outdoors, Surface, Ground
 from honeybee.room import Room
+from honeybee.altnumber import autocalculate
 
 import pytest
 
@@ -14,7 +15,7 @@ def test_outdoors_default():
     assert bc.sun_exposure_idf == 'SunExposed'
     assert bc.wind_exposure
     assert bc.wind_exposure_idf == 'WindExposed'
-    assert bc.view_factor == 'autocalculate'
+    assert bc.view_factor == autocalculate
 
 
 def test_outdoors_custom():
@@ -33,7 +34,7 @@ def test_outdoors_to_dict():
     assert outdict['type'] == 'Outdoors'
     assert outdict['sun_exposure']
     assert outdict['wind_exposure']
-    assert outdict['view_factor'] == 'autocalculate'
+    assert outdict['view_factor'] == autocalculate.to_dict()
     outdict = bc.to_dict(full=False)
     assert 'sun_exposure' not in outdict
     assert 'wind_exposure' not in outdict
