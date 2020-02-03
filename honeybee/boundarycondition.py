@@ -1,5 +1,6 @@
 """Boundary Condition for Face, Aperture, Door."""
 from .typing import float_in_range, tuple_with_length
+from .altnumber import autocalculate
 
 import re
 
@@ -50,7 +51,7 @@ class Outdoors(_BoundaryCondition):
     __slots__ = ('_sun_exposure', '_wind_exposure', '_view_factor')
 
     def __init__(self, sun_exposure=True, wind_exposure=True,
-                 view_factor='autocalculate'):
+                 view_factor=autocalculate):
         """Initialize Outdoors boundary condition.
 
         Args:
@@ -59,8 +60,8 @@ class Outdoors(_BoundaryCondition):
             wind_exposure: A boolean noting whether the boundary is exposed to wind.
                 Default: True.
             view_factor: A number between 0 and 1 for the view factor to the ground.
-                This input can also be the word 'autocalculate' to have the view
-                factor automatically calculated.  Default: 'autocalculate'.
+                This input can also be an Autocalculate object to sigify that the view
+                factor automatically calculated.  Default: autocalculate.
         """
         assert isinstance(sun_exposure, bool), \
             'Input sun_exposure must be a Boolean. Got {}.'.format(type(sun_exposure))
@@ -68,9 +69,8 @@ class Outdoors(_BoundaryCondition):
         assert isinstance(wind_exposure, bool), \
             'Input wind_exposure must be a Boolean. Got {}.'.format(type(wind_exposure))
         self._wind_exposure = wind_exposure
-        if isinstance(view_factor, str) and \
-                (view_factor.lower() == 'autocalculate' or view_factor == ''):
-            self._view_factor = 'autocalculate'
+        if view_factor == autocalculate:
+            self._view_factor = autocalculate
         else:
             self._view_factor = float_in_range(
                 view_factor, 0.0, 1.0, 'view factor to ground')
@@ -86,8 +86,8 @@ class Outdoors(_BoundaryCondition):
             'condition. Got {}.'.format(data['type'])
         sun_exposure = True if 'sun_exposure' not in data else data['sun_exposure']
         wind_exposure = True if 'wind_exposure' not in data else data['wind_exposure']
-        view_factor = 'autocalculate' if 'view_factor' not in data else \
-            data['view_factor']
+        view_factor = autocalculate if 'view_factor' not in data or \
+            data['view_factor'] == autocalculate.to_dict() else data['view_factor']
         return cls(sun_exposure, wind_exposure, view_factor)
 
     @property
@@ -127,7 +127,8 @@ class Outdoors(_BoundaryCondition):
         if full:
             bc_dict['sun_exposure'] = self.sun_exposure
             bc_dict['wind_exposure'] = self.wind_exposure
-            bc_dict['view_factor'] = self.view_factor
+            bc_dict['view_factor'] = autocalculate.to_dict() if \
+                self.view_factor == autocalculate else self.view_factor
         return bc_dict
 
 
