@@ -42,6 +42,9 @@ def test_model_init():
     assert model.display_name == 'Tiny House'
     assert model.north_angle == 0
     assert model.north_vector == Vector2D(0, 1)
+    assert model.units == 'Meters'
+    assert model.tolerance == 0
+    assert model.angle_tolerance == 0
     assert len(model.rooms) == 1
     assert isinstance(model.rooms[0], Room)
     assert len(model.faces) == 6
@@ -56,6 +59,26 @@ def test_model_init():
     assert len(model.orphaned_shades) == 0
     assert len(model.orphaned_apertures) == 0
     assert len(model.orphaned_doors) == 0
+
+
+def test_model_properties_setability():
+    """Test the setting of properties on the Model."""
+    room = Room.from_box('Tiny House Zone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+
+    model = Model('Tiny House', [room])
+
+    model.name = 'TestBox'
+    assert model.name == 'TestBox'
+    model.north_angle = 20
+    assert model.north_angle == 20
+    model.units = 'Feet'
+    assert model.units == 'Feet'
+    model.tolerance = 0.01
+    assert model.tolerance == 0.01
+    model.angle_tolerance = 0.01
+    assert model.angle_tolerance == 0.01
 
 
 def test_model_init_orphaned_objects():

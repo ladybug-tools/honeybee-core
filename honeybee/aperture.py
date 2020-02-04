@@ -272,7 +272,7 @@ class Aperture(_BaseWithShade):
         self._boundary_condition = boundary_conditions.surface(other_aperture, True)
         other_aperture._boundary_condition = boundary_conditions.surface(self, True)
 
-    def overhang(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
+    def overhang(self, depth, angle=0, indoor=False, tolerance=0.01, base_name=None):
         """Add a single overhang for this Aperture.
 
         Args:
@@ -284,7 +284,7 @@ class Aperture(_BaseWithShade):
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
             tolerance: An optional value to return None if the overhang has a length less
-                than the tolerance. Default is 0, which will always yeild an overhang.
+                than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
         
@@ -296,7 +296,7 @@ class Aperture(_BaseWithShade):
         return self.louvers_by_count(1, depth, angle=angle, indoor=indoor,
                                      tolerance=tolerance, base_name=base_name)
 
-    def right_fin(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
+    def right_fin(self, depth, angle=0, indoor=False, tolerance=0.01, base_name=None):
         """Add a single vertical fin on the right side of this Aperture.
 
         Args:
@@ -307,7 +307,7 @@ class Aperture(_BaseWithShade):
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
             tolerance: An optional value to return None if the fin has a length less
-                than the tolerance. Default is 0, which will always yeild a fin.
+                than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InRightFin or OutRightFin depending on whether indoor is True.
         
@@ -320,7 +320,7 @@ class Aperture(_BaseWithShade):
             1, depth, angle=angle, contour_vector=Vector2D(1, 0),
             indoor=indoor, tolerance=tolerance, base_name=base_name)
 
-    def left_fin(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
+    def left_fin(self, depth, angle=0, indoor=False, tolerance=0.01, base_name=None):
         """Add a single vertical fin on the left side of this Aperture.
 
         Args:
@@ -331,7 +331,7 @@ class Aperture(_BaseWithShade):
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
             tolerance: An optional value to return None if the fin has a length less
-                than the tolerance. Default is 0, which will always yeild a fin.
+                than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InLeftFin or OutLeftFin depending on whether indoor is True.
         
@@ -388,7 +388,7 @@ class Aperture(_BaseWithShade):
 
     def louvers_by_count(self, louver_count, depth, offset=0, angle=0,
                          contour_vector=Vector2D(0, 1), flip_start_side=False,
-                         indoor=False, tolerance=0, base_name=None):
+                         indoor=False, tolerance=0.01, base_name=None):
         """Add a series of louvered Shade objects covering this Aperture.
 
         Args:
@@ -411,8 +411,7 @@ class Aperture(_BaseWithShade):
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
             tolerance: An optional value to remove any louvers with a length less
-                than the tolerance. Default is 0, which will include all louvers
-                no matter how small.
+                than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
         
@@ -440,7 +439,7 @@ class Aperture(_BaseWithShade):
 
     def louvers_by_distance_between(
             self, distance, depth, offset=0, angle=0, contour_vector=Vector2D(0, 1),
-            flip_start_side=False, indoor=False, tolerance=0, base_name=None):
+            flip_start_side=False, indoor=False, tolerance=0.01, base_name=None):
         """Add a series of louvered Shade objects covering this Aperture.
 
         Args:
@@ -461,7 +460,7 @@ class Aperture(_BaseWithShade):
                 Setting to True will start contours on the bottom or left.
             indoor: Boolean for whether louvers should be generated facing the
                 opposite direction of the aperture normal (typically meaning
-                indoor geometry). Default: False.
+                indoor geometry). Default: 0.01, suitable for objects in meters.
             tolerance: An optional value to remove any louvers with a length less
                 than the tolerance. Default is 0, which will include all louvers
                 no matter how small.
@@ -543,12 +542,13 @@ class Aperture(_BaseWithShade):
         self._geometry = self.geometry.scale(factor, origin)
         self.scale_shades(factor, origin)
 
-    def check_planar(self, tolerance, raise_exception=True):
+    def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Aperture's vertices lie within the same plane.
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
                 object's's plane at which the vertex is said to lie in the plane.
+                Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
         """

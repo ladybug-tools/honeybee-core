@@ -392,7 +392,7 @@ class Face(_BaseWithShade):
         for door in doors:
             self.add_door(door)
 
-    def set_adjacency(self, other_face, tolerance=0):
+    def set_adjacency(self, other_face, tolerance=0.01):
         """Set this face adjacent to another and set the other face adjacent to this one.
 
         Note that this method does not verify whether the other_face geometry is
@@ -409,7 +409,8 @@ class Face(_BaseWithShade):
         Args:
             other_face: Another Face object to be set adjacent to this one.
             tolerance: The minimum distance between the center of two aperture
-                geometries at which they are condsidered adjacent. Default: 0.
+                geometries at which they are condsidered adjacent. Default: 0.01,
+                suitable for objects in meters.
 
         Returns:
             dict: A dictionary of adjacency information with the following keys.
@@ -465,7 +466,7 @@ class Face(_BaseWithShade):
 
         return adj_info
 
-    def apertures_by_ratio(self, ratio, tolerance=0):
+    def apertures_by_ratio(self, ratio, tolerance=0.01):
         """Add apertures to this Face given a ratio of aperture area to facea area.
 
         Note that this method removes any existing apertures on the Face.
@@ -479,7 +480,8 @@ class Face(_BaseWithShade):
             tolerance: The maximum difference between point values for them to be
                 considered a part of a rectangle. This is used in the event that
                 this face is concave and an attempt to subdivide the face into a
-                rectangle is made. It does not affect the ability to produce apertures.
+                rectangle is made. It does not affect the ability to produce apertures
+                for convex Faces. Default: 0.01, suitable for objects in meters.
 
         Usage:
 
@@ -502,7 +504,7 @@ class Face(_BaseWithShade):
 
     def apertures_by_ratio_rectangle(self, ratio, aperture_height, sill_height,
                                      horizontal_separation, vertical_separation=0,
-                                     tolerance=0):
+                                     tolerance=0.01):
         """Add apertures to this face given a ratio of aperture area to face area.
 
         Note that this method removes any existing apertures on the Face.
@@ -530,7 +532,8 @@ class Face(_BaseWithShade):
                 separation between top and bottom apertures. The default is
                 0 for no separation.
             tolerance: The maximum difference between point values for them to be
-                considered a part of a rectangle.
+                considered a part of a rectangle. Default: 0.01, suitable for
+                objects in meters.
 
         Usage:
 
@@ -556,7 +559,7 @@ class Face(_BaseWithShade):
 
     def apertures_by_width_height_rectangle(self, aperture_height, aperture_width,
                                             sill_height, horizontal_separation,
-                                            tolerance=0):
+                                            tolerance=0.01):
         """Add repeating apertures to this face given the aperture width and height.
 
         Note that this method removes any existing apertures on the Face.
@@ -577,7 +580,8 @@ class Face(_BaseWithShade):
                 individual apertures centerlines.  If this number is larger than
                 the parent rectangle base, only one aperture will be produced.
             tolerance: The maximum difference between point values for them to be
-                considered a part of a rectangle.
+                considered a part of a rectangle. Default: 0.01, suitable for
+                objects in meters.
 
         Usage:
 
@@ -663,7 +667,7 @@ class Face(_BaseWithShade):
         self._apertures.append(aperture)
         return aperture
 
-    def overhang(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
+    def overhang(self, depth, angle=0, indoor=False, tolerance=0.01, base_name=None):
         """Add an overhang to this Face.
 
         Args:
@@ -675,7 +679,7 @@ class Face(_BaseWithShade):
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
             tolerance: An optional value to not add the overhang if it has a length less
-                than the tolerance. Default is 0, which will always yeild an overhang.
+                than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
         
@@ -689,7 +693,7 @@ class Face(_BaseWithShade):
 
     def louvers_by_count(self, louver_count, depth, offset=0, angle=0,
                          contour_vector=Vector2D(0, 1), flip_start_side=False,
-                         indoor=False, tolerance=0, base_name=None):
+                         indoor=False, tolerance=0.01, base_name=None):
         """Add a series of louvered Shade objects over this Face.
 
         Args:
@@ -712,8 +716,7 @@ class Face(_BaseWithShade):
                 opposite direction of the Face normal (typically meaning
                 indoor geometry). Default: False.
             tolerance: An optional value to remove any louvers with a length less
-                than the tolerance. Default is 0, which will include all louvers
-                no matter how small.
+                than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
         
@@ -741,7 +744,7 @@ class Face(_BaseWithShade):
 
     def louvers_by_distance_between(
             self, distance, depth, offset=0, angle=0, contour_vector=Vector2D(0, 1),
-            flip_start_side=False, indoor=False, tolerance=0, base_name=None):
+            flip_start_side=False, indoor=False, tolerance=0.01, base_name=None):
         """Add a series of louvered Shade objects over this Face.
 
         Args:
@@ -764,8 +767,7 @@ class Face(_BaseWithShade):
                 opposite direction of the Face normal (typically meaning
                 indoor geometry). Default: False.
             tolerance: An optional value to remove any louvers with a length less
-                than the tolerance. Default is 0, which will include all louvers
-                no matter how small.
+                than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
         
@@ -868,7 +870,7 @@ class Face(_BaseWithShade):
         self.scale_shades(factor, origin)
         self._punched_geometry = None  # reset so that it can be re-computed
 
-    def check_sub_faces_valid(self, tolerance, angle_tolerance, raise_exception=True):
+    def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check that sub-faces are co-planar with this Face within the Face boundary.
 
         Note this does not check the planarity of the sub-faces themselves, whether
@@ -876,9 +878,11 @@ class Face(_BaseWithShade):
 
         Args:
             tolerance: The minimum difference between the coordinate values of two
-                vertices at which they can be considered equivalent.
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
             angle_tolerance: The max angle in degrees that the plane normals can
                 differ from one another in order for them to be considered coplanar.
+                Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an sub-face is not valid.
         """
@@ -886,7 +890,7 @@ class Face(_BaseWithShade):
         dr = self.check_doors_valid(tolerance, angle_tolerance, raise_exception)
         return True if ap and dr else False
 
-    def check_apertures_valid(self, tolerance, angle_tolerance, raise_exception=True):
+    def check_apertures_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check that apertures are co-planar with this Face within the Face boundary.
 
         Note this does not check the planarity of the apertures themselves, whether
@@ -894,12 +898,15 @@ class Face(_BaseWithShade):
 
         Args:
             tolerance: The minimum difference between the coordinate values of two
-                vertices at which they can be considered equivalent.
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
             angle_tolerance: The max angle in degrees that the plane normals can
                 differ from one another in order for them to be considered coplanar.
+                Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an aperture is not valid.
         """
+        angle_tolerance = math.radians(angle_tolerance)
         for ap in self._apertures:
             if not self.geometry.is_sub_face(ap.geometry, tolerance, angle_tolerance):
                 if raise_exception:
@@ -909,7 +916,7 @@ class Face(_BaseWithShade):
                 return False
         return True
 
-    def check_doors_valid(self, tolerance, angle_tolerance, raise_exception=True):
+    def check_doors_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check that doors are co-planar with this Face within the Face boundary.
 
         Note this does not check the planarity of the doors themselves, whether
@@ -917,12 +924,15 @@ class Face(_BaseWithShade):
 
         Args:
             tolerance: The minimum difference between the coordinate values of two
-                vertices at which they can be considered equivalent.
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
             angle_tolerance: The max angle in degrees that the plane normals can
                 differ from one another in order for them to be considered coplanar.
+                Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an door is not valid.
         """
+        angle_tolerance = math.radians(angle_tolerance)
         for dr in self._doors:
             if not self.geometry.is_sub_face(dr.geometry, tolerance, angle_tolerance):
                 if raise_exception:
@@ -932,12 +942,13 @@ class Face(_BaseWithShade):
                 return False
         return True
 
-    def check_planar(self, tolerance, raise_exception=True):
+    def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Face's vertices lie within the same plane.
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
                 object's's plane at which the vertex is said to lie in the plane.
+                Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
         """

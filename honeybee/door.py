@@ -271,7 +271,7 @@ class Door(_BaseWithShade):
         self._boundary_condition = boundary_conditions.surface(other_door, True)
         other_door._boundary_condition = boundary_conditions.surface(self, True)
 
-    def overhang(self, depth, angle=0, indoor=False, tolerance=0, base_name=None):
+    def overhang(self, depth, angle=0, indoor=False, tolerance=0.01, base_name=None):
         """Add a single overhang for this Door. Can represent entryway awnings.
 
         Args:
@@ -283,7 +283,7 @@ class Door(_BaseWithShade):
                 opposite direction of the aperture normal (typically meaning
                 indoor geometry). Default: False.
             tolerance: An optional value to return None if the overhang has a length less
-                than the tolerance. Default is 0, which will always yeild an overhang.
+                than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
         
@@ -365,12 +365,13 @@ class Door(_BaseWithShade):
         self._geometry = self.geometry.scale(factor, origin)
         self.scale_shades(factor, origin)
 
-    def check_planar(self, tolerance, raise_exception=True):
+    def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Door's vertices lie within the same plane.
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
                 object's's plane at which the vertex is said to lie in the plane.
+                Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
         """

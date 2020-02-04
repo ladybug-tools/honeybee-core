@@ -7,7 +7,7 @@ from .face import Face
 from .shade import Shade
 from .aperture import Aperture
 from .door import Door
-from .typing import float_in_range
+from .typing import float_in_range, float_positive
 from .boundarycondition import Surface
 from .facetype import AirWall
 import honeybee.writer.model as writer
@@ -26,6 +26,9 @@ class Model(_Base):
         * display_name
         * north_angle
         * north_vector
+        * units
+        * tolerance
+        * angle_tolerance
         * rooms
         * faces
         * shades
@@ -37,10 +40,14 @@ class Model(_Base):
         * orphaned_doors
     """
     __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
-                 '_orphaned_doors', '_north_angle', '_north_vector')
+                 '_orphaned_doors', '_north_angle', '_north_vector', '_units',
+                 '_tolerance', '_angle_tolerance')
+    
+    UNITS = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')
 
     def __init__(self, name, rooms=None, orphaned_faces=None, orphaned_shades=None,
-                 orphaned_apertures=None, orphaned_doors=None, north_angle=0):
+                 orphaned_apertures=None, orphaned_doors=None, north_angle=0,
+                 units='Meters', tolerance=0, angle_tolerance=0):
         """A collection of Rooms, Faces, Apertures, and Doors for an entire model.
 
         Args:
@@ -59,9 +66,26 @@ class Model(_Base):
                 Models that are to be exported for energy simulation.
             north_angle: An number between 0 and 360 to set the clockwise north
                 direction in degrees. Default is 0.
+            units: Text for the units system in which the model geometry
+                exists. Default: 'Meters'. Choose from the following:
+                    * Meters
+                    * Millimeters
+                    * Feet
+                    * Inches
+                    * Centimeters
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. Zero indicates that no tolerance
+                checks should be performed. Default: 0.
+            angle_tolerance: The max angle difference in degrees that vertices are
+                allowed to differ from one another in order to consider them colinear.
+                Zero indicates that no angle tolerance checks should be performed.
+                Default: 0.
         """
         self.name = name
         self.north_angle = north_angle
+        self.units = units
+        self.tolerance = tolerance
+        self.angle_tolerance = angle_tolerance
 
         self._rooms = []
         self._orphaned_faces = []
@@ -97,9 +121,14 @@ class Model(_Base):
         assert data['type'] == 'Model', 'Expected Model dictionary. ' \
             'Got {}.'.format(data['type'])
 
+        # import the tolerance values
+        tol = 0 if 'tolerance' not in data else data['tolerance']
+        angle_tol = 0 if 'angle_tolerance' not in data else data['angle_tolerance']
+
+        # import all of the geometry
         rooms = None  # import rooms
         if 'rooms' in data and data['rooms'] is not None:
-            rooms = [Room.from_dict(r) for r in data['rooms']]
+            rooms = [Room.from_dict(r, tol, angle_tol) for r in data['rooms']]
         orphaned_faces = None  # import orphaned faces
         if 'orphaned_faces' in data and data['orphaned_faces'] is not None:
             orphaned_faces = [Face.from_dict(f) for f in data['orphaned_faces']]
@@ -116,10 +145,12 @@ class Model(_Base):
 
         # import the north angle
         north_angle = 0 if 'north_angle' not in data else data['north_angle']
+        units = 'Meters' if 'units' not in data else data['units']
 
         # build the model object
         model = Model(data['name'], rooms, orphaned_faces, orphaned_shades,
-                      orphaned_apertures, orphaned_doors, north_angle)
+                      orphaned_apertures, orphaned_doors, north_angle,
+                      units, tol, angle_tol)
         assert model.display_name == model.name, \
             'Model name "{}" has invalid characters."'.format(data['name'])
         if 'display_name' in data and data['display_name'] is not None:
@@ -130,7 +161,8 @@ class Model(_Base):
         return model
 
     @classmethod
-    def from_objects(cls, name, objects, north_angle=0):
+    def from_objects(cls, name, objects, north_angle=0, units='Meters',
+                     tolerance=0, angle_tolerance=0):
         """Initialize a Model from a list of any type of honeybee-core geometry objects.
 
         Args:
@@ -138,6 +170,20 @@ class Model(_Base):
             objects: A list of honeybee Rooms, Faces, Shades, Apertures and Doors.
             north_angle: An number between 0 and 360 to set the clockwise north
                 direction in degrees. Default is 0.
+            units: Text for the units system in which the model geometry
+                exists. Default: 'Meters'. Choose from the following:
+                    * Meters
+                    * Millimeters
+                    * Feet
+                    * Inches
+                    * Centimeters
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. Zero indicates that no tolerance
+                checks should be performed. Default: 0.
+            angle_tolerance: The max angle difference in degrees that vertices are
+                allowed to differ from one another in order to consider them colinear.
+                Zero indicates that no angle tolerance checks should be performed.
+                Default: 0.
         """
         rooms = []
         faces = []
@@ -183,6 +229,45 @@ class Model(_Base):
         self._north_vector = value
         self._north_angle = \
             math.degrees(Vector2D(0, 1).angle_clockwise(self._north_vector))
+
+    @property
+    def units(self):
+        """Get or set Text for the units system in which the model geometry exists."""
+        return self._units
+
+    @units.setter
+    def units(self, value):
+        assert value in self.UNITS, '{} is not supported as a units system. ' \
+            'Choose from the following: {}'.format(value, self.units)
+        self._units = value
+
+    @property
+    def tolerance(self):
+        """Get or set a number for the max meaningful difference between x, y, z values.
+        
+        This value should be in the Model's units. Zero indicates cases
+        where no tolerance checks should be performed.
+        """
+        return self._tolerance
+
+    @tolerance.setter
+    def tolerance(self, value):
+        self._tolerance = float_positive(value, 'model tolerance')
+
+    @property
+    def angle_tolerance(self):
+        """Get or set a number for the max meaningful angle difference in degrees.
+        
+        Face3D normal vectors differing by this amount are not considered parallel
+        and Face3D segments that differ from 180 by this amount are not considered
+        colinear. Zero indicates cases where no angle_tolerance checks should be
+        performed.
+        """
+        return self._angle_tolerance
+
+    @angle_tolerance.setter
+    def angle_tolerance(self, value):
+        self._angle_tolerance = float_positive(value, 'model angle_tolerance')
 
     @property
     def rooms(self):
@@ -886,6 +971,7 @@ class Model(_Base):
         base = {'type': 'Model'}
         base['name'] = self.name
         base['display_name'] = self.display_name
+        base['units'] = self.units
         base['properties'] = self.properties.to_dict(included_prop)
         if self._rooms != []:
             base['rooms'] = \
@@ -904,6 +990,10 @@ class Model(_Base):
                 [dr.to_dict(True, included_prop) for dr in self._orphaned_doors]
         if self.north_angle != 0:
             base['north_angle'] = self.north_angle
+        if self.tolerance != 0:
+            base['tolerance'] = self.tolerance
+        if self.angle_tolerance != 0:
+            base['angle_tolerance'] = self.angle_tolerance
 
         if triangulate_sub_faces:
             apertures, parents_to_edit = self.triangulated_apertures()
@@ -956,7 +1046,7 @@ class Model(_Base):
             [shade.duplicate() for shade in self._orphaned_shades],
             [aperture.duplicate() for aperture in self._orphaned_apertures],
             [door.duplicate() for door in self._orphaned_doors],
-            self.north_angle)
+            self.north_angle, self.units, self.tolerance, self.angle_tolerance)
         new_model._display_name = self.display_name
         new_model._properties._duplicate_extension_attr(self._properties)
         return new_model
