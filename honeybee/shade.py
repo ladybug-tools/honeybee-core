@@ -212,12 +212,13 @@ class Shade(_Base):
         """
         self._geometry = self.geometry.scale(factor, origin)
 
-    def check_planar(self, tolerance, raise_exception=True):
+    def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Shade's vertices lie within the same plane.
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
                 object's's plane at which the vertex is said to lie in the plane.
+                Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
         """

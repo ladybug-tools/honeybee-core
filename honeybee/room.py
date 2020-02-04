@@ -38,14 +38,15 @@ class Room(_BaseWithShade):
     """
     __slots__ = ('_geometry', '_faces', '_multiplier')
 
-    def __init__(self, name, faces, tolerance=None, angle_tolerance=None):
+    def __init__(self, name, faces, tolerance=0, angle_tolerance=0):
         """A volume enclosed by faces, representing a single room or space.
 
-        Note that, if None is input for tolerance and angle_tolerance, no checks will
-        be performed to determine whether the room is a closed volume and no attempt
-        will be made to flip faces in the event that they are not facing outward from
-        the room volume.  As such, an input tolerance of None is intended for
-        workflows where the solidity of the room volume has been evaluated elsewhere.
+        Note that, if zero is input for tolerance and angle_tolerance, no checks
+        will be performed to determine whether the room is a closed volume
+        and no attempt will be made to flip faces in the event that they are not
+        facing outward from the room volume.  As such, an input tolerance of 0
+        is intended for workflows where the solidity of the room volume has been
+        evaluated elsewhere.
 
         Args:
             name: Room name. Must be < 100 characters.
@@ -54,11 +55,11 @@ class Room(_BaseWithShade):
             tolerance: The maximum difference between x, y, and z values
                 at which vertices of adjacent faces are considered equivalent. This is
                 used in determining whether the faces form a closed volume. Default
-                is None, which makes no attempt to evaluate whether the Room volume
+                is 0, which makes no attempt to evaluate whether the Room volume
                 is closed.
             angle_tolerance: The max angle difference in degrees that vertices are
                 allowed to differ from one another in order to consider them colinear.
-                Default is None, which makes no attempt to evaluate whether the Room
+                Default is 0, which makes no attempt to evaluate whether the Room
                 volume is closed.
         """
         _BaseWithShade.__init__(self, name)  # process the name
@@ -71,14 +72,14 @@ class Room(_BaseWithShade):
                 'Expected honeybee Face. Got {}'.format(type(face))
             face._parent = self
 
-        if tolerance is None:
+        if tolerance == 0:
             self._faces = faces
             self._geometry = None  # calculated later from faces or added by classmethods
         else:
             # try to get a closed volume between the faces
             room_polyface = Polyface3D.from_faces(
                 tuple(face.geometry for face in faces), tolerance)
-            if not room_polyface.is_solid and angle_tolerance is not None:
+            if not room_polyface.is_solid and angle_tolerance != 0:
                 ang_tol = math.radians(angle_tolerance)
                 room_polyface = room_polyface.merge_overlapping_edges(tolerance, ang_tol)
             # replace honeybee face geometry with versions that are facing outwards
@@ -92,17 +93,27 @@ class Room(_BaseWithShade):
         self._properties = RoomProperties(self)  # properties for extensions
 
     @classmethod
-    def from_dict(cls, data):
+    def from_dict(cls, data, tolerance=0, angle_tolerance=0):
         """Initialize an Room from a dictionary.
 
         Args:
             data: A dictionary representation of a Room object.
+            tolerance: The maximum difference between x, y, and z values
+                at which vertices of adjacent faces are considered equivalent. This is
+                used in determining whether the faces form a closed volume. Default
+                is 0, which makes no attempt to evaluate whether the Room volume
+                is closed.
+            angle_tolerance: The max angle difference in degrees that vertices are
+                allowed to differ from one another in order to consider them colinear.
+                Default is 0, which makes no attempt to evaluate whether the Room
+                volume is closed.
         """
         # check the type of dictionary
         assert data['type'] == 'Room', 'Expected Room dictionary. ' \
             'Got {}.'.format(data['type'])
 
-        room = cls(data['name'], [Face.from_dict(f_dict) for f_dict in data['faces']])
+        room = cls(data['name'], [Face.from_dict(f_dict) for f_dict in data['faces']],
+                   tolerance, angle_tolerance)
         if 'display_name' in data and data['display_name'] is not None:
             room._display_name = data['display_name']
         if 'multiplier' in data and data['multiplier'] is not None:
@@ -461,15 +472,17 @@ class Room(_BaseWithShade):
         if self._geometry is not None:
             self._geometry = self.geometry.scale(factor, origin)
 
-    def check_solid(self, tolerance, angle_tolerance, raise_exception=True):
+    def check_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check whether the Room is a closed solid to within the input tolerances.
 
         Args:
             tolerance: tolerance: The maximum difference between x, y, and z values
                 at which face vertices are considered equivalent. This is used in
-                determining whether the faces form a closed volume.
+                determining whether the faces form a closed volume. Default: 0.01,
+                suitable for objects in meters.
             angle_tolerance: The max angle difference in degrees that vertices are
                 allowed to differ from one another in order to consider them colinear.
+                Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if the room geometry does not form a closed solid.
         """
@@ -489,7 +502,7 @@ class Room(_BaseWithShade):
                 'tolerance.'.format(self.display_name, tolerance, angle_tolerance))
         return False
 
-    def check_planar(self, tolerance, raise_exception=True):
+    def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check that all of the Room's geometry components are planar.
 
         This includes all of the Room's Faces, Apertures, Doors and Shades.
@@ -497,6 +510,7 @@ class Room(_BaseWithShade):
         Args:
             tolerance: The minimum distance between a given vertex and a the
                 object's's plane at which the vertex is said to lie in the plane.
+                Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
         """
@@ -567,13 +581,14 @@ class Room(_BaseWithShade):
         return self._check_non_zero_shades(tolerance, raise_exception)
 
     @staticmethod
-    def solve_adjacency(rooms, tolerance):
+    def solve_adjacency(rooms, tolerance=0.01):
         """Solve for all adjacencies between a list of input rooms.
 
         Args:
             rooms: A list of rooms for which adjacencies will be solved.
             tolerance: The minimum difference between the coordinate values of two
-                faces at which they can be considered centered adjacent.
+                faces at which they can be considered centered adjacent. Default: 0.01,
+                suitable for objects in meters.
 
         Returns:
             dict: A dictionary of adjacency information with the following keys.
