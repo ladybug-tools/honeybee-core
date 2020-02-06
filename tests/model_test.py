@@ -355,6 +355,19 @@ def test_scale():
     assert room[1].doors[0].area == model.rooms[0][1].doors[0].area * 2 ** 2
 
 
+def test_convert_to_units():
+    """Test the Model convert_to_units method."""
+    room = Room.from_box('Tiny House Zone', 120, 240, 96)
+    inches_conversion = Model.conversion_factor_to_meters('Inches')
+
+    model = Model('Tiny House', [room], units='Inches')
+    model.convert_to_units('Meters')
+
+    assert room.floor_area == pytest.approx(120 * 240 * (inches_conversion ** 2), rel=1e-3)
+    assert room.volume == pytest.approx(120 * 240 * 96 * (inches_conversion ** 3), rel=1e-3)
+    assert model.units == 'Meters'
+
+
 def test_rotate():
     """Test the Model rotate method."""
     room = Room.from_box('Tiny House Zone', 5, 10, 3)

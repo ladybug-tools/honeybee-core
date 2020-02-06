@@ -554,6 +554,28 @@ class Model(_Base):
         for door in self._orphaned_doors:
             door.scale(factor, origin)
 
+    def convert_to_units(self, units='Meters'):
+        """Convert all of the geometry in this model to certain units.
+
+        Thins involves both scaling the geometry and changing the Model's
+        units property.
+
+        Args:
+            units: Text for the units to which the Model geometry should be
+                converted. Default: Meters. Choose from the following:
+                    * Meters
+                    * Millimeters
+                    * Feet
+                    * Inches
+                    * Centimeters
+        """
+        if self.units != units:
+            scale_fac1 = self.conversion_factor_to_meters(self.units)
+            scale_fac2 = self.conversion_factor_to_meters(units)
+            scale_fac = scale_fac1 / scale_fac2
+            self.scale(scale_fac)
+            self.units = units
+
     def check_duplicate_room_names(self, raise_exception=True):
         """Check that there are no duplicate Room names in the model."""
         room_names = set()
@@ -1028,6 +1050,38 @@ class Model(_Base):
                         [dr.to_dict(True, included_prop) for dr in tri_drs])
 
         return base
+    
+    @staticmethod
+    def conversion_factor_to_meters(units):
+        """Get the conversion factor to meters based on input units.
+
+        Args:
+            units: Text for the units. Choose from the following:
+                * Meters
+                * Millimeters
+                * Feet
+                * Inches
+                * Centimeters
+
+        Returns:
+            A number for the conversion factor, which should be multiplied by
+            all distance units taken from Rhino geoemtry in order to convert
+            them to meters.
+        """
+        if units == 'Meters':
+            return 1.0
+        elif units == 'Millimeters':
+            return 0.001
+        elif units == 'Feet':
+            return 0.305
+        elif units == 'Inches':
+            return 0.0254
+        elif units == 'Centimeters':
+            return 0.01
+        else:
+            raise ValueError(
+                "You're kidding me! What units are you using?" + units + "?\n"
+                "Please use Meters, Millimeters, Centimeters, Feet or Inches.")
 
     def __add__(self, other):
         new_model = self.duplicate()
