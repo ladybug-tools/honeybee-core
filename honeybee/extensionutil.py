@@ -2,8 +2,8 @@
 """A series of utility functions that are useful across several honeybee extensions."""
 
 
-def model_extension_dicts(data, extension_key, room_ext_dicts=[], face_ext_dicts=[],
-                          shade_ext_dicts=[], aperture_ext_dicts=[], door_ext_dicts=[]):
+def model_extension_dicts(data, extension_key, room_ext_dicts, face_ext_dicts,
+                          shade_ext_dicts, aperture_ext_dicts, door_ext_dicts):
     """Get all Model property dictionaries of an extension organized by geometry type.
 
     Note that the order in which dictionaries appear in the output lists is the
@@ -51,8 +51,8 @@ def model_extension_dicts(data, extension_key, room_ext_dicts=[], face_ext_dicts
         aperture_ext_dicts, door_ext_dicts
 
 
-def room_extension_dicts(room_list, extension_key, room_ext_dicts=[], face_ext_dicts=[],
-                         shade_ext_dicts=[], aperture_ext_dicts=[], door_ext_dicts=[]):
+def room_extension_dicts(room_list, extension_key, room_ext_dicts, face_ext_dicts,
+                         shade_ext_dicts, aperture_ext_dicts, door_ext_dicts):
     """Get all Room property dictionaires of an extension organized by geometry type.
 
     Args:
@@ -80,8 +80,8 @@ def room_extension_dicts(room_list, extension_key, room_ext_dicts=[], face_ext_d
         aperture_ext_dicts, door_ext_dicts
 
 
-def face_extension_dicts(face_list, extension_key, face_ext_dicts=[],
-                         shade_ext_dicts=[], aperture_ext_dicts=[], door_ext_dicts=[]):
+def face_extension_dicts(face_list, extension_key, face_ext_dicts,
+                         shade_ext_dicts, aperture_ext_dicts, door_ext_dicts):
     """Get all Face property dictionaires of an extension organized by geometry type.
 
     Args:
@@ -111,7 +111,7 @@ def face_extension_dicts(face_list, extension_key, face_ext_dicts=[],
     return face_ext_dicts, shade_ext_dicts, aperture_ext_dicts, door_ext_dicts
 
 
-def shade_extension_dicts(shade_list, extension_key, shade_ext_dicts=[]):
+def shade_extension_dicts(shade_list, extension_key, shade_ext_dicts):
     """Get all Shade property dictionaires of an extension organized by geometry type.
 
     Args:
@@ -126,8 +126,8 @@ def shade_extension_dicts(shade_list, extension_key, shade_ext_dicts=[]):
     return shade_ext_dicts
 
 
-def aperture_extension_dicts(aperture_list, extension_key, aperture_ext_dicts=[],
-                             shade_ext_dicts=[]):
+def aperture_extension_dicts(aperture_list, extension_key, aperture_ext_dicts,
+                             shade_ext_dicts):
     """Get all Aperture property dictionaires of an extension organized by geometry type.
 
     Args:
@@ -147,8 +147,8 @@ def aperture_extension_dicts(aperture_list, extension_key, aperture_ext_dicts=[]
     return aperture_ext_dicts, shade_ext_dicts
 
 
-def door_extension_dicts(door_list, extension_key, door_ext_dicts=[],
-                         shade_ext_dicts=[]):
+def door_extension_dicts(door_list, extension_key, door_ext_dicts,
+                         shade_ext_dicts):
     """Get all Door property dictionaires of an extension organized by geometry type.
 
     Args:
