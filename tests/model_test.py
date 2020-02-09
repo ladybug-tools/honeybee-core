@@ -600,21 +600,21 @@ def test_check_missing_adjacencies():
     assert model_1.check_missing_adjacencies(True)
 
 
-def test_check_all_air_walls_adjacent():
-    """Test the check_all_air_walls_adjacent method."""
+def test_check_all_air_boundaries_adjacent():
+    """Test the check_all_air_boundaries_adjacent method."""
     room_south = Room.from_box('South Zone', 5, 5, 3, origin=Point3D(0, 0, 0))
     room_north = Room.from_box('North Zone', 5, 5, 3, origin=Point3D(0, 5, 0))
     room_south[3].apertures_by_ratio(0.4, 0.01)
-    room_south[1].type = face_types.air_wall
-    room_north[3].type = face_types.air_wall
+    room_south[1].type = face_types.air_boundary
+    room_north[3].type = face_types.air_boundary
 
     model = Model('Test House', [room_south, room_north])
-    assert not model.check_all_air_walls_adjacent(False)
+    assert not model.check_all_air_boundaries_adjacent(False)
     with pytest.raises(ValueError):
-        model.check_all_air_walls_adjacent(True)
+        model.check_all_air_boundaries_adjacent(True)
 
     Room.solve_adjacency([room_south, room_north], 0.01)
-    assert model.check_all_air_walls_adjacent(False)
+    assert model.check_all_air_boundaries_adjacent(False)
 
 
 def test_check_planar():

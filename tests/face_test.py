@@ -326,7 +326,7 @@ def test_sub_faces_invalid_face_type():
     ap_face3d = Face3D.from_rectangle(2, 2, Plane(o=Point3D(2, 2, 3)))
     dr_face3d = Face3D.from_rectangle(2, 2, Plane(o=Point3D(7, 7, 3)))
 
-    face = Face('Test_Roof', face_face3d, face_types.air_wall)
+    face = Face('Test_Roof', face_face3d, face_types.air_boundary)
     aperture = Aperture('Test_Skylight', ap_face3d)
     door = Door('Test_Trap_Door', dr_face3d)
 

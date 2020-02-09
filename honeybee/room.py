@@ -596,7 +596,7 @@ class Room(_BaseWithShade):
                 * adjacent_faces - A list of tuples with each tuple containing 2 objects
                     for Faces paired in the process of solving adjacency. This data can
                     be used to assign custom properties to the new adjacent Faces (like
-                    making all adjacencies an AirWall face type or assigning custom
+                    making all adjacencies an AirBoundary face type or assigning custom
                     materials/construcitons).
                 * adjacent_apertures - A list of tuples with each tuple containing 2
                     objects for Apertures paired in the process of solving adjacency.

@@ -1,5 +1,5 @@
 """test Face class."""
-from honeybee.facetype import Wall, RoofCeiling, Floor, AirWall, face_types
+from honeybee.facetype import Wall, RoofCeiling, Floor, AirBoundary, face_types
 
 import pytest
 
@@ -34,10 +34,10 @@ def test_floor():
     assert floor_type_1 != face_types.wall
 
 
-def test_air_wall():
-    """Test the initialization of the AirWall face type."""
-    air_type_1 = AirWall()
-    air_type_2 = face_types.air_wall
+def test_air_boundary():
+    """Test the initialization of the AirBoundary face type."""
+    air_type_1 = AirBoundary()
+    air_type_2 = face_types.air_boundary
 
     str(air_type_1)  # test the string representation
     assert air_type_1 == air_type_2
@@ -50,9 +50,9 @@ def test_face_type_by_name():
     assert isinstance(face_types.by_name('wall'), Wall)
     assert isinstance(face_types.by_name('WALL'), Wall)
 
-    assert isinstance(face_types.by_name('AirWall'), AirWall)
-    assert isinstance(face_types.by_name('air_wall'), AirWall)
-    assert isinstance(face_types.by_name('AIRWALL'), AirWall)
+    assert isinstance(face_types.by_name('AirBoundary'), AirBoundary)
+    assert isinstance(face_types.by_name('air_boundary'), AirBoundary)
+    assert isinstance(face_types.by_name('AirBoundary'), AirBoundary)
 
     with pytest.raises(ValueError):
         face_types.by_name('Not_a_face_type')
