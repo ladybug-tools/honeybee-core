@@ -81,6 +81,31 @@ class _Properties(object):
                 import traceback
                 traceback.print_exc()
                 raise Exception('Failed to add prefix to {}: {}'.format(var, e))
+    
+    def _reset_extension_attr_to_default(self):
+        """Reset all extension attributes for the object to be default.
+
+        This is useful in cases where properties that are hard-assigned to a specific
+        object might be illegal in combination with other properties and so they
+        should be reset upon the setting of the other properties. For example,
+        setting a Face type to AirBoundary typically makes certain types of energy
+        and radiance properties illegal. So calling this function whenever setting
+        Face type to AirBoundary will reset the extension attributes to the legal
+        default values.
+        """
+        attr = [atr for atr in dir(self)
+                if not atr.startswith('_') and atr not in self._do_not_duplicate]
+
+        for atr in attr:
+            var = getattr(self, atr)
+            if not hasattr(var, 'reset_to_default'):
+                continue
+            try:
+                var.reset_to_default()
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to reset_to_default for {}: {}'.format(var, e))
 
     def _add_extension_attr_to_dict(self, base, abridged, include):
         """Add attributes for extensions to the base dictionary.
@@ -273,6 +298,14 @@ class RoomProperties(_Properties):
         """
         self._add_prefix_extension_attr(prefix)
 
+    def reset_to_default(self):
+        """Reset the extension properties assigned at the level of this Room to default.
+
+        This typically means erasing any ConstructionSets or ModifierSetss assigned
+        to this Room among other properties.
+        """
+        self._reset_extension_attr_to_default()
+
     def __repr__(self):
         """Properties representation."""
         return 'RoomProperties'
@@ -319,6 +352,14 @@ class FaceProperties(_Properties):
             prefix: Text that will be inserted at the start of extension attribute names.
         """
         self._add_prefix_extension_attr(prefix)
+    
+    def reset_to_default(self):
+        """Reset the extension properties assigned at the level of this Face to default.
+
+        This typically means erasing any Constructions or Modifiers assigned to this
+        Face (having them instead assigned by ConstrucitonSets and ModifierSets).
+        """
+        self._reset_extension_attr_to_default()
 
     def __repr__(self):
         """Properties representation."""
@@ -368,6 +409,14 @@ class ShadeProperties(_Properties):
         """
         self._add_prefix_extension_attr(prefix)
 
+    def reset_to_default(self):
+        """Reset the extension properties assigned at the level of this Shade to default.
+
+        This typically means erasing any Constructions or Modifiers assigned to this
+        Shade (having them instead assigned by ConstrucitonSets and ModifierSets).
+        """
+        self._reset_extension_attr_to_default()
+
     def __repr__(self):
         """Properties representation."""
         return 'ShadeProperties: {}'.format(self.host.display_name)
@@ -416,6 +465,14 @@ class ApertureProperties(_Properties):
         """
         self._add_prefix_extension_attr(prefix)
 
+    def reset_to_default(self):
+        """Reset the extension properties assigned to this Aperture to default.
+
+        This typically means erasing any Constructions or Modifiers assigned to this
+        Aperture (having them instead assigned by ConstrucitonSets and ModifierSets).
+        """
+        self._reset_extension_attr_to_default()
+
     def __repr__(self):
         """Properties representation."""
         return 'ApertureProperties: {}'.format(self.host.display_name)
@@ -463,6 +520,14 @@ class DoorProperties(_Properties):
             prefix: Text that will be inserted at the start of extension attribute names.
         """
         self._add_prefix_extension_attr(prefix)
+
+    def reset_to_default(self):
+        """Reset the extension properties assigned to this Door to default.
+
+        This typically means erasing any Constructions or Modifiers assigned to this
+        Door (having them instead assigned by ConstrucitonSets and ModifierSets).
+        """
+        self._reset_extension_attr_to_default()
 
     def __repr__(self):
         """Properties representation."""

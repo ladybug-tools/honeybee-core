@@ -9,7 +9,7 @@ from .aperture import Aperture
 from .door import Door
 from .typing import float_in_range, float_positive
 from .boundarycondition import Surface
-from .facetype import AirWall
+from .facetype import AirBoundary
 import honeybee.writer.model as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
@@ -662,16 +662,16 @@ class Model(_Base):
             return False
         return True
 
-    def check_all_air_walls_adjacent(self, raise_exception=True):
-        """Check that all Faces with the AirWall type are adjacent to other Faces.
+    def check_all_air_boundaries_adjacent(self, raise_exception=True):
+        """Check that all Faces with the AirBoundary type are adjacent to other Faces.
 
         This is a requirement for energy simulation.
         """
         for face in self.faces:
-            if isinstance(face.type, AirWall) and not \
+            if isinstance(face.type, AirBoundary) and not \
                     isinstance(face.boundary_condition, Surface):
                 if raise_exception:
-                    raise ValueError('Face "{}" is an AirWall but is not adjacent '
+                    raise ValueError('Face "{}" is an AirBoundary but is not adjacent '
                                      'to another Face.'.format(face.display_name))
                 return False
         return True

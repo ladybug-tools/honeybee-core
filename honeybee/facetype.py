@@ -45,12 +45,8 @@ class Floor(_FaceType):
     pass
 
 
-class AirWall(_FaceType):
-    """Type for virtual partitions between Rooms.
-
-    Note that the use of the word 'Wall' in AirWall does not limit the application
-    of this type to vertical faces. It can be applied to any face between two Rooms.
-    """
+class AirBoundary(_FaceType):
+    """Type for air boundaries (aka. virtual partitions) between Rooms."""
     __slots__ = ()
     pass
 
@@ -62,7 +58,7 @@ class _FaceTypes(object):
         self._wall = Wall()
         self._roof_ceiling = RoofCeiling()
         self._floor = Floor()
-        self._air_wall = AirWall()
+        self._air_boundary = AirBoundary()
         self._type_name_dict = None
 
     @property
@@ -78,8 +74,8 @@ class _FaceTypes(object):
         return self._floor
 
     @property
-    def air_wall(self):
-        return self._air_wall
+    def air_boundary(self):
+        return self._air_boundary
 
     def by_name(self, face_type_name):
         """Get a Face Type instance from its name.

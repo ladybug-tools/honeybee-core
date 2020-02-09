@@ -2,7 +2,7 @@
 """Honeybee Face."""
 from ._basewithshade import _BaseWithShade
 from .properties import FaceProperties
-from .facetype import face_types, get_type_from_normal, AirWall
+from .facetype import face_types, get_type_from_normal, AirBoundary
 from .boundarycondition import boundary_conditions, get_bc_from_position, \
     _BoundaryCondition, Outdoors, Surface
 from .shade import Shade
@@ -66,7 +66,7 @@ class Face(_BaseWithShade):
 
         # process the geometry
         assert isinstance(geometry, Face3D), \
-            'Expected ladybug_geometry Face3D. Got {}'.format(type(geometry))
+            'Expected ladybug_geometry Face3D. Got {}'.format(geometry)
         self._geometry = geometry
         self._parent = None  # _parent will be set when the Face is added to a Room
         # initialize with no apertures/doors (they can be assigned later)
@@ -74,15 +74,17 @@ class Face(_BaseWithShade):
         self._apertures = []
         self._doors = []
 
+        # initialize properties for extensions
+        self._properties = FaceProperties(self)
+
         # set face type based on normal if not provided
-        self.type = type or get_type_from_normal(geometry.normal)
+        if type is not None:
+            assert type in self.TYPES, '{} is not a valid face type.'.format(type)
+        self._type = type or get_type_from_normal(geometry.normal)
 
         # set boundary condition by the relation to a zero ground plane if not provided
         self.boundary_condition = boundary_condition or \
             get_bc_from_position(geometry.boundary)
-
-        # initialize properties for extensions
-        self._properties = FaceProperties(self)
 
     @classmethod
     def from_dict(cls, data):
@@ -141,15 +143,20 @@ class Face(_BaseWithShade):
 
     @property
     def type(self):
-        """Get or set an object for Type of Face (ie. Wall, Floor, Roof)."""
+        """Get or set an object for Type of Face (ie. Wall, Floor, Roof).
+        
+        Note that setting this property will reset extension attrributes on this
+        Face to their default values.
+        """
         return self._type
 
     @type.setter
     def type(self, value):
         assert value in self.TYPES, '{} is not a valid face type.'.format(value)
-        if self._apertures != [] or self._doors != []:
-            assert not isinstance(value, AirWall), \
+        if isinstance(value, AirBoundary):
+            assert self._apertures == [] or self._doors == [], \
                 '{} cannot be assigned to a Face with Apertures or Doors.'.format(value)
+        self.properties.reset_to_default()  # reset constructions/modifiers
         self._type = value
 
     @property
@@ -1043,8 +1050,8 @@ class Face(_BaseWithShade):
         assert isinstance(self.boundary_condition, Outdoors), \
             '{} can only be added to Faces with a Outdoor boundary condition.'.format(
                 sub_face_type.__name__)
-        assert not isinstance(self.type, AirWall), \
-            '{} cannot be added to AirWalls.'.format(sub_face_type.__name__)
+        assert not isinstance(self.type, AirBoundary), \
+            '{} cannot be added to AirBoundary.'.format(sub_face_type.__name__)
 
     def __copy__(self):
         new_f = Face(self.name, self.geometry, self.type, self.boundary_condition)
