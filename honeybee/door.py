@@ -16,6 +16,14 @@ import math
 class Door(_BaseWithShade):
     """A single planar Door in a Face.
 
+    Args:
+        name: Door name. Must be < 100 characters.
+        geometry: A ladybug-geometry Face3D.
+        boundary_condition: Boundary condition object (Outdoors, Surface, etc.).
+            Default: Outdoors.
+        is_glass: Boolean to note whether this object is a glass door as opposed
+            to an opaque door. Default: False.
+
     Properties:
         * name
         * display_name
@@ -37,16 +45,7 @@ class Door(_BaseWithShade):
     __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_glass')
 
     def __init__(self, name, geometry, boundary_condition=None, is_glass=False):
-        """A single planar Door in a Face.
-
-        Args:
-            name: Door name. Must be < 100 characters.
-            geometry: A ladybug-geometry Face3D.
-            boundary_condition: Boundary condition object (Outdoors, Surface, etc.).
-                Default: Outdoors.
-            is_glass: Boolean to note whether this object is a glass door as opposed
-                to an opaque door. Default: False.
-        """
+        """A single planar Door in a Face."""
         _BaseWithShade.__init__(self, name)  # process the name
 
         # process the geometry
@@ -198,7 +197,7 @@ class Door(_BaseWithShade):
     def perimeter(self):
         """Get the perimeter of the door."""
         return self._geometry.perimeter
-    
+
     def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
         """Get a number between 0 and 360 for the orientation of the door in degrees.
 
@@ -229,10 +228,10 @@ class Door(_BaseWithShade):
             if orient < ang:
                 return orient_text[i]
         return orient_text[0]
-    
+
     def add_prefix(self, prefix):
         """Change the name of this object by inserting a prefix.
-        
+
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects
@@ -286,7 +285,7 @@ class Door(_BaseWithShade):
                 than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
-        
+
         Returns:
             A list of the new Shade objects that have been generated.
         """

@@ -7,6 +7,9 @@ from .shade import Shade
 class _BaseWithShade(_Base):
     """A base class for all objects that can have Shades nested on them.
 
+    Args:
+        name: Object name. Must be < 100 characters.
+
     Properties:
         * name
         * display_name
@@ -18,11 +21,7 @@ class _BaseWithShade(_Base):
     __slots__ = ('_outdoor_shades', '_indoor_shades')
 
     def __init__(self, name):
-        """Initialize base with shade object.
-
-        Args:
-            name: Object name. Must be < 100 characters.
-        """
+        """Initialize base with shade object."""
         _Base.__init__(self, name)  # process the name
         self._outdoor_shades = []
         self._indoor_shades = []
@@ -178,7 +177,7 @@ class _BaseWithShade(_Base):
             oshd.scale(factor, origin)
         for ishd in self._indoor_shades:
             ishd.scale(factor, origin)
-    
+
     def _add_prefix_shades(self, prefix):
         """Change the name of all child shades by inserting a prefix.
 

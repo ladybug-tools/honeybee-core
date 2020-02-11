@@ -6,18 +6,17 @@ from .typing import valid_string
 class _Base(object):
     """A base class for all geometry objects.
 
+    Args:
+        name: Object name. Must be < 100 characters.
+
     Properties:
-        name
-        display_name
+        * name
+        * display_name
     """
     __slots__ = ('_name', '_display_name', '_properties')
 
     def __init__(self, name):
-        """Initialize base object.
-
-        Args:
-            name: Object name. Must be < 100 characters.
-        """
+        """Initialize base object."""
         self.name = name
         self._properties = None
 
