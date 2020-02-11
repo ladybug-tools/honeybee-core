@@ -2,11 +2,11 @@
 
 This is useful for cases like the following:
 
-    * Searching through the honeybee-radiance modifier library.
-    * Searching through the honeybee-energy material, construction, schedule,
-        constructionset, or programtype libraries.
-    * Searching through EnergyPlus IDD or RDD to find possilbe output variables
-        to request form the simulation.
+* Searching through the honeybee-radiance modifier library.
+* Searching through the honeybee-energy material, construction, schedule,
+  constructionset, or programtype libraries.
+* Searching through EnergyPlus IDD or RDD to find possilbe output variables
+  to request form the simulation.
 """
 
 

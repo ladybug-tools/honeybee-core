@@ -13,6 +13,10 @@ import math
 class Shade(_Base):
     """A single planar shade.
 
+    Args:
+        name: Shade name. Must be < 100 characters.
+        geometry: A ladybug-geometry Face3D.
+
     Properties:
         * name
         * display_name
@@ -30,12 +34,7 @@ class Shade(_Base):
     __slots__ = ('_geometry', '_parent', '_is_indoor')
 
     def __init__(self, name, geometry):
-        """A single planar shade.
-
-        Args:
-            name: Shade name. Must be < 100 characters.
-            geometry: A ladybug-geometry Face3D.
-        """
+        """A single planar shade."""
         _Base.__init__(self, name)  # process the name
 
         # process the geometry
@@ -85,7 +84,7 @@ class Shade(_Base):
     @property
     def parent(self):
         """Get the parent object if assigned. None if not assigned.
-        
+
         The parent object can be either a Room, Face, Aperture or Door.
         """
         return self._parent
@@ -94,11 +93,11 @@ class Shade(_Base):
     def has_parent(self):
         """Get a boolean noting whether this Shade has a parent object."""
         return self._parent is not None
-    
+
     @property
     def is_indoor(self):
         """Get a boolean for whether this Shade is on the indoors of its parent object.
-        
+
         Note that, if there is no parent assigned to this Shade, this property will
         be False.
         """
@@ -146,10 +145,10 @@ class Shade(_Base):
     def perimeter(self):
         """Get the perimeter of the shade."""
         return self._geometry.perimeter
-    
+
     def add_prefix(self, prefix):
         """Change the name of this object by inserting a prefix.
-        
+
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects

@@ -21,6 +21,39 @@ import math
 class Model(_Base):
     """A collection of Rooms, Faces, Shades, Apertures, and Doors representing a model.
 
+    Args:
+        name: Model name. Must be < 100 characters.
+        rooms: A list of Room objects in the model.
+        orphaned_faces: A list of the Face objects in the model that lack
+            a parent Room. Note that orphaned Faces are not acceptable for
+            Models that are to be exported for energy simulation.
+        orphaned_shades: A list of the Shade objects in the model that lack
+            a parent.
+        orphaned_apertures: A list of the Aperture objects in the model that lack
+            a parent Face. Note that orphaned Apertures are not acceptable for
+            Models that are to be exported for energy simulation.
+        orphaned_doors: A list of the Door objects in the model that lack
+            a parent Face. Note that orphaned Doors are not acceptable for
+            Models that are to be exported for energy simulation.
+        north_angle: An number between 0 and 360 to set the clockwise north
+            direction in degrees. Default is 0.
+        units: Text for the units system in which the model geometry
+            exists. Default: 'Meters'. Choose from the following:
+
+            * Meters
+            * Millimeters
+            * Feet
+            * Inches
+            * Centimeters
+
+        tolerance: The maximum difference between x, y, and z values at which
+            vertices are considered equivalent. Zero indicates that no tolerance
+            checks should be performed. Default: 0.
+        angle_tolerance: The max angle difference in degrees that vertices are
+            allowed to differ from one another in order to consider them colinear.
+            Zero indicates that no angle tolerance checks should be performed.
+            Default: 0.
+
     Properties:
         * name
         * display_name
@@ -42,45 +75,13 @@ class Model(_Base):
     __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
                  '_orphaned_doors', '_north_angle', '_north_vector', '_units',
                  '_tolerance', '_angle_tolerance')
-    
+
     UNITS = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')
 
     def __init__(self, name, rooms=None, orphaned_faces=None, orphaned_shades=None,
                  orphaned_apertures=None, orphaned_doors=None, north_angle=0,
                  units='Meters', tolerance=0, angle_tolerance=0):
-        """A collection of Rooms, Faces, Apertures, and Doors for an entire model.
-
-        Args:
-            name: Model name. Must be < 100 characters.
-            rooms: A list of Room objects in the model.
-            orphaned_faces: A list of the Face objects in the model that lack
-                a parent Room. Note that orphaned Faces are not acceptable for
-                Models that are to be exported for energy simulation.
-            orphaned_shades: A list of the Shade objects in the model that lack
-                a parent.
-            orphaned_apertures: A list of the Aperture objects in the model that lack
-                a parent Face. Note that orphaned Apertures are not acceptable for
-                Models that are to be exported for energy simulation.
-            orphaned_doors: A list of the Door objects in the model that lack
-                a parent Face. Note that orphaned Doors are not acceptable for
-                Models that are to be exported for energy simulation.
-            north_angle: An number between 0 and 360 to set the clockwise north
-                direction in degrees. Default is 0.
-            units: Text for the units system in which the model geometry
-                exists. Default: 'Meters'. Choose from the following:
-                    * Meters
-                    * Millimeters
-                    * Feet
-                    * Inches
-                    * Centimeters
-            tolerance: The maximum difference between x, y, and z values at which
-                vertices are considered equivalent. Zero indicates that no tolerance
-                checks should be performed. Default: 0.
-            angle_tolerance: The max angle difference in degrees that vertices are
-                allowed to differ from one another in order to consider them colinear.
-                Zero indicates that no angle tolerance checks should be performed.
-                Default: 0.
-        """
+        """A collection of Rooms, Faces, Apertures, and Doors for an entire model."""
         self.name = name
         self.north_angle = north_angle
         self.units = units
@@ -172,11 +173,13 @@ class Model(_Base):
                 direction in degrees. Default is 0.
             units: Text for the units system in which the model geometry
                 exists. Default: 'Meters'. Choose from the following:
-                    * Meters
-                    * Millimeters
-                    * Feet
-                    * Inches
-                    * Centimeters
+
+                * Meters
+                * Millimeters
+                * Feet
+                * Inches
+                * Centimeters
+
             tolerance: The maximum difference between x, y, and z values at which
                 vertices are considered equivalent. Zero indicates that no tolerance
                 checks should be performed. Default: 0.
@@ -244,7 +247,7 @@ class Model(_Base):
     @property
     def tolerance(self):
         """Get or set a number for the max meaningful difference between x, y, z values.
-        
+
         This value should be in the Model's units. Zero indicates cases
         where no tolerance checks should be performed.
         """
@@ -257,7 +260,7 @@ class Model(_Base):
     @property
     def angle_tolerance(self):
         """Get or set a number for the max meaningful angle difference in degrees.
-        
+
         Face3D normal vectors differing by this amount are not considered parallel
         and Face3D segments that differ from 180 by this amount are not considered
         colinear. Zero indicates cases where no angle_tolerance checks should be
@@ -563,11 +566,12 @@ class Model(_Base):
         Args:
             units: Text for the units to which the Model geometry should be
                 converted. Default: Meters. Choose from the following:
-                    * Meters
-                    * Millimeters
-                    * Feet
-                    * Inches
-                    * Centimeters
+
+                * Meters
+                * Millimeters
+                * Feet
+                * Inches
+                * Centimeters
         """
         if self.units != units:
             scale_fac1 = self.conversion_factor_to_meters(self.units)
@@ -759,20 +763,24 @@ class Model(_Base):
         Apertures that all have 3 or 4 sides.
 
         Returns:
-            triangulated_apertures: A list of lists where each list is a set of
+            A tuple with two elements
+
+            -   triangulated_apertures: A list of lists where each list is a set of
                 triangle Apertures meant to replace an Aperture with more than
                 4 sides in the model.
-            parents_to_edit: An list of lists that parellels the triangulated_apertures
+
+            -   parents_to_edit: An list of lists that parellels the triangulated_apertures
                 in that each item represents an Aperture that has been triangulated
                 in the model. However, each of these lists holds between 1 and 3 values
                 for the names of the original aperture and parents of the aperture.
                 This information is intended to help edit parent faces that have had
                 their child faces triangulated. The 3 values are as follows:
-                    0 = The name of the original Aperture that was triangulated.
-                    1 = The name of the parent Face of the original Aperture
-                        (if it exists).
-                    2 = The name of the parent Room of the parent Face of the
-                        original Aperture (if it exists).
+
+                * 0 = The name of the original Aperture that was triangulated.
+                * 1 = The name of the parent Face of the original Aperture
+                  (if it exists).
+                * 2 = The name of the parent Room of the parent Face of the
+                  original Aperture (if it exists).
         """
         triangulated_apertures = []
         parents_to_edit = []
@@ -816,19 +824,23 @@ class Model(_Base):
         all have 3 or 4 sides.
 
         Returns:
-            triangulated_doors: A list of lists where each list is a set of triangle
+            A tuple with two elements
+
+            -   triangulated_doors: A list of lists where each list is a set of triangle
                 Doors meant to replace a Door with more than 4 sides in the model.
-            parents_to_edit: An list of lists that parellels the triangulated_doors
+
+            -   parents_to_edit: An list of lists that parellels the triangulated_doors
                 in that each item represents a Door that has been triangulated
                 in the model. However, each of these lists holds between 1 and 3 values
                 for the names of the original door and parents of the door.
                 This information is intended to help edit parent faces that have had
                 their child faces triangulated. The 3 values are as follows:
-                    0 = The name of the original Door that was triangulated.
-                    1 = The name of the parent Face of the original Door
-                        (if it exists).
-                    2 = The name of the parent Room of the parent Face of the
-                        original Door (if it exists).
+
+                * 0 = The name of the original Door that was triangulated.
+                * 1 = The name of the parent Face of the original Door
+                  (if it exists).
+                * 2 = The name of the parent Room of the parent Face of the
+                  original Door (if it exists).
         """
         triangulated_doors = []
         parents_to_edit = []
@@ -876,14 +888,18 @@ class Model(_Base):
                 to generate the new Aperture objects.
 
         Returns:
-            new_aps: A list of the new Aperture objects.
-            parent_edit_info: An array of up to 3 values meant to help edit parents that
+            A tuple with two elements
+
+            -   new_aps: A list of the new Aperture objects.
+
+            -   parent_edit_info: An array of up to 3 values meant to help edit parents that
                 have had their child faces triangulated. The 3 values are as follows:
-                    0 = The name of the original Aperture that was triangulated.
-                    1 = The name of the parent Face of the original Aperture
-                        (if it exists).
-                    2 = The name of the parent Room of the parent Face of the
-                        original Aperture (if it exists).
+
+                * 0 = The name of the original Aperture that was triangulated.
+                * 1 = The name of the parent Face of the original Aperture
+                  (if it exists).
+                * 2 = The name of the parent Room of the parent Face of the
+                  original Aperture (if it exists).
         """
         # make the new Apertures and add them to the model
         new_aps = []
@@ -894,7 +910,7 @@ class Model(_Base):
             if original_ap.has_parent:
                 new_ap._parent = original_ap.parent
             new_aps.append(new_ap)
-        
+
         # transfer over any child shades to the first triangulated object
         if len(original_ap._indoor_shades) != 0:
             new_shds = [shd.duplicate() for shd in original_ap._indoor_shades]
@@ -924,14 +940,18 @@ class Model(_Base):
                 to generate the new Door objects.
 
         Returns:
-            new_drs: A list of the new Door objects.
-            parent_edit_info: An array of up to 3 values meant to help edit parents that
+            A tuple with four elements
+
+            -   new_drs: A list of the new Door objects.
+
+            -   parent_edit_info: An array of up to 3 values meant to help edit parents that
                 have had their child faces triangulated. The 3 values are as follows:
-                    0 = The name of the original Door that was triangulated.
-                    1 = The name of the parent Face of the original Door
-                        (if it exists).
-                    2 = The name of the parent Room of the parent Face of the
-                        original Door (if it exists).
+
+                * 0 = The name of the original Door that was triangulated.
+                * 1 = The name of the parent Face of the original Door
+                  (if it exists).
+                * 2 = The name of the parent Room of the parent Face of the
+                  original Door (if it exists).
         """
         # make the new doors and add them to the model
         new_drs = []
@@ -1050,13 +1070,14 @@ class Model(_Base):
                         [dr.to_dict(True, included_prop) for dr in tri_drs])
 
         return base
-    
+
     @staticmethod
     def conversion_factor_to_meters(units):
         """Get the conversion factor to meters based on input units.
 
         Args:
             units: Text for the units. Choose from the following:
+
                 * Meters
                 * Millimeters
                 * Feet

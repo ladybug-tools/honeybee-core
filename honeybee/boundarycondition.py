@@ -46,23 +46,23 @@ class _BoundaryCondition(object):
 
 
 class Outdoors(_BoundaryCondition):
-    """Outdoor boundary condition."""
+    """Outdoor boundary condition.
+
+    Args:
+        sun_exposure: A boolean noting whether the boundary is exposed to sun.
+            Default: True.
+        wind_exposure: A boolean noting whether the boundary is exposed to wind.
+            Default: True.
+        view_factor: A number between 0 and 1 for the view factor to the ground.
+            This input can also be an Autocalculate object to sigify that the view
+            factor automatically calculated.  Default: autocalculate.
+    """
 
     __slots__ = ('_sun_exposure', '_wind_exposure', '_view_factor')
 
     def __init__(self, sun_exposure=True, wind_exposure=True,
                  view_factor=autocalculate):
-        """Initialize Outdoors boundary condition.
-
-        Args:
-            sun_exposure: A boolean noting whether the boundary is exposed to sun.
-                Default: True.
-            wind_exposure: A boolean noting whether the boundary is exposed to wind.
-                Default: True.
-            view_factor: A number between 0 and 1 for the view factor to the ground.
-                This input can also be an Autocalculate object to sigify that the view
-                factor automatically calculated.  Default: autocalculate.
-        """
+        """Initialize Outdoors boundary condition."""
         assert isinstance(sun_exposure, bool), \
             'Input sun_exposure must be a Boolean. Got {}.'.format(type(sun_exposure))
         self._sun_exposure = sun_exposure
@@ -231,16 +231,16 @@ class Surface(_BoundaryCondition):
 
 
 class Ground(_BoundaryCondition):
-    """Ground boundary condition."""
+    """Ground boundary condition.
+    
+    Args:
+        data: A dictionary representaion of the boundary condition.
+    """
     __slots__ = ()
 
     @classmethod
     def from_dict(cls, data):
-        """Initialize Ground BoundaryCondition from a dictionary.
-
-        Args:
-            data: A dictionary representaion of the boundary condition.
-        """
+        """Initialize Ground BoundaryCondition from a dictionary."""
         assert data['type'] == 'Ground', 'Expected dictionary for Ground boundary ' \
             'condition. Got {}.'.format(data['type'])
         return cls()
@@ -266,14 +266,14 @@ class _BoundaryConditions(object):
 
     def surface(self, other_object, sub_face=False):
         """Get a Surface boundary condition.
-        
+
         Args:
             other_object: The other object that is adjacent to the one that will
                 bear this Surface boundary condition.
-            sub_face: Boolean to note whether 
+            sub_face: Boolean to note whether
         """
         return Surface.from_other_object(other_object, sub_face)
-    
+
     def by_name(self, bc_name):
         """Get a boundary condition object instance by its name.
 
@@ -292,7 +292,7 @@ class _BoundaryConditions(object):
             raise ValueError(
                 '"{}" is not a valid boundary condition name.\nChoose from the '
                 'following: {}'.format(bc_name, list(self._bc_name_dict.keys())))
-    
+
     def _build_bc_name_dict(self):
         """Build a dictionary that can be used to lookup boundary conditions by name."""
         attr = [atr for atr in dir(self) if not atr.startswith('_')]

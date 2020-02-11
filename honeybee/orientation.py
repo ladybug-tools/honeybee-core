@@ -30,7 +30,7 @@ from ladybug_geometry.geometry2d.pointvector import Vector2D
 
 def angles_from_num_orient(num_subdivisions=4):
     """Get a list of angles based on the number of compass subdividsions.
-    
+
     Args:
         num_subdivisions: An integer for the number of times that the compass
             should be subdivided. Default: 4, which will yield angles for North,
@@ -51,14 +51,14 @@ def angles_from_num_orient(num_subdivisions=4):
 
 def face_orient_index(face, angles, north_vector=Vector2D(0, 1)):
     """Get the index to be used for a given face/aperture orientation from an angle list.
-    
+
     Args:
         face: A honeybee Face or Aperture object.
         angles: A list of angles that denote the boundaries of each orientation
             category.
         north_vector: An optional ladybug_geometry Vector2D for the north direction.
             Default is the Y-axis (0, 1).
-    
+
     Returns:
         An integer for the index used to assign properties to the object of the
         input orientation. Will be None if the input Face or Aperture is perfectly
@@ -72,13 +72,13 @@ def face_orient_index(face, angles, north_vector=Vector2D(0, 1)):
 
 def orient_index(orientation, angles):
     """Get the index to be used for a given face/aperture orientation from an angle list.
-    
+
     Args:
         orientation: The horizontal cardinal orientaion of the Face or Aperture
             in degrees.
         angles: A list of angles that denote the boundaries of each orientation
             category.
-    
+
     Returns:
         An integer for the index used to assign properties to the object of the
         input orientation.
@@ -91,7 +91,7 @@ def orient_index(orientation, angles):
 
 def inputs_by_index(orientation_index, all_inputs):
     """Get all of the inputs of a certain index from a list of all_inputs.
-    
+
     This is useful for getting the set of all inputs that should be assigned to
     a given Face or Aperture using its orientation_index.
     """
@@ -100,7 +100,7 @@ def inputs_by_index(orientation_index, all_inputs):
 
 def check_matching_inputs(all_inputs, num_orient=None):
     """Check that all orientation-specific inputs are coordinated.
-    
+
     This means that each input is either a array of values to be aplied to each
     orientation, which is has the same length as other orientation-specific arrays,
     or it is a single value to be used for all orientations.
@@ -111,10 +111,13 @@ def check_matching_inputs(all_inputs, num_orient=None):
         num_orient: An optional integer for the number of orientation categories
             to be used. If None, the length of the longest input list in the
             all_inputs will be used.
-    
+
     Returns:
-        all_inputs -- The input all_inputs with all sub-arrays having the same length.
-        num_orient -- An integer for the number of orientations used in the check.
+        A tuple with two elements
+
+        -   all_inputs -- The input all_inputs with all sub-arrays having the same length.
+
+        -   num_orient -- An integer for the number of orientations used in the check.
     """
     num_orient = max([len(inp) for inp in all_inputs]) if num_orient is None \
             else num_orient

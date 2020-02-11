@@ -19,6 +19,20 @@ import math
 class Room(_BaseWithShade):
     """A volume enclosed by faces, representing a single room or space.
 
+    Args:
+        name: Room name. Must be < 100 characters.
+        faces: A list or tuple of honeybee Face objects that together form the
+            closed volume of a room.
+        tolerance: The maximum difference between x, y, and z values
+            at which vertices of adjacent faces are considered equivalent. This is
+            used in determining whether the faces form a closed volume. Default
+            is 0, which makes no attempt to evaluate whether the Room volume
+            is closed.
+        angle_tolerance: The max angle difference in degrees that vertices are
+            allowed to differ from one another in order to consider them colinear.
+            Default is 0, which makes no attempt to evaluate whether the Room
+            volume is closed.
+
     Properties:
         * name
         * display_name
@@ -47,20 +61,6 @@ class Room(_BaseWithShade):
         facing outward from the room volume.  As such, an input tolerance of 0
         is intended for workflows where the solidity of the room volume has been
         evaluated elsewhere.
-
-        Args:
-            name: Room name. Must be < 100 characters.
-            faces: A list or tuple of honeybee Face objects that together form the
-                closed volume of a room.
-            tolerance: The maximum difference between x, y, and z values
-                at which vertices of adjacent faces are considered equivalent. This is
-                used in determining whether the faces form a closed volume. Default
-                is 0, which makes no attempt to evaluate whether the Room volume
-                is closed.
-            angle_tolerance: The max angle difference in degrees that vertices are
-                allowed to differ from one another in order to consider them colinear.
-                Default is 0, which makes no attempt to evaluate whether the Room
-                volume is closed.
         """
         _BaseWithShade.__init__(self, name)  # process the name
 
@@ -329,10 +329,10 @@ class Room(_BaseWithShade):
                 orientations += face.horizontal_orientation(north_vector) * face.area
                 areas += face.area
         return orientations / areas if areas != 0 else None
-    
+
     def add_prefix(self, prefix):
         """Change the name of this object and all child objects by inserting a prefix.
-        
+
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects
@@ -591,17 +591,19 @@ class Room(_BaseWithShade):
                 suitable for objects in meters.
 
         Returns:
-            dict: A dictionary of adjacency information with the following keys.
+            A dictionary of adjacency information with the following keys.
 
-                * adjacent_faces - A list of tuples with each tuple containing 2 objects
-                    for Faces paired in the process of solving adjacency. This data can
-                    be used to assign custom properties to the new adjacent Faces (like
-                    making all adjacencies an AirBoundary face type or assigning custom
-                    materials/construcitons).
-                * adjacent_apertures - A list of tuples with each tuple containing 2
-                    objects for Apertures paired in the process of solving adjacency.
-                * adjacent_doors - A list of tuples with each tuple containing 2 objects
-                    for Doors paired in the process of solving adjacency.
+            -   adjacent_faces - A list of tuples with each tuple containing 2 objects
+                for Faces paired in the process of solving adjacency. This data can
+                be used to assign custom properties to the new adjacent Faces (like
+                making all adjacencies an AirBoundary face type or assigning custom
+                materials/construcitons).
+
+            -   adjacent_apertures - A list of tuples with each tuple containing 2
+                objects for Apertures paired in the process of solving adjacency.
+
+            -   adjacent_doors - A list of tuples with each tuple containing 2 objects
+                for Doors paired in the process of solving adjacency.
         """
         # lists of adjacencies to track
         adj_info = {'adjacent_faces': [], 'adjacent_apertures': [],

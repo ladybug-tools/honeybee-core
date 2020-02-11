@@ -8,16 +8,16 @@ on their own but should have a host object.
 
 
 class _Properties(object):
-    """Base class for all Properties classes."""
+    """Base class for all Properties classes.
+
+    Args:
+        host: A honeybee-core geometry object that hosts these properties
+            (ie. Model, Room, Face, Shade, Aperture, Door).
+    """
     _do_not_duplicate = ('host', 'to_dict', 'ToString')
 
     def __init__(self, host):
-        """Initialize properties.
-
-        Args:
-            host: A honeybee-core geometry object that hosts these properties
-                (ie. Model, Room, Face, Shade, Aperture, Door).
-        """
+        """Initialize properties."""
         self._host = host
 
     @property
@@ -51,14 +51,14 @@ class _Properties(object):
                 import traceback
                 traceback.print_exc()
                 raise Exception('Failed to duplicate {}: {}'.format(var, e))
-    
+
     def _add_prefix_extension_attr(self, prefix):
         """Change the name extension attributes unique to this object by adding a prefix.
-        
+
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms).
-        
+
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the object and does not add the prefix to attributes that are
         shared across several objects.
@@ -81,7 +81,7 @@ class _Properties(object):
                 import traceback
                 traceback.print_exc()
                 raise Exception('Failed to add prefix to {}: {}'.format(var, e))
-    
+
     def _reset_extension_attr_to_default(self):
         """Reset all extension attributes for the object to be default.
 
@@ -285,10 +285,10 @@ class RoomProperties(_Properties):
 
         base = self._add_extension_attr_to_dict(base, abridged, include)
         return base
-    
+
     def add_prefix(self, prefix):
         """Change the name extension attributes unique to this object by adding a prefix.
-        
+
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Room (eg. single-room HVAC systems) and does not add the
         prefix to attributes that are shared across several Rooms (eg. ConstructionSets).
@@ -343,7 +343,7 @@ class FaceProperties(_Properties):
 
     def add_prefix(self, prefix):
         """Change the name extension attributes unique to this object by adding a prefix.
-        
+
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Face and does not add the prefix to attributes that are
         shared across several Faces.
@@ -352,7 +352,7 @@ class FaceProperties(_Properties):
             prefix: Text that will be inserted at the start of extension attribute names.
         """
         self._add_prefix_extension_attr(prefix)
-    
+
     def reset_to_default(self):
         """Reset the extension properties assigned at the level of this Face to default.
 
@@ -399,7 +399,7 @@ class ShadeProperties(_Properties):
 
     def add_prefix(self, prefix):
         """Change the name extension attributes unique to this object by adding a prefix.
-        
+
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Shade and does not add the prefix to attributes that are
         shared across several Shades.
@@ -455,7 +455,7 @@ class ApertureProperties(_Properties):
 
     def add_prefix(self, prefix):
         """Change the name extension attributes unique to this object by adding a prefix.
-        
+
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Aperture and does not add the prefix to attributes that are
         shared across several Apertures.
@@ -511,7 +511,7 @@ class DoorProperties(_Properties):
 
     def add_prefix(self, prefix):
         """Change the name extension attributes unique to this object by adding a prefix.
-        
+
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Door and does not add the prefix to attributes that are
         shared across several Doors.

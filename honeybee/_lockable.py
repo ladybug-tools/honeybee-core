@@ -23,6 +23,9 @@ def lockable(cls):
     http://stackoverflow.com/questions/3603502/prevent-creating-new-attributes-outside-init
 
     Usage:
+
+    .. code-block:: python
+
         @lockable
         class Foo(object):
             def __init__(self):

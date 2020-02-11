@@ -22,6 +22,18 @@ import math
 class Face(_BaseWithShade):
     """A single planar face.
 
+    Args:
+        name: Face name. Must be < 100 characters.
+        geometry: A ladybug-geometry Face3D.
+        type: Face type. Default varies depending on the direction that
+            the Face geometry is points.
+            RoofCeiling = pointing upward within 30 degrees
+            Wall = oriented vertically within +/- 60 degrees
+            Floor = pointing downward within 30 degrees
+        boundary_condition: Face boundary condition (Outdoors, Ground, etc.)
+            Default is Outdoors unless all vertices of the geometry lie
+            below the below the XY plane, in which case it will be set to Ground.
+
     Properties:
         * name
         * display_name
@@ -48,20 +60,7 @@ class Face(_BaseWithShade):
                  '_apertures', '_doors', '_type', '_boundary_condition')
 
     def __init__(self, name, geometry, type=None, boundary_condition=None):
-        """A single planar face.
-
-        Args:
-            name: Face name. Must be < 100 characters.
-            geometry: A ladybug-geometry Face3D.
-            type: Face type. Default varies depending on the direction that
-                the Face geometry is points.
-                RoofCeiling = pointing upward within 30 degrees
-                Wall = oriented vertically within +/- 60 degrees
-                Floor = pointing downward within 30 degrees
-            boundary_condition: Face boundary condition (Outdoors, Ground, etc.)
-                Default is Outdoors unless all vertices of the geometry lie
-                below the below the XY plane, in which case it will be set to Ground.
-        """
+        """A single planar face."""
         _BaseWithShade.__init__(self, name)  # process the name
 
         # process the geometry
@@ -144,7 +143,7 @@ class Face(_BaseWithShade):
     @property
     def type(self):
         """Get or set an object for Type of Face (ie. Wall, Floor, Roof).
-        
+
         Note that setting this property will reset extension attrributes on this
         Face to their default values.
         """
@@ -301,10 +300,10 @@ class Face(_BaseWithShade):
             if orient < ang:
                 return orient_text[i]
         return orient_text[0]
-    
+
     def add_prefix(self, prefix):
         """Change the name of this object and all child objects by inserting a prefix.
-        
+
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects
@@ -420,12 +419,13 @@ class Face(_BaseWithShade):
                 suitable for objects in meters.
 
         Returns:
-            dict: A dictionary of adjacency information with the following keys.
+            A dictionary of adjacency information with the following keys
 
-                * adjacent_apertures - A list of tuples with each tuple containing 2
-                    objects for Apertures paired in the process of solving adjacency.
-                * adjacent_doors - A list of tuples with each tuple containing 2
-                    objects for Doors paired in the process of solving adjacency.
+            -   adjacent_apertures - A list of tuples with each tuple containing 2
+                objects for Apertures paired in the process of solving adjacency.
+
+            -   adjacent_doors - A list of tuples with each tuple containing 2
+                objects for Doors paired in the process of solving adjacency.
         """
         # check the inputs and the ability of the faces to be adjacent
         assert isinstance(other_face, Face), \
@@ -635,7 +635,7 @@ class Face(_BaseWithShade):
             aperture_name: Optional name for the aperture. If None, the default name
                 will follow the convention "[face_name]_Glz[count]" where [count]
                 is one more than the current numer of apertures in the face.
-        
+
         Returns:
             The new Aperture object that has been generated.
 
@@ -689,7 +689,7 @@ class Face(_BaseWithShade):
                 than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
-        
+
         Returns:
             A list of the new Shade objects that have been generated.
         """
@@ -726,7 +726,7 @@ class Face(_BaseWithShade):
                 than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
-        
+
         Returns:
             A list of the new Shade objects that have been generated.
         """
@@ -777,7 +777,7 @@ class Face(_BaseWithShade):
                 than the tolerance. Default: 0.01, suitable for objects in meters.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
-        
+
         Returns:
             A list of the new Shade objects that have been generated.
         """
