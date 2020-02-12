@@ -109,8 +109,6 @@ html_theme_options = {
 # Bootstrap theme custom file paths (relative to this file)
 # Layout.html path (already added above, include if different)
 # templates_path = ['_templates']
-# Stylesheet path
-html_static_path = ["_static"]
 
 # on_rtd is whether we are on readthedocs.org
 # on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -123,7 +121,7 @@ html_static_path = ["_static"]
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = []
+html_static_path = ["_static"]
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
