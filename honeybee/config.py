@@ -121,7 +121,7 @@ class Folders(object):
         An attempt will be made to create the directory if it does not already exist.
         """
         home_folder = os.getenv('HOME') or os.path.expanduser('~')
-        sim_folder = os.path.join(home_folder, 'honeybee')
+        sim_folder = os.path.join(home_folder, 'honeybee', 'simulation')
         if not os.path.isdir(sim_folder):
             try:
                 os.makedirs(sim_folder)
