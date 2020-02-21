@@ -37,20 +37,20 @@ def model_extension_dicts(data, extension_key, room_ext_dicts, face_ext_dicts,
 
     # loop through the model dictionary using the same logic that the
     # model does when you requst rooms, faces, shades, apertures and doors.
-    if 'rooms' in data:
+    if 'rooms' in data and data['rooms'] is not None:
         room_extension_dicts(data['rooms'], extension_key, room_ext_dicts,
                              face_ext_dicts, shade_ext_dicts, aperture_ext_dicts,
                              door_ext_dicts)
-    if 'orphaned_faces' in data:
+    if 'orphaned_faces' in data and data['orphaned_faces'] is not None:
         face_extension_dicts(data['orphaned_faces'], extension_key, face_ext_dicts,
                              shade_ext_dicts, aperture_ext_dicts, door_ext_dicts)
-    if 'orphaned_apertures' in data:
+    if 'orphaned_apertures' in data and data['orphaned_apertures'] is not None:
         aperture_extension_dicts(data['orphaned_apertures'], extension_key,
                                  aperture_ext_dicts, shade_ext_dicts)
-    if 'orphaned_doors' in data:
+    if 'orphaned_doors' in data and data['orphaned_doors'] is not None:
         door_extension_dicts(data['orphaned_doors'], extension_key, door_ext_dicts,
                              shade_ext_dicts)
-    if 'orphaned_shades' in data:
+    if 'orphaned_shades' in data and data['orphaned_shades'] is not None:
         shade_extension_dicts(data['orphaned_shades'], extension_key, shade_ext_dicts)
 
     return room_ext_dicts, face_ext_dicts, shade_ext_dicts, \
