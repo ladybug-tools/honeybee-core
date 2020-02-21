@@ -240,7 +240,7 @@ class ModelProperties(_Properties):
             if atr not in data['properties']:
                 continue
             var = getattr(self, atr)
-            if not hasattr(var, 'apply_properties_from_dict'):
+            if var and not hasattr(var, 'apply_properties_from_dict'):
                 continue
             try:
                 var.apply_properties_from_dict(data)
