@@ -117,7 +117,7 @@ class Folders(object):
     @staticmethod
     def _find_default_simulation_folder():
         """Find the the default simulation folder in its usual location.
-        
+
         An attempt will be made to create the directory if it does not already exist.
         """
         home_folder = os.getenv('HOME') or os.path.expanduser('~')
