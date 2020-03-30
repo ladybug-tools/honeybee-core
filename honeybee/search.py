@@ -1,4 +1,5 @@
 """Collection of methods for searching for keywords and filtering lists by keywords.
+This module also included methods to get nested attributes of objects.
 
 This is useful for cases like the following:
 
@@ -49,3 +50,47 @@ def any_keywords_in_string(name, keywords):
         if kw in name:
             return True
     return False
+
+
+def get_attr_nested(obj_instance, attr_name, decimal_count=None):
+    """Get the attribute of an object while allowing the request of nested attributes.
+
+    Args:
+        obj_instance: An instance of a Python object. Typically, this is a honeybee
+            object like a Model, Room, Face, Aperture, Door, or Shade.
+        attr_name: A string of an attribute that the input obj_instace should have.
+            This can have '.' that separate the nested attributes from one another.
+            For example, 'properties.energy.construction'.
+        decimal_count: An optional integer to be used to round the property to a
+            number of decimal places if it is a float.
+
+    Returns:
+        A string or number for tha attribute assinged ot the obj_instance. If the
+        input attr_name is a valid attribute for the object but None is assinged,
+        the output will be 'None'. If the input attr_name is not valid for
+        the input object, 'N/A' will be returned.
+    """
+    if '.' in attr_name:  # nested attribute
+        attributes = attr_name.split('.')  # get all the sub-attributes
+        current_obj = obj_instance
+        try:
+            for attribute in attributes:
+                current_obj = getattr(current_obj, attribute)
+            if isinstance(current_obj, float) and decimal_count:
+                return round(current_obj, decimal_count)
+            else:
+                return str(current_obj)
+        except AttributeError as e:
+            if 'NoneType' in str(e):  # it's a valid attribute but it's not assigned
+                return 'None'
+            else:  # it's not a valid attribute
+                return 'N/A'
+    else:  # honeybee-core attribute
+        try:
+            current_obj = getattr(obj_instance, attr_name)
+            if isinstance(current_obj, float) and decimal_count:
+                return round(current_obj, decimal_count)
+            else:
+                return str(current_obj)
+        except AttributeError:
+            return 'N/A'
