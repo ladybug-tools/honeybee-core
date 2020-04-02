@@ -7,52 +7,78 @@ class _Base(object):
     """A base class for all geometry objects.
 
     Args:
-        name: Object name. Must be < 100 characters.
+        identifier: Text string for a unique object ID. Must be < 100 characters and
+            not contain any spaces or special characters.
 
     Properties:
-        * name
+        * identifier
         * display_name
+        * user_data
     """
-    __slots__ = ('_name', '_display_name', '_properties')
+    __slots__ = ('_identifier', '_display_name', '_properties', '_user_data')
 
-    def __init__(self, name):
+    def __init__(self, identifier):
         """Initialize base object."""
-        self.name = name
+        self._identifier = valid_string(identifier, 'honeybee object identifier')
+        self._display_name = self._identifier
         self._properties = None
+        self._user_data = None
 
     @property
-    def name(self):
-        """Get or set the object name (including only legal characters)."""
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = valid_string(value, 'honeybee object name')
-        self._display_name = value
+    def identifier(self):
+        """Get a text string for the unique object identifer.
+    
+        This identifier remains constant as the object is mutated, copied, and
+        serialized to different formats (eg. dict, idf, rad). As such, this
+        property is used to reference the object across a Model.
+        """
+        return self._identifier
 
     @property
     def display_name(self):
-        """Get the original input name by user.
+        """Get or set a string for the object name without any character restrictions.
 
-        If there are no illegal characters in name then name and display_name will
-        be the same. Legal characters are ., A-Z, a-z, 0-9, _ and -.
-        Invalid characters are automatically removed from the original name for
-        compatability with simulation engines.
+        If not set, this will be equal to the identifier.
         """
         return self._display_name
+
+    @display_name.setter
+    def display_name(self, value):
+        try:
+            self._display_name = str(value)
+        except UnicodeEncodeError:  # Python 2 machine lacking the character set
+            self._display_name = value  # keep it as unicode
 
     @property
     def properties(self):
         """Get object properties, including Radiance, Energy and other properties."""
         return self._properties
 
+    @property
+    def user_data(self):
+        """Get or set an optional dictionary for additional meta data for this object.
+
+        This will be None until it has been set. All keys and values of this
+        dictionary should be of a standard Python type to ensure correct
+        serialization of the object to/from JSON (eg. str, float, int, list, dict)
+        """
+        return self._user_data
+
+    @user_data.setter
+    def user_data(self, value):
+        if value is not None:
+            assert isinstance(value, dict), 'Expected dictionary for honeybee ' \
+                'object user_data. Got {}.'.format(type(value))
+        self._user_data = value
+
     def duplicate(self):
         """Get a copy of this object."""
         return self.__copy__()
 
     def __copy__(self):
-        new_obj = self.__class__(self.name)
+        new_obj = self.__class__(self.identifier)
         new_obj._display_name = self.display_name
+        new_obj._user_data = None if self.user_data is None else self.user_data.copy()
         return new_obj
 
     def ToString(self):

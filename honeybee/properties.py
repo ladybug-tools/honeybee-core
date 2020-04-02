@@ -120,7 +120,7 @@ class _Properties(object):
             abridged: Boolean to note whether the attributes of the extensions should
                 be abridged (True) or full (False). For example, if a Room's energy
                 properties are abridged, the program_type attribute under the energy
-                properties dictionary will just be the name of the program_type. If
+                properties dictionary will just be the identifier of the program_type. If
                 it is full (not abridged), the program_type will be a complete
                 dictionary following the ProgramType schema. Abridged dictionaries
                 should be used within the Model.to_dict but full dictionaries should
@@ -252,7 +252,7 @@ class ModelProperties(_Properties):
 
     def __repr__(self):
         """Properties representation."""
-        return 'ModelProperties'
+        return 'ModelProperties: {}'.format(self.host.display_name)
 
 
 class RoomProperties(_Properties):
@@ -287,14 +287,14 @@ class RoomProperties(_Properties):
         return base
 
     def add_prefix(self, prefix):
-        """Change the name extension attributes unique to this object by adding a prefix.
+        """Change the identifier extension attributes unique to this object by adding a prefix.
 
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Room (eg. single-room HVAC systems) and does not add the
         prefix to attributes that are shared across several Rooms (eg. ConstructionSets).
 
         Args:
-            prefix: Text that will be inserted at the start of extension attribute names.
+            prefix: Text that will be inserted at the start of extension attribute identifiers.
         """
         self._add_prefix_extension_attr(prefix)
 
@@ -308,7 +308,7 @@ class RoomProperties(_Properties):
 
     def __repr__(self):
         """Properties representation."""
-        return 'RoomProperties'
+        return 'RoomProperties: {}'.format(self.host.display_name)
 
 
 class FaceProperties(_Properties):
@@ -342,14 +342,14 @@ class FaceProperties(_Properties):
         return base
 
     def add_prefix(self, prefix):
-        """Change the name extension attributes unique to this object by adding a prefix.
+        """Change the identifier extension attributes unique to this object by adding a prefix.
 
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Face and does not add the prefix to attributes that are
         shared across several Faces.
 
         Args:
-            prefix: Text that will be inserted at the start of extension attribute names.
+            prefix: Text that will be inserted at the start of extension attribute identifiers.
         """
         self._add_prefix_extension_attr(prefix)
 
@@ -398,14 +398,14 @@ class ShadeProperties(_Properties):
         return base
 
     def add_prefix(self, prefix):
-        """Change the name extension attributes unique to this object by adding a prefix.
+        """Change the identifier extension attributes unique to this object by adding a prefix.
 
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Shade and does not add the prefix to attributes that are
         shared across several Shades.
 
         Args:
-            prefix: Text that will be inserted at the start of extension attribute names.
+            prefix: Text that will be inserted at the start of extension attribute identifiers.
         """
         self._add_prefix_extension_attr(prefix)
 
@@ -454,14 +454,14 @@ class ApertureProperties(_Properties):
         return base
 
     def add_prefix(self, prefix):
-        """Change the name extension attributes unique to this object by adding a prefix.
+        """Change the identifier extension attributes unique to this object by adding a prefix.
 
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Aperture and does not add the prefix to attributes that are
         shared across several Apertures.
 
         Args:
-            prefix: Text that will be inserted at the start of extension attribute names.
+            prefix: Text that will be inserted at the start of extension attribute identifiers.
         """
         self._add_prefix_extension_attr(prefix)
 
@@ -510,14 +510,14 @@ class DoorProperties(_Properties):
         return base
 
     def add_prefix(self, prefix):
-        """Change the name extension attributes unique to this object by adding a prefix.
+        """Change the identifier extension attributes unique to this object by adding a prefix.
 
         Notably, this method only adds the prefix to extension attributes that must
         be unique to the Door and does not add the prefix to attributes that are
         shared across several Doors.
 
         Args:
-            prefix: Text that will be inserted at the start of extension attribute names.
+            prefix: Text that will be inserted at the start of extension attribute identifiers.
         """
         self._add_prefix_extension_attr(prefix)
 

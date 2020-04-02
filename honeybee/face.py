@@ -1,6 +1,7 @@
 # coding: utf-8
 """Honeybee Face."""
 from ._basewithshade import _BaseWithShade
+from .typing import clean_string
 from .properties import FaceProperties
 from .facetype import face_types, get_type_from_normal, AirBoundary
 from .boundarycondition import boundary_conditions, get_bc_from_position, \
@@ -23,7 +24,8 @@ class Face(_BaseWithShade):
     """A single planar face.
 
     Args:
-        name: Face name. Must be < 100 characters.
+        identifier: Text string for a unique Face ID. Must be < 100 characters and
+            not contain any spaces or special characters.
         geometry: A ladybug-geometry Face3D.
         type: Face type. Default varies depending on the direction that
             the Face geometry is points.
@@ -35,7 +37,7 @@ class Face(_BaseWithShade):
             below the below the XY plane, in which case it will be set to Ground.
 
     Properties:
-        * name
+        * identifier
         * display_name
         * type
         * boundary_condition
@@ -54,14 +56,15 @@ class Face(_BaseWithShade):
         * center
         * area
         * perimeter
+        * user_data
     """
     TYPES = face_types
     __slots__ = ('_geometry', '_parent', '_punched_geometry',
                  '_apertures', '_doors', '_type', '_boundary_condition')
 
-    def __init__(self, name, geometry, type=None, boundary_condition=None):
+    def __init__(self, identifier, geometry, type=None, boundary_condition=None):
         """A single planar face."""
-        _BaseWithShade.__init__(self, name)  # process the name
+        _BaseWithShade.__init__(self, identifier)  # process the identifier
 
         # process the geometry
         assert isinstance(geometry, Face3D), \
@@ -104,9 +107,11 @@ class Face(_BaseWithShade):
                 'Boundary condition "{}" is not supported in this honyebee '
                 'installation.'.format(data['boundary_condition']['type']))
         bc = bc_class.from_dict(data['boundary_condition'])
-        face = cls(data['name'], Face3D.from_dict(data['geometry']), face_type, bc)
+        face = cls(data['identifier'], Face3D.from_dict(data['geometry']), face_type, bc)
         if 'display_name' in data and data['display_name'] is not None:
-            face._display_name = data['display_name']
+            face.display_name = data['display_name']
+        if 'user_data' in data and data['user_data'] is not None:
+            face.user_data = data['user_data']
 
         # add sub-faces and shades to faces
         if 'apertures' in data and data['apertures'] is not None:
@@ -124,7 +129,7 @@ class Face(_BaseWithShade):
         return face
 
     @classmethod
-    def from_vertices(cls, name, vertices, type=None, boundary_condition=None):
+    def from_vertices(cls, identifier, vertices, type=None, boundary_condition=None):
         """Create a Face from vertices with each vertex as an iterable of 3 floats.
 
         Note that this method is not recommended for a face with one or more holes
@@ -132,13 +137,14 @@ class Face(_BaseWithShade):
         be derived from a single list of vertices.
 
         Args:
-            name: Face name.
+            identifier: Text string for a unique Face ID. Must be < 100 characters and
+                not contain any spaces or special characters.
             vertices: A flattened list of 3 or more vertices as (x, y, z).
             type: Face type object (eg. Wall, Floor).
             boundary_condition: Boundary condition object (eg. Outdoors, Ground)
         """
         geometry = Face3D(tuple(Point3D(*v) for v in vertices))
-        return cls(name, geometry, type, boundary_condition)
+        return cls(identifier, geometry, type, boundary_condition)
 
     @property
     def type(self):
@@ -302,20 +308,21 @@ class Face(_BaseWithShade):
         return orient_text[0]
 
     def add_prefix(self, prefix):
-        """Change the name of this object and all child objects by inserting a prefix.
+        """Change the identifier of this object and all child objects by inserting a prefix.
 
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects
-        within a Model must have unique names.
+        within a Model must have unique identifiers.
 
         Args:
             prefix: Text that will be inserted at the start of this object's
-                (and child objects') name and display_name. It is recommended
-                that this name be short to avoid maxing out the 100 allowable
-                characters for honeybee names.
+                (and child objects') identifier and display_name. It is recommended
+                that this prefix be short to avoid maxing out the 100 allowable
+                characters for honeybee identifiers.
         """
-        self.name = '{}_{}'.format(prefix, self.display_name)
+        self._identifier = clean_string('{}_{}'.format(prefix, self.identifier))
+        self.display_name = '{}_{}'.format(prefix, self.display_name)
         self.properties.add_prefix(prefix)
         for ap in self._apertures:
             ap.add_prefix(prefix)
@@ -323,7 +330,7 @@ class Face(_BaseWithShade):
             dr.add_prefix(prefix)
         self._add_prefix_shades(prefix)
         if isinstance(self._boundary_condition, Surface):
-            new_bc_objs = ('{}_{}'.format(prefix, adj_name) for adj_name
+            new_bc_objs = (clean_string('{}_{}'.format(prefix, adj_name)) for adj_name
                            in self._boundary_condition._boundary_condition_objects)
             self._boundary_condition = Surface(new_bc_objs, False)
 
@@ -440,7 +447,7 @@ class Face(_BaseWithShade):
         # set the apertures to be adjacent to one another
         assert len(self._apertures) == len(other_face._apertures), \
             'Number of apertures does not match between {} and {}.'.format(
-                self.name, other_face.name)
+                self.display_name, other_face.display_name)
         if len(self._apertures) > 0:
             found_adjacencies = 0
             for aper_1 in self._apertures:
@@ -452,12 +459,13 @@ class Face(_BaseWithShade):
                         break
             assert len(self._apertures) == found_adjacencies, \
                 'Not all apertures of {} were found to be adjacent to apertures in {}.' \
-                '\nTry increasing the tolerance.'.format(self.name, other_face.name)
+                '\nTry increasing the tolerance.'.format(
+                    self.display_name, other_face.display_name)
 
         # set the doors to be adjacent to one another
         assert len(self._doors) == len(other_face._doors), \
             'Number of doors does not match between {} and {}.'.format(
-                self.name, other_face.name)
+                self.display_name, other_face.display_name)
         if len(self._doors) > 0:
             found_adjacencies = 0
             for door_1 in self._doors:
@@ -469,7 +477,8 @@ class Face(_BaseWithShade):
                         break
             assert len(self._doors) == found_adjacencies, \
                 'Not all doors of {} were found to be adjacent to doors in {}.' \
-                '\nTry increasing the tolerance.'.format(self.name, other_face.name)
+                '\nTry increasing the tolerance.'.format(
+                    self.display_name, other_face.display_name)
 
         return adj_info
 
@@ -505,7 +514,7 @@ class Face(_BaseWithShade):
         else:
             ap_faces = self._geometry.sub_faces_by_ratio_rectangle(ratio, tolerance)
         for i, ap_face in enumerate(ap_faces):
-            aperture = Aperture('{}_Glz{}'.format(self.display_name, i), ap_face)
+            aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
             aperture._parent = self
             self._apertures.append(aperture)
 
@@ -560,7 +569,7 @@ class Face(_BaseWithShade):
                 ratio, aperture_height, sill_height, horizontal_separation,
                 vertical_separation, tolerance)
         for i, ap_face in enumerate(ap_faces):
-            aperture = Aperture('{}_Glz{}'.format(self.display_name, i), ap_face)
+            aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
             aperture._parent = self
             self._apertures.append(aperture)
 
@@ -609,12 +618,12 @@ class Face(_BaseWithShade):
             aperture_height, aperture_width, sill_height, horizontal_separation,
             tolerance)
         for i, ap_face in enumerate(ap_faces):
-            aperture = Aperture('{}_Glz{}'.format(self.display_name, i), ap_face)
+            aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
             aperture._parent = self
             self._apertures.append(aperture)
 
     def aperture_by_width_height(self, width, height, sill_height=1,
-                                 aperture_name=None):
+                                 aperture_identifier=None):
         """Add a single rectangular aperture to the center of this Face.
 
         A rectangular window with the input width and height will always be added
@@ -632,8 +641,8 @@ class Face(_BaseWithShade):
             width: A number for the Aperture width.
             height: A number for the Aperture height.
             sill_height: A number for the sill height. Default: 1.
-            aperture_name: Optional name for the aperture. If None, the default name
-                will follow the convention "[face_name]_Glz[count]" where [count]
+            aperture_identifier: Optional string for the aperture identifier. If None, the default
+                will follow the convention "[face_identifier]_Glz[count]" where [count]
                 is one more than the current numer of apertures in the face.
 
         Returns:
@@ -667,9 +676,8 @@ class Face(_BaseWithShade):
             ap_face = ap_face.flip()
 
         # Create the aperture and add it to this Face
-        name = aperture_name or '{}_Glz{}'.format(
-            self.display_name, len(self.apertures))
-        aperture = Aperture(name, ap_face)
+        identifier = aperture_identifier or '{}_Glz{}'.format(self.identifier, len(self.apertures))
+        aperture = Aperture(identifier, ap_face)
         aperture._parent = self
         self._apertures.append(aperture)
         return aperture
@@ -687,7 +695,7 @@ class Face(_BaseWithShade):
                 indoor geometry). Default: False.
             tolerance: An optional value to not add the overhang if it has a length less
                 than the tolerance. Default: 0.01, suitable for objects in meters.
-            base_name: Optional base name for the shade objects. If None, the default
+            base_name: Optional base identifier for the shade objects. If None, the default
                 is InOverhang or OutOverhang depending on whether indoor is True.
 
         Returns:
@@ -724,7 +732,7 @@ class Face(_BaseWithShade):
                 indoor geometry). Default: False.
             tolerance: An optional value to remove any louvers with a length less
                 than the tolerance. Default: 0.01, suitable for objects in meters.
-            base_name: Optional base name for the shade objects. If None, the default
+            base_name: Optional base identifier for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
 
         Returns:
@@ -742,7 +750,7 @@ class Face(_BaseWithShade):
             louver_count, depth, offset, angle,
             contour_vector, flip_start_side, tolerance)
         for i, shade_geo in enumerate(shade_faces):
-            louvers.append(Shade(shd_name_base.format(self.display_name, i), shade_geo))
+            louvers.append(Shade(shd_name_base.format(self.identifier, i), shade_geo))
         if indoor:
             self.add_indoor_shades(louvers)
         else:
@@ -775,7 +783,7 @@ class Face(_BaseWithShade):
                 indoor geometry). Default: False.
             tolerance: An optional value to remove any louvers with a length less
                 than the tolerance. Default: 0.01, suitable for objects in meters.
-            base_name: Optional base name for the shade objects. If None, the default
+            base_name: Optional base identifier for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
 
         Returns:
@@ -791,7 +799,7 @@ class Face(_BaseWithShade):
         shade_faces = face_geo.countour_fins_by_distance_between(
             distance, depth, offset, angle, contour_vector, flip_start_side, tolerance)
         for i, shade_geo in enumerate(shade_faces):
-            louvers.append(Shade(shd_name_base.format(self.display_name, i), shade_geo))
+            louvers.append(Shade(shd_name_base.format(self.identifier, i), shade_geo))
         if indoor:
             self.add_indoor_shades(louvers)
         else:
@@ -1018,14 +1026,14 @@ class Face(_BaseWithShade):
         Args:
             abridged: Boolean to note whether the extension properties of the
                 object (ie. materials, construcitons) should be included in detail
-                (False) or just referenced by name (True). Default: False.
+                (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
         """
         base = {'type': 'Face'}
-        base['name'] = self.name
+        base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
         enforce_upper_left = True if 'energy' in base['properties'] else False
@@ -1054,8 +1062,9 @@ class Face(_BaseWithShade):
             '{} cannot be added to AirBoundary.'.format(sub_face_type.__name__)
 
     def __copy__(self):
-        new_f = Face(self.name, self.geometry, self.type, self.boundary_condition)
+        new_f = Face(self.identifier, self.geometry, self.type, self.boundary_condition)
         new_f._display_name = self.display_name
+        new_f._user_data = None if self.user_data is None else self.user_data.copy()
         new_f._apertures = [ap.duplicate() for ap in self._apertures]
         new_f._doors = [dr.duplicate() for dr in self._doors]
         for ap in new_f._apertures:
@@ -1065,6 +1074,8 @@ class Face(_BaseWithShade):
         self._duplicate_child_shades(new_f)
         new_f._punched_geometry = self._punched_geometry
         new_f._properties._duplicate_extension_attr(self._properties)
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
         return new_f
 
     def __repr__(self):

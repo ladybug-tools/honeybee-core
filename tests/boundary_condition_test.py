@@ -60,12 +60,12 @@ def test_surface_from_other_object():
     assert bc.name == 'Surface'
     assert bc.sun_exposure_idf == 'NoSun'
     assert bc.wind_exposure_idf == 'NoWind'
-    assert bc.boundary_condition_object == room[1].name
+    assert bc.boundary_condition_object == room[1].identifier
 
 
 def test_surface_custom():
-    ap_adj_names = ('Adjacent Aperture', 'Adjacent Face', 'Adjacent Room')
-    face_adj_names = ('Adjacent Face', 'Adjacent Room')
+    ap_adj_names = ('AdjacentAperture', 'AdjacentFace', 'AdjacentRoom')
+    face_adj_names = ('AdjacentFace', 'AdjacentRoom')
     ap_bc = Surface(ap_adj_names, True)
     face_bc = Surface(face_adj_names, False)
     assert ap_bc.name == face_bc.name == 'Surface'
@@ -78,8 +78,8 @@ def test_surface_custom():
 
 
 def test_surface_to_dict():
-    ap_adj_names = ('Adjacent Aperture', 'Adjacent Face', 'Adjacent Room')
-    face_adj_names = ('Adjacent Face', 'Adjacent Room')
+    ap_adj_names = ('AdjacentAperture', 'AdjacentFace', 'AdjacentRoom')
+    face_adj_names = ('AdjacentFace', 'AdjacentRoom')
     ap_bc = Surface(ap_adj_names, True)
     face_bc = Surface(face_adj_names, False)
     ap_bc_dict = ap_bc.to_dict()

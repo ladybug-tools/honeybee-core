@@ -1,47 +1,84 @@
 """Test the typing functions."""
-from honeybee.typing import valid_string, valid_rad_string, valid_ep_string, \
+from honeybee.typing import clean_string, clean_rad_string, clean_ep_string, \
     float_in_range, int_in_range, float_positive, int_positive, \
-    tuple_with_length, list_with_length, normpath
+    tuple_with_length, list_with_length, normpath, \
+    clean_and_id_string, clean_and_id_rad_string, clean_and_id_ep_string
 
 import pytest
 
 
-def test_valid_string():
-    """Test the valid_string method."""
+def test_clean_string():
+    """Test the clean_string method."""
     correct_str = '0.5 in. Gypsum Wall'
     incorrect_str = '0.5 in., Gypsum Wall'
     long_str = 'This is an exceptionally long text string that should never be used ' \
         'for the name of anything in EnergyPlus for whatever reason'
 
-    assert valid_string(correct_str) == '0.5in.GypsumWall'
-    assert valid_string(incorrect_str) == '0.5in.GypsumWall'
+    assert clean_string(correct_str) == '0.5in.GypsumWall'
+    assert clean_string(incorrect_str) == '0.5in.GypsumWall'
     with pytest.raises(AssertionError):
-        valid_string(long_str)
+        clean_string(long_str)
 
 
-def test_valid_rad_string():
-    """Test the valid_rad_string method."""
+def test_clean_rad_string():
+    """Test the clean_rad_string method."""
     correct_str = '0.5 in. Gypsum Wall'
     incorrect_str = '0.5 in., Gypsum Wall'
     long_str = 'This is an exceptionally long text string that should never be used ' \
         'for the name of anything in EnergyPlus but is actually ok for Radiance'
 
-    assert valid_rad_string(correct_str) == '0.5in.GypsumWall'
-    assert valid_rad_string(incorrect_str) == '0.5in.GypsumWall'
-    valid_rad_string(long_str)
+    assert clean_rad_string(correct_str) == '0.5in.GypsumWall'
+    assert clean_rad_string(incorrect_str) == '0.5in.GypsumWall'
+    clean_rad_string(long_str)
 
 
-def test_valid_ep_string():
-    """Test the valid_ep_string method."""
+def test_clean_ep_string():
+    """Test the clean_ep_string method."""
     correct_str = '1/2 in. Gypsum Board'
     incorrect_str = '1/2 in., Gypsum Board!'
     long_str = 'This is an exceptionally long text string that should never be used ' \
         'for the name of anything in EnergyPlus'
 
-    assert valid_ep_string(correct_str) == correct_str
-    assert valid_ep_string(incorrect_str) == correct_str
+    assert clean_ep_string(correct_str) == correct_str
+    assert clean_ep_string(incorrect_str) == correct_str
     with pytest.raises(AssertionError):
-        valid_ep_string(long_str)
+        clean_ep_string(long_str)
+
+
+def test_clean_and_id_string():
+    """Test the clean_and_id_string method."""
+    correct_str = '0.5 in. Gypsum Wall'
+    incorrect_str = '0.5 in., Gypsum Wall'
+    long_str = 'This is an exceptionally long text string that should never be used ' \
+        'for the name of anything in EnergyPlus for whatever reason'
+
+    assert clean_and_id_string(correct_str).startswith('0.5in.GypsumWall')
+    assert clean_and_id_string(incorrect_str).startswith('0.5in.GypsumWall')
+    assert len(clean_and_id_string(long_str)) < 70
+
+
+def test_clean_and_id_rad_string():
+    """Test the clean_and_id_rad_string method."""
+    correct_str = '0.5 in. Gypsum Wall'
+    incorrect_str = '0.5 in., Gypsum Wall'
+    long_str = 'This is an exceptionally long text string that should never be used ' \
+        'for the name of anything in EnergyPlus but is actually ok for Radiance'
+
+    assert clean_and_id_rad_string(correct_str).startswith('0.5in.GypsumWall')
+    assert clean_and_id_rad_string(incorrect_str).startswith('0.5in.GypsumWall')
+    assert len(clean_and_id_rad_string(long_str)) > 70
+
+
+def test_clean_ep_string():
+    """Test the clean_and_id_ep_string method."""
+    correct_str = '1/2 in. Gypsum Board'
+    incorrect_str = '1/2 in., Gypsum Board!'
+    long_str = 'This is an exceptionally long text string that should never be used ' \
+        'for the name of anything in EnergyPlus'
+
+    assert clean_and_id_ep_string(correct_str).startswith(correct_str)
+    assert clean_and_id_ep_string(incorrect_str).startswith(correct_str)
+    assert len(clean_and_id_ep_string(long_str)) < 70
 
 
 def test_float_in_range():

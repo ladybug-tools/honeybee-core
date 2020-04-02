@@ -10,15 +10,19 @@ from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.plane import Plane
 
+import uuid as py_uuid
+import json
 import pytest
 
 
 def test_init():
     """Test the initialization of a Face."""
     vertices = [Point3D(0, 0, 0), Point3D(0, 10, 0), Point3D(0, 10, 3), Point3D(0, 0, 3)]
-    face = Face('Wall: SIM_INT_AIR [920980]', Face3D(vertices))
+    unique_id = str(py_uuid.uuid4())
+    face = Face(unique_id, Face3D(vertices))
+    face.display_name = 'Wall: SIM_INT_AIR [920980]'
 
-    assert face.name == 'WallSIM_INT_AIR920980'
+    assert face.identifier == unique_id
     assert face.display_name == 'Wall: SIM_INT_AIR [920980]'
     assert isinstance(face.geometry, Face3D)
     assert len(face.vertices) == 4
@@ -30,6 +34,16 @@ def test_init():
     assert isinstance(face.boundary_condition, Outdoors)
     assert isinstance(face.type, Wall)
     assert not face.has_parent
+
+
+def test_face_non_ascii_name():
+    """Test the initialization of Face objects with non-ascii display names."""
+    test_file = './tests/json/nonascii_face.json'
+
+    with open(test_file) as fp:
+        face_json = json.load(fp)
+    rebuilt_face = Face.from_dict(face_json)
+    assert 'Pared' in rebuilt_face.display_name
 
 
 def test_default_face_type():
@@ -49,7 +63,7 @@ def test_default_face_type():
 def test_setting_face_type():
     """Test the setting of face type to override default."""
     vertices = [Point3D(0, 0, 0), Point3D(0, 10, 0), Point3D(0, 10, 3), Point3D(0, 0, 3)]
-    face = Face('Vertical Roof', Face3D(vertices), face_types.roof_ceiling)
+    face = Face('VerticalRoof', Face3D(vertices), face_types.roof_ceiling)
 
     assert face.type == face_types.roof_ceiling
     face.type = face_types.wall
@@ -64,9 +78,9 @@ def test_default_boundary_condition():
         [Point3D(0, 0, -1), Point3D(0, 10, -1), Point3D(0, 10, 3), Point3D(0, 0, 3)]
     vertices_below = \
         [Point3D(0, 0, -3), Point3D(0, 10, -3), Point3D(0, 10, 0), Point3D(0, 0, 0)]
-    face_above = Face('Wall Above', Face3D(vertices_above))
-    face_mid = Face('Wall Mid', Face3D(vertices_mid))
-    face_below = Face('Wall Below', Face3D(vertices_below))
+    face_above = Face('WallAbove', Face3D(vertices_above))
+    face_mid = Face('WallMid', Face3D(vertices_mid))
+    face_below = Face('WallBelow', Face3D(vertices_below))
 
     assert face_above.boundary_condition == boundary_conditions.outdoors
     assert face_mid.boundary_condition == boundary_conditions.outdoors
@@ -76,7 +90,7 @@ def test_default_boundary_condition():
 def test_set_boundary_condition():
     """Test the setting of boundary condition to override default."""
     vertices = [Point3D(0, 0, 0), Point3D(0, 10, 0), Point3D(0, 10, 3), Point3D(0, 0, 3)]
-    face = Face('Wall', Face3D(vertices), face_types.wall, boundary_conditions.ground)
+    face = Face('MyWall', Face3D(vertices), face_types.wall, boundary_conditions.ground)
 
     assert face.boundary_condition == boundary_conditions.ground
     face.boundary_condition = boundary_conditions.outdoors
@@ -86,13 +100,13 @@ def test_set_boundary_condition():
 def test_face_duplicate():
     """Test the duplication of Face objects."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
-    face_1 = Aperture('Test Face', Face3D(pts))
+    face_1 = Aperture('TestFace', Face3D(pts))
     face_2 = face_1.duplicate()
 
     assert face_1 is not face_2
     for i, pt in enumerate(face_1.vertices):
         assert pt == face_2.vertices[i]
-    assert face_1.name == face_2.name
+    assert face_1.identifier == face_2.identifier
 
     face_2.move(Vector3D(0, 1, 0))
     for i, pt in enumerate(face_1.vertices):
@@ -106,10 +120,10 @@ def test_horizontal_orientation():
     pts_3 = [Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(0, 5, 3), Point3D(0, 5, 0)]
     pts_4 = tuple(reversed(pts_3))
 
-    face_1 = Face('Test Face', Face3D(pts_1))
-    face_2 = Face('Test Face', Face3D(pts_2))
-    face_3 = Face('Test Face', Face3D(pts_3))
-    face_4 = Face('Test Face', Face3D(pts_4))
+    face_1 = Face('TestFace1', Face3D(pts_1))
+    face_2 = Face('TestFace2', Face3D(pts_2))
+    face_3 = Face('TestFace3', Face3D(pts_3))
+    face_4 = Face('TestFace4', Face3D(pts_4))
 
     assert face_1.horizontal_orientation() == 0
     assert face_2.horizontal_orientation() == 180
@@ -124,10 +138,10 @@ def test_cardinal_direction():
     pts_3 = [Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(0, 5, 3), Point3D(0, 5, 0)]
     pts_4 = tuple(reversed(pts_3))
 
-    face_1 = Face('Test Face', Face3D(pts_1))
-    face_2 = Face('Test Face', Face3D(pts_2))
-    face_3 = Face('Test Face', Face3D(pts_3))
-    face_4 = Face('Test Face', Face3D(pts_4))
+    face_1 = Face('TestFace1', Face3D(pts_1))
+    face_2 = Face('TestFace2', Face3D(pts_2))
+    face_3 = Face('TestFace3', Face3D(pts_3))
+    face_4 = Face('TestFace4', Face3D(pts_4))
 
     assert face_1.cardinal_direction() == 'North'
     assert face_2.cardinal_direction() == 'South'
@@ -145,10 +159,10 @@ def test_face_add_prefix():
     prefix = 'New'
     face.add_prefix(prefix)
 
-    assert face.name.startswith(prefix)
+    assert face.identifier.startswith(prefix)
     for ap in face.apertures:
-        assert ap.name.startswith(prefix)
-    
+        assert ap.identifier.startswith(prefix)
+
     face_face3d = Face3D.from_rectangle(10, 10, Plane(o=Point3D(0, 0, 3)))
     ap_face3d = Face3D.from_rectangle(2, 2, Plane(o=Point3D(2, 2, 3)))
     face = Face('Test_Roof', face_face3d)
@@ -157,7 +171,7 @@ def test_face_add_prefix():
     face.add_prefix(prefix)
 
     for dr in face.doors:
-        assert dr.name.startswith(prefix)
+        assert dr.identifier.startswith(prefix)
 
 def test_add_remove_door():
     """Test the adding and removing of an door to a Face."""
@@ -390,9 +404,9 @@ def test_face_overhang():
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 3))
     pts_3 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 0))
-    face_1 = Face('Rectangle Face', Face3D(pts_1))
-    face_2 = Face('Good Triangle Face', Face3D(pts_2))
-    face_3 = Face('Bad Triangle Face', Face3D(pts_3))
+    face_1 = Face('RectangleFace', Face3D(pts_1))
+    face_2 = Face('GoodTriangleFace', Face3D(pts_2))
+    face_3 = Face('BadTriangleFace', Face3D(pts_3))
     face_1.overhang(1, tolerance=0.01)
     face_2.overhang(1, tolerance=0.01)
     face_3.overhang(1, tolerance=0.01)
@@ -406,7 +420,7 @@ def test_face_overhang():
 def test_face_louvers_by_distance_between():
     """Test the creation of a louvers_by_distance_between for Face objects."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
-    face = Face('Rectangle Face', Face3D(pts_1))
+    face = Face('RectangleFace', Face3D(pts_1))
     face.louvers_by_distance_between(0.5, 0.2, 0.1)
 
     assert len(face.outdoor_shades) == 6
@@ -420,7 +434,7 @@ def test_move():
     """Test the Face move method."""
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
     plane_1 = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 0))
-    face = Face('Rectangle Face', Face3D(pts_1, plane_1))
+    face = Face('RectangleFace', Face3D(pts_1, plane_1))
 
     vec_1 = Vector3D(2, 2, 2)
     new_f = face.duplicate()
@@ -438,7 +452,7 @@ def test_scale():
     """Test the Face scale method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    face = Face('Rectangle Face', Face3D(pts, plane))
+    face = Face('RectangleFace', Face3D(pts, plane))
 
     new_f = face.duplicate()
     new_f.scale(2)
@@ -455,7 +469,7 @@ def test_rotate():
     """Test the Face rotate method."""
     pts = (Point3D(0, 0, 2), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    face = Face('Rectangle Face', Face3D(pts, plane))
+    face = Face('RectangleFace', Face3D(pts, plane))
     origin = Point3D(0, 0, 0)
     axis = Vector3D(1, 0, 0)
 
@@ -486,7 +500,7 @@ def test_rotate_xy():
     """Test the Face rotate_xy method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    face = Face('Rectangle Face', Face3D(pts, plane))
+    face = Face('RectangleFace', Face3D(pts, plane))
     origin_1 = Point3D(1, 1, 0)
 
     test_1 = face.duplicate()
@@ -512,7 +526,7 @@ def test_reflect():
     """Test the Face reflect method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    face = Face('Rectangle Face', Face3D(pts, plane))
+    face = Face('RectangleFace', Face3D(pts, plane))
 
     origin_1 = Point3D(1, 0, 2)
     origin_2 = Point3D(0, 0, 2)
@@ -556,9 +570,9 @@ def test_check_planar():
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     pts_3 = (Point3D(0, 0, 2.0001), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     plane_1 = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    face_1 = Face('Wall 1', Face3D(pts_1, plane_1))
-    face_2 = Face('Wall 2', Face3D(pts_2, plane_1))
-    face_3 = Face('Wall 3', Face3D(pts_3, plane_1))
+    face_1 = Face('Wall1', Face3D(pts_1, plane_1))
+    face_2 = Face('Wall2', Face3D(pts_2, plane_1))
+    face_3 = Face('Wall3', Face3D(pts_3, plane_1))
 
     assert face_1.check_planar(0.001) is True
     assert face_2.check_planar(0.001, False) is False
@@ -576,10 +590,10 @@ def test_check_self_intersecting():
     plane_2 = Plane(Vector3D(0, 0, -1))
     pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2), Point3D(0, 2))
     pts_2 = (Point3D(0, 0), Point3D(0, 2), Point3D(2, 0), Point3D(2, 2))
-    face_1 = Face('Wall 1', Face3D(pts_1, plane_1))
-    face_2 = Face('Wall 2', Face3D(pts_2, plane_1))
-    face_3 = Face('Wall 3', Face3D(pts_1, plane_2))
-    face_4 = Face('Wall 4', Face3D(pts_2, plane_2))
+    face_1 = Face('Wall1', Face3D(pts_1, plane_1))
+    face_2 = Face('Wall2', Face3D(pts_2, plane_1))
+    face_3 = Face('Wall3', Face3D(pts_1, plane_2))
+    face_4 = Face('Wall4', Face3D(pts_2, plane_2))
 
     assert face_1.check_self_intersecting(False) is True
     assert face_2.check_self_intersecting(False) is False
@@ -596,8 +610,8 @@ def test_check_non_zero():
     plane_1 = Plane(Vector3D(0, 0, 1))
     pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2))
     pts_2 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 0))
-    face_1 = Face('Wall 1', Face3D(pts_1, plane_1))
-    face_2 = Face('Wall 2', Face3D(pts_2, plane_1))
+    face_1 = Face('Wall1', Face3D(pts_1, plane_1))
+    face_2 = Face('Wall2', Face3D(pts_2, plane_1))
 
     assert face_1.check_non_zero(0.0001, False) is True
     assert face_2.check_non_zero(0.0001, False) is False
@@ -608,13 +622,15 @@ def test_check_non_zero():
 def test_to_dict():
     """Test the Face to_dict method."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    face = Face.from_vertices('test wall', vertices, face_types.wall,
+    unique_id = str(py_uuid.uuid4())
+    face = Face.from_vertices(unique_id, vertices, face_types.wall,
                               boundary_conditions.ground)
+    face.display_name = 'testwall'
 
     fd = face.to_dict()
     assert fd['type'] == 'Face'
-    assert fd['name'] == 'testwall'
-    assert fd['display_name'] == 'test wall'
+    assert fd['identifier'] == unique_id
+    assert fd['display_name'] == 'testwall'
     assert 'geometry' in fd
     assert len(fd['geometry']['boundary']) == len(vertices)
     assert 'properties' in fd
@@ -626,7 +642,7 @@ def test_to_dict():
 def test_to_from_dict():
     """Test the to/from dict of Face objects."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    face = Face.from_vertices('test wall', vertices, face_types.wall,
+    face = Face.from_vertices('testwall', vertices, face_types.wall,
                               boundary_conditions.ground)
 
     face_dict = face.to_dict()
@@ -638,7 +654,7 @@ def test_to_from_dict():
 def test_writer():
     """Test the Face writer object."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    face = Face.from_vertices('test wall', vertices, face_types.wall,
+    face = Face.from_vertices('testwall', vertices, face_types.wall,
                               boundary_conditions.ground)
 
     writers = [mod for mod in dir(face.to) if not mod.startswith('_')]

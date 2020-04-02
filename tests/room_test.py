@@ -21,18 +21,18 @@ def test_init():
     pts_4 = [Point3D(10, 10, 0), Point3D(0, 10, 0), Point3D(0, 10, 3), Point3D(10, 10, 3)]
     pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 0, 3)]
-    face_1 = Face('Face 1', Face3D(pts_1))
-    face_2 = Face('Face 2', Face3D(pts_2))
-    face_3 = Face('Face 3', Face3D(pts_3))
-    face_4 = Face('Face 4', Face3D(pts_4))
-    face_5 = Face('Face 5', Face3D(pts_5))
-    face_6 = Face('Face 6', Face3D(pts_6))
-    room = Room('Zone: SHOE_BOX [920980]',
+    face_1 = Face('Face1', Face3D(pts_1))
+    face_2 = Face('Face2', Face3D(pts_2))
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4))
+    face_5 = Face('Face5', Face3D(pts_5))
+    face_6 = Face('Face6', Face3D(pts_6))
+    room = Room('ZoneSHOE_BOX920980',
                 [face_1, face_2, face_3, face_4, face_5, face_6], 0.01, 1)
 
     str(room)  # test the string representation of the room
-    assert room.name == 'ZoneSHOE_BOX920980'
-    assert room.display_name == 'Zone: SHOE_BOX [920980]'
+    assert room.identifier == 'ZoneSHOE_BOX920980'
+    assert room.display_name == 'ZoneSHOE_BOX920980'
     assert room.multiplier == 1
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 8
@@ -64,14 +64,14 @@ def test_init_open():
     pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 2.5, 3), Point3D(0, 2.5, 3), Point3D(0, 0, 3)]
     pts_7 = [Point3D(10, 2.5, 3), Point3D(10, 5, 3), Point3D(0, 5, 3), Point3D(0, 2.5, 3)]
-    face_1 = Face('Face 1', Face3D(pts_1))
-    face_2 = Face('Face 2', Face3D(pts_2))
-    face_3 = Face('Face 3', Face3D(pts_3))
-    face_4 = Face('Face 4', Face3D(pts_4))
-    face_5 = Face('Face 5', Face3D(pts_5))
-    face_6 = Face('Face 6', Face3D(pts_6))
-    face_7 = Face('Face 7', Face3D(pts_7))
-    room = Room('Zone: SHOE_BOX [920980]',
+    face_1 = Face('Face1', Face3D(pts_1))
+    face_2 = Face('Face2', Face3D(pts_2))
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4))
+    face_5 = Face('Face5', Face3D(pts_5))
+    face_6 = Face('Face6', Face3D(pts_6))
+    face_7 = Face('Face7', Face3D(pts_7))
+    room = Room('ZoneSHOE_BOX920980',
                 [face_1, face_2, face_3, face_4, face_5, face_6, face_7],
                 0.01, 1)
 
@@ -90,21 +90,21 @@ def test_init_coplanar():
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 2.5, 3), Point3D(0, 2.5, 3), Point3D(0, 0, 3)]
     pts_7 = [Point3D(10, 2.5, 3), Point3D(10, 5, 3), Point3D(0, 5, 3), Point3D(0, 2.5, 3)]
     pts_8 = [Point3D(10, 5, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 5, 3)]
-    face_1 = Face('Face 1', Face3D(pts_1))
-    face_2 = Face('Face 2', Face3D(pts_2))
-    face_3 = Face('Face 3', Face3D(pts_3))
-    face_4 = Face('Face 4', Face3D(pts_4))
-    face_5 = Face('Face 5', Face3D(pts_5))
-    face_6 = Face('Face 6', Face3D(pts_6))
-    face_7 = Face('Face 7', Face3D(pts_7))
-    face_8 = Face('Face 8', Face3D(pts_8))
-    room = Room('Zone: SHOE_BOX [920980]',
+    face_1 = Face('Face1', Face3D(pts_1))
+    face_2 = Face('Face2', Face3D(pts_2))
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4))
+    face_5 = Face('Face5', Face3D(pts_5))
+    face_6 = Face('Face6', Face3D(pts_6))
+    face_7 = Face('Face7', Face3D(pts_7))
+    face_8 = Face('Face8', Face3D(pts_8))
+    room = Room('ZoneSHOE_BOX920980',
                 [face_1, face_2, face_3, face_4, face_5, face_6, face_7, face_8],
                 0.01, 1)
 
     str(room)  # test the string representation of the room
-    assert room.name == 'ZoneSHOE_BOX920980'
-    assert room.display_name == 'Zone: SHOE_BOX [920980]'
+    assert room.identifier == 'ZoneSHOE_BOX920980'
+    assert room.display_name == 'ZoneSHOE_BOX920980'
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 12
     assert len(room) == 8
@@ -125,10 +125,10 @@ def test_polyface3d_init_from_polyface():
     hole_pts = [Point3D(1, 1, 0), Point3D(2, 1, 0), Point3D(2, 2, 0), Point3D(1, 2, 0)]
     face = Face3D(bound_pts, None, [hole_pts])
     polyface = Polyface3D.from_offset_face(face, 3)
-    room = Room.from_polyface3d('Donut Zone', polyface)
+    room = Room.from_polyface3d('DonutZone', polyface)
 
-    assert room.name == 'DonutZone'
-    assert room.display_name == 'Donut Zone'
+    assert room.identifier == 'DonutZone'
+    assert room.display_name == 'DonutZone'
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 16
     assert len(room) == 10
@@ -145,10 +145,10 @@ def test_polyface3d_init_from_polyface():
 
 def test_init_from_box():
     """Test the initialization of a room from box."""
-    room = Room.from_box('Zone: SHOE_BOX [920980]', 5, 10, 3, 90, Point3D(0, 0, 3))
+    room = Room.from_box('ZoneSHOE_BOX920980', 5, 10, 3, 90, Point3D(0, 0, 3))
 
-    assert room.name == 'ZoneSHOE_BOX920980'
-    assert room.display_name == 'Zone: SHOE_BOX [920980]'
+    assert room.identifier == 'ZoneSHOE_BOX920980'
+    assert room.display_name == 'ZoneSHOE_BOX920980'
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 8
     assert len(room) == 6
@@ -173,13 +173,13 @@ def test_average_orientation():
     pts_4 = [Point3D(10, 10, 0), Point3D(0, 10, 0), Point3D(0, 10, 3), Point3D(10, 10, 3)]
     pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 0, 3)]
-    face_1 = Face('Face 1', Face3D(pts_1), boundary_condition=boundary_conditions.ground)
-    face_2 = Face('Face 2', Face3D(pts_2), boundary_condition=boundary_conditions.ground)
-    face_3 = Face('Face 3', Face3D(pts_3))
-    face_4 = Face('Face 4', Face3D(pts_4), boundary_condition=boundary_conditions.ground)
-    face_5 = Face('Face 5', Face3D(pts_5), boundary_condition=boundary_conditions.ground)
-    face_6 = Face('Face 6', Face3D(pts_6))
-    room = Room('Passive Solar Earthship',
+    face_1 = Face('Face1', Face3D(pts_1), boundary_condition=boundary_conditions.ground)
+    face_2 = Face('Face2', Face3D(pts_2), boundary_condition=boundary_conditions.ground)
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4), boundary_condition=boundary_conditions.ground)
+    face_5 = Face('Face5', Face3D(pts_5), boundary_condition=boundary_conditions.ground)
+    face_6 = Face('Face6', Face3D(pts_6))
+    room = Room('PassiveSolarEarthship',
                 [face_1, face_2, face_3, face_4, face_5, face_6], 0.01, 1)
 
     assert room.average_orientation() == 180
@@ -196,13 +196,13 @@ def test_room_add_prefix():
     prefix = 'New'
     room.add_prefix(prefix)
 
-    assert room.name.startswith(prefix)
+    assert room.identifier.startswith(prefix)
     for face in room.faces:
-        assert face.name.startswith(prefix)
+        assert face.identifier.startswith(prefix)
         for ap in face.apertures:
-            assert ap.name.startswith(prefix)
+            assert ap.identifier.startswith(prefix)
     for shd in room.shades:
-        assert shd.name.startswith(prefix)
+        assert shd.identifier.startswith(prefix)
 
 
 def test_room_multiplier():
@@ -228,7 +228,7 @@ def test_apertures_and_shades():
     table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
     room.add_indoor_shade(Shade('Table', table_geo))
     tree_canopy_geo = Face3D.from_regular_polygon(6, 2, Plane(o=Point3D(5, -3, 4)))
-    room.add_outdoor_shade(Shade('Tree Canopy', tree_canopy_geo))
+    room.add_outdoor_shade(Shade('TreeCanopy', tree_canopy_geo))
 
     assert room.exterior_aperture_area == pytest.approx(7.5, rel=1e-3)
     assert len(room.indoor_shades) == 1
@@ -241,7 +241,7 @@ def test_apertures_and_shades():
     assert len(room.outdoor_shades) == 0
 
     room.add_indoor_shade(Shade('Table', table_geo))
-    room.add_outdoor_shade(Shade('Tree Canopy', tree_canopy_geo))
+    room.add_outdoor_shade(Shade('TreeCanopy', tree_canopy_geo))
     assert len(room.indoor_shades) == 1
     assert len(room.outdoor_shades) == 1
     assert room.indoor_shades[0].has_parent
@@ -398,16 +398,16 @@ def test_check_planar():
     pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 0, 3)]
     pts_7 = [Point3D(10, 0, 3), Point3D(10, 10, 3.1), Point3D(0, 10, 3), Point3D(0, 0, 3)]
-    face_1 = Face('Face 1', Face3D(pts_1))
-    face_2 = Face('Face 2', Face3D(pts_2))
-    face_3 = Face('Face 3', Face3D(pts_3))
-    face_4 = Face('Face 4', Face3D(pts_4))
-    face_5 = Face('Face 5', Face3D(pts_5))
-    face_6 = Face('Face 6', Face3D(pts_6))
-    face_7 = Face('Face 7', Face3D(pts_7))
-    room_1 = Room('Zone: SHOE_BOX [920980]',
+    face_1 = Face('Face1', Face3D(pts_1))
+    face_2 = Face('Face2', Face3D(pts_2))
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4))
+    face_5 = Face('Face5', Face3D(pts_5))
+    face_6 = Face('Face6', Face3D(pts_6))
+    face_7 = Face('Face7', Face3D(pts_7))
+    room_1 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_6], 0.01, 1)
-    room_2 = Room('Zone: SHOE_BOX [920980]',
+    room_2 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_7], 0.01, 1)
 
     assert room_1.check_planar(0.01, False)
@@ -423,16 +423,16 @@ def test_check_self_intersecting():
     pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 0, 3)]
     pts_7 = [Point3D(10, 0, 3), Point3D(0, 10, 3), Point3D(10, 10, 3), Point3D(0, 0, 3)]
-    face_1 = Face('Face 1', Face3D(pts_1))
-    face_2 = Face('Face 2', Face3D(pts_2))
-    face_3 = Face('Face 3', Face3D(pts_3))
-    face_4 = Face('Face 4', Face3D(pts_4))
-    face_5 = Face('Face 5', Face3D(pts_5))
-    face_6 = Face('Face 6', Face3D(pts_6))
-    face_7 = Face('Face 7', Face3D(pts_7))
-    room_1 = Room('Zone: SHOE_BOX [920980]',
+    face_1 = Face('Face1', Face3D(pts_1))
+    face_2 = Face('Face2', Face3D(pts_2))
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4))
+    face_5 = Face('Face5', Face3D(pts_5))
+    face_6 = Face('Face6', Face3D(pts_6))
+    face_7 = Face('Face7', Face3D(pts_7))
+    room_1 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_6], 0.01, 1)
-    room_2 = Room('Zone: SHOE_BOX [920980]',
+    room_2 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_7], 0.01, 1)
 
     assert room_1.check_self_intersecting(False)
@@ -448,16 +448,16 @@ def test_check_non_zero():
     pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 0, 3)]
     pts_7 = [Point3D(10, 0, 3), Point3D(10, 0.0001, 3), Point3D(0, 0.0001, 3), Point3D(0, 0, 3)]
-    face_1 = Face('Face 1', Face3D(pts_1))
-    face_2 = Face('Face 2', Face3D(pts_2))
-    face_3 = Face('Face 3', Face3D(pts_3))
-    face_4 = Face('Face 4', Face3D(pts_4))
-    face_5 = Face('Face 5', Face3D(pts_5))
-    face_6 = Face('Face 6', Face3D(pts_6))
-    face_7 = Face('Face 7', Face3D(pts_7))
-    room_1 = Room('Zone: SHOE_BOX [920980]',
+    face_1 = Face('Face1', Face3D(pts_1))
+    face_2 = Face('Face2', Face3D(pts_2))
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4))
+    face_5 = Face('Face5', Face3D(pts_5))
+    face_6 = Face('Face6', Face3D(pts_6))
+    face_7 = Face('Face7', Face3D(pts_7))
+    room_1 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_6], 0.01, 1)
-    room_2 = Room('Zone: SHOE_BOX [920980]',
+    room_2 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_6, face_7])
 
     assert room_1.check_non_zero(0.01, False)
@@ -466,8 +466,8 @@ def test_check_non_zero():
 
 def test_solve_adjacency():
     """Test the solve adjacency method."""
-    room_south = Room.from_box('South Zone', 5, 5, 3, origin=Point3D(0, 0, 0))
-    room_north = Room.from_box('North Zone', 5, 5, 3, origin=Point3D(0, 5, 0))
+    room_south = Room.from_box('SouthZone', 5, 5, 3, origin=Point3D(0, 0, 0))
+    room_north = Room.from_box('NorthZone', 5, 5, 3, origin=Point3D(0, 5, 0))
 
     assert room_south[1].boundary_condition == boundary_conditions.outdoors
     assert room_north[3].boundary_condition == boundary_conditions.outdoors
@@ -476,8 +476,8 @@ def test_solve_adjacency():
 
     assert isinstance(room_south[1].boundary_condition, Surface)
     assert isinstance(room_north[3].boundary_condition, Surface)
-    assert room_south[1].boundary_condition.boundary_condition_object == room_north[3].name
-    assert room_north[3].boundary_condition.boundary_condition_object == room_south[1].name
+    assert room_south[1].boundary_condition.boundary_condition_object == room_north[3].identifier
+    assert room_north[3].boundary_condition.boundary_condition_object == room_south[1].identifier
     assert len(adj_info['adjacent_faces']) == 1
     assert len(adj_info['adjacent_apertures']) == 0
     assert len(adj_info['adjacent_doors']) == 0
@@ -485,8 +485,8 @@ def test_solve_adjacency():
 
 def test_solve_adjacency_aperture():
     """Test the solve adjacency method with an interior aperture."""
-    room_south = Room.from_box('South Zone', 5, 5, 3, origin=Point3D(0, 0, 0))
-    room_north = Room.from_box('North Zone', 5, 5, 3, origin=Point3D(0, 5, 0))
+    room_south = Room.from_box('SouthZone', 5, 5, 3, origin=Point3D(0, 0, 0))
+    room_north = Room.from_box('NorthZone', 5, 5, 3, origin=Point3D(0, 5, 0))
     room_south[1].apertures_by_ratio(0.4, 0.01)
     room_north[3].apertures_by_ratio(0.4, 0.01)
 
@@ -498,9 +498,9 @@ def test_solve_adjacency_aperture():
     assert isinstance(room_south[1].apertures[0].boundary_condition, Surface)
     assert isinstance(room_north[3].apertures[0].boundary_condition, Surface)
     assert room_south[1].apertures[0].boundary_condition.boundary_condition_object == \
-        room_north[3].apertures[0].name
+        room_north[3].apertures[0].identifier
     assert room_north[3].apertures[0].boundary_condition.boundary_condition_object == \
-        room_south[1].apertures[0].name
+        room_south[1].apertures[0].identifier
     assert len(adj_info['adjacent_faces']) == 1
     assert len(adj_info['adjacent_apertures']) == 1
     assert len(adj_info['adjacent_doors']) == 0
@@ -508,11 +508,12 @@ def test_solve_adjacency_aperture():
 
 def test_to_dict():
     """Test the Room to_dict method."""
-    room = Room.from_box('Shoe Box Zone', 5, 10, 3)
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    room.display_name = 'Shoe Box Zone'
 
     rd = room.to_dict()
     assert rd['type'] == 'Room'
-    assert rd['name'] == 'ShoeBoxZone'
+    assert rd['identifier'] == 'ShoeBoxZone'
     assert rd['display_name'] == 'Shoe Box Zone'
     assert 'faces' in rd
     assert len(rd['faces']) == 6
@@ -524,7 +525,7 @@ def test_to_dict():
 
 def test_to_from_dict():
     """Test the to/from dict of Room objects."""
-    room = Room.from_box('Shoe Box Zone', 5, 10, 3)
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
 
     room_dict = room.to_dict()
     new_room = Room.from_dict(room_dict)
@@ -534,7 +535,7 @@ def test_to_from_dict():
 
 def test_writer():
     """Test the Room writer object."""
-    room = Room.from_box('Shoe Box Zone', 5, 10, 3)
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
 
     writers = [mod for mod in dir(room.to) if not mod.startswith('_')]
     for writer in writers:

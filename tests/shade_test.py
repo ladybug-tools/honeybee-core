@@ -5,17 +5,19 @@ from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
+import uuid as py_uuid
+import json
 import pytest
 
 
 def test_shade_init():
     """Test the initialization of Shade objects."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
-    shade = Shade('Test Shade', Face3D(pts))
+    shade = Shade('TestShade', Face3D(pts))
     str(shade)  # test the string representation
 
-    assert shade.name == 'TestShade'
-    assert shade.display_name == 'Test Shade'
+    assert shade.identifier == 'TestShade'
+    assert shade.display_name == 'TestShade'
     assert isinstance(shade.geometry, Face3D)
     assert len(shade.vertices) == 4
     assert shade.upper_left_vertices[0] == Point3D(1, 0, 3)
@@ -30,10 +32,10 @@ def test_shade_init():
 def test_shade_from_vertices():
     """Test the initialization of shade objects from vertices."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
-    shade = Shade.from_vertices('Test Shade', pts)
+    shade = Shade.from_vertices('TestShade', pts)
 
-    assert shade.name == 'TestShade'
-    assert shade.display_name == 'Test Shade'
+    assert shade.identifier == 'TestShade'
+    assert shade.display_name == 'TestShade'
     assert isinstance(shade.geometry, Face3D)
     assert len(shade.vertices) == 4
     assert shade.upper_left_vertices[0] == Point3D(1, 0, 3)
@@ -48,13 +50,13 @@ def test_shade_from_vertices():
 def test_shade_duplicate():
     """Test the duplication of shade objects."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
-    shd_1 = Shade('Test Shade', Face3D(pts))
+    shd_1 = Shade('TestShade', Face3D(pts))
     shd_2 = shd_1.duplicate()
 
     assert shd_1 is not shd_2
     for i, pt in enumerate(shd_1.vertices):
         assert pt == shd_2.vertices[i]
-    assert shd_1.name == shd_2.name
+    assert shd_1.identifier == shd_2.identifier
 
     shd_2.move(Vector3D(0, 1, 0))
     for i, pt in enumerate(shd_1.vertices):
@@ -65,7 +67,7 @@ def test_move():
     """Test the shade move method."""
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
     plane_1 = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 0))
-    shade = Shade('Rectangle Shade', Face3D(pts_1, plane_1))
+    shade = Shade('RectangleShade', Face3D(pts_1, plane_1))
 
     vec_1 = Vector3D(2, 2, 2)
     new_shd = shade.duplicate()
@@ -83,7 +85,7 @@ def test_scale():
     """Test the shade scale method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    shade = Shade('Rectangle Shade', Face3D(pts, plane))
+    shade = Shade('RectangleShade', Face3D(pts, plane))
 
     new_shd = shade.duplicate()
     new_shd.scale(2)
@@ -100,7 +102,7 @@ def test_rotate():
     """Test the shade rotate method."""
     pts = (Point3D(0, 0, 2), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    shade = Shade('Rectangle Shade', Face3D(pts, plane))
+    shade = Shade('RectangleShade', Face3D(pts, plane))
     origin = Point3D(0, 0, 0)
     axis = Vector3D(1, 0, 0)
 
@@ -131,7 +133,7 @@ def test_rotate_xy():
     """Test the Shade rotate_xy method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    shade = Shade('Rectangle Shade', Face3D(pts, plane))
+    shade = Shade('RectangleShade', Face3D(pts, plane))
     origin_1 = Point3D(1, 1, 0)
 
     test_1 = shade.duplicate()
@@ -157,7 +159,7 @@ def test_reflect():
     """Test the Shade reflect method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    shade = Shade('Rectangle Shade', Face3D(pts, plane))
+    shade = Shade('RectangleShade', Face3D(pts, plane))
 
     origin_1 = Point3D(1, 0, 2)
     origin_2 = Point3D(0, 0, 2)
@@ -201,9 +203,9 @@ def test_check_planar():
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     pts_3 = (Point3D(0, 0, 2.0001), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     plane_1 = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    shade_1 = Shade('Shade 1', Face3D(pts_1, plane_1))
-    shade_2 = Shade('Shade 2', Face3D(pts_2, plane_1))
-    shade_3 = Shade('Shade 3', Face3D(pts_3, plane_1))
+    shade_1 = Shade('Shade1', Face3D(pts_1, plane_1))
+    shade_2 = Shade('Shade2', Face3D(pts_2, plane_1))
+    shade_3 = Shade('Shade3', Face3D(pts_3, plane_1))
 
     assert shade_1.check_planar(0.001) is True
     assert shade_2.check_planar(0.001, False) is False
@@ -221,10 +223,10 @@ def test_check_self_intersecting():
     plane_2 = Plane(Vector3D(0, 0, -1))
     pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2), Point3D(0, 2))
     pts_2 = (Point3D(0, 0), Point3D(0, 2), Point3D(2, 0), Point3D(2, 2))
-    shade_1 = Shade('shade 1', Face3D(pts_1, plane_1))
-    shade_2 = Shade('shade 2', Face3D(pts_2, plane_1))
-    shade_3 = Shade('shade 3', Face3D(pts_1, plane_2))
-    shade_4 = Shade('shade 4', Face3D(pts_2, plane_2))
+    shade_1 = Shade('shade1', Face3D(pts_1, plane_1))
+    shade_2 = Shade('shade2', Face3D(pts_2, plane_1))
+    shade_3 = Shade('shade3', Face3D(pts_1, plane_2))
+    shade_4 = Shade('shade4', Face3D(pts_2, plane_2))
 
     assert shade_1.check_self_intersecting(False) is True
     assert shade_2.check_self_intersecting(False) is False
@@ -241,8 +243,8 @@ def test_check_non_zero():
     plane_1 = Plane(Vector3D(0, 0, 1))
     pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2))
     pts_2 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 0))
-    shade_1 = Shade('shade 1', Face3D(pts_1, plane_1))
-    shade_2 = Shade('shade 2', Face3D(pts_2, plane_1))
+    shade_1 = Shade('shade1', Face3D(pts_1, plane_1))
+    shade_2 = Shade('shade2', Face3D(pts_2, plane_1))
 
     assert shade_1.check_non_zero(0.0001, False) is True
     assert shade_2.check_non_zero(0.0001, False) is False
@@ -253,12 +255,12 @@ def test_check_non_zero():
 def test_to_dict():
     """Test the shade to_dict method."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    shd = Shade.from_vertices('Rectangle Shade', vertices)
+    shd = Shade.from_vertices('RectangleShade', vertices)
 
     shdd = shd.to_dict()
     assert shdd['type'] == 'Shade'
-    assert shdd['name'] == 'RectangleShade'
-    assert shdd['display_name'] == 'Rectangle Shade'
+    assert shdd['identifier'] == 'RectangleShade'
+    assert shdd['display_name'] == 'RectangleShade'
     assert 'geometry' in shdd
     assert len(shdd['geometry']['boundary']) == len(vertices)
     assert 'properties' in shdd
@@ -268,7 +270,7 @@ def test_to_dict():
 def test_to_from_dict():
     """Test the to/from dict of Shade objects."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    shd = Shade.from_vertices('Rectangle Shade', vertices)
+    shd = Shade.from_vertices('RectangleShade', vertices)
 
     shd_dict = shd.to_dict()
     new_shd = Shade.from_dict(shd_dict)
@@ -279,7 +281,7 @@ def test_to_from_dict():
 def test_writer():
     """Test the Shade writer object."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    shd = Shade.from_vertices('Rectangle Shade', vertices)
+    shd = Shade.from_vertices('RectangleShade', vertices)
 
     writers = [mod for mod in dir(shd.to) if not mod.startswith('_')]
     for writer in writers:

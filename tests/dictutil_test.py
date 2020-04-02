@@ -17,7 +17,7 @@ import pytest
 
 def test_dict_to_object():
     """Test the dict_to_object method with all geometry objects."""
-    room = Room.from_box('Tiny House Zone', 5, 10, 3)
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
     south_face = room[3]
     south_face.apertures_by_ratio(0.4, 0.01)
     south_face.apertures[0].overhang(0.5, indoor=False)
@@ -28,11 +28,11 @@ def test_dict_to_object():
                   Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
                       Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
-    door = Door('Front Door', Face3D(door_verts))
+    door = Door('FrontDoor', Face3D(door_verts))
     north_face.add_door(door)
-    aperture = Aperture('Front Aperture', Face3D(aperture_verts))
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
     north_face.add_aperture(aperture)
-    model = Model('Tiny House', [room])
+    model = Model('TinyHouse', [room])
 
     model_dict = model.to_dict()
     room_dict = room.to_dict()

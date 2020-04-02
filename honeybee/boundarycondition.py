@@ -141,7 +141,7 @@ class Surface(_BoundaryCondition):
         """Initialize Surface boundary condition.
 
         Args:
-            boundary_condition_objects: A list of up to 3 object names that are adjacent
+            boundary_condition_objects: A list of up to 3 object identifiers that are adjacent
                 to this one. The first object is always the one that is immediately
                 adjacent and is of the same object type (Face, Aperture, Door). When
                 this boundary condition is applied to a Face, the second object in the
@@ -187,12 +187,12 @@ class Surface(_BoundaryCondition):
         """
         error_msg = 'Surface boundary conditions can only be assigned to objects' \
             ' with parent Rooms.'
-        bc_objects = [other_object.name]
+        bc_objects = [other_object.identifier]
         if other_object.has_parent:
-            bc_objects.append(other_object.parent.name)
+            bc_objects.append(other_object.parent.identifier)
             if sub_face:
                 if other_object.parent.has_parent:
-                    bc_objects.append(other_object.parent.parent.name)
+                    bc_objects.append(other_object.parent.parent.identifier)
                 else:
                     raise AttributeError(error_msg)
         else:
@@ -201,7 +201,7 @@ class Surface(_BoundaryCondition):
 
     @property
     def boundary_condition_objects(self):
-        """Get a tuple of up to 3 object names that are adjacent to this one.
+        """Get a tuple of up to 3 object identifiers that are adjacent to this one.
 
         The first object is always the one that is immediately adjacet and is of
         the same object type (Face, Aperture, Door).
@@ -215,7 +215,7 @@ class Surface(_BoundaryCondition):
 
     @property
     def boundary_condition_object(self):
-        """Get the name of the object adjacent to this one."""
+        """Get the identifier of the object adjacent to this one."""
         return self._boundary_condition_objects[0]
 
     def to_dict(self):

@@ -1,6 +1,7 @@
 # coding: utf-8
 """Honeybee Aperture."""
 from ._basewithshade import _BaseWithShade
+from .typing import clean_string
 from .properties import ApertureProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
 from .shade import Shade
@@ -17,7 +18,8 @@ class Aperture(_BaseWithShade):
     """A single planar Aperture in a Face.
 
     Args:
-        name: Aperture name. Must be < 100 characters.
+        identifier: Text string for a unique Aperture ID. Must be < 100 characters and
+            not contain any spaces or special characters.
         geometry: A ladybug-geometry Face3D.
         boundary_condition: Boundary condition object (Outdoors, Surface).
             Default: Outdoors.
@@ -25,7 +27,7 @@ class Aperture(_BaseWithShade):
             ventilation. Default: False
 
     Properties:
-        * name
+        * identifier
         * display_name
         * boundary_condition
         * is_operable
@@ -41,12 +43,13 @@ class Aperture(_BaseWithShade):
         * center
         * area
         * perimeter
+        * user_data
     """
     __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_operable')
 
-    def __init__(self, name, geometry, boundary_condition=None, is_operable=False):
+    def __init__(self, identifier, geometry, boundary_condition=None, is_operable=False):
         """A single planar aperture in a face."""
-        _BaseWithShade.__init__(self, name)  # process the name
+        _BaseWithShade.__init__(self, identifier)  # process the identifier
 
         # process the geometry
         assert isinstance(geometry, Face3D), \
@@ -81,10 +84,12 @@ class Aperture(_BaseWithShade):
             raise ValueError(
                 'Boundary condition "{}" is not supported for Apertures.'.format(
                     data['boundary_condition']['type']))
-        aperture = cls(data['name'], Face3D.from_dict(data['geometry']),
+        aperture = cls(data['identifier'], Face3D.from_dict(data['geometry']),
                        boundary_condition, is_operable)
         if 'display_name' in data and data['display_name'] is not None:
-            aperture._display_name = data['display_name']
+            aperture.display_name = data['display_name']
+        if 'user_data' in data and data['user_data'] is not None:
+            aperture.user_data = data['user_data']
         aperture._recover_shades_from_dict(data)
 
         if data['properties']['type'] == 'ApertureProperties':
@@ -92,11 +97,12 @@ class Aperture(_BaseWithShade):
         return aperture
 
     @classmethod
-    def from_vertices(cls, name, vertices, boundary_condition=None, is_operable=False):
+    def from_vertices(cls, identifier, vertices, boundary_condition=None, is_operable=False):
         """Create an Aperture from vertices with each vertex as an iterable of 3 floats.
 
         Args:
-            name: Aperture name. Must be < 100 characters.
+            identifier: Text string for a unique Aperture ID. Must be < 100 characters and
+                not contain any spaces or special characters.
             vertices: A flattened list of 3 or more vertices as (x, y, z).
             boundary_condition: Boundary condition object (eg. Outdoors, Surface).
                 Default: Outdoors.
@@ -104,7 +110,7 @@ class Aperture(_BaseWithShade):
                 natrual ventilation. Default: False
         """
         geometry = Face3D(tuple(Point3D(*v) for v in vertices))
-        return cls(name, geometry, boundary_condition, is_operable)
+        return cls(identifier, geometry, boundary_condition, is_operable)
 
     @property
     def boundary_condition(self):
@@ -231,24 +237,25 @@ class Aperture(_BaseWithShade):
         return orient_text[0]
 
     def add_prefix(self, prefix):
-        """Change the name of this object and all child objects by inserting a prefix.
+        """Change the identifier of this object and all child objects by inserting a prefix.
 
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects
-        within a Model must have unique names.
+        within a Model must have unique identifiers.
 
         Args:
             prefix: Text that will be inserted at the start of this object's
-                (and child objects') name and display_name. It is recommended
-                that this name be short to avoid maxing out the 100 allowable
-                characters for honeybee names.
+                (and child objects') identifier and display_name. It is recommended
+                that this prefix be short to avoid maxing out the 100 allowable
+                characters for honeybee identifiers.
         """
-        self.name = '{}_{}'.format(prefix, self.display_name)
+        self._identifier = clean_string('{}_{}'.format(prefix, self.identifier))
+        self.display_name = '{}_{}'.format(prefix, self.display_name)
         self.properties.add_prefix(prefix)
         self._add_prefix_shades(prefix)
         if isinstance(self._boundary_condition, Surface):
-            new_bc_objs = ('{}_{}'.format(prefix, adj_name) for adj_name
+            new_bc_objs = (clean_string('{}_{}'.format(prefix, adj_name)) for adj_name
                            in self._boundary_condition._boundary_condition_objects)
             self._boundary_condition = Surface(new_bc_objs, True)
 
@@ -369,14 +376,14 @@ class Aperture(_BaseWithShade):
         for seg in self.geometry.boundary_segments:
             shade_geo = Face3D.from_extrusion(seg, extru_vec)
             extrusion.append(
-                Shade(shd_name_base.format(self.display_name, shd_count), shade_geo))
+                Shade(shd_name_base.format(self.identifier, shd_count), shade_geo))
             shd_count += 1
         if self.geometry.has_holes:
             for hole in self.geometry.hole_segments:
                 for seg in hole:
                     shade_geo = Face3D.from_extrusion(seg, extru_vec)
                     extrusion.append(
-                        Shade(shd_name_base.format(self.display_name, shd_count),
+                        Shade(shd_name_base.format(self.identifier, shd_count),
                               shade_geo))
                     shd_count += 1
         if indoor:
@@ -429,7 +436,7 @@ class Aperture(_BaseWithShade):
         else:
             shd_name_base = '{}_' + str(base_name) + '{}'
         for i, shade_geo in enumerate(shade_faces):
-            louvers.append(Shade(shd_name_base.format(self.display_name, i), shade_geo))
+            louvers.append(Shade(shd_name_base.format(self.identifier, i), shade_geo))
         if indoor:
             self.add_indoor_shades(louvers)
         else:
@@ -480,7 +487,7 @@ class Aperture(_BaseWithShade):
         else:
             shd_name_base = '{}_' + str(base_name) + '{}'
         for i, shade_geo in enumerate(shade_faces):
-            louvers.append(Shade(shd_name_base.format(self.display_name, i), shade_geo))
+            louvers.append(Shade(shd_name_base.format(self.identifier, i), shade_geo))
         if indoor:
             self.add_indoor_shades(louvers)
         else:
@@ -610,14 +617,14 @@ class Aperture(_BaseWithShade):
         Args:
             abridged: Boolean to note whether the extension properties of the
                 object (ie. materials, construcitons) should be included in detail
-                (False) or just referenced by name (True). Default: False.
+                (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
         """
         base = {'type': 'Aperture'}
-        base['name'] = self.name
+        base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
         enforce_upper_left = True if 'energy' in base['properties'] else False
@@ -628,12 +635,15 @@ class Aperture(_BaseWithShade):
         else:
             base['boundary_condition'] = self.boundary_condition.to_dict()
         self._add_shades_to_dict(base, abridged, included_prop)
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
         return base
 
     def __copy__(self):
-        new_ap = Aperture(self.name, self.geometry, self.boundary_condition,
+        new_ap = Aperture(self.identifier, self.geometry, self.boundary_condition,
                           self.is_operable)
         new_ap._display_name = self.display_name
+        new_ap._user_data = None if self.user_data is None else self.user_data.copy()
         self._duplicate_child_shades(new_ap)
         new_ap._properties._duplicate_extension_attr(self._properties)
         return new_ap

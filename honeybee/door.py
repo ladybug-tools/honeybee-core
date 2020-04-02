@@ -1,6 +1,7 @@
 # coding: utf-8
 """Honeybee Door."""
 from ._basewithshade import _BaseWithShade
+from .typing import clean_string
 from .properties import DoorProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
 from .shade import Shade
@@ -17,7 +18,8 @@ class Door(_BaseWithShade):
     """A single planar Door in a Face.
 
     Args:
-        name: Door name. Must be < 100 characters.
+        identifier: Text string for a unique Door ID. Must be < 100 characters and
+            not contain any spaces or special characters.
         geometry: A ladybug-geometry Face3D.
         boundary_condition: Boundary condition object (Outdoors, Surface, etc.).
             Default: Outdoors.
@@ -25,7 +27,7 @@ class Door(_BaseWithShade):
             to an opaque door. Default: False.
 
     Properties:
-        * name
+        * identifier
         * display_name
         * boundary_condition
         * is_glass
@@ -41,12 +43,13 @@ class Door(_BaseWithShade):
         * center
         * area
         * perimeter
+        * user_data
     """
     __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_glass')
 
-    def __init__(self, name, geometry, boundary_condition=None, is_glass=False):
+    def __init__(self, identifier, geometry, boundary_condition=None, is_glass=False):
         """A single planar Door in a Face."""
-        _BaseWithShade.__init__(self, name)  # process the name
+        _BaseWithShade.__init__(self, identifier)  # process the identifier
 
         # process the geometry
         assert isinstance(geometry, Face3D), \
@@ -81,10 +84,12 @@ class Door(_BaseWithShade):
             raise ValueError(
                 'Boundary condition "{}" is not supported for Door.'.format(
                     data['boundary_condition']['type']))
-        door = cls(data['name'], Face3D.from_dict(data['geometry']),
+        door = cls(data['identifier'], Face3D.from_dict(data['geometry']),
                    boundary_condition, is_glass)
         if 'display_name' in data and data['display_name'] is not None:
-            door._display_name = data['display_name']
+            door.display_name = data['display_name']
+        if 'user_data' in data and data['user_data'] is not None:
+            door.user_data = data['user_data']
         door._recover_shades_from_dict(data)
 
         if data['properties']['type'] == 'DoorProperties':
@@ -92,11 +97,12 @@ class Door(_BaseWithShade):
         return door
 
     @classmethod
-    def from_vertices(cls, name, vertices, boundary_condition=None, is_glass=False):
+    def from_vertices(cls, identifier, vertices, boundary_condition=None, is_glass=False):
         """Create a Door from vertices with each vertex as an iterable of 3 floats.
 
         Args:
-            name: Door name. Must be < 100 characters.
+            identifier: Text string for a unique Door ID. Must be < 100 characters and
+                not contain any spaces or special characters.
             vertices: A flattened list of 3 or more vertices as (x, y, z).
             boundary_condition: Boundary condition object (eg. Outdoors, Surface).
                 Default: Outdoors.
@@ -104,7 +110,7 @@ class Door(_BaseWithShade):
                 to an opaque door. Default: False.
         """
         geometry = Face3D(tuple(Point3D(*v) for v in vertices))
-        return cls(name, geometry, boundary_condition, is_glass)
+        return cls(identifier, geometry, boundary_condition, is_glass)
 
     @property
     def boundary_condition(self):
@@ -230,23 +236,25 @@ class Door(_BaseWithShade):
         return orient_text[0]
 
     def add_prefix(self, prefix):
-        """Change the name of this object by inserting a prefix.
+        """Change the identifier of this object and all child objects by inserting a prefix.
 
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects
-        within a Model must have unique names.
+        within a Model must have unique identifiers.
 
         Args:
-            prefix: Text that will be inserted at the start of this object's name
-                and display_name. It is recommended that this name be short to
-                avoid maxing out the 100 allowable characters for honeybee names.
+            prefix: Text that will be inserted at the start of this object's
+                (and child objects') identifier and display_name. It is recommended
+                that this prefix be short to avoid maxing out the 100 allowable
+                characters for honeybee identifiers.
         """
-        self.name = '{}_{}'.format(prefix, self.display_name)
+        self._identifier = clean_string('{}_{}'.format(prefix, self.identifier))
+        self.display_name = '{}_{}'.format(prefix, self.display_name)
         self.properties.add_prefix(prefix)
         self._add_prefix_shades(prefix)
         if isinstance(self._boundary_condition, Surface):
-            new_bc_objs = ('{}_{}'.format(prefix, adj_name) for adj_name
+            new_bc_objs = (clean_string('{}_{}'.format(prefix, adj_name)) for adj_name
                            in self._boundary_condition._boundary_condition_objects)
             self._boundary_condition = Surface(new_bc_objs, True)
 
@@ -303,7 +311,7 @@ class Door(_BaseWithShade):
         # create the Shade objects
         overhang = []
         for i, shade_geo in enumerate(shade_faces):
-            overhang.append(Shade(shd_name_base.format(self.display_name, i), shade_geo))
+            overhang.append(Shade(shd_name_base.format(self.identifier, i), shade_geo))
         if indoor:
             self.add_indoor_shades(overhang)
         else:
@@ -433,14 +441,14 @@ class Door(_BaseWithShade):
         Args:
             abridged: Boolean to note whether the extension properties of the
                 object (ie. materials, construcitons) should be included in detail
-                (False) or just referenced by name (True). Default: False.
+                (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
         """
         base = {'type': 'Door'}
-        base['name'] = self.name
+        base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
         enforce_upper_left = True if 'energy' in base['properties'] else False
@@ -452,11 +460,14 @@ class Door(_BaseWithShade):
         else:
             base['boundary_condition'] = self.boundary_condition.to_dict()
         self._add_shades_to_dict(base, abridged, included_prop)
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
         return base
 
     def __copy__(self):
-        new_door = Door(self.name, self.geometry, self.boundary_condition, self.is_glass)
+        new_door = Door(self.identifier, self.geometry, self.boundary_condition, self.is_glass)
         new_door._display_name = self.display_name
+        new_door._user_data = None if self.user_data is None else self.user_data.copy()
         self._duplicate_child_shades(new_door)
         new_door._properties._duplicate_extension_attr(self._properties)
         return new_door
