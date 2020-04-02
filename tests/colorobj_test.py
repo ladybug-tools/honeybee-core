@@ -16,8 +16,8 @@ import pytest
 
 def test_color_room():
     """Test ColorRoom."""
-    room_south = Room.from_box('South Zone', 5, 5, 3, origin=Point3D(0, 0, 0))
-    room_north = Room.from_box('North Zone', 5, 5, 3, origin=Point3D(0, 5, 0))
+    room_south = Room.from_box('SouthZone', 5, 5, 3, origin=Point3D(0, 0, 0))
+    room_north = Room.from_box('NorthZone', 5, 5, 3, origin=Point3D(0, 5, 0))
     room_south[1].apertures_by_ratio(0.4, 0.01)
     room_north[3].apertures_by_ratio(0.4, 0.01)
 
@@ -29,9 +29,9 @@ def test_color_room():
                   Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
                       Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
-    door = Door('Front Door', Face3D(door_verts))
+    door = Door('FrontDoor', Face3D(door_verts))
     room_north[1].add_door(door)
-    aperture = Aperture('Front Aperture', Face3D(aperture_verts))
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
     room_north[1].add_aperture(aperture)
     Room.solve_adjacency([room_south, room_north], 0.01)
 
@@ -41,7 +41,7 @@ def test_color_room():
     assert len(color_room1.rooms) == len(color_room2.rooms) == 2
     assert color_room1.attr_name == color_room1.attr_name_end == 'display_name'
     assert color_room2.attr_name == color_room2.attr_name_end == 'multiplier'
-    assert color_room1.attributes == ('South Zone', 'North Zone')
+    assert color_room1.attributes == ('SouthZone', 'NorthZone')
     assert color_room2.attributes == ('1', '1')
     assert isinstance(color_room1.graphic_container, GraphicContainer)
     assert len(color_room1.attributes_unique) == \
@@ -61,12 +61,12 @@ def test_color_face():
     pts_4 = [Point3D(10, 10, 0), Point3D(0, 10, 0), Point3D(0, 10, 3), Point3D(10, 10, 3)]
     pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 0, 3)]
-    face_1 = Face('Face 1', Face3D(pts_1))
-    face_2 = Face('Face 2', Face3D(pts_2))
-    face_3 = Face('Face 3', Face3D(pts_3))
-    face_4 = Face('Face 4', Face3D(pts_4))
-    face_5 = Face('Face 5', Face3D(pts_5))
-    face_6 = Face('Face 6', Face3D(pts_6))
+    face_1 = Face('Face1', Face3D(pts_1))
+    face_2 = Face('Face2', Face3D(pts_2))
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4))
+    face_5 = Face('Face5', Face3D(pts_5))
+    face_6 = Face('Face6', Face3D(pts_6))
     face_2.apertures_by_ratio(0.4, 0.01)
     face_2.apertures[0].overhang(0.5, indoor=False)
     face_2.apertures[0].overhang(0.5, indoor=True)
@@ -75,12 +75,12 @@ def test_color_face():
                   Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
     aperture_verts = [Point3D(4.5, 5, 1), Point3D(2.5, 5, 1),
                       Point3D(2.5, 5, 2.5), Point3D(4.5, 5, 2.5)]
-    door = Door('Front Door', Face3D(door_verts))
+    door = Door('FrontDoor', Face3D(door_verts))
     aperture = Aperture('Partition', Face3D(aperture_verts))
     table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
     table = Shade('Table', table_geo)
     tree_canopy_geo = Face3D.from_regular_polygon(6, 2, Plane(o=Point3D(5, -3, 4)))
-    tree_canopy = Shade('Tree Canopy', tree_canopy_geo)
+    tree_canopy = Shade('TreeCanopy', tree_canopy_geo)
 
     all_geo = [face_1, face_2, face_3, face_4, face_5, face_6, table, tree_canopy,
                aperture, door]
@@ -93,9 +93,9 @@ def test_color_face():
     assert color_face1.attr_name == color_face1.attr_name_end == 'display_name'
     assert color_face2.attr_name == color_face2.attr_name_end == 'boundary_condition'
     assert color_face1.attributes == \
-        ('Face 1', 'Face 2', 'Face 2_Glz0', 'Face 2_Glz0_OutOverhang0',
-         'Face 2_Glz0_InOverhang0', 'Face 3', 'Face 4', 'Face 5', 'Face 6',
-         'Table', 'Tree Canopy', 'Partition', 'Front Door')
+        ('Face1', 'Face2', 'Face2_Glz0', 'Face2_Glz0_OutOverhang0',
+         'Face2_Glz0_InOverhang0', 'Face3', 'Face4', 'Face5', 'Face6',
+         'Table', 'TreeCanopy', 'Partition', 'FrontDoor')
     assert color_face2.attributes == \
         ('Ground', 'Outdoors', 'Outdoors', 'N/A', 'N/A', 'Outdoors', 'Outdoors',
          'Outdoors', 'Outdoors', 'N/A', 'N/A', 'Outdoors', 'Outdoors')

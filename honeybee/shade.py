@@ -1,6 +1,7 @@
 # coding: utf-8
 """Honeybee Shade."""
 from ._base import _Base
+from .typing import clean_string
 from .properties import ShadeProperties
 import honeybee.writer.shade as writer
 
@@ -14,11 +15,12 @@ class Shade(_Base):
     """A single planar shade.
 
     Args:
-        name: Shade name. Must be < 100 characters.
+        identifier: Text string for a unique Shade ID. Must be < 100 characters and
+            not contain any spaces or special characters.
         geometry: A ladybug-geometry Face3D.
 
     Properties:
-        * name
+        * identifier
         * display_name
         * parent
         * is_indoor
@@ -30,12 +32,13 @@ class Shade(_Base):
         * center
         * area
         * perimeter
+        * user_data
     """
     __slots__ = ('_geometry', '_parent', '_is_indoor')
 
-    def __init__(self, name, geometry):
+    def __init__(self, identifier, geometry):
         """A single planar shade."""
-        _Base.__init__(self, name)  # process the name
+        _Base.__init__(self, identifier)  # process the identifier
 
         # process the geometry
         assert isinstance(geometry, Face3D), \
@@ -58,16 +61,18 @@ class Shade(_Base):
         assert data['type'] == 'Shade', 'Expected Shade dictionary. ' \
             'Got {}.'.format(data['type'])
 
-        shade = cls(data['name'], Face3D.from_dict(data['geometry']))
+        shade = cls(data['identifier'], Face3D.from_dict(data['geometry']))
         if 'display_name' in data and data['display_name'] is not None:
-            shade._display_name = data['display_name']
+            shade.display_name = data['display_name']
+        if 'user_data' in data and data['user_data'] is not None:
+            shade.user_data = data['user_data']
 
         if data['properties']['type'] == 'ShadeProperties':
             shade.properties._load_extension_attr_from_dict(data['properties'])
         return shade
 
     @classmethod
-    def from_vertices(cls, name, vertices):
+    def from_vertices(cls, identifier, vertices):
         """Create a Shade from vertices with each vertex as an iterable of 3 floats.
 
         Note that this method is not recommended for a shade with one or more holes
@@ -75,11 +80,12 @@ class Shade(_Base):
         be derived from a single list of vertices.
 
         Args:
-            name: Shade name.
+            identifier: Text string for a unique Shade ID. Must be < 100 characters and
+                not contain any spaces or special characters.
             vertices: A flattened list of 3 or more vertices as (x, y, z).
         """
         geometry = Face3D(tuple(Point3D(*v) for v in vertices))
-        return cls(name, geometry)
+        return cls(identifier, geometry)
 
     @property
     def parent(self):
@@ -147,19 +153,20 @@ class Shade(_Base):
         return self._geometry.perimeter
 
     def add_prefix(self, prefix):
-        """Change the name of this object by inserting a prefix.
+        """Change the identifier of this object by inserting a prefix.
 
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects
-        within a Model must have unique names.
+        within a Model must have unique identifiers.
 
         Args:
-            prefix: Text that will be inserted at the start of this object's name
-                and display_name. It is recommended that this name be short to
-                avoid maxing out the 100 allowable characters for honeybee names.
+            prefix: Text that will be inserted at the start of this object's identifier
+                and display_name. It is recommended that this prefix be short to
+                avoid maxing out the 100 allowable characters for honeybee identifiers.
         """
-        self.name = '{}_{}'.format(prefix, self.display_name)
+        self._identifier = clean_string('{}_{}'.format(prefix, self.identifier))
+        self.display_name = '{}_{}'.format(prefix, self.display_name)
         self.properties.add_prefix(prefix)
 
     def move(self, moving_vec):
@@ -280,23 +287,26 @@ class Shade(_Base):
         Args:
             abridged: Boolean to note whether the extension properties of the
                 object (ie. materials, transmittance schedule) should be included in
-                detail (False) or just referenced by name (True). Default: False.
+                detail (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
         """
         base = {'type': 'Shade'}
-        base['name'] = self.name
+        base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
         enforce_upper_left = True if 'energy' in base['properties'] else False
         base['geometry'] = self._geometry.to_dict(False, enforce_upper_left)
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
         return base
 
     def __copy__(self):
-        new_shade = Shade(self.name, self.geometry)
+        new_shade = Shade(self.identifier, self.geometry)
         new_shade._display_name = self.display_name
+        new_shade._user_data = None if self.user_data is None else self.user_data.copy()
         new_shade._properties._duplicate_extension_attr(self._properties)
         return new_shade
 

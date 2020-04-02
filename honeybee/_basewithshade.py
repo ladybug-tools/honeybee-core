@@ -8,10 +8,11 @@ class _BaseWithShade(_Base):
     """A base class for all objects that can have Shades nested on them.
 
     Args:
-        name: Object name. Must be < 100 characters.
+        identifier: Text string for a unique object ID. Must be < 100 characters and
+            not contain any spaces or special characters.
 
     Properties:
-        * name
+        * identifier
         * display_name
         * geometry
         * outdoor_shades
@@ -20,9 +21,9 @@ class _BaseWithShade(_Base):
     """
     __slots__ = ('_outdoor_shades', '_indoor_shades')
 
-    def __init__(self, name):
+    def __init__(self, identifier):
         """Initialize base with shade object."""
-        _Base.__init__(self, name)  # process the name
+        _Base.__init__(self, identifier)  # process the identifier
         self._outdoor_shades = []
         self._indoor_shades = []
 
@@ -227,7 +228,7 @@ class _BaseWithShade(_Base):
             base: The base object dictionary to which the child shades will be added.
             abridged: Boolean to note whether the extension properties of the
                 object should be included in detail (False) or just referenced by
-                name (True). Default: False.
+                identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be

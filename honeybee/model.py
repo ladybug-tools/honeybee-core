@@ -1,6 +1,7 @@
 # coding: utf-8
 """Honeybee Model."""
 from ._base import _Base
+from .typing import clean_string
 from .properties import ModelProperties
 from .room import Room
 from .face import Face
@@ -22,7 +23,8 @@ class Model(_Base):
     """A collection of Rooms, Faces, Shades, Apertures, and Doors representing a model.
 
     Args:
-        name: Model name. Must be < 100 characters.
+        identifier: Text string for a unique Model ID. Must be < 100 characters and
+            not contain any spaces or special characters.
         rooms: A list of Room objects in the model.
         orphaned_faces: A list of the Face objects in the model that lack
             a parent Room. Note that orphaned Faces are not acceptable for
@@ -55,7 +57,7 @@ class Model(_Base):
             Default: 0.
 
     Properties:
-        * name
+        * identifier
         * display_name
         * north_angle
         * north_vector
@@ -71,6 +73,7 @@ class Model(_Base):
         * orphaned_shades
         * orphaned_apertures
         * orphaned_doors
+        * user_data
     """
     __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
                  '_orphaned_doors', '_north_angle', '_north_vector', '_units',
@@ -78,11 +81,12 @@ class Model(_Base):
 
     UNITS = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')
 
-    def __init__(self, name, rooms=None, orphaned_faces=None, orphaned_shades=None,
+    def __init__(self, identifier, rooms=None, orphaned_faces=None, orphaned_shades=None,
                  orphaned_apertures=None, orphaned_doors=None, north_angle=0,
                  units='Meters', tolerance=0, angle_tolerance=0):
         """A collection of Rooms, Faces, Apertures, and Doors for an entire model."""
-        self.name = name
+        _Base.__init__(self, identifier)  # process the identifier
+
         self.north_angle = north_angle
         self.units = units
         self.tolerance = tolerance
@@ -149,25 +153,26 @@ class Model(_Base):
         units = 'Meters' if 'units' not in data else data['units']
 
         # build the model object
-        model = Model(data['name'], rooms, orphaned_faces, orphaned_shades,
+        model = Model(data['identifier'], rooms, orphaned_faces, orphaned_shades,
                       orphaned_apertures, orphaned_doors, north_angle,
                       units, tol, angle_tol)
-        assert model.display_name == model.name, \
-            'Model name "{}" has invalid characters."'.format(data['name'])
         if 'display_name' in data and data['display_name'] is not None:
-            model._display_name = data['display_name']
+            model.display_name = data['display_name']
+        if 'user_data' in data and data['user_data'] is not None:
+            model.user_data = data['user_data']
 
         # assign extension properties to the model
         model.properties.apply_properties_from_dict(data)
         return model
 
     @classmethod
-    def from_objects(cls, name, objects, north_angle=0, units='Meters',
+    def from_objects(cls, identifier, objects, north_angle=0, units='Meters',
                      tolerance=0, angle_tolerance=0):
         """Initialize a Model from a list of any type of honeybee-core geometry objects.
 
         Args:
-            name: Model name. Must be < 100 characters.
+            identifier: Text string for a unique Model ID. Must be < 100 characters and
+                not contain any spaces or special characters.
             objects: A list of honeybee Rooms, Faces, Shades, Apertures and Doors.
             north_angle: An number between 0 and 360 to set the clockwise north
                 direction in degrees. Default is 0.
@@ -208,7 +213,7 @@ class Model(_Base):
                 raise TypeError('Expected Room, Face, Shade, Aperture or Door '
                                 'for Model. Got {}'.format(type(obj)))
 
-        return cls(name, rooms, faces, shades, apertures, doors, north_angle)
+        return cls(identifier, rooms, faces, shades, apertures, doors, north_angle)
 
     @property
     def north_angle(self):
@@ -373,94 +378,94 @@ class Model(_Base):
         """Add a Face object without a parent to the model."""
         assert isinstance(obj, Face), 'Expected Face. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Face "{}"" has a parent Room. Add the Room to '\
-            'the model instead of the Face.'.format(obj.name)
+            'the model instead of the Face.'.format(obj.display_name)
         self._orphaned_faces.append(obj)
 
     def add_shade(self, obj):
         """Add an Shade object to the model."""
         assert isinstance(obj, Shade), 'Expected Shade. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Shade "{}"" has a parent object. Add the object to '\
-            'the model instead of the Shade.'.format(obj.name)
+            'the model instead of the Shade.'.format(obj.display_name)
         self._orphaned_shades.append(obj)
 
     def add_aperture(self, obj):
         """Add an Aperture object to the model."""
         assert isinstance(obj, Aperture), 'Expected Aperture. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Aperture "{}"" has a parent Face. Add the Face to '\
-            'the model instead of the Aperture.'.format(obj.name)
+            'the model instead of the Aperture.'.format(obj.display_name)
         self._orphaned_apertures.append(obj)
 
     def add_door(self, obj):
         """Add an Door object to the model."""
         assert isinstance(obj, Door), 'Expected Door. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Door "{}"" has a parent Face. Add the Face to '\
-            'the model instead of the Door.'.format(obj.name)
+            'the model instead of the Door.'.format(obj.display_name)
         self._orphaned_doors.append(obj)
 
-    def get_rooms_by_name(self, names):
-        """Get a list of Room objects in the model given the Room names."""
+    def get_rooms_by_identifier(self, identifiers):
+        """Get a list of Room objects in the model given the Room identifiers."""
         rooms = []
         model_rooms = self._rooms
-        for name in names:
+        for identifier in identifiers:
             for room in model_rooms:
-                if room.name == name:
+                if room.identifier == identifier:
                     rooms.append(room)
                     break
             else:
-                raise ValueError('Room "{}" was not found in the model.'.format(name))
+                raise ValueError('Room "{}" was not found in the model.'.format(identifier))
         return rooms
 
-    def get_faces_by_name(self, names):
-        """Get a list of Face objects in the model given the Face names."""
+    def get_faces_by_identifier(self, identifiers):
+        """Get a list of Face objects in the model given the Face identifiers."""
         faces = []
         model_faces = self.faces
-        for name in names:
+        for identifier in identifiers:
             for face in model_faces:
-                if face.name == name:
+                if face.identifier == identifier:
                     faces.append(face)
                     break
             else:
-                raise ValueError('Face "{}" was not found in the model.'.format(name))
+                raise ValueError('Face "{}" was not found in the model.'.format(identifier))
         return faces
 
-    def get_shades_by_name(self, names):
-        """Get a list of Shade objects in the model given the Shade names."""
+    def get_shades_by_identifier(self, identifiers):
+        """Get a list of Shade objects in the model given the Shade identifiers."""
         shades = []
         model_shades = self.shades
-        for name in names:
+        for identifier in identifiers:
             for face in model_shades:
-                if face.name == name:
+                if face.identifier == identifier:
                     shades.append(face)
                     break
             else:
-                raise ValueError('Shade "{}" was not found in the model.'.format(name))
+                raise ValueError('Shade "{}" was not found in the model.'.format(identifier))
         return shades
 
-    def get_apertures_by_name(self, names):
-        """Get a list of Aperture objects in the model given the Aperture names."""
+    def get_apertures_by_identifier(self, identifiers):
+        """Get a list of Aperture objects in the model given the Aperture identifiers."""
         apertures = []
         model_apertures = self.apertures
-        for name in names:
+        for identifier in identifiers:
             for aperture in model_apertures:
-                if aperture.name == name:
+                if aperture.identifier == identifier:
                     apertures.append(aperture)
                     break
             else:
                 raise ValueError(
-                    'Aperture "{}" was not found in the model.'.format(name))
+                    'Aperture "{}" was not found in the model.'.format(identifier))
         return apertures
 
-    def get_doors_by_name(self, names):
-        """Get a list of Door objects in the model given the Door names."""
+    def get_doors_by_identifier(self, identifiers):
+        """Get a list of Door objects in the model given the Door identifiers."""
         doors = []
         model_doors = self.doors
-        for name in names:
+        for identifier in identifiers:
             for door in model_doors:
-                if door.name == name:
+                if door.identifier == identifier:
                     doors.append(door)
                     break
             else:
-                raise ValueError('Door "{}" was not found in the model.'.format(name))
+                raise ValueError('Door "{}" was not found in the model.'.format(identifier))
         return doors
 
     def move(self, moving_vec):
@@ -580,85 +585,85 @@ class Model(_Base):
             self.scale(scale_fac)
             self.units = units
 
-    def check_duplicate_room_names(self, raise_exception=True):
-        """Check that there are no duplicate Room names in the model."""
-        room_names = set()
-        duplicate_names = set()
+    def check_duplicate_room_identifiers(self, raise_exception=True):
+        """Check that there are no duplicate Room identifiers in the model."""
+        room_identifiers = set()
+        duplicate_identifiers = set()
         for room in self._rooms:
-            if room.name not in room_names:
-                room_names.add(room.name)
+            if room.identifier not in room_identifiers:
+                room_identifiers.add(room.identifier)
             else:
-                duplicate_names.add(room.name)
-        if len(duplicate_names) != 0:
+                duplicate_identifiers.add(room.identifier)
+        if len(duplicate_identifiers) != 0:
             if raise_exception:
                 raise ValueError('The model has the following duplicated '
-                                 'Room names:\n{}'.format('\n'.join(duplicate_names)))
+                                 'Room identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
             return False
         return True
 
-    def check_duplicate_face_names(self, raise_exception=True):
-        """Check that there are no duplicate Face names in the model."""
-        face_names = set()
-        duplicate_names = set()
+    def check_duplicate_face_identifiers(self, raise_exception=True):
+        """Check that there are no duplicate Face identifiers in the model."""
+        face_identifiers = set()
+        duplicate_identifiers = set()
         for face in self.faces:
-            if face.name not in face_names:
-                face_names.add(face.name)
+            if face.identifier not in face_identifiers:
+                face_identifiers.add(face.identifier)
             else:
-                duplicate_names.add(face.name)
-        if len(duplicate_names) != 0:
+                duplicate_identifiers.add(face.identifier)
+        if len(duplicate_identifiers) != 0:
             if raise_exception:
                 raise ValueError('The model has the following duplicated '
-                                 'Face names:\n{}'.format('\n'.join(duplicate_names)))
+                                 'Face identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
             return False
         return True
 
-    def check_duplicate_shade_names(self, raise_exception=True):
-        """Check that there are no duplicate Shade names in the model."""
-        shade_names = set()
-        duplicate_names = set()
+    def check_duplicate_shade_identifiers(self, raise_exception=True):
+        """Check that there are no duplicate Shade identifiers in the model."""
+        shade_identifiers = set()
+        duplicate_identifiers = set()
         for shade in self.shades:
-            if shade.name not in shade_names:
-                shade_names.add(shade.name)
+            if shade.identifier not in shade_identifiers:
+                shade_identifiers.add(shade.identifier)
             else:
-                duplicate_names.add(shade.name)
-        if len(duplicate_names) != 0:
+                duplicate_identifiers.add(shade.identifier)
+        if len(duplicate_identifiers) != 0:
             if raise_exception:
                 raise ValueError('The model has the following duplicated '
-                                 'Shade names:\n{}'.format('\n'.join(duplicate_names)))
+                                 'Shade identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
             return False
         return True
 
-    def check_duplicate_sub_face_names(self, raise_exception=True):
-        """Check that there are no duplicate sub-face names in the model.
+    def check_duplicate_sub_face_identifiers(self, raise_exception=True):
+        """Check that there are no duplicate sub-face identifiers in the model.
 
         Note that both Apertures and Doors are checked for duplicates since the two
         are counted together by EnergyPlus.
         """
         sub_faces = self.apertures + self.doors
-        sub_face_names = set()
-        duplicate_names = set()
+        sub_face_identifiers = set()
+        duplicate_identifiers = set()
         for sub_face in sub_faces:
-            if sub_face.name not in sub_face_names:
-                sub_face_names.add(sub_face.name)
+            if sub_face.identifier not in sub_face_identifiers:
+                sub_face_identifiers.add(sub_face.identifier)
             else:
-                duplicate_names.add(sub_face.name)
-        if len(duplicate_names) != 0:
+                duplicate_identifiers.add(sub_face.identifier)
+        if len(duplicate_identifiers) != 0:
             if raise_exception:
                 raise ValueError('The model has the following duplicated sub-face '
-                                 'names:\n{}'.format('\n'.join(duplicate_names)))
+                                 'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
             return False
         return True
 
     def check_missing_adjacencies(self, raise_exception=True):
         """Check that all Faces have adjacent objects that exist in the model."""
-        bc_obj_names = []
+        bc_obj_identifiers = []
         for room in self._rooms:
             for face in room._faces:
                 if isinstance(face.boundary_condition, Surface):
-                    bc_obj_names.append(
+                    bc_obj_identifiers.append(
                         face.boundary_condition.boundary_condition_object)
         try:
-            self.get_faces_by_name(bc_obj_names)
+            self.get_faces_by_identifier(bc_obj_identifiers)
         except ValueError as e:
             if raise_exception:
                 raise ValueError('A Face has an adjacent object that is missing '
@@ -772,14 +777,14 @@ class Model(_Base):
             -   parents_to_edit: An list of lists that parellels the triangulated_apertures
                 in that each item represents an Aperture that has been triangulated
                 in the model. However, each of these lists holds between 1 and 3 values
-                for the names of the original aperture and parents of the aperture.
+                for the identifiers of the original aperture and parents of the aperture.
                 This information is intended to help edit parent faces that have had
                 their child faces triangulated. The 3 values are as follows:
 
-                * 0 = The name of the original Aperture that was triangulated.
-                * 1 = The name of the parent Face of the original Aperture
+                * 0 = The identifier of the original Aperture that was triangulated.
+                * 1 = The identifier of the parent Face of the original Aperture
                   (if it exists).
-                * 2 = The name of the parent Room of the parent Face of the
+                * 2 = The identifier of the parent Room of the parent Face of the
                   original Aperture (if it exists).
         """
         triangulated_apertures = []
@@ -789,7 +794,7 @@ class Model(_Base):
         for i, ap in enumerate(all_apertures):
             if len(ap.geometry) <= 4:
                 pass
-            elif ap.name not in adj_check:
+            elif ap.identifier not in adj_check:
                 # generate the new triangulated apertures
                 ap_mesh3d = ap.triangulated_mesh3d
                 new_verts = [[ap_mesh3d[v] for v in face] for face in ap_mesh3d.faces]
@@ -800,9 +805,9 @@ class Model(_Base):
                     parents_to_edit.append(parent_edit_info)
                 # coordinate new apertures with any adjacent apertures
                 if isinstance(ap.boundary_condition, Surface):
-                    bc_obj_name = ap.boundary_condition.boundary_condition_object
+                    bc_obj_identifier = ap.boundary_condition.boundary_condition_object
                     for other_ap in all_apertures:
-                        if other_ap.name == bc_obj_name:
+                        if other_ap.identifier == bc_obj_identifier:
                             adj_ap = other_ap
                             break
                     new_adj_ap_geo = [face.flip() for face in new_ap_geo]
@@ -812,7 +817,7 @@ class Model(_Base):
                     triangulated_apertures.append(new_adj_aps)
                     if edit_in is not None:
                         parents_to_edit.append(edit_in)
-                    adj_check.append(adj_ap.name)
+                    adj_check.append(adj_ap.identifier)
         return triangulated_apertures, parents_to_edit
 
     def triangulated_doors(self):
@@ -832,14 +837,14 @@ class Model(_Base):
             -   parents_to_edit: An list of lists that parellels the triangulated_doors
                 in that each item represents a Door that has been triangulated
                 in the model. However, each of these lists holds between 1 and 3 values
-                for the names of the original door and parents of the door.
+                for the identifiers of the original door and parents of the door.
                 This information is intended to help edit parent faces that have had
                 their child faces triangulated. The 3 values are as follows:
 
-                * 0 = The name of the original Door that was triangulated.
-                * 1 = The name of the parent Face of the original Door
+                * 0 = The identifier of the original Door that was triangulated.
+                * 1 = The identifier of the parent Face of the original Door
                   (if it exists).
-                * 2 = The name of the parent Room of the parent Face of the
+                * 2 = The identifier of the parent Room of the parent Face of the
                   original Door (if it exists).
         """
         triangulated_doors = []
@@ -849,7 +854,7 @@ class Model(_Base):
         for i, dr in enumerate(all_doors):
             if len(dr.geometry) <= 4:
                 pass
-            elif dr.name not in adj_check:
+            elif dr.identifier not in adj_check:
                 # generate the new triangulated doors
                 dr_mesh3d = dr.triangulated_mesh3d
                 new_verts = [[dr_mesh3d[v] for v in face] for face in dr_mesh3d.faces]
@@ -860,9 +865,9 @@ class Model(_Base):
                     parents_to_edit.append(parent_edit_info)
                 # coordinate new doors with any adjacent doors
                 if isinstance(dr.boundary_condition, Surface):
-                    bc_obj_name = dr.boundary_condition.boundary_condition_object
+                    bc_obj_identifier = dr.boundary_condition.boundary_condition_object
                     for other_dr in all_doors:
-                        if other_dr.name == bc_obj_name:
+                        if other_dr.identifier == bc_obj_identifier:
                             adj_dr = other_dr
                             break
                     new_adj_dr_geo = [face.flip() for face in new_dr_geo]
@@ -872,7 +877,7 @@ class Model(_Base):
                     triangulated_doors.append(new_adj_drs)
                     if edit_in is not None:
                         parents_to_edit.append(edit_in)
-                    adj_check.append(adj_dr.name)
+                    adj_check.append(adj_dr.identifier)
         return triangulated_doors, parents_to_edit
 
     def _replace_aperture(self, original_ap, new_ap_geo):
@@ -895,16 +900,16 @@ class Model(_Base):
             -   parent_edit_info: An array of up to 3 values meant to help edit parents that
                 have had their child faces triangulated. The 3 values are as follows:
 
-                * 0 = The name of the original Aperture that was triangulated.
-                * 1 = The name of the parent Face of the original Aperture
+                * 0 = The identifier of the original Aperture that was triangulated.
+                * 1 = The identifier of the parent Face of the original Aperture
                   (if it exists).
-                * 2 = The name of the parent Room of the parent Face of the
+                * 2 = The identifier of the parent Room of the parent Face of the
                   original Aperture (if it exists).
         """
         # make the new Apertures and add them to the model
         new_aps = []
         for i, ap_face in enumerate(new_ap_geo):
-            new_ap = Aperture('{}..{}'.format(original_ap.display_name, i),
+            new_ap = Aperture('{}..{}'.format(original_ap.identifier, i),
                               ap_face, None, original_ap.is_operable)
             new_ap._properties = original_ap._properties  # transfer extension properties
             if original_ap.has_parent:
@@ -920,11 +925,11 @@ class Model(_Base):
             new_aps[0].add_outdoor_shades(new_shds)
 
         # create the parent edit info
-        parent_edit_info = [original_ap.name]
+        parent_edit_info = [original_ap.identifier]
         if original_ap.has_parent:
-            parent_edit_info.append(original_ap.parent.name)
+            parent_edit_info.append(original_ap.parent.identifier)
             if original_ap.parent.has_parent:
-                parent_edit_info.append(original_ap.parent.parent.name)
+                parent_edit_info.append(original_ap.parent.parent.identifier)
         return new_aps, parent_edit_info
 
     def _replace_door(self, original_dr, new_dr_geo):
@@ -947,16 +952,16 @@ class Model(_Base):
             -   parent_edit_info: An array of up to 3 values meant to help edit parents that
                 have had their child faces triangulated. The 3 values are as follows:
 
-                * 0 = The name of the original Door that was triangulated.
-                * 1 = The name of the parent Face of the original Door
+                * 0 = The identifier of the original Door that was triangulated.
+                * 1 = The identifier of the parent Face of the original Door
                   (if it exists).
-                * 2 = The name of the parent Room of the parent Face of the
+                * 2 = The identifier of the parent Room of the parent Face of the
                   original Door (if it exists).
         """
         # make the new doors and add them to the model
         new_drs = []
         for i, dr_face in enumerate(new_dr_geo):
-            new_dr = Door('{}..{}'.format(original_dr.display_name, i), dr_face)
+            new_dr = Door('{}..{}'.format(original_dr.identifier, i), dr_face)
             new_dr._properties = original_dr._properties  # transfer extension properties
             if original_dr.has_parent:
                 new_dr._parent = original_dr.parent
@@ -971,11 +976,11 @@ class Model(_Base):
             new_drs[0].add_outdoor_shades(new_shds)
 
         # create the parent edit info
-        parent_edit_info = [original_dr.name]
+        parent_edit_info = [original_dr.identifier]
         if original_dr.has_parent:
-            parent_edit_info.append(original_dr.parent.name)
+            parent_edit_info.append(original_dr.parent.identifier)
             if original_dr.parent.has_parent:
-                parent_edit_info.append(original_dr.parent.parent.name)
+                parent_edit_info.append(original_dr.parent.parent.identifier)
         return new_drs, parent_edit_info
 
     @property
@@ -1011,7 +1016,7 @@ class Model(_Base):
                 not relevant for energy simulation. Default: False.
         """
         base = {'type': 'Model'}
-        base['name'] = self.name
+        base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['units'] = self.units
         base['properties'] = self.properties.to_dict(included_prop)
@@ -1042,13 +1047,13 @@ class Model(_Base):
             for tri_aps, edit_infos in zip(apertures, parents_to_edit):
                 if len(edit_infos) == 3:
                     for room in base['rooms']:
-                        if room['name'] == edit_infos[2]:
+                        if room['identifier'] == edit_infos[2]:
                             break
                     for face in room['faces']:
-                        if face['name'] == edit_infos[1]:
+                        if face['identifier'] == edit_infos[1]:
                             break
                     for i, ap in enumerate(face['apertures']):
-                        if ap['name'] == edit_infos[0]:
+                        if ap['identifier'] == edit_infos[0]:
                             break
                     del face['apertures'][i]
                     face['apertures'].extend(
@@ -1057,17 +1062,20 @@ class Model(_Base):
             for tri_drs, edit_infos in zip(doors, parents_to_edit):
                 if len(edit_infos) == 3:
                     for room in base['rooms']:
-                        if room['name'] == edit_infos[2]:
+                        if room['identifier'] == edit_infos[2]:
                             break
                     for face in room['faces']:
-                        if face['name'] == edit_infos[1]:
+                        if face['identifier'] == edit_infos[1]:
                             break
                     for i, ap in enumerate(face['doors']):
-                        if ap['name'] == edit_infos[0]:
+                        if ap['identifier'] == edit_infos[0]:
                             break
                     del face['doors'][i]
                     face['doors'].extend(
                         [dr.to_dict(True, included_prop) for dr in tri_drs])
+
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
 
         return base
 
@@ -1115,7 +1123,7 @@ class Model(_Base):
 
     def __copy__(self):
         new_model = Model(
-            self.name,
+            self.identifier,
             [room.duplicate() for room in self._rooms],
             [face.duplicate() for face in self._orphaned_faces],
             [shade.duplicate() for shade in self._orphaned_shades],
@@ -1123,6 +1131,7 @@ class Model(_Base):
             [door.duplicate() for door in self._orphaned_doors],
             self.north_angle, self.units, self.tolerance, self.angle_tolerance)
         new_model._display_name = self.display_name
+        new_model._user_data = None if self.user_data is None else self.user_data.copy()
         new_model._properties._duplicate_extension_attr(self._properties)
         return new_model
 

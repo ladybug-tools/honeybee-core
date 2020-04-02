@@ -1,6 +1,7 @@
 # coding: utf-8
 """Honeybee Room."""
 from ._basewithshade import _BaseWithShade
+from .typing import clean_string
 from .properties import RoomProperties
 from .face import Face
 from .facetype import get_type_from_normal, Wall, Floor
@@ -20,7 +21,8 @@ class Room(_BaseWithShade):
     """A volume enclosed by faces, representing a single room or space.
 
     Args:
-        name: Room name. Must be < 100 characters.
+        identifier: Text string for a unique Room ID. Must be < 100 characters and
+            not contain any spaces or special characters.
         faces: A list or tuple of honeybee Face objects that together form the
             closed volume of a room.
         tolerance: The maximum difference between x, y, and z values
@@ -34,7 +36,7 @@ class Room(_BaseWithShade):
             volume is closed.
 
     Properties:
-        * name
+        * identifier
         * display_name
         * faces
         * multiplier
@@ -49,10 +51,11 @@ class Room(_BaseWithShade):
         * exterior_wall_area
         * exterior_aperture_area
         * average_floor_height
+        * user_data
     """
     __slots__ = ('_geometry', '_faces', '_multiplier')
 
-    def __init__(self, name, faces, tolerance=0, angle_tolerance=0):
+    def __init__(self, identifier, faces, tolerance=0, angle_tolerance=0):
         """A volume enclosed by faces, representing a single room or space.
 
         Note that, if zero is input for tolerance and angle_tolerance, no checks
@@ -62,7 +65,7 @@ class Room(_BaseWithShade):
         is intended for workflows where the solidity of the room volume has been
         evaluated elsewhere.
         """
-        _BaseWithShade.__init__(self, name)  # process the name
+        _BaseWithShade.__init__(self, identifier)  # process the identifier
 
         # process the zone volume geometry
         if not isinstance(faces, tuple):
@@ -112,10 +115,12 @@ class Room(_BaseWithShade):
         assert data['type'] == 'Room', 'Expected Room dictionary. ' \
             'Got {}.'.format(data['type'])
 
-        room = cls(data['name'], [Face.from_dict(f_dict) for f_dict in data['faces']],
+        room = cls(data['identifier'], [Face.from_dict(f_dict) for f_dict in data['faces']],
                    tolerance, angle_tolerance)
         if 'display_name' in data and data['display_name'] is not None:
-            room._display_name = data['display_name']
+            room.display_name = data['display_name']
+        if 'user_data' in data and data['user_data'] is not None:
+            room.user_data = data['user_data']
         if 'multiplier' in data and data['multiplier'] is not None:
             room._multiplier = data['multiplier']
         room._recover_shades_from_dict(data)
@@ -125,12 +130,13 @@ class Room(_BaseWithShade):
         return room
 
     @classmethod
-    def from_polyface3d(cls, name, polyface, roof_angle=30, floor_angle=150,
+    def from_polyface3d(cls, identifier, polyface, roof_angle=30, floor_angle=150,
                         ground_depth=0):
         """Initialize a Room from a ladybug_geometry Polyface3D object.
 
         Args:
-            name: Room name. Must be < 100 characters.
+            identifier: Text string for a unique Room ID. Must be < 100 characters and
+                not contain any spaces or special characters.
             polyface: A ladybug_geometry Polyface3D object representing the closed
                 volume of a room. The Polyface3D.is_solid property can be used to
                 determine whether the polyface is a closed solid before input here.
@@ -144,15 +150,15 @@ class Room(_BaseWithShade):
             'Expected ladybug_geometry Polyface3D. Got {}'.format(type(polyface))
         faces = []
         for i, face in enumerate(polyface.faces):
-            faces.append(Face('{}..Face{}'.format(name, i), face,
+            faces.append(Face('{}..Face{}'.format(identifier, i), face,
                               get_type_from_normal(face.normal, roof_angle, floor_angle),
                               get_bc_from_position(face.boundary, ground_depth)))
-        room = cls(name, faces)
+        room = cls(identifier, faces)
         room._geometry = polyface
         return room
 
     @classmethod
-    def from_box(cls, name, width=3.0, depth=6.0, height=3.2,
+    def from_box(cls, identifier, width=3.0, depth=6.0, height=3.2,
                  orientation_angle=0, origin=Point3D(0, 0, 0)):
         """Initialize a Room from parameters describing a box.
 
@@ -161,7 +167,8 @@ class Room(_BaseWithShade):
         cardinal direction of the orientation_angle.
 
         Args:
-            name: Room name. Must be < 100 characters.
+            identifier: Text string for a unique Room ID. Must be < 100 characters and
+                not contain any spaces or special characters.
             width: Number for the width of the box (in the X direction). Default: 3.0.
             depth: Number for the depth of the box (in the Y direction). Default: 6.0.
             height: Number for the height of the box (in the Z direction). Default: 3.2.
@@ -183,10 +190,10 @@ class Room(_BaseWithShade):
         directions = ('Bottom', 'Front', 'Right', 'Back', 'Left', 'Top')
         faces = []
         for face, dir in zip(polyface.faces, directions):
-            faces.append(Face('{}_{}'.format(name, dir), face,
+            faces.append(Face('{}_{}'.format(identifier, dir), face,
                               get_type_from_normal(face.normal),
                               get_bc_from_position(face.boundary)))
-        room = cls(name, faces)
+        room = cls(identifier, faces)
         room._geometry = polyface
         return room
 
@@ -331,20 +338,21 @@ class Room(_BaseWithShade):
         return orientations / areas if areas != 0 else None
 
     def add_prefix(self, prefix):
-        """Change the name of this object and all child objects by inserting a prefix.
+        """Change the identifier of this object and all child objects by inserting a prefix.
 
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
         into one Model (like making a model of repeated rooms) since all objects
-        within a Model must have unique names.
+        within a Model must have unique identifiers.
 
         Args:
             prefix: Text that will be inserted at the start of this object's
-                (and child objects') name and display_name. It is recommended
-                that this name be short to avoid maxing out the 100 allowable
-                characters for honeybee names.
+                (and child objects') identifier and display_name. It is recommended
+                that this prefix be short to avoid maxing out the 100 allowable
+                characters for honeybee identifiers.
         """
-        self.name = '{}_{}'.format(prefix, self.display_name)
+        self._identifier = clean_string('{}_{}'.format(prefix, self.identifier))
+        self.display_name = '{}_{}'.format(prefix, self.display_name)
         self.properties.add_prefix(prefix)
         for face in self._faces:
             face.add_prefix(prefix)
@@ -653,25 +661,28 @@ class Room(_BaseWithShade):
         Args:
             abridged: Boolean to note whether the extension properties of the
                 object (ie. construciton sets) should be included in detail
-                (False) or just referenced by name (True). Default: False.
+                (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
         """
         base = {'type': 'Room'}
-        base['name'] = self.name
+        base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
         base['faces'] = [f.to_dict(abridged, included_prop) for f in self._faces]
         self._add_shades_to_dict(base, abridged, included_prop)
         if self.multiplier != 1:
             base['multiplier'] = self.multiplier
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
         return base
 
     def __copy__(self):
-        new_r = Room(self.name, tuple(face.duplicate() for face in self._faces))
+        new_r = Room(self.identifier, tuple(face.duplicate() for face in self._faces))
         new_r._display_name = self.display_name
+        new_r._user_data = None if self.user_data is None else self.user_data.copy()
         new_r._multiplier = self.multiplier
         self._duplicate_child_shades(new_r)
         new_r._geometry = self._geometry

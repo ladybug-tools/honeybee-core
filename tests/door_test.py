@@ -7,16 +7,20 @@ from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
+import uuid as py_uuid
+import json
 import pytest
 
 
 def test_door_init():
     """Test the initialization of Door objects."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
-    door = Door('Test Door', Face3D(pts))
+    unique_id = str(py_uuid.uuid4())
+    door = Door(unique_id, Face3D(pts))
+    door.display_name = 'Test Door'
     str(door)  # test the string representation
 
-    assert door.name == 'TestDoor'
+    assert door.identifier == unique_id
     assert door.display_name == 'Test Door'
     assert isinstance(door.geometry, Face3D)
     assert len(door.vertices) == 4
@@ -33,9 +37,11 @@ def test_door_init():
 def test_door_from_vertices():
     """Test the initialization of Door objects from vertices."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
-    door = Door.from_vertices('Test Door', pts)
+    unique_id = str(py_uuid.uuid4())
+    door = Door.from_vertices(unique_id, pts)
+    door.display_name = 'Test Door'
 
-    assert door.name == 'TestDoor'
+    assert door.identifier == unique_id
     assert door.display_name == 'Test Door'
     assert isinstance(door.geometry, Face3D)
     assert len(door.vertices) == 4
@@ -52,14 +58,14 @@ def test_door_from_vertices():
 def test_door_add_prefix():
     """Test the door add_prefix method."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
-    door = Door.from_vertices('Test Door', pts)
+    door = Door.from_vertices('TestDoor', pts)
     door.overhang(1)
     prefix = 'New'
     door.add_prefix(prefix)
 
-    assert door.name.startswith(prefix)
+    assert door.identifier.startswith(prefix)
     for shd in door.shades:
-        assert shd.name.startswith(prefix)
+        assert shd.identifier.startswith(prefix)
 
 
 def test_door_overhang():
@@ -67,9 +73,9 @@ def test_door_overhang():
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 3))
     pts_3 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 0))
-    door_1 = Door('Rectangle Door', Face3D(pts_1))
-    door_2 = Door('Good Triangle Door', Face3D(pts_2))
-    door_3 = Door('Bad Triangle Door', Face3D(pts_3))
+    door_1 = Door('RectangleDoor', Face3D(pts_1))
+    door_2 = Door('GoodTriangleDoor', Face3D(pts_2))
+    door_3 = Door('BadTriangleDoor', Face3D(pts_3))
     door_1.overhang(1, tolerance=0.01)
     door_2.overhang(1, indoor=True, tolerance=0.01)
     door_3.overhang(1, tolerance=0.01)
@@ -85,13 +91,13 @@ def test_door_overhang():
 def test_door_duplicate():
     """Test the duplication of door objects."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
-    dr_1 = Door('Test Door', Face3D(pts))
+    dr_1 = Door('TestDoor', Face3D(pts))
     dr_2 = dr_1.duplicate()
 
     assert dr_1 is not dr_2
     for i, pt in enumerate(dr_1.vertices):
         assert pt == dr_2.vertices[i]
-    assert dr_1.name == dr_2.name
+    assert dr_1.identifier == dr_2.identifier
 
     dr_2.move(Vector3D(0, 1, 0))
     for i, pt in enumerate(dr_1.vertices):
@@ -102,7 +108,7 @@ def test_move():
     """Test the Door move method."""
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
     plane_1 = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 0))
-    door = Door('Rectangle Door', Face3D(pts_1, plane_1))
+    door = Door('RectangleDoor', Face3D(pts_1, plane_1))
 
     vec_1 = Vector3D(2, 2, 2)
     new_dr = door.duplicate()
@@ -120,7 +126,7 @@ def test_scale():
     """Test the Door scale method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    door = Door('Rectangle Door', Face3D(pts, plane))
+    door = Door('RectangleDoor', Face3D(pts, plane))
 
     new_dr = door.duplicate()
     new_dr.scale(2)
@@ -137,7 +143,7 @@ def test_rotate():
     """Test the Door rotate method."""
     pts = (Point3D(0, 0, 2), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    door = Door('Rectangle Door', Face3D(pts, plane))
+    door = Door('RectangleDoor', Face3D(pts, plane))
     origin = Point3D(0, 0, 0)
     axis = Vector3D(1, 0, 0)
 
@@ -168,7 +174,7 @@ def test_rotate_xy():
     """Test the Door rotate_xy method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    door = Door('Rectangle Door', Face3D(pts, plane))
+    door = Door('RectangleDoor', Face3D(pts, plane))
     origin_1 = Point3D(1, 1, 0)
 
     test_1 = door.duplicate()
@@ -194,7 +200,7 @@ def test_reflect():
     """Test the Door reflect method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    door = Door('Rectangle Door', Face3D(pts, plane))
+    door = Door('RectangleDoor', Face3D(pts, plane))
 
     origin_1 = Point3D(1, 0, 2)
     origin_2 = Point3D(0, 0, 2)
@@ -238,9 +244,9 @@ def test_check_planar():
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     pts_3 = (Point3D(0, 0, 2.0001), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     plane_1 = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    door_1 = Door('Door 1', Face3D(pts_1, plane_1))
-    door_2 = Door('Door 2', Face3D(pts_2, plane_1))
-    door_3 = Door('Door 3', Face3D(pts_3, plane_1))
+    door_1 = Door('Door1', Face3D(pts_1, plane_1))
+    door_2 = Door('Door2', Face3D(pts_2, plane_1))
+    door_3 = Door('Door3', Face3D(pts_3, plane_1))
 
     assert door_1.check_planar(0.001) is True
     assert door_2.check_planar(0.001, False) is False
@@ -258,10 +264,10 @@ def test_check_self_intersecting():
     plane_2 = Plane(Vector3D(0, 0, -1))
     pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2), Point3D(0, 2))
     pts_2 = (Point3D(0, 0), Point3D(0, 2), Point3D(2, 0), Point3D(2, 2))
-    door_1 = Door('Door 1', Face3D(pts_1, plane_1))
-    door_2 = Door('Door 2', Face3D(pts_2, plane_1))
-    door_3 = Door('Door 3', Face3D(pts_1, plane_2))
-    door_4 = Door('Door 4', Face3D(pts_2, plane_2))
+    door_1 = Door('Door1', Face3D(pts_1, plane_1))
+    door_2 = Door('Door2', Face3D(pts_2, plane_1))
+    door_3 = Door('Door3', Face3D(pts_1, plane_2))
+    door_4 = Door('Door4', Face3D(pts_2, plane_2))
 
     assert door_1.check_self_intersecting(False) is True
     assert door_2.check_self_intersecting(False) is False
@@ -278,8 +284,8 @@ def test_check_non_zero():
     plane_1 = Plane(Vector3D(0, 0, 1))
     pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2))
     pts_2 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 0))
-    door_1 = Door('Door 1', Face3D(pts_1, plane_1))
-    door_2 = Door('Door 2', Face3D(pts_2, plane_1))
+    door_1 = Door('Door1', Face3D(pts_1, plane_1))
+    door_2 = Door('Door2', Face3D(pts_2, plane_1))
 
     assert door_1.check_non_zero(0.0001, False) is True
     assert door_2.check_non_zero(0.0001, False) is False
@@ -290,11 +296,13 @@ def test_check_non_zero():
 def test_to_dict():
     """Test the Door to_dict method."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    dr = Door.from_vertices('Rectangle Door', vertices)
+    unique_id = str(py_uuid.uuid4())
+    dr = Door.from_vertices(unique_id, vertices)
+    dr.display_name = 'Rectangle Door'
 
     drd = dr.to_dict()
     assert drd['type'] == 'Door'
-    assert drd['name'] == 'RectangleDoor'
+    assert drd['identifier'] == unique_id
     assert drd['display_name'] == 'Rectangle Door'
     assert 'geometry' in drd
     assert len(drd['geometry']['boundary']) == len(vertices)
@@ -306,7 +314,7 @@ def test_to_dict():
 def test_to_from_dict():
     """Test the to/from dict of Door objects."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    dr = Door.from_vertices('Rectangle Door', vertices)
+    dr = Door.from_vertices('RectangleDoor', vertices)
 
     dr_dict = dr.to_dict()
     new_dr = Door.from_dict(dr_dict)
@@ -317,7 +325,7 @@ def test_to_from_dict():
 def test_writer():
     """Test the Door writer object."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    door = Door.from_vertices('Rectangle Door', vertices)
+    door = Door.from_vertices('RectangleDoor', vertices)
 
     writers = [mod for mod in dir(door.to) if not mod.startswith('_')]
     for writer in writers:

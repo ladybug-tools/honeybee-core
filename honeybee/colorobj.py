@@ -123,7 +123,7 @@ class _ColorObject(object):
         self._attr_name = str(attr_name)
         at_split = self._attr_name.split('.')
         self._attr_name_end = at_split[-1] if len(at_split) == 1 or \
-            at_split[-1] != 'name' else at_split[-2]
+            at_split[-1] != 'display_name' else at_split[-2]
 
     def _process_attributes(self, hb_objs):
         """Process the attributes of honeybee objects."""
@@ -256,7 +256,7 @@ class ColorFace(_ColorObject):
         * min_point
         * max_point
     """
-    __slots__ = ('_faces', '_flat_faces', '_flat_geometry',)
+    __slots__ = ('_faces', '_flat_faces', '_flat_geometry')
 
     def __init__(self, faces, attr_name, legend_parameters=None):
         """Initialize ColorFace."""

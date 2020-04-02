@@ -7,16 +7,20 @@ from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
+import uuid as py_uuid
+import json
 import pytest
 
 
 def test_aperture_init():
     """Test the initialization of Aperture objects."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
-    aperture = Aperture('Test Window', Face3D(pts))
+    unique_id = str(py_uuid.uuid4())
+    aperture = Aperture(unique_id, Face3D(pts))
+    aperture.display_name = 'Test Window'
     str(aperture)  # test the string representation
 
-    assert aperture.name == 'TestWindow'
+    assert aperture.identifier == unique_id
     assert aperture.display_name == 'Test Window'
     assert isinstance(aperture.geometry, Face3D)
     assert len(aperture.vertices) == 4
@@ -34,9 +38,11 @@ def test_aperture_init():
 def test_aperture_from_vertices():
     """Test the initialization of Aperture objects from vertices."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
-    aperture = Aperture.from_vertices('Test Window', pts)
+    unique_id = str(py_uuid.uuid4())
+    aperture = Aperture.from_vertices(unique_id, pts)
+    aperture.display_name = 'Test Window'
 
-    assert aperture.name == 'TestWindow'
+    assert aperture.identifier == unique_id
     assert aperture.display_name == 'Test Window'
     assert isinstance(aperture.geometry, Face3D)
     assert len(aperture.vertices) == 4
@@ -54,13 +60,14 @@ def test_aperture_from_vertices():
 def test_aperture_duplicate():
     """Test the duplication of Aperture objects."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
-    ap_1 = Aperture('Test Window', Face3D(pts))
+    ap_1 = Aperture('TestWindow', Face3D(pts))
     ap_2 = ap_1.duplicate()
 
     assert ap_1 is not ap_2
     for i, pt in enumerate(ap_1.vertices):
         assert pt == ap_2.vertices[i]
-    assert ap_1.name == ap_2.name
+    assert ap_1.identifier == ap_2.identifier
+    assert ap_1.display_name == ap_2.display_name
 
     ap_2.move(Vector3D(0, 1, 0))
     for i, pt in enumerate(ap_1.vertices):
@@ -70,14 +77,14 @@ def test_aperture_duplicate():
 def test_aperture_add_prefix():
     """Test the aperture add_prefix method."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
-    aperture = Aperture('Rectangle Window', Face3D(pts_1))
+    aperture = Aperture('RectangleWindow', Face3D(pts_1))
     aperture.extruded_border(0.1)
     prefix = 'New'
     aperture.add_prefix(prefix)
 
-    assert aperture.name.startswith(prefix)
+    assert aperture.identifier.startswith(prefix)
     for shd in aperture.shades:
-        assert shd.name.startswith(prefix)
+        assert shd.identifier.startswith(prefix)
 
 
 def test_aperture_overhang():
@@ -85,9 +92,9 @@ def test_aperture_overhang():
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 3))
     pts_3 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 0))
-    aperture_1 = Aperture('Rectangle Window', Face3D(pts_1))
-    aperture_2 = Aperture('Good Triangle Window', Face3D(pts_2))
-    aperture_3 = Aperture('Bad Triangle Window', Face3D(pts_3))
+    aperture_1 = Aperture('RectangleWindow', Face3D(pts_1))
+    aperture_2 = Aperture('GoodTriangleWindow', Face3D(pts_2))
+    aperture_3 = Aperture('BadTriangleWindow', Face3D(pts_3))
     aperture_1.overhang(1, tolerance=0.01)
     aperture_2.overhang(1, indoor=True, tolerance=0.01)
     aperture_3.overhang(1, tolerance=0.01)
@@ -104,8 +111,8 @@ def test_aperture_fin():
     """Test the creation of a fins for Aperture objects."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 3))
-    aperture_1 = Aperture('Rectangle Window', Face3D(pts_1))
-    aperture_2 = Aperture('Triangle Window', Face3D(pts_2))
+    aperture_1 = Aperture('RectangleWindow', Face3D(pts_1))
+    aperture_2 = Aperture('TriangleWindow', Face3D(pts_2))
     aperture_1.right_fin(1, tolerance=0.01)
     aperture_2.right_fin(1, tolerance=0.01)
     aperture_1.left_fin(1, tolerance=0.01)
@@ -121,8 +128,8 @@ def test_aperture_extruded_border():
     """Test the creation of an extruded border for Aperture objects."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 3), Point3D(4, 0, 3))
-    aperture_1 = Aperture('Rectangle Window', Face3D(pts_1))
-    aperture_2 = Aperture('Triangle Window', Face3D(pts_2))
+    aperture_1 = Aperture('RectangleWindow', Face3D(pts_1))
+    aperture_2 = Aperture('TriangleWindow', Face3D(pts_2))
 
     aperture_1.extruded_border(0.1)
     aperture_2.extruded_border(0.1)
@@ -145,7 +152,7 @@ def test_aperture_extruded_border():
 def test_aperture_louvers_by_distance_between():
     """Test the creation of a louvers_by_distance_between for Aperture objects."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
-    aperture = Aperture('Rectangle Window', Face3D(pts_1))
+    aperture = Aperture('RectangleWindow', Face3D(pts_1))
     aperture.louvers_by_distance_between(0.5, 0.2, 0.1)
 
     assert len(aperture.outdoor_shades) == 6
@@ -159,7 +166,7 @@ def test_move():
     """Test the Aperture move method."""
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
     plane_1 = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 0))
-    aperture = Aperture('Rectangle Window', Face3D(pts_1, plane_1))
+    aperture = Aperture('RectangleWindow', Face3D(pts_1, plane_1))
 
     vec_1 = Vector3D(2, 2, 2)
     new_ap = aperture.duplicate()
@@ -177,7 +184,7 @@ def test_scale():
     """Test the Aperture scale method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    aperture = Aperture('Rectangle Window', Face3D(pts, plane))
+    aperture = Aperture('RectangleWindow', Face3D(pts, plane))
 
     new_ap = aperture.duplicate()
     new_ap.scale(2)
@@ -194,7 +201,7 @@ def test_rotate():
     """Test the Aperture rotate method."""
     pts = (Point3D(0, 0, 2), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    aperture = Aperture('Rectangle Window', Face3D(pts, plane))
+    aperture = Aperture('RectangleWindow', Face3D(pts, plane))
     origin = Point3D(0, 0, 0)
     axis = Vector3D(1, 0, 0)
 
@@ -225,7 +232,7 @@ def test_rotate_xy():
     """Test the Aperture rotate_xy method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    aperture = Aperture('Rectangle Window', Face3D(pts, plane))
+    aperture = Aperture('RectangleWindow', Face3D(pts, plane))
     origin_1 = Point3D(1, 1, 0)
 
     test_1 = aperture.duplicate()
@@ -251,7 +258,7 @@ def test_reflect():
     """Test the Aperture reflect method."""
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     plane = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    aperture = Aperture('Rectangle Window', Face3D(pts, plane))
+    aperture = Aperture('RectangleWindow', Face3D(pts, plane))
 
     origin_1 = Point3D(1, 0, 2)
     origin_2 = Point3D(0, 0, 2)
@@ -295,9 +302,9 @@ def test_check_planar():
     pts_2 = (Point3D(0, 0, 0), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     pts_3 = (Point3D(0, 0, 2.0001), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     plane_1 = Plane(Vector3D(0, 0, 1), Point3D(0, 0, 2))
-    aperture_1 = Aperture('Window 1', Face3D(pts_1, plane_1))
-    aperture_2 = Aperture('Window 2', Face3D(pts_2, plane_1))
-    aperture_3 = Aperture('Window 3', Face3D(pts_3, plane_1))
+    aperture_1 = Aperture('Window1', Face3D(pts_1, plane_1))
+    aperture_2 = Aperture('Window2', Face3D(pts_2, plane_1))
+    aperture_3 = Aperture('Window3', Face3D(pts_3, plane_1))
 
     assert aperture_1.check_planar(0.001) is True
     assert aperture_2.check_planar(0.001, False) is False
@@ -315,10 +322,10 @@ def test_check_self_intersecting():
     plane_2 = Plane(Vector3D(0, 0, -1))
     pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2), Point3D(0, 2))
     pts_2 = (Point3D(0, 0), Point3D(0, 2), Point3D(2, 0), Point3D(2, 2))
-    aperture_1 = Aperture('Window 1', Face3D(pts_1, plane_1))
-    aperture_2 = Aperture('Window 2', Face3D(pts_2, plane_1))
-    aperture_3 = Aperture('Window 3', Face3D(pts_1, plane_2))
-    aperture_4 = Aperture('Window 4', Face3D(pts_2, plane_2))
+    aperture_1 = Aperture('Window1', Face3D(pts_1, plane_1))
+    aperture_2 = Aperture('Window2', Face3D(pts_2, plane_1))
+    aperture_3 = Aperture('Window3', Face3D(pts_1, plane_2))
+    aperture_4 = Aperture('Window4', Face3D(pts_2, plane_2))
 
     assert aperture_1.check_self_intersecting(False) is True
     assert aperture_2.check_self_intersecting(False) is False
@@ -335,8 +342,8 @@ def test_check_non_zero():
     plane_1 = Plane(Vector3D(0, 0, 1))
     pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2))
     pts_2 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 0))
-    aperture_1 = Aperture('Window 1', Face3D(pts_1, plane_1))
-    aperture_2 = Aperture('Window 2', Face3D(pts_2, plane_1))
+    aperture_1 = Aperture('Window1', Face3D(pts_1, plane_1))
+    aperture_2 = Aperture('Window2', Face3D(pts_2, plane_1))
 
     assert aperture_1.check_non_zero(0.0001, False) is True
     assert aperture_2.check_non_zero(0.0001, False) is False
@@ -347,11 +354,13 @@ def test_check_non_zero():
 def test_to_dict():
     """Test the Aperture to_dict method."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    ap = Aperture.from_vertices('Rectangle Window', vertices)
+    unique_id = str(py_uuid.uuid4())
+    ap = Aperture.from_vertices(unique_id, vertices)
+    ap.display_name = 'Rectangle Window'
 
     ad = ap.to_dict()
     assert ad['type'] == 'Aperture'
-    assert ad['name'] == 'RectangleWindow'
+    assert ad['identifier'] == unique_id
     assert ad['display_name'] == 'Rectangle Window'
     assert 'geometry' in ad
     assert len(ad['geometry']['boundary']) == len(vertices)
@@ -364,7 +373,7 @@ def test_to_dict():
 def test_to_from_dict():
     """Test the to/from dict of Aperture objects."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    ap = Aperture.from_vertices('Rectangle Window', vertices)
+    ap = Aperture.from_vertices('RectangleWindow', vertices)
 
     ap_dict = ap.to_dict()
     new_ap = Aperture.from_dict(ap_dict)
@@ -375,7 +384,7 @@ def test_to_from_dict():
 def test_writer():
     """Test the Aperture writer object."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    ap = Aperture.from_vertices('Rectangle Window', vertices)
+    ap = Aperture.from_vertices('RectangleWindow', vertices)
 
     writers = [mod for mod in dir(ap.to) if not mod.startswith('_')]
     for writer in writers:

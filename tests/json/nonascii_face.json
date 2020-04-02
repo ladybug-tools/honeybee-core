@@ -1,0 +1,37 @@
+{
+    "type": "Face",
+    "identifier": "5e8e8256-167d-4677-ad1c-a9e893ae6513",
+    "display_name": "Pared Extra\u00f1a",
+    "properties": {
+        "type": "FaceProperties"
+    },
+    "geometry": {
+        "type": "Face3D",
+        "boundary": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                10.0,
+                0.0
+            ],
+            [
+                0.0,
+                10.0,
+                3.0
+            ],
+            [
+                0.0,
+                0.0,
+                3.0
+            ]
+        ]
+    },
+    "face_type": "Wall",
+    "boundary_condition": {
+        "type": "Outdoors"
+    }
+}
