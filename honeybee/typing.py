@@ -173,7 +173,7 @@ def clean_rad_string(value, input_name=''):
 def clean_ep_string(value, input_name=''):
     """Clean a string for EnergyPlus that can be used for energy material names.
 
-    This includes stripping out all illegal characters, removing trailing white spaces,
+    This includes stripping out all illegal characters, removing trailing spaces,
     and rasing an error if the name is not longer than 100 characters or no legal
     characters found.
     """
