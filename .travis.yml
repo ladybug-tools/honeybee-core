@@ -34,6 +34,8 @@ jobs:
     - npx semantic-release
   - stage: docs
     if: branch = master AND (NOT type IN (pull_request))
+    python:
+    - "3.7"
     script:
     - sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee
     - sphinx-build -b html ./docs ./docs/_build/docs
