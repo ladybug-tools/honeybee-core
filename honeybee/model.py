@@ -289,6 +289,28 @@ class Model(_Base):
         return child_faces + self._orphaned_faces
 
     @property
+    def apertures(self):
+        """Get a list of all Aperture objects in the model."""
+        child_apertures = []
+        for room in self._rooms:
+            for face in room._faces:
+                child_apertures.extend(face._apertures)
+        for face in self._orphaned_faces:
+            child_apertures.extend(face._apertures)
+        return child_apertures + self._orphaned_apertures
+
+    @property
+    def doors(self):
+        """Get a list of all Door objects in the model."""
+        child_doors = []
+        for room in self._rooms:
+            for face in room._faces:
+                child_doors.extend(face._doors)
+        for face in self._orphaned_faces:
+            child_doors.extend(face._doors)
+        return child_doors + self._orphaned_doors
+
+    @property
     def shades(self):
         """Get a list of all Shade objects in the model."""
         child_shades = []
@@ -313,36 +335,9 @@ class Model(_Base):
         return child_shades + self._orphaned_shades
 
     @property
-    def apertures(self):
-        """Get a list of all Aperture objects in the model."""
-        child_apertures = []
-        for room in self._rooms:
-            for face in room._faces:
-                child_apertures.extend(face._apertures)
-        for face in self._orphaned_faces:
-            child_apertures.extend(face._apertures)
-        return child_apertures + self._orphaned_apertures
-
-    @property
-    def doors(self):
-        """Get a list of all Door objects in the model."""
-        child_doors = []
-        for room in self._rooms:
-            for face in room._faces:
-                child_doors.extend(face._doors)
-        for face in self._orphaned_faces:
-            child_doors.extend(face._doors)
-        return child_doors + self._orphaned_doors
-
-    @property
     def orphaned_faces(self):
         """Get a list of all Face objects without parent Rooms in the model."""
         return tuple(self._orphaned_faces)
-
-    @property
-    def orphaned_shades(self):
-        """Get a list of all Shade objects without parent Rooms in the model."""
-        return tuple(self._orphaned_shades)
 
     @property
     def orphaned_apertures(self):
@@ -353,6 +348,11 @@ class Model(_Base):
     def orphaned_doors(self):
         """Get a list of all Door objects without parent Faces in the model."""
         return tuple(self._orphaned_doors)
+
+    @property
+    def orphaned_shades(self):
+        """Get a list of all Shade objects without parent Rooms in the model."""
+        return tuple(self._orphaned_shades)
 
     def add_model(self, other_model):
         """Add another Model object to this model."""
@@ -485,9 +485,14 @@ class Model(_Base):
             aperture.move(moving_vec)
         for door in self._orphaned_doors:
             door.move(moving_vec)
+        self.properties.move(moving_vec)
 
     def rotate(self, axis, angle, origin):
         """Rotate this Model by a certain angle around an axis and origin.
+
+        Note that using this method does NOT rotate the model north_vector and,
+        if it is desired that this north_vector be rotated with the model geometry,
+        it must be rotated separately.
 
         Args:
             axis: A ladybug_geometry Vector3D axis representing the axis of rotation.
@@ -505,9 +510,14 @@ class Model(_Base):
             aperture.rotate(axis, angle, origin)
         for door in self._orphaned_doors:
             door.rotate(axis, angle, origin)
+        self.properties.rotate(axis, angle, origin)
 
     def rotate_xy(self, angle, origin):
         """Rotate this Model counterclockwise in the world XY plane by a certain angle.
+
+        Note that using this method does NOT rotate the model north_vector and,
+        if it is desired that this north_vector be rotated with the model geometry,
+        it must be rotated separately.
 
         Args:
             angle: An angle in degrees.
@@ -524,9 +534,14 @@ class Model(_Base):
             aperture.rotate_xy(angle, origin)
         for door in self._orphaned_doors:
             door.rotate_xy(angle, origin)
+        self.properties.rotate_xy(angle, origin)
 
     def reflect(self, plane):
         """Reflect this Model across a plane with the input normal vector and origin.
+
+        Note that using this method does NOT reflect the model north_vector and,
+        if it is desired that this north_vector be reflected with the model geometry,
+        it must be reflected separately.
 
         Args:
             plane: A ladybug_geometry Plane across which the object will
@@ -542,9 +557,14 @@ class Model(_Base):
             aperture.reflect(plane)
         for door in self._orphaned_doors:
             door.reflect(plane)
+        self.properties.reflect(plane)
 
     def scale(self, factor, origin=None):
         """Scale this Model by a factor from an origin point.
+
+        Note that using this method does NOT scale the model tolerance and, if
+        it is desired that this tolerance be scaled with the model geometry,
+        it must be scaled separately.
 
         Args:
             factor: A number representing how much the object should be scaled.
@@ -561,6 +581,7 @@ class Model(_Base):
             aperture.scale(factor, origin)
         for door in self._orphaned_doors:
             door.scale(factor, origin)
+        self.properties.scale(factor, origin)
 
     def convert_to_units(self, units='Meters'):
         """Convert all of the geometry in this model to certain units.
@@ -692,7 +713,7 @@ class Model(_Base):
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
-                object's's plane at which the vertex is said to lie in the plane.
+                object's plane at which the vertex is said to lie in the plane.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
         """
@@ -741,7 +762,7 @@ class Model(_Base):
         Args:
             tolerance: The minimum acceptable area of the object. Default is 0.0001,
                 which is equal to 1 cm2 when model units are meters. This is just
-                above the smalest size that OpenStudio will accept.
+                above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
         """
@@ -790,7 +811,7 @@ class Model(_Base):
         triangulated_apertures = []
         parents_to_edit = []
         all_apertures = self.apertures
-        adj_check = []  # confirms when interior apertures are triagulated by adjacency
+        adj_check = []  # confirms when interior apertures are triangulated by adjacency
         for i, ap in enumerate(all_apertures):
             if len(ap.geometry) <= 4:
                 pass
@@ -850,7 +871,7 @@ class Model(_Base):
         triangulated_doors = []
         parents_to_edit = []
         all_doors = self.doors
-        adj_check = []  # confirms when interior doors are triagulated by adjacency
+        adj_check = []  # confirms when interior doors are triangulated by adjacency
         for i, dr in enumerate(all_doors):
             if len(dr.geometry) <= 4:
                 pass
@@ -1094,7 +1115,7 @@ class Model(_Base):
 
         Returns:
             A number for the conversion factor, which should be multiplied by
-            all distance units taken from Rhino geoemtry in order to convert
+            all distance units taken from Rhino geometry in order to convert
             them to meters.
         """
         if units == 'Meters':

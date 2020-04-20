@@ -36,7 +36,7 @@ def model_extension_dicts(data, extension_key, room_ext_dicts, face_ext_dicts,
         'Expected Model dictionary. Got {}.'.format(data['type'])
 
     # loop through the model dictionary using the same logic that the
-    # model does when you requst rooms, faces, shades, apertures and doors.
+    # model does when you request rooms, faces, shades, apertures and doors.
     if 'rooms' in data and data['rooms'] is not None:
         room_extension_dicts(data['rooms'], extension_key, room_ext_dicts,
                              face_ext_dicts, shade_ext_dicts, aperture_ext_dicts,

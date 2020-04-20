@@ -209,7 +209,7 @@ class Room(_BaseWithShade):
         Multipliers are used to speed up the calculation when similar Rooms are
         repeated more than once. Essentially, a given simulation with the
         Room is run once and then the result is mutliplied by the multiplier.
-        This means that the "repetition" isn't in a particualr direction (it's
+        This means that the "repetition" isn't in a particular direction (it's
         essentially in the exact same location) and this comes with some
         inaccuracy. However, this error might not be too large if the Rooms
         are similar enough and it can often be worth it since it can greatly
@@ -421,6 +421,7 @@ class Room(_BaseWithShade):
         for face in self._faces:
             face.move(moving_vec)
         self.move_shades(moving_vec)
+        self.properties.move(moving_vec)
         if self._geometry is not None:
             self._geometry = self.geometry.move(moving_vec)
 
@@ -436,6 +437,7 @@ class Room(_BaseWithShade):
         for face in self._faces:
             face.rotate(axis, angle, origin)
         self.rotate_shades(axis, angle, origin)
+        self.properties.rotate(axis, angle, origin)
         if self._geometry is not None:
             self._geometry = self.geometry.rotate(axis, math.radians(angle), origin)
 
@@ -450,6 +452,7 @@ class Room(_BaseWithShade):
         for face in self._faces:
             face.rotate_xy(angle, origin)
         self.rotate_xy_shades(angle, origin)
+        self.properties.rotate_xy(angle, origin)
         if self._geometry is not None:
             self._geometry = self.geometry.rotate_xy(math.radians(angle), origin)
 
@@ -463,6 +466,7 @@ class Room(_BaseWithShade):
         for face in self._faces:
             face.reflect(plane)
         self.reflect_shades(plane)
+        self.properties.reflect(plane)
         if self._geometry is not None:
             self._geometry = self.geometry.reflect(plane.n, plane.o)
 
@@ -477,6 +481,7 @@ class Room(_BaseWithShade):
         for face in self._faces:
             face.scale(factor, origin)
         self.scale_shades(factor, origin)
+        self.properties.scale(factor, origin)
         if self._geometry is not None:
             self._geometry = self.geometry.scale(factor, origin)
 
@@ -517,7 +522,7 @@ class Room(_BaseWithShade):
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
-                object's's plane at which the vertex is said to lie in the plane.
+                object's plane at which the vertex is said to lie in the plane.
                 Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
@@ -569,7 +574,7 @@ class Room(_BaseWithShade):
         Args:
             tolerance: The minimum acceptable area of the object. Default is 0.0001,
                 which is equal to 1 cm2 when model units are meters. This is just
-                above the smalest size that OpenStudio will accept.
+                above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
         """
@@ -605,7 +610,7 @@ class Room(_BaseWithShade):
                 for Faces paired in the process of solving adjacency. This data can
                 be used to assign custom properties to the new adjacent Faces (like
                 making all adjacencies an AirBoundary face type or assigning custom
-                materials/construcitons).
+                materials/constructions).
 
             -   adjacent_apertures - A list of tuples with each tuple containing 2
                 objects for Apertures paired in the process of solving adjacency.
@@ -660,7 +665,7 @@ class Room(_BaseWithShade):
 
         Args:
             abridged: Boolean to note whether the extension properties of the
-                object (ie. construciton sets) should be included in detail
+                object (ie. construction sets) should be included in detail
                 (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if

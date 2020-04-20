@@ -6,7 +6,7 @@ This is useful for cases like the following:
 * Searching through the honeybee-radiance modifier library.
 * Searching through the honeybee-energy material, construction, schedule,
   constructionset, or programtype libraries.
-* Searching through EnergyPlus IDD or RDD to find possilbe output variables
+* Searching through EnergyPlus IDD or RDD to find possible output variables
   to request form the simulation.
 """
 
@@ -22,9 +22,9 @@ def filter_array_by_keywords(array, keywords, parse_phrases=True):
             the given keywords.
         keywords: An array of strings representing keywords.
         parse_phrases: If True, this method will automatically parse any strings of
-            multiple keywords (spearated by spaces) into separate keywords for
-            searching. This results in a greater liklihood that someone finds what
-            they are searching for in large arrays but it may not be appropropriate for
+            multiple keywords (separated by spaces) into separate keywords for
+            searching. This results in a greater likelihood that someone finds what
+            they are searching for in large arrays but it may not be appropriate for
             all cases. You may want to set it to False when you are searching for a
             specific phrase that includes spaces. Default: True.
     """
@@ -65,8 +65,8 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None):
             number of decimal places if it is a float.
 
     Returns:
-        A string or number for tha attribute assinged ot the obj_instance. If the
-        input attr_name is a valid attribute for the object but None is assinged,
+        A string or number for tha attribute assigned ot the obj_instance. If the
+        input attr_name is a valid attribute for the object but None is assigned,
         the output will be 'None'. If the input attr_name is not valid for
         the input object, 'N/A' will be returned.
     """

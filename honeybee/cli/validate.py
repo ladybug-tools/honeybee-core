@@ -37,7 +37,7 @@ def validate_model(model_json):
         model_json: Full path to a Model JSON file.
     """
     try:
-        # check that the file is thre
+        # check that the file is there
         assert os.path.isfile(model_json), 'No JSON file found at {}.'.format(model_json)
     
         # validate the Model JSON
@@ -49,7 +49,7 @@ def validate_model(model_json):
         parsed_model = Model.from_dict(data)
         parsed_model.check_missing_adjacencies(raise_exception=True)
         click.echo('Python re-serialization passed.')
-        click.echo('Congratulations! Yout Model JSON is valid!')
+        click.echo('Congratulations! Your Model JSON is valid!')
     except Exception as e:
         _logger.exception('Model validation failed.\n{}'.format(e))
         sys.exit(1)

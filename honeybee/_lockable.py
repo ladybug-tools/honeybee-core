@@ -63,7 +63,7 @@ def lockable(cls):
             object.__setattr__(self, key, value)
 
     def init_decorator(func):
-        """Initialize the locabke decorator for the class."""
+        """Initialize the lockable decorator for the class."""
 
         @wraps(func)
         def wrapper(self, *args, **kwargs):
@@ -93,7 +93,7 @@ def lockable(cls):
                 break
         if not _all_good:
             raise AttributeError(
-                'When using the @locakble decorator on a class with __slots__, '
+                'When using the @lockable decorator on a class with __slots__, '
                 'a "_locked" variable must be specified within __slots__.')
 
     return cls
