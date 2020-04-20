@@ -177,6 +177,7 @@ class Shade(_Base):
                 to move the face.
         """
         self._geometry = self.geometry.move(moving_vec)
+        self.properties.move(moving_vec)
 
     def rotate(self, axis, angle, origin):
         """Rotate this Shade by a certain angle around an axis and origin.
@@ -188,6 +189,7 @@ class Shade(_Base):
                 object will be rotated.
         """
         self._geometry = self.geometry.rotate(axis, math.radians(angle), origin)
+        self.properties.rotate(axis, angle, origin)
 
     def rotate_xy(self, angle, origin):
         """Rotate this Shade counterclockwise in the world XY plane by a certain angle.
@@ -198,6 +200,7 @@ class Shade(_Base):
                 object will be rotated.
         """
         self._geometry = self.geometry.rotate_xy(math.radians(angle), origin)
+        self.properties.rotate_xy(angle, origin)
 
     def reflect(self, plane):
         """Reflect this Shade across a plane.
@@ -207,6 +210,7 @@ class Shade(_Base):
                 be reflected.
         """
         self._geometry = self.geometry.reflect(plane.n, plane.o)
+        self.properties.reflect(plane)
 
     def scale(self, factor, origin=None):
         """Scale this Shade by a factor from an origin point.
@@ -217,13 +221,14 @@ class Shade(_Base):
                 to scale. If None, it will be scaled from the World origin (0, 0, 0).
         """
         self._geometry = self.geometry.scale(factor, origin)
+        self.properties.scale(factor, origin)
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Shade's vertices lie within the same plane.
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
-                object's's plane at which the vertex is said to lie in the plane.
+                object's plane at which the vertex is said to lie in the plane.
                 Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
@@ -235,7 +240,7 @@ class Shade(_Base):
                 self.display_name, e))
 
     def check_self_intersecting(self, raise_exception=True):
-        """Check whether the edges of the Shade intersect one another (like a bowtwie).
+        """Check whether the edges of the Shade intersect one another (like a bowtie).
 
         Args:
             raise_exception: If True, a ValueError will be raised if the object
@@ -254,7 +259,7 @@ class Shade(_Base):
         Args:
             tolerance: The minimum acceptable area of the object. Default is 0.0001,
                 which is equal to 1 cm2 when model units are meters. This is just
-                above the smalest size that OpenStudio will accept.
+                above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
         """

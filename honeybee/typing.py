@@ -139,7 +139,7 @@ def list_with_length(value, length=3, item_type=float, input_name=''):
 def clean_string(value, input_name=''):
     """Clean a string so that it is valid for both Radiance and EnergyPlus.
 
-    This will strip out spaces and special charcters and raise an error if the
+    This will strip out spaces and special characters and raise an error if the
     string is empty after stripping or has more than 100 characters.
     """
     try:
@@ -194,7 +194,7 @@ def clean_ep_string(value, input_name=''):
 def clean_and_id_string(value, input_name=''):
     """Clean a string and add 8 unique characters to it to make it unique.
 
-    Strings longer than 50 characters will be trucated before adding the ID.
+    Strings longer than 50 characters will be truncated before adding the ID.
     The resulting string will be valid for both Radiance and EnergyPlus.
     """
     try:
@@ -224,7 +224,7 @@ def clean_and_id_ep_string(value, input_name=''):
     """Clean a string and add 8 unique characters to it to make it unique for EnergyPlus.
 
     This includes stripping out all illegal charactersand removing trailing white spaces.
-    Strings longer than 50 characters will be trucated before adding the ID.
+    Strings longer than 50 characters will be truncated before adding the ID.
     """
     try:
         val = ''.join(i for i in value if ord(i) < 128)  # strip out non-ascii

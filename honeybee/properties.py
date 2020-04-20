@@ -14,7 +14,8 @@ class _Properties(object):
         host: A honeybee-core geometry object that hosts these properties
             (ie. Model, Room, Face, Shade, Aperture, Door).
     """
-    _do_not_duplicate = ('host', 'to_dict', 'ToString')
+    _exclude = set(('host', 'move', 'rotate', 'rotate_xy', 'reflect', 'scale',
+                    'add_prefix', 'reset_to_default', 'to_dict', 'ToString'))
 
     def __init__(self, host):
         """Initialize properties."""
@@ -24,6 +25,130 @@ class _Properties(object):
     def host(self):
         """Get the object hosting these properties."""
         return self._host
+
+    @property
+    def _extension_attributes(self):
+        return (atr for atr in dir(self) if not atr.startswith('_')
+                and atr not in self._exclude)
+
+    def move(self, moving_vec):
+        """Apply a move transform to extension attributes.
+
+        This is useful in cases where extension attributes possess geometric data
+        that should be moved alongside the host object. For example, dynamic
+        geometry within the honeybee-radiance state of an aperture should be
+        moved if the host aperture is moved.
+
+        Args:
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the face.
+        """
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if not hasattr(var, 'move'):
+                continue
+            try:
+                var.move(moving_vec)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to move {}: {}'.format(var, e))
+
+    def rotate(self, axis, angle, origin):
+        """Apply a rotatation transform to extension attributes.
+
+        This is useful in cases where extension attributes possess geometric data
+        that should be rotated alongside the host object. For example, dynamic
+        geometry within the honeybee-radiance state of an aperture should be
+        rotated if the host aperture is rotated.
+
+        Args:
+            axis: A ladybug_geometry Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if not hasattr(var, 'rotate'):
+                continue
+            try:
+                var.rotate(axis, angle, origin)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to rotate {}: {}'.format(var, e))
+
+    def rotate_xy(self, angle, origin):
+        """Apply a rotatation in the XY plane to extension attributes.
+
+        This is useful in cases where extension attributes possess geometric data
+        that should be rotated alongside the host object. For example, dynamic
+        geometry within the honeybee-radiance state of an aperture should be
+        rotated if the host aperture is rotated.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if not hasattr(var, 'rotate_xy'):
+                continue
+            try:
+                var.rotate_xy(angle, origin)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to rotate {}: {}'.format(var, e))
+
+    def reflect(self, plane):
+        """Apply a reflection transform to extension attributes.
+
+        This is useful in cases where extension attributes possess geometric data
+        that should be reflected alongside the host object. For example, dynamic
+        geometry within the honeybee-radiance state of an aperture should be
+        reflected if the host aperture is reflected.
+
+        Args:
+            plane: A ladybug_geometry Plane across which the object will
+                be reflected.
+        """
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if not hasattr(var, 'reflect'):
+                continue
+            try:
+                var.reflect(plane)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to reflect {}: {}'.format(var, e))
+
+    def scale(self, factor, origin=None):
+        """Apply a scale transform to extension attributes.
+
+        This is useful in cases where extension attributes possess geometric data
+        that should be scaled alongside the host object. For example, dynamic
+        geometry within the honeybee-radiance state of an aperture should be
+        scaled if the host aperture is scaled.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if not hasattr(var, 'scale'):
+                continue
+            try:
+                var.scale(factor, origin)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to scale {}: {}'.format(var, e))
 
     def _duplicate_extension_attr(self, original_properties):
         """Duplicate the attributes added by extensions.
@@ -38,10 +163,7 @@ class _Properties(object):
             original_properties: The properties object of the original core
                 object from which the duplicate was derived.
         """
-        attr = [atr for atr in dir(self)
-                if not atr.startswith('_') and atr not in self._do_not_duplicate]
-
-        for atr in attr:
+        for atr in self._extension_attributes:
             var = getattr(original_properties, atr)
             if not hasattr(var, 'duplicate'):
                 continue
@@ -68,10 +190,7 @@ class _Properties(object):
                 name. It is recommended that this name be short to avoid maxing
                 out the 100 allowable characters for honeybee names.
         """
-        attr = [atr for atr in dir(self)
-                if not atr.startswith('_') and atr not in self._do_not_duplicate]
-
-        for atr in attr:
+        for atr in self._extension_attributes:
             var = getattr(self, atr)
             if not hasattr(var, 'add_prefix'):
                 continue
@@ -93,10 +212,7 @@ class _Properties(object):
         Face type to AirBoundary will reset the extension attributes to the legal
         default values.
         """
-        attr = [atr for atr in dir(self)
-                if not atr.startswith('_') and atr not in self._do_not_duplicate]
-
-        for atr in attr:
+        for atr in self._extension_attributes:
             var = getattr(self, atr)
             if not hasattr(var, 'reset_to_default'):
                 continue
@@ -130,12 +246,7 @@ class _Properties(object):
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
         """
-        if include is not None:
-            attr = include
-        else:
-            attr = [atr for atr in dir(self)
-                    if not atr.startswith('_') and atr not in self._do_not_duplicate]
-
+        attr = include if include is not None else self._extension_attributes
         for atr in attr:
             var = getattr(self, atr)
             if not hasattr(var, 'to_dict'):
@@ -162,10 +273,7 @@ class _Properties(object):
                 attributes from the dictionary and assign them to the object on
                 which this method is called.
         """
-        attr = [atr for atr in dir(self)
-                if not atr.startswith('_') and atr not in self._do_not_duplicate]
-
-        for atr in attr:
+        for atr in self._extension_attributes:
             var = getattr(self, atr)
             if not hasattr(var, 'from_dict'):
                 continue
@@ -206,15 +314,8 @@ class ModelProperties(_Properties):
             include: A list of keys to be included in dictionary.
                 If None all the available keys will be included.
         """
-        base = {
-            'type': 'ModelProperties'
-        }
-        if include is not None:
-            attr = include
-        else:
-            attr = [atr for atr in dir(self)
-                    if not atr.startswith('_') and atr != 'host']
-
+        base = {'type': 'ModelProperties'}
+        attr = include if include is not None else self._extension_attributes
         for atr in attr:
             var = getattr(self, atr)
             if not hasattr(var, 'to_dict'):
@@ -233,10 +334,7 @@ class ModelProperties(_Properties):
         Args:
             data: A dictionary representation of an entire honeybee-core Model.
         """
-        attr = [atr for atr in dir(self)
-                if not atr.startswith('_') and atr not in self._do_not_duplicate]
-
-        for atr in attr:
+        for atr in self._extension_attributes:
             if atr not in data['properties']:
                 continue
             var = getattr(self, atr)
@@ -301,7 +399,7 @@ class RoomProperties(_Properties):
     def reset_to_default(self):
         """Reset the extension properties assigned at the level of this Room to default.
 
-        This typically means erasing any ConstructionSets or ModifierSetss assigned
+        This typically means erasing any ConstructionSets or ModifierSets assigned
         to this Room among other properties.
         """
         self._reset_extension_attr_to_default()
@@ -357,7 +455,7 @@ class FaceProperties(_Properties):
         """Reset the extension properties assigned at the level of this Face to default.
 
         This typically means erasing any Constructions or Modifiers assigned to this
-        Face (having them instead assigned by ConstrucitonSets and ModifierSets).
+        Face (having them instead assigned by ConstructionSets and ModifierSets).
         """
         self._reset_extension_attr_to_default()
 
@@ -413,7 +511,7 @@ class ShadeProperties(_Properties):
         """Reset the extension properties assigned at the level of this Shade to default.
 
         This typically means erasing any Constructions or Modifiers assigned to this
-        Shade (having them instead assigned by ConstrucitonSets and ModifierSets).
+        Shade (having them instead assigned by ConstructionSets and ModifierSets).
         """
         self._reset_extension_attr_to_default()
 
@@ -469,7 +567,7 @@ class ApertureProperties(_Properties):
         """Reset the extension properties assigned to this Aperture to default.
 
         This typically means erasing any Constructions or Modifiers assigned to this
-        Aperture (having them instead assigned by ConstrucitonSets and ModifierSets).
+        Aperture (having them instead assigned by ConstructionSets and ModifierSets).
         """
         self._reset_extension_attr_to_default()
 
@@ -525,7 +623,7 @@ class DoorProperties(_Properties):
         """Reset the extension properties assigned to this Door to default.
 
         This typically means erasing any Constructions or Modifiers assigned to this
-        Door (having them instead assigned by ConstrucitonSets and ModifierSets).
+        Door (having them instead assigned by ConstructionSets and ModifierSets).
         """
         self._reset_extension_attr_to_default()
 

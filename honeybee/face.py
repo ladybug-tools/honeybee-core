@@ -104,7 +104,7 @@ class Face(_BaseWithShade):
             bc_class = getattr(hbc, data['boundary_condition']['type'])
         except AttributeError:
             raise ValueError(
-                'Boundary condition "{}" is not supported in this honyebee '
+                'Boundary condition "{}" is not supported in this honeybee '
                 'installation.'.format(data['boundary_condition']['type']))
         bc = bc_class.from_dict(data['boundary_condition'])
         face = cls(data['identifier'], Face3D.from_dict(data['geometry']), face_type, bc)
@@ -150,7 +150,7 @@ class Face(_BaseWithShade):
     def type(self):
         """Get or set an object for Type of Face (ie. Wall, Floor, Roof).
 
-        Note that setting this property will reset extension attrributes on this
+        Note that setting this property will reset extension attributes on this
         Face to their default values.
         """
         return self._type
@@ -422,7 +422,7 @@ class Face(_BaseWithShade):
         Args:
             other_face: Another Face object to be set adjacent to this one.
             tolerance: The minimum distance between the center of two aperture
-                geometries at which they are condsidered adjacent. Default: 0.01,
+                geometries at which they are considered adjacent. Default: 0.01,
                 suitable for objects in meters.
 
         Returns:
@@ -627,7 +627,7 @@ class Face(_BaseWithShade):
         """Add a single rectangular aperture to the center of this Face.
 
         A rectangular window with the input width and height will always be added
-        by this method regardless of whether this parent Face contains a recongizable
+        by this method regardless of whether this parent Face contains a recognizable
         rectangular portion or not. Furthermore, this method preserves any existing
         apertures on the Face.
 
@@ -643,7 +643,7 @@ class Face(_BaseWithShade):
             sill_height: A number for the sill height. Default: 1.
             aperture_identifier: Optional string for the aperture identifier. If None, the default
                 will follow the convention "[face_identifier]_Glz[count]" where [count]
-                is one more than the current numer of apertures in the face.
+                is one more than the current number of apertures in the face.
 
         Returns:
             The new Aperture object that has been generated.
@@ -819,6 +819,7 @@ class Face(_BaseWithShade):
         for dr in self._doors:
             dr.move(moving_vec)
         self.move_shades(moving_vec)
+        self.properties.move(moving_vec)
         self._punched_geometry = None  # reset so that it can be re-computed
 
     def rotate(self, axis, angle, origin):
@@ -836,6 +837,7 @@ class Face(_BaseWithShade):
         for dr in self._doors:
             dr.rotate(axis, angle, origin)
         self.rotate_shades(axis, angle, origin)
+        self.properties.rotate(axis, angle, origin)
         self._punched_geometry = None  # reset so that it can be re-computed
 
     def rotate_xy(self, angle, origin):
@@ -852,6 +854,7 @@ class Face(_BaseWithShade):
         for dr in self._doors:
             dr.rotate_xy(angle, origin)
         self.rotate_xy_shades(angle, origin)
+        self.properties.rotate_xy(angle, origin)
         self._punched_geometry = None  # reset so that it can be re-computed
 
     def reflect(self, plane):
@@ -867,6 +870,7 @@ class Face(_BaseWithShade):
         for dr in self._doors:
             dr.reflect(plane)
         self.reflect_shades(plane)
+        self.properties.reflect(plane)
         self._punched_geometry = None  # reset so that it can be re-computed
 
     def scale(self, factor, origin=None):
@@ -883,6 +887,7 @@ class Face(_BaseWithShade):
         for dr in self._doors:
             dr.scale(factor, origin)
         self.scale_shades(factor, origin)
+        self.properties.scale(factor, origin)
         self._punched_geometry = None  # reset so that it can be re-computed
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
@@ -962,7 +967,7 @@ class Face(_BaseWithShade):
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
-                object's's plane at which the vertex is said to lie in the plane.
+                object's plane at which the vertex is said to lie in the plane.
                 Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
@@ -974,7 +979,7 @@ class Face(_BaseWithShade):
                 self.display_name, e))
 
     def check_self_intersecting(self, raise_exception=True):
-        """Check whether the edges of the Face intersect one another (like a bowtwie).
+        """Check whether the edges of the Face intersect one another (like a bowtie).
 
         Args:
             raise_exception: If True, a ValueError will be raised if the object
@@ -993,7 +998,7 @@ class Face(_BaseWithShade):
         Args:
             tolerance: The minimum acceptable area of the object. Default is 0.0001,
                 which is equal to 1 cm2 when model units are meters. This is just
-                above the smalest size that OpenStudio will accept.
+                above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
         """
@@ -1025,7 +1030,7 @@ class Face(_BaseWithShade):
 
         Args:
             abridged: Boolean to note whether the extension properties of the
-                object (ie. materials, construcitons) should be included in detail
+                object (ie. materials, constructions) should be included in detail
                 (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
@@ -1054,7 +1059,7 @@ class Face(_BaseWithShade):
         return base
 
     def _acceptable_sub_face_check(self, sub_face_type=Aperture):
-        """Check whether the Face can accept sub-faces and raise an excption if not."""
+        """Check whether the Face can accept sub-faces and raise an exception if not."""
         assert isinstance(self.boundary_condition, Outdoors), \
             '{} can only be added to Faces with a Outdoor boundary condition.'.format(
                 sub_face_type.__name__)

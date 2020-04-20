@@ -107,7 +107,7 @@ class Aperture(_BaseWithShade):
             boundary_condition: Boundary condition object (eg. Outdoors, Surface).
                 Default: Outdoors.
             is_operable: Boolean to note whether the Aperture can be opened for
-                natrual ventilation. Default: False
+                natural ventilation. Default: False
         """
         geometry = Face3D(tuple(Point3D(*v) for v in vertices))
         return cls(identifier, geometry, boundary_condition, is_operable)
@@ -503,6 +503,7 @@ class Aperture(_BaseWithShade):
         """
         self._geometry = self.geometry.move(moving_vec)
         self.move_shades(moving_vec)
+        self.properties.move(moving_vec)
 
     def rotate(self, axis, angle, origin):
         """Rotate this Aperture by a certain angle around an axis and origin.
@@ -515,6 +516,7 @@ class Aperture(_BaseWithShade):
         """
         self._geometry = self.geometry.rotate(axis, math.radians(angle), origin)
         self.rotate_shades(axis, angle, origin)
+        self.properties.rotate(axis, angle, origin)
 
     def rotate_xy(self, angle, origin):
         """Rotate this Aperture counterclockwise in the world XY plane by a certain angle.
@@ -526,6 +528,7 @@ class Aperture(_BaseWithShade):
         """
         self._geometry = self.geometry.rotate_xy(math.radians(angle), origin)
         self.rotate_xy_shades(angle, origin)
+        self.properties.rotate_xy(angle, origin)
 
     def reflect(self, plane):
         """Reflect this Aperture across a plane.
@@ -536,6 +539,7 @@ class Aperture(_BaseWithShade):
         """
         self._geometry = self.geometry.reflect(plane.n, plane.o)
         self.reflect_shades(plane)
+        self.properties.reflect(plane)
 
     def scale(self, factor, origin=None):
         """Scale this Aperture by a factor from an origin point.
@@ -547,13 +551,14 @@ class Aperture(_BaseWithShade):
         """
         self._geometry = self.geometry.scale(factor, origin)
         self.scale_shades(factor, origin)
+        self.properties.scale(factor, origin)
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Aperture's vertices lie within the same plane.
 
         Args:
             tolerance: The minimum distance between a given vertex and a the
-                object's's plane at which the vertex is said to lie in the plane.
+                object's plane at which the vertex is said to lie in the plane.
                 Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
@@ -565,7 +570,7 @@ class Aperture(_BaseWithShade):
                 self.display_name, e))
 
     def check_self_intersecting(self, raise_exception=True):
-        """Check whether the edges of the Aperture intersect one another (like a bowtwie)
+        """Check whether the edges of the Aperture intersect one another (like a bowtie)
 
         Args:
             raise_exception: If True, a ValueError will be raised if the object
@@ -584,7 +589,7 @@ class Aperture(_BaseWithShade):
         Args:
             tolerance: The minimum acceptable area of the object. Default is 0.0001,
                 which is equal to 1 cm2 when model units are meters. This is just
-                above the smalest size that OpenStudio will accept.
+                above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
         """
@@ -616,7 +621,7 @@ class Aperture(_BaseWithShade):
 
         Args:
             abridged: Boolean to note whether the extension properties of the
-                object (ie. materials, construcitons) should be included in detail
+                object (ie. materials, constructions) should be included in detail
                 (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if

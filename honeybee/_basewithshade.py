@@ -222,7 +222,7 @@ class _BaseWithShade(_Base):
         return True
 
     def _add_shades_to_dict(self, base, abridged=False, included_prop=None):
-        """Method used to add child shades to the paret base dictionary.
+        """Method used to add child shades to the parent base dictionary.
 
         Args:
             base: The base object dictionary to which the child shades will be added.
@@ -259,7 +259,7 @@ class _BaseWithShade(_Base):
                 ishd._is_indoor = True
 
     def _duplicate_child_shades(self, new_object):
-        """Add duplicated child shades to a duplcated new_object."""
+        """Add duplicated child shades to a duplicated new_object."""
         new_object._outdoor_shades = [oshd.duplicate() for oshd in self._outdoor_shades]
         new_object._indoor_shades = [ishd.duplicate() for ishd in self._indoor_shades]
         for oshd in new_object._outdoor_shades:

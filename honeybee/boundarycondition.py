@@ -54,7 +54,7 @@ class Outdoors(_BoundaryCondition):
         wind_exposure: A boolean noting whether the boundary is exposed to wind.
             Default: True.
         view_factor: A number between 0 and 1 for the view factor to the ground.
-            This input can also be an Autocalculate object to sigify that the view
+            This input can also be an Autocalculate object to signify that the view
             factor automatically calculated.  Default: autocalculate.
     """
 
@@ -80,7 +80,7 @@ class Outdoors(_BoundaryCondition):
         """Initialize Outdoors BoundaryCondition from a dictionary.
 
         Args:
-            data: A dictionary representaion of the boundary condition.
+            data: A dictionary representation of the boundary condition.
         """
         assert data['type'] == 'Outdoors', 'Expected dictionary for Outdoors boundary ' \
             'condition. Got {}.'.format(data['type'])
@@ -133,7 +133,7 @@ class Outdoors(_BoundaryCondition):
 
 
 class Surface(_BoundaryCondition):
-    """Bondary condition when an object is adjacent to another object."""
+    """Boundary condition when an object is adjacent to another object."""
 
     __slots__ = ('_boundary_condition_objects',)
 
@@ -166,7 +166,7 @@ class Surface(_BoundaryCondition):
         """Initialize Surface BoundaryCondition from a dictionary.
 
         Args:
-            data: A dictionary representaion of the boundary condition.
+            data: A dictionary representation of the boundary condition.
             sub_face: Boolean to note whether this boundary condition is applied to a
                 sub-face (an Aperture or a Door) instead of a Face. Default: False.
         """
@@ -203,7 +203,7 @@ class Surface(_BoundaryCondition):
     def boundary_condition_objects(self):
         """Get a tuple of up to 3 object identifiers that are adjacent to this one.
 
-        The first object is always the one that is immediately adjacet and is of
+        The first object is always the one that is immediately adjacent and is of
         the same object type (Face, Aperture, Door).
         When this boundary condition is applied to a Face, the second object in the
         tuple will be the parent Room of the adjacent object.
@@ -234,7 +234,7 @@ class Ground(_BoundaryCondition):
     """Ground boundary condition.
     
     Args:
-        data: A dictionary representaion of the boundary condition.
+        data: A dictionary representation of the boundary condition.
     """
     __slots__ = ()
 
@@ -313,7 +313,7 @@ boundary_conditions = _BoundaryConditions()
 
 
 def get_bc_from_position(positions, ground_depth=0):
-    """Return a boundary condition based on the relationship to a gound plane.
+    """Return a boundary condition based on the relationship to a ground plane.
 
     Positions that are entirely at or below the ground_depth will get a Ground
     boundary condition. If there are any positions above the ground_depth, an

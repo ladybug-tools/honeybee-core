@@ -74,17 +74,17 @@ class _ColorObject(object):
 
     @property
     def attributes(self):
-        """Get a tuple of text for the attributes assinged to the objects.
+        """Get a tuple of text for the attributes assigned to the objects.
 
         If the input attr_name is a valid attribute for the object but None is
-        assinged, the output will be 'None'. If the input attr_name is not valid
+        assigned, the output will be 'None'. If the input attr_name is not valid
         for the input object, 'N/A' will be returned.
         """
         return self._attributes
 
     @property
     def attributes_unique(self):
-        """Get a tuple of text for the unique attributes assinged to the objects."""
+        """Get a tuple of text for the unique attributes assigned to the objects."""
         return self._attributes_unique
 
     @property

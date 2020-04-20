@@ -1,4 +1,4 @@
-"""Collection of utilites for assigning different properties based on orientation.
+"""Collection of utilities for assigning different properties based on orientation.
 
 The functions here are meant to be adaptable to splitting up the compass based on
 however many bins the user desires, though the most common arrangement is likely
@@ -16,7 +16,7 @@ Usage:
     all_inputs = [ep_constructions, rad_materials]
     all_inputs, num_orient = check_matching_inputs(all_inputs)
 
-    # assign proeprties based on orientation
+    # assign properties based on orientation
     angles = angles_from_num_orient(num_orient)
     for face in hb_faces:
         orient_i = face_orient_index(face, angles)
@@ -74,7 +74,7 @@ def orient_index(orientation, angles):
     """Get the index to be used for a given face/aperture orientation from an angle list.
 
     Args:
-        orientation: The horizontal cardinal orientaion of the Face or Aperture
+        orientation: The horizontal cardinal orientation of the Face or Aperture
             in degrees.
         angles: A list of angles that denote the boundaries of each orientation
             category.
@@ -101,7 +101,7 @@ def inputs_by_index(orientation_index, all_inputs):
 def check_matching_inputs(all_inputs, num_orient=None):
     """Check that all orientation-specific inputs are coordinated.
 
-    This means that each input is either a array of values to be aplied to each
+    This means that each input is either a array of values to be applied to each
     orientation, which is has the same length as other orientation-specific arrays,
     or it is a single value to be used for all orientations.
 

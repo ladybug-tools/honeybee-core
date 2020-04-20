@@ -15,7 +15,7 @@ import honeybee.boundarycondition as hbc
 
 
 def dict_to_object(honeybee_dict, raise_exception=True):
-    """Re-serialize a dicationary of almost any object within honeybee.
+    """Re-serialize a dictionary of almost any object within honeybee.
 
     This includes any Model, Room, Face, Aperture, Door, Shade, or boundary
     condition object.
@@ -51,4 +51,4 @@ def dict_to_object(honeybee_dict, raise_exception=True):
         bc_class = getattr(hbc, obj_type)
         return bc_class.from_dict(honeybee_dict)
     elif raise_exception:
-        raise ValueError('{} is not a reconized honeybee object'.format(obj_type))
+        raise ValueError('{} is not a recognized honeybee object'.format(obj_type))
