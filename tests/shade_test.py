@@ -257,14 +257,14 @@ def test_to_dict():
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
     shd = Shade.from_vertices('RectangleShade', vertices)
 
-    shdd = shd.to_dict()
-    assert shdd['type'] == 'Shade'
-    assert shdd['identifier'] == 'RectangleShade'
-    assert shdd['display_name'] == 'RectangleShade'
-    assert 'geometry' in shdd
-    assert len(shdd['geometry']['boundary']) == len(vertices)
-    assert 'properties' in shdd
-    assert shdd['properties']['type'] == 'ShadeProperties'
+    shd = shd.to_dict()
+    assert shd['type'] == 'Shade'
+    assert shd['identifier'] == 'RectangleShade'
+    assert shd['display_name'] == 'RectangleShade'
+    assert 'geometry' in shd
+    assert len(shd['geometry']['boundary']) == len(vertices)
+    assert 'properties' in shd
+    assert shd['properties']['type'] == 'ShadeProperties'
 
 
 def test_to_from_dict():
