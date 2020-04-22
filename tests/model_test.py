@@ -49,12 +49,14 @@ def test_model_init():
     assert isinstance(model.rooms[0], Room)
     assert len(model.faces) == 6
     assert isinstance(model.faces[0], Face)
-    assert len(model.shades) == 2
-    assert isinstance(model.shades[0], Shade)
     assert len(model.apertures) == 2
     assert isinstance(model.apertures[0], Aperture)
     assert len(model.doors) == 1
     assert isinstance(model.doors[0], Door)
+    assert len(model.indoor_shades) == 1
+    assert isinstance(model.indoor_shades[0], Shade)
+    assert len(model.outdoor_shades) == 1
+    assert isinstance(model.outdoor_shades[0], Shade)
     assert len(model.orphaned_faces) == 0
     assert len(model.orphaned_shades) == 0
     assert len(model.orphaned_apertures) == 0

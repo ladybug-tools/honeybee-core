@@ -335,6 +335,57 @@ class Model(_Base):
         return child_shades + self._orphaned_shades
 
     @property
+    def indoor_shades(self):
+        """Get a list of all indoor Shade objects in the model."""
+        child_shades = []
+        for room in self._rooms:
+            child_shades.extend(room._indoor_shades)
+            for face in room.faces:
+                child_shades.extend(face._indoor_shades)
+                for ap in face._apertures:
+                    child_shades.extend(ap._indoor_shades)
+                for dr in face._doors:
+                    child_shades.extend(dr._indoor_shades)
+        for face in self._orphaned_faces:
+            child_shades.extend(face._indoor_shades)
+            for ap in face._apertures:
+                child_shades.extend(ap._indoor_shades)
+            for dr in face._doors:
+                child_shades.extend(dr._indoor_shades)
+        for ap in self._orphaned_apertures:
+            child_shades.extend(ap._indoor_shades)
+        for dr in self._orphaned_doors:
+            child_shades.extend(dr._indoor_shades)
+        return child_shades
+
+    @property
+    def outdoor_shades(self):
+        """Get a list of all outdoor Shade objects in the model.
+
+        This includes all of the orphaned_shades.
+        """
+        child_shades = []
+        for room in self._rooms:
+            child_shades.extend(room._outdoor_shades)
+            for face in room.faces:
+                child_shades.extend(face._outdoor_shades)
+                for ap in face._apertures:
+                    child_shades.extend(ap._outdoor_shades)
+                for dr in face._doors:
+                    child_shades.extend(dr._outdoor_shades)
+        for face in self._orphaned_faces:
+            child_shades.extend(face._outdoor_shades)
+            for ap in face._apertures:
+                child_shades.extend(ap._outdoor_shades)
+            for dr in face._doors:
+                child_shades.extend(dr._outdoor_shades)
+        for ap in self._orphaned_apertures:
+            child_shades.extend(ap._outdoor_shades)
+        for dr in self._orphaned_doors:
+            child_shades.extend(dr._outdoor_shades)
+        return child_shades + self._orphaned_shades
+
+    @property
     def orphaned_faces(self):
         """Get a list of all Face objects without parent Rooms in the model."""
         return tuple(self._orphaned_faces)
