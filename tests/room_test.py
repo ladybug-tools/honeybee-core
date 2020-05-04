@@ -251,7 +251,7 @@ def test_apertures_and_shades():
     assert len(room.outdoor_shades) == 0
 
 
-def test_generate_grid():
+def generate_grid():
     """Test the generate_grid method."""
     room = Room.from_box('ShoeBoxZone', 5, 10, 3)
     mesh_grid = room.generate_grid(1)[0]

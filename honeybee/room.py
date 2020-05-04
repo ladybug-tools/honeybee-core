@@ -407,7 +407,7 @@ class Room(_BaseWithShade):
         floor_grids = []
         for face in self._faces:
             if isinstance(face.type, Floor):
-                floor_grids.append(face.geometry.get_mesh_grid(
+                floor_grids.append(face.geometry.mesh_grid(
                     x_dim, y_dim, offset, True))
         return floor_grids
 
