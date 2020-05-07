@@ -40,8 +40,6 @@ def test_model_init():
 
     assert model.identifier == 'TinyHouse'
     assert model.display_name == 'TinyHouse'
-    assert model.north_angle == 0
-    assert model.north_vector == Vector2D(0, 1)
     assert model.units == 'Meters'
     assert model.tolerance == 0
     assert model.angle_tolerance == 0
@@ -73,8 +71,6 @@ def test_model_properties_setability():
 
     model.display_name = 'TestBox'
     assert model.display_name == 'TestBox'
-    model.north_angle = 20
-    assert model.north_angle == 20
     model.units = 'Feet'
     assert model.units == 'Feet'
     model.tolerance = 0.01
@@ -772,7 +768,6 @@ def test_to_dict():
     aperture = Aperture('FrontAperture', Face3D(aperture_verts))
     north_face.add_aperture(aperture)
     model = Model('TinyHouse', [room])
-    model.north_angle = 15
 
     model_dict = model.to_dict()
     assert model_dict['type'] == 'Model'
@@ -788,8 +783,6 @@ def test_to_dict():
     assert len(model_dict['rooms'][0]['faces'][1]['doors']) == 1
     assert 'outdoor_shades' in model_dict['rooms'][0]['faces'][3]['apertures'][0]
     assert len(model_dict['rooms'][0]['faces'][3]['apertures'][0]['outdoor_shades']) == 1
-    assert 'north_angle' in model_dict
-    assert model_dict['north_angle'] == 15
     assert 'properties' in model_dict
     assert model_dict['properties']['type'] == 'ModelProperties'
 
@@ -812,7 +805,6 @@ def test_to_from_dict_methods():
     aperture = Aperture('FrontAperture', Face3D(aperture_verts))
     north_face.add_aperture(aperture)
     model = Model('TinyHouse', [room])
-    model.north_angle = 15
 
     model_dict = model.to_dict()
     new_model = Model.from_dict(model_dict)
@@ -820,7 +812,6 @@ def test_to_from_dict_methods():
 
     assert new_model.identifier == 'TinyHouse'
     assert new_model.display_name == 'TinyHouse'
-    assert new_model.north_angle == 15
     assert len(new_model.rooms) == 1
     assert isinstance(new_model.rooms[0], Room)
     assert len(new_model.faces) == 6
