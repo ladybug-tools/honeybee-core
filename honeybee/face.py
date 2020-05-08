@@ -573,6 +573,46 @@ class Face(_BaseWithShade):
             aperture._parent = self
             self._apertures.append(aperture)
 
+    def apertures_by_ratio_gridded(self, ratio, x_dim, y_dim=None):
+        """Add apertures to this face given a ratio of aperture area to face area.
+
+        Note that this method removes any existing apertures on the Face.
+        
+        Apertures will be arranged in a grid derived from this face's plane.
+        Because the x_dim and y_dim refer to dimensions within the X and Y
+        coordinate system of this faces's plane, rotating this plane will
+        result in rotated grid cells. This is particularly useful for generating
+        skylights based on a glazing ratio.
+
+        If the x_dim and/or y_dim are too large for this face, this method will
+        return essentially the same result as the apertures_by_ratio method.
+
+        Args:
+            ratio: A number between 0 and 1 for the ratio between the area of
+                the apertures and the area of this face.
+            x_dim: The x dimension of the grid cells as a number.
+            y_dim: The y dimension of the grid cells as a number. Default is None,
+                which will assume the same cell dimension for y as is set for x.
+
+        Usage:
+
+        .. code-block:: python
+
+            room = Room.from_box(3.0, 6.0, 3.2, 180)
+            room.faces[-1].apertures_by_ratio_gridded(0.05, 3)
+        """
+        assert 0 <= ratio < 1, 'Ratio must be between 0 and 1. Got {}'.format(ratio)
+        self._acceptable_sub_face_check(Aperture)
+        self.remove_sub_faces()
+        if ratio == 0:
+            return
+        else:
+            ap_faces = self._geometry.sub_faces_by_ratio_gridded(ratio, x_dim, y_dim)
+        for i, ap_face in enumerate(ap_faces):
+            aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
+            aperture._parent = self
+            self._apertures.append(aperture)
+
     def apertures_by_width_height_rectangle(self, aperture_height, aperture_width,
                                             sill_height, horizontal_separation,
                                             tolerance=0.01):

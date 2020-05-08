@@ -376,6 +376,21 @@ def test_apertures_by_ratio_rectangle():
     assert face.apertures[0].geometry.max.z - face.apertures[0].geometry.min.z == 2
 
 
+def test_apertures_by_ratio_gridded():
+    """Test the adding of apertures by ratio with gridded apertures."""
+    pts = (Point3D(0, 0, 0), Point3D(12, 0, 0), Point3D(12, 0, 12), Point3D(0, 0, 6))
+    face = Face('Test_Ceiling', Face3D(pts))
+
+    face.apertures_by_ratio_gridded(0.4, 2, 2)
+    assert len(face.apertures) == 24
+    assert sum([ap.area for ap in face.apertures]) == pytest.approx(face.area * 0.4, rel=1e-3)
+
+    face.apertures_by_ratio_gridded(0.4, 12, 12)
+    assert len(face.apertures) == 1
+    assert sum([ap.area for ap in face.apertures]) == pytest.approx(face.area * 0.4, rel=1e-3)
+
+
+
 def test_apertures_by_width_height_rectangle():
     """Test the adding of apertures by width/height."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(10, 0, 3), Point3D(10, 0, 0))
