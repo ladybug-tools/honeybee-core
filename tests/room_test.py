@@ -254,17 +254,17 @@ def test_apertures_and_shades():
 def generate_grid():
     """Test the generate_grid method."""
     room = Room.from_box('ShoeBoxZone', 5, 10, 3)
-    mesh_grid = room.generate_grid(1)[0]
+    mesh_grid = room.generate_grid(1)
     assert len(mesh_grid.faces) == 50
-    mesh_grid = room.generate_grid(0.5)[0]
+    mesh_grid = room.generate_grid(0.5)
     assert len(mesh_grid.faces) == 200
 
     room = Room.from_box('ShoeBoxZone', 5, 10, 3, 90)
-    mesh_grid = room.generate_grid(1)[0]
+    mesh_grid = room.generate_grid(1)
     assert len(mesh_grid.faces) == 50
 
     room = Room.from_box('ShoeBoxZone', 5, 10, 3, 45)
-    mesh_grid = room.generate_grid(1)[0]
+    mesh_grid = room.generate_grid(1)
     assert len(mesh_grid.faces) == 50
 
 
