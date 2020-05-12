@@ -12,6 +12,7 @@ import honeybee.writer.room as writer
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
 from ladybug_geometry.geometry3d.plane import Plane
+from ladybug_geometry.geometry3d.mesh import Mesh3D
 from ladybug_geometry.geometry3d.polyface import Polyface3D
 
 import math
@@ -388,6 +389,8 @@ class Room(_BaseWithShade):
         system of the floor faces's planes. So rotating the planes of the floor faces
         will result in rotated grid cells.
 
+        Will be None if the Room has no floor faces.
+
         Args:
             x_dim: The x dimension of the grid cells as a number.
             y_dim: The y dimension of the grid cells as a number. Default is None,
@@ -401,15 +404,18 @@ class Room(_BaseWithShade):
         .. code-block:: python
 
             room = Room.from_box(3.0, 6.0, 3.2, 180)
-            floor_mesh = room.generate_mesh_grid(0.5, 0.5, 1)
-            test_points = floor_mesh[0].face_centroids
+            floor_mesh = room.generate_grid(0.5, 0.5, 1)
+            test_points = floor_mesh.face_centroids
         """
         floor_grids = []
         for face in self._faces:
             if isinstance(face.type, Floor):
-                floor_grids.append(face.geometry.mesh_grid(
-                    x_dim, y_dim, offset, True))
-        return floor_grids
+                floor_grids.append(face.geometry.mesh_grid(x_dim, y_dim, offset, True))
+        if len(floor_grids) == 1:
+            return floor_grids[0]
+        elif len(floor_grids) > 1:
+            return Mesh3D.join_meshes(floor_grids)
+        return None
 
     def move(self, moving_vec):
         """Move this Room along a vector.
