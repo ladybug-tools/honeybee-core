@@ -335,7 +335,7 @@ class ModelProperties(_Properties):
             data: A dictionary representation of an entire honeybee-core Model.
         """
         for atr in self._extension_attributes:
-            if atr not in data['properties']:
+            if atr not in data['properties'] or data['properties'][atr] is None:
                 continue
             var = getattr(self, atr)
             if var and not hasattr(var, 'apply_properties_from_dict'):
