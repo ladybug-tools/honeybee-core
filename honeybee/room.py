@@ -237,7 +237,7 @@ class Room(_BaseWithShade):
         """Get a ladybug_geometry Polyface3D object representing the room."""
         if self._geometry is None:
             self._geometry = Polyface3D.from_faces(
-                tuple(face.geometry for face in self._faces))
+                tuple(face.geometry for face in self._faces), 0)  # use 0 tolerance
         return self._geometry
 
     @property
