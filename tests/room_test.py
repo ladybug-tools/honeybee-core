@@ -34,6 +34,7 @@ def test_init():
     assert room.identifier == 'ZoneSHOE_BOX920980'
     assert room.display_name == 'ZoneSHOE_BOX920980'
     assert room.multiplier == 1
+    assert room.story is None
     assert isinstance(room.geometry, Polyface3D)
     assert len(room.geometry.vertices) == 8
     assert len(room) == 6
@@ -120,7 +121,7 @@ def test_init_coplanar():
 
 
 def test_polyface3d_init_from_polyface():
-    """Test the initalization of room from a Poyface3D."""
+    """Test the initialization of room from a Polyface3D."""
     bound_pts = [Point3D(0, 0), Point3D(3, 0), Point3D(3, 3), Point3D(0, 3)]
     hole_pts = [Point3D(1, 1, 0), Point3D(2, 1, 0), Point3D(2, 2, 0), Point3D(1, 2, 0)]
     face = Face3D(bound_pts, None, [hole_pts])
@@ -218,6 +219,21 @@ def test_room_multiplier():
     room_dict = room.to_dict()
     assert 'multiplier' in room_dict
     assert room_dict['multiplier'] == 5
+
+
+def test_room_story():
+    """Test the room multiplier."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.5, 0.01)
+
+    room.story = 'Floor1'
+    assert room.story == 'Floor1'
+    room_dup = room.duplicate()
+    assert room_dup.story == 'Floor1'
+    room_dict = room.to_dict()
+    assert 'story' in room_dict
+    assert room_dict['story'] == 'Floor1'
 
 
 def test_apertures_and_shades():
@@ -504,6 +520,33 @@ def test_solve_adjacency_aperture():
     assert len(adj_info['adjacent_faces']) == 1
     assert len(adj_info['adjacent_apertures']) == 1
     assert len(adj_info['adjacent_doors']) == 0
+
+
+def test_group_by_orientation():
+    """Test the group_by_orientation method."""
+    pts_1 = (Point3D(0, 0), Point3D(15, 0), Point3D(10, 5), Point3D(5, 5))
+    pts_2 = (Point3D(15, 0), Point3D(15, 15), Point3D(10, 10), Point3D(10, 5))
+    pts_3 = (Point3D(0, 15), Point3D(5, 10), Point3D(10, 10), Point3D(15, 15))
+    pts_4 = (Point3D(0, 0), Point3D(5, 5), Point3D(5, 10), Point3D(0, 15))
+    pts_5 = (Point3D(5, 5), Point3D(10, 5), Point3D(10, 10), Point3D(5, 10))
+    pf_1 = Polyface3D.from_offset_face(Face3D(pts_1), 3)
+    pf_2 = Polyface3D.from_offset_face(Face3D(pts_2), 3)
+    pf_3 = Polyface3D.from_offset_face(Face3D(pts_3), 3)
+    pf_4 = Polyface3D.from_offset_face(Face3D(pts_4), 3)
+    pf_5 = Polyface3D.from_offset_face(Face3D(pts_5), 3)
+    room_1 = Room.from_polyface3d('Zone1', pf_1)
+    room_2 = Room.from_polyface3d('Zone2', pf_2)
+    room_3 = Room.from_polyface3d('Zone3', pf_3)
+    room_4 = Room.from_polyface3d('Zone4', pf_4)
+    room_5 = Room.from_polyface3d('Zone5', pf_5)
+
+    rooms = [room_1, room_2, room_3, room_4, room_5]
+    adj_info = Room.solve_adjacency(rooms, 0.01)
+    grouped_rooms, core_rooms, orientations = Room.group_by_orientation(rooms)
+
+    assert len(grouped_rooms) == 4
+    assert len(core_rooms) == 1
+    assert orientations == [0.0, 90.0, 180.0, 270.0]
 
 
 def test_to_dict():

@@ -62,13 +62,16 @@ class Model(_Base):
         * angle_tolerance
         * rooms
         * faces
-        * shades
         * apertures
         * doors
+        * shades
+        * indoor_shades
+        * outdoor_shades
         * orphaned_faces
         * orphaned_shades
         * orphaned_apertures
         * orphaned_doors
+        * stories
         * user_data
     """
     __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
@@ -373,6 +376,18 @@ class Model(_Base):
         """Get a list of all Shade objects without parent Rooms in the model."""
         return tuple(self._orphaned_shades)
 
+    @property
+    def stories(self):
+        """Get a list of text for each unique story identifier in the Model.
+
+        Note that this will be an empty list if the model has to rooms.
+        """
+        _stories = set()
+        for room in self._rooms:
+            if room.story is not None:
+                _stories.add(room.story)
+        return list(_stories)
+
     def add_model(self, other_model):
         """Add another Model object to this model."""
         assert isinstance(other_model, Model), \
@@ -589,6 +604,31 @@ class Model(_Base):
         for door in self._orphaned_doors:
             door.scale(factor, origin)
         self.properties.scale(factor, origin)
+
+    def assign_stories_by_floor_height(self, min_difference=2.0, overwrite=False):
+        """Assign story properties to the rooms of this Model using their floor heights.
+
+        Stories will be named with a standard convention ('Floor1', 'Floor2', etc.).
+
+        Args:
+            min_difference: An float value to denote the minimum difference
+                in floor heights that is considered meaningful. This can be used
+                to ensure rooms like those representing stair landings are grouped
+                with floors. Default: 2.0, which means that any difference in
+                floor heights less than 2.0 will be considered a part of the
+                same story. This assumption is suitable for models in meters.
+            overwrite: If True, all story properties of this model's rooms will
+                be overwritten by this method. If False, this method will only
+                assign stories to Rooms that do not already have a story identifier
+                already assigned to them. (Default: False).
+
+        Returns:
+            A list of the unique story names that were assigned to the input rooms.
+        """
+        if overwrite:
+            for room in self._rooms:
+                room.story = None
+        return Room.stories_by_floor_height(self._rooms, min_difference)
 
     def convert_to_units(self, units='Meters'):
         """Convert all of the geometry in this model to certain units.

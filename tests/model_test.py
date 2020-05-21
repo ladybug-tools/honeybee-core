@@ -366,6 +366,40 @@ def test_convert_to_units():
     assert model.units == 'Meters'
 
 
+def test_assign_stories_by_floor_height():
+    """Test the Model assign_stories_by_floor_height method."""
+    first_floor = Room.from_box('First_Floor', 10, 10, 3, origin=Point3D(0, 0, 0))
+    second_floor = Room.from_box('Second_Floor', 10, 10, 3, origin=Point3D(0, 0, 3))
+    for face in first_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    for face in second_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    pts_1 = [Point3D(0, 0, 6), Point3D(0, 10, 6), Point3D(10, 10, 6), Point3D(10, 0, 6)]
+    pts_2 = [Point3D(0, 0, 6), Point3D(5, 0, 9), Point3D(5, 10, 9), Point3D(0, 10, 6)]
+    pts_3 = [Point3D(10, 0, 6), Point3D(10, 10, 6), Point3D(5, 10, 9), Point3D(5, 0, 9)]
+    pts_4 = [Point3D(0, 0, 6), Point3D(10, 0, 6), Point3D(5, 0, 9)]
+    pts_5 = [Point3D(10, 10, 6), Point3D(0, 10, 6), Point3D(5, 10, 9)]
+    face_1 = Face('AtticFace1', Face3D(pts_1))
+    face_2 = Face('AtticFace2', Face3D(pts_2))
+    face_3 = Face('AtticFace3', Face3D(pts_3))
+    face_4 = Face('AtticFace4', Face3D(pts_4))
+    face_5 = Face('AtticFace5', Face3D(pts_5))
+    attic = Room('Attic', [face_1, face_2, face_3, face_4, face_5], 0.01, 1)
+    Room.solve_adjacency([first_floor, second_floor, attic], 0.01)
+    model = Model('MultiZoneSingleFamilyHouse', [first_floor, second_floor, attic])
+
+    assert len(model.stories) == 0
+    model.assign_stories_by_floor_height(2.0)
+    assert len(model.stories) == 3
+    assert first_floor.story == 'Floor1'
+    assert second_floor.story == 'Floor2'
+    assert attic.story == 'Floor3'
+    model.assign_stories_by_floor_height(4.0, overwrite=True)
+    assert len(model.stories) == 2
+    assert first_floor.story == second_floor.story == 'Floor1'
+    assert attic.story == 'Floor2'
+
+
 def test_rotate():
     """Test the Model rotate method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
