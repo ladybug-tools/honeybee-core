@@ -1,12 +1,12 @@
 # coding: utf-8
 """Honeybee Room."""
 from ._basewithshade import _BaseWithShade
-from .typing import clean_string
+from .typing import float_in_range, int_in_range, valid_string, clean_string
 from .properties import RoomProperties
 from .face import Face
 from .facetype import get_type_from_normal, Wall, Floor
 from .boundarycondition import get_bc_from_position, Outdoors, Surface
-from .typing import float_in_range, int_in_range
+from honeybee.orientation import angles_from_num_orient, orient_index
 import honeybee.writer.room as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
@@ -20,6 +20,13 @@ import math
 
 class Room(_BaseWithShade):
     """A volume enclosed by faces, representing a single room or space.
+
+    Note that, if zero is input for tolerance and angle_tolerance, no checks
+    will be performed to determine whether the room is a closed volume
+    and no attempt will be made to flip faces in the event that they are not
+    facing outward from the room volume.  As such, an input tolerance of 0
+    is intended for workflows where the solidity of the room volume has been
+    evaluated elsewhere.
 
     Args:
         identifier: Text string for a unique Room ID. Must be < 100 characters and
@@ -41,6 +48,7 @@ class Room(_BaseWithShade):
         * display_name
         * faces
         * multiplier
+        * story
         * indoor_furniture
         * indoor_shades
         * outdoor_shades
@@ -54,18 +62,10 @@ class Room(_BaseWithShade):
         * average_floor_height
         * user_data
     """
-    __slots__ = ('_geometry', '_faces', '_multiplier')
+    __slots__ = ('_geometry', '_faces', '_multiplier', '_story')
 
     def __init__(self, identifier, faces, tolerance=0, angle_tolerance=0):
-        """A volume enclosed by faces, representing a single room or space.
-
-        Note that, if zero is input for tolerance and angle_tolerance, no checks
-        will be performed to determine whether the room is a closed volume
-        and no attempt will be made to flip faces in the event that they are not
-        facing outward from the room volume.  As such, an input tolerance of 0
-        is intended for workflows where the solidity of the room volume has been
-        evaluated elsewhere.
-        """
+        """Initialize Room."""
         _BaseWithShade.__init__(self, identifier)  # process the identifier
 
         # process the zone volume geometry
@@ -94,6 +94,7 @@ class Room(_BaseWithShade):
             self._geometry = room_polyface
 
         self._multiplier = 1  # default value that can be overridden later
+        self._story = None  # default value that can be overridden later
         self._properties = RoomProperties(self)  # properties for extensions
 
     @classmethod
@@ -124,6 +125,8 @@ class Room(_BaseWithShade):
             room.user_data = data['user_data']
         if 'multiplier' in data and data['multiplier'] is not None:
             room._multiplier = data['multiplier']
+        if 'story' in data and data['story'] is not None:
+            room._story = data['story']
         room._recover_shades_from_dict(data)
 
         if data['properties']['type'] == 'RoomProperties':
@@ -221,6 +224,21 @@ class Room(_BaseWithShade):
     @multiplier.setter
     def multiplier(self, value):
         self._multiplier = int_in_range(value, 1, input_name='room multiplier')
+    
+    @property
+    def story(self):
+        """Get or set text for the story identifier to which this Room belongs.
+
+        Rooms sharing the same story identifier are considered part of the same
+        story in a Model.
+        """
+        return self._story
+
+    @story.setter
+    def story(self, value):
+        if value is not None:
+            value = valid_string(value, 'honeybee room story identifier')
+        self._story = value
 
     @property
     def indoor_furniture(self):
@@ -651,6 +669,145 @@ class Room(_BaseWithShade):
                 pass  # we have reached the end of the list of zones
         return adj_info
 
+    @staticmethod
+    def group_by_orientation(rooms, group_count=None, north_vector=Vector2D(0, 1)):
+        """Group Rooms with the same average outdoor wall orientation.
+
+        Args:
+            rooms: A list of honeybee rooms to be grouped by orientation.
+            group_count: An optional positive integer to set the number of orientation
+                groups to use. For example, setting this to 4 will result in rooms
+                being grouped by four orientations (North, East, South, West). If None,
+                the maximum number of unique groups will be used.
+            north_vector: A ladybug_geometry Vector2D for the north direction.
+                Default is the Y-axis (0, 1).
+
+        Returns:
+            A tuple with three items.
+
+            -   grouped_rooms - A list of lists of honeybee rooms with each sub-list
+                representing a different orientation.
+
+            -   core_rooms - A list of honeybee rooms with no identifiable orientation.
+
+            -   orientations - A list of numbers between 0 and 360 with one orientation
+                for each branch of the output grouped_rooms. This will be a list of
+                angle ranges if a value is input for group_count.
+        """
+        # loop through each of the rooms and get the orientation
+        orient_dict = {}
+        core_rooms = []
+        for room in rooms:
+            ori = room.average_orientation(north_vector)
+            if ori is None:
+                core_rooms.append(room)
+            else:
+                try:
+                    orient_dict[ori].append(room)
+                except KeyError:
+                    orient_dict[ori] = []
+                    orient_dict[ori].append(room)
+
+        # sort the rooms by orientation values
+        room_mtx = sorted(orient_dict.items(), key = lambda d: float(d[0]))
+        orientations = [r_tup[0] for r_tup in room_mtx]
+        grouped_rooms = [r_tup[1] for r_tup in room_mtx]
+
+        # group orientations if there is an input group_count
+        if group_count is not None:
+            angs = angles_from_num_orient(group_count)
+            p_rooms = [[] for i in range(group_count)]
+            for ori, rm in zip(orientations, grouped_rooms):
+                or_ind = orient_index(ori, angs)
+                p_rooms[or_ind].extend(rm)
+            orientations = ['{} - {}'.format(int(angs[i - 1]), int(angs[i]))
+                            for i in range(group_count)]
+            grouped_rooms = p_rooms
+        return grouped_rooms, core_rooms, orientations
+
+    @staticmethod
+    def group_by_floor_height(rooms, min_difference=0.01):
+        """Group Rooms according to their average floor height.
+
+        Args:
+            rooms: A list of honeybee rooms to be grouped by floor height.
+            min_difference: An float value to denote the minimum difference
+                in floor heights that is considered meaningful. This can be used
+                to ensure rooms like those representing stair landings are grouped
+                with those below them. Default: 0.01, which means that virtually
+                any minor difference in floor heights will result in a new group.
+                This assumption is suitable for models in meters.
+
+        Returns:
+            A tuple with two items.
+
+            -   grouped_rooms - A list of lists of honeybee rooms with each sub-list
+                representing a different floor height.
+
+            -   floor_heights - A list of floor heights with one floor height for each
+                sub-list of the output grouped_rooms.
+        """
+        # loop through each of the rooms and get the floor height
+        flrhgt_dict = {}
+        for room in rooms:
+            flrhgt = room.average_floor_height
+            try:  # assume there is already a story with the room's floor height
+                flrhgt_dict[flrhgt].append(room)
+            except KeyError:  # this is the first room with this floor height
+                flrhgt_dict[flrhgt] = []
+                flrhgt_dict[flrhgt].append(room)
+
+        # sort the rooms by floor heights
+        room_mtx = sorted(flrhgt_dict.items(), key = lambda d: float(d[0]))
+        flr_hgts = [r_tup[0] for r_tup in room_mtx]
+        rooms = [r_tup[1] for r_tup in room_mtx]
+
+        # group floor heights if they differ by less than the min_difference
+        floor_heights = [flr_hgts[0]]
+        grouped_rooms = [rooms[0]]
+        for flrh, rm in zip(flr_hgts[1:], rooms[1:]):
+            if flrh - floor_heights[-1] < min_difference:
+                grouped_rooms[-1].extend(rm)
+            else:
+                grouped_rooms.append(rm)
+                floor_heights.append(flrh)
+        return grouped_rooms, floor_heights
+
+    @staticmethod
+    def stories_by_floor_height(rooms, min_difference=2.0):
+        """Assign story properties to a set of Rooms using their floor heights.
+
+        Stories will be named with a standard convention ('Floor1', 'Floor2', etc.).
+        Note that this method will only assign stories to Rooms that do not have
+        a story identifier already assigned to them. 
+
+        Args:
+            rooms: A list of rooms for which story properties will be automatically
+                assigned.
+            min_difference: An float value to denote the minimum difference
+                in floor heights that is considered meaningful. This can be used
+                to ensure rooms like those representing stair landings are grouped
+                with those below them. Default: 2.0, which means that any difference
+                in floor heights less than 2.0 will be considered a part of the
+                same story. This assumption is suitable for models in meters.
+
+        Returns:
+            A list of the unique story names that were assigned to the input rooms.
+        """
+        # group the rooms by floor height
+        new_rooms, new_flr_hgts = Room.group_by_floor_height(rooms, min_difference)
+
+        # assign the story property to each of the groups
+        story_names = []
+        for i, room_list in enumerate(new_rooms):
+            story_name = 'Floor{}'.format(i + 1)
+            story_names.append(story_name)
+            for room in room_list:
+                if room.story is not None:
+                    continue  # preserve any existing user-assigned story values
+                room.story = story_name
+        return story_names
+
     @property
     def to(self):
         """Room writer object.
@@ -686,6 +843,8 @@ class Room(_BaseWithShade):
         self._add_shades_to_dict(base, abridged, included_prop)
         if self.multiplier != 1:
             base['multiplier'] = self.multiplier
+        if self.story is not None:
+            base['story'] = self.story
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
@@ -695,6 +854,7 @@ class Room(_BaseWithShade):
         new_r._display_name = self.display_name
         new_r._user_data = None if self.user_data is None else self.user_data.copy()
         new_r._multiplier = self.multiplier
+        new_r._story = self.story
         self._duplicate_child_shades(new_r)
         new_r._geometry = self._geometry
         new_r._properties._duplicate_extension_attr(self._properties)
