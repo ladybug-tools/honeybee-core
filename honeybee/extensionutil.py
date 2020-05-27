@@ -79,7 +79,10 @@ def room_extension_dicts(room_list, extension_key, room_ext_dicts, face_ext_dict
         -   door_ext_dicts: A list with Door extension property dictionaries.
     """
     for room_dict in room_list:
-        room_ext_dicts.append(room_dict['properties'][extension_key])
+        try:
+            room_ext_dicts.append(room_dict['properties'][extension_key])
+        except KeyError:
+            room_ext_dicts.append(None)
         if 'outdoor_shades' in room_dict and room_dict['outdoor_shades'] is not None:
             shade_extension_dicts(room_dict['outdoor_shades'], extension_key,
                                   shade_ext_dicts)
@@ -112,7 +115,10 @@ def face_extension_dicts(face_list, extension_key, face_ext_dicts,
         -   door_ext_dicts: A list with Door extension property dictionaries.
     """
     for face_dict in face_list:
-        face_ext_dicts.append(face_dict['properties'][extension_key])
+        try:
+            face_ext_dicts.append(face_dict['properties'][extension_key])
+        except KeyError:
+            face_ext_dicts.append(None)
         if 'outdoor_shades' in face_dict and face_dict['outdoor_shades'] is not None:
             shade_extension_dicts(face_dict['outdoor_shades'], extension_key,
                                   shade_ext_dicts)
@@ -139,7 +145,10 @@ def shade_extension_dicts(shade_list, extension_key, shade_ext_dicts):
         shade_ext_dicts -- A list with Shade extension property dictionaries.
     """
     for shd_dict in shade_list:
-        shade_ext_dicts.append(shd_dict['properties'][extension_key])
+        try:
+            shade_ext_dicts.append(shd_dict['properties'][extension_key])
+        except KeyError:
+            shade_ext_dicts.append(None)
     return shade_ext_dicts
 
 
@@ -159,7 +168,10 @@ def aperture_extension_dicts(aperture_list, extension_key, aperture_ext_dicts,
         -   shade_ext_dicts: A list with Shade extension property dictionaries.
     """
     for ap_dict in aperture_list:
-        aperture_ext_dicts.append(ap_dict['properties'][extension_key])
+        try:
+            aperture_ext_dicts.append(ap_dict['properties'][extension_key])
+        except KeyError:
+            aperture_ext_dicts.append(None)
         if 'outdoor_shades' in ap_dict and ap_dict['outdoor_shades'] is not None:
             shade_extension_dicts(ap_dict['outdoor_shades'], extension_key, shade_ext_dicts)
         if 'indoor_shades' in ap_dict and ap_dict['indoor_shades'] is not None:
@@ -183,7 +195,10 @@ def door_extension_dicts(door_list, extension_key, door_ext_dicts,
         -   shade_ext_dicts: A list with Shade extension property dictionaries.
     """
     for dr_dict in door_list:
-        door_ext_dicts.append(dr_dict['properties'][extension_key])
+        try:
+            door_ext_dicts.append(dr_dict['properties'][extension_key])
+        except KeyError:
+            door_ext_dicts.append(None)
         if 'outdoor_shades' in dr_dict and dr_dict['outdoor_shades'] is not None:
             shade_extension_dicts(dr_dict['outdoor_shades'], extension_key, shade_ext_dicts)
         if 'indoor_shades' in dr_dict and dr_dict['indoor_shades'] is not None:
