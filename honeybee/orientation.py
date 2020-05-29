@@ -120,7 +120,7 @@ def check_matching_inputs(all_inputs, num_orient=None):
         -   num_orient -- An integer for the number of orientations used in the check.
     """
     num_orient = max([len(inp) for inp in all_inputs]) if num_orient is None \
-            else num_orient
+        else num_orient
     for i, param_list in enumerate(all_inputs):
         if len(param_list) == 1:
             all_inputs[i] = param_list * num_orient

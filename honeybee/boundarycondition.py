@@ -232,7 +232,7 @@ class Surface(_BoundaryCondition):
 
 class Ground(_BoundaryCondition):
     """Ground boundary condition.
-    
+
     Args:
         data: A dictionary representation of the boundary condition.
     """

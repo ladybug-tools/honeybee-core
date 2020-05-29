@@ -10,7 +10,6 @@ from .room import Room
 from .facetype import Floor
 from .search import get_attr_nested
 
-from ladybug.color import Colorset
 from ladybug.graphic import GraphicContainer
 from ladybug.legend import LegendParameters, LegendParametersCategorized
 from ladybug_geometry.geometry3d.pointvector import Point3D
@@ -18,7 +17,7 @@ from ladybug_geometry.geometry3d.pointvector import Point3D
 
 class _ColorObject(object):
     """Base class for visualization objects.
-    
+
     Properties:
         * legend_parameters
         * attr_name
@@ -67,7 +66,7 @@ class _ColorObject(object):
     @property
     def attr_name_end(self):
         """Get text for the last attribute in the attr_name.
-        
+
         Useful when attr_name is nested.
         """
         return self._attr_name_end
@@ -215,7 +214,7 @@ class ColorRoom(_ColorObject):
     @property
     def floor_faces(self):
         """Get a nested array with each sub-array having all floor Face3Ds of each room.
-        
+
         This is useful for producing visualizations since coloring floors or rooms
         instead of the entire room solid allows more of the model to be viewed at once.
         """

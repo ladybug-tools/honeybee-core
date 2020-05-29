@@ -8,7 +8,7 @@ from .shade import Shade
 import honeybee.writer.aperture as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
-from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.face import Face3D
 
 import math
@@ -552,6 +552,18 @@ class Aperture(_BaseWithShade):
         self._geometry = self.geometry.scale(factor, origin)
         self.scale_shades(factor, origin)
         self.properties.scale(factor, origin)
+
+    def remove_colinear_vertices(self, tolerance=0.01):
+        """Remove all colinear and duplicate vertices from this object's geometry.
+
+        Note that this does not affect any assigned Shades.
+
+        Args:
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered colinear. Default: 0.01,
+                suitable for objects in meters.
+        """
+        self._geometry = self.geometry.remove_colinear_vertices(tolerance)
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Aperture's vertices lie within the same plane.

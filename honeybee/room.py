@@ -224,7 +224,7 @@ class Room(_BaseWithShade):
     @multiplier.setter
     def multiplier(self, value):
         self._multiplier = int_in_range(value, 1, input_name='room multiplier')
-    
+
     @property
     def story(self):
         """Get or set text for the story identifier to which this Room belongs.
@@ -377,7 +377,6 @@ class Room(_BaseWithShade):
             face.add_prefix(prefix)
         self._add_prefix_shades(prefix)
 
-
     def remove_indoor_furniture(self):
         """Remove all indoor furniture assigned to this Room.
 
@@ -508,6 +507,26 @@ class Room(_BaseWithShade):
         self.properties.scale(factor, origin)
         if self._geometry is not None:
             self._geometry = self.geometry.scale(factor, origin)
+
+    def remove_colinear_vertices_envelope(self, tolerance=0.01):
+        """Remove colinear and duplicate vertices from this object's Faces and Sub-faces.
+
+        Note that this does not affect any assigned Shades.
+
+        Args:
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered colinear. Default: 0.01,
+                suitable for objects in meters.
+        """
+        for face in self._faces:
+            face.remove_colinear_vertices(tolerance)
+            for ap in face._apertures:
+                ap.remove_colinear_vertices(tolerance)
+            for dr in face._doors:
+                dr.remove_colinear_vertices(tolerance)
+        if self._geometry is not None:
+            self._geometry = Polyface3D.from_faces(
+                tuple(face.geometry for face in self._faces), tolerance)
 
     def check_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check whether the Room is a closed solid to within the input tolerances.
@@ -709,7 +728,7 @@ class Room(_BaseWithShade):
                     orient_dict[ori].append(room)
 
         # sort the rooms by orientation values
-        room_mtx = sorted(orient_dict.items(), key = lambda d: float(d[0]))
+        room_mtx = sorted(orient_dict.items(), key=lambda d: float(d[0]))
         orientations = [r_tup[0] for r_tup in room_mtx]
         grouped_rooms = [r_tup[1] for r_tup in room_mtx]
 
@@ -758,7 +777,7 @@ class Room(_BaseWithShade):
                 flrhgt_dict[flrhgt].append(room)
 
         # sort the rooms by floor heights
-        room_mtx = sorted(flrhgt_dict.items(), key = lambda d: float(d[0]))
+        room_mtx = sorted(flrhgt_dict.items(), key=lambda d: float(d[0]))
         flr_hgts = [r_tup[0] for r_tup in room_mtx]
         rooms = [r_tup[1] for r_tup in room_mtx]
 
@@ -779,7 +798,7 @@ class Room(_BaseWithShade):
 
         Stories will be named with a standard convention ('Floor1', 'Floor2', etc.).
         Note that this method will only assign stories to Rooms that do not have
-        a story identifier already assigned to them. 
+        a story identifier already assigned to them.
 
         Args:
             rooms: A list of rooms for which story properties will be automatically

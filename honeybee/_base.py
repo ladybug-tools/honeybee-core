@@ -27,7 +27,7 @@ class _Base(object):
     @property
     def identifier(self):
         """Get a text string for the unique object identifer.
-    
+
         This identifier remains constant as the object is mutated, copied, and
         serialized to different formats (eg. dict, idf, rad). As such, this
         property is used to reference the object across a Model.

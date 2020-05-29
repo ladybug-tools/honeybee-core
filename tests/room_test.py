@@ -1,5 +1,6 @@
 """Test Room class."""
 from honeybee.face import Face
+from honeybee.aperture import Aperture
 from honeybee.shade import Shade
 from honeybee.room import Room
 from honeybee.boundarycondition import boundary_conditions, Surface
@@ -403,6 +404,24 @@ def test_reflect():
     assert test_2.geometry.vertices[2].x == pytest.approx(-1, rel=1e-3)
     assert test_2.geometry.vertices[2].y == pytest.approx(-1, rel=1e-3)
     assert test_2.geometry.vertices[2].z == pytest.approx(2, rel=1e-3)
+
+
+def test_remove_colinear_vertices_envelope():
+    """Test the remove_colinear_vertices_envelope method."""
+    pts_1 = (Point3D(0, 0), Point3D(1, 0), Point3D(2, 0), Point3D(2, 2),
+             Point3D(0, 2))
+    pf_1 = Polyface3D.from_offset_face(Face3D(pts_1), 3)
+    room_1 = Room.from_polyface3d('Zone1', pf_1)
+    pts_2 = (Point3D(0.5, 2, 0.5), Point3D(1, 2, 0.5), Point3D(1.5, 2, 0.5),
+             Point3D(1.5, 2, 2), Point3D(0.5, 2, 2))
+    ap_2 = Aperture('TestAperture1', Face3D(pts_2))
+    room_1[-3].add_aperture(ap_2)
+
+    assert len(room_1[0].geometry.vertices) == 5
+    assert len(ap_2.geometry.vertices) == 5
+    room_1.remove_colinear_vertices_envelope(0.0001)
+    assert len(room_1[0].geometry.vertices) == 4
+    assert len(ap_2.geometry.vertices) == 4
 
 
 def test_check_planar():

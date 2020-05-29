@@ -13,7 +13,7 @@ import honeybee.boundarycondition as hbc
 import honeybee.writer.face as writer
 
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
-from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
@@ -577,7 +577,7 @@ class Face(_BaseWithShade):
         """Add apertures to this face given a ratio of aperture area to face area.
 
         Note that this method removes any existing apertures on the Face.
-        
+
         Apertures will be arranged in a grid derived from this face's plane.
         Because the x_dim and y_dim refer to dimensions within the X and Y
         coordinate system of this faces's plane, rotating this plane will
@@ -646,11 +646,11 @@ class Face(_BaseWithShade):
             room = Room.from_box(5.0, 10.0, 3.2, 180)
             room.faces[1].apertures_by_width_height_rectangle(1.5, 2, 0.8, 2.5)
         """
-        assert  aperture_height > 0, \
+        assert aperture_height > 0, \
             'aperture_height must be above 0. Got {}'.format(aperture_height)
-        assert  aperture_width > 0, \
+        assert aperture_width > 0, \
             'aperture_width must be above 0. Got {}'.format(aperture_width)
-        assert  horizontal_separation > 0, \
+        assert horizontal_separation > 0, \
             'horizontal_separation must be above 0. Got {}'.format(horizontal_separation)
         self._acceptable_sub_face_check(Aperture)
         self.remove_sub_faces()
@@ -930,6 +930,19 @@ class Face(_BaseWithShade):
         self.properties.scale(factor, origin)
         self._punched_geometry = None  # reset so that it can be re-computed
 
+    def remove_colinear_vertices(self, tolerance=0.01):
+        """Remove all colinear and duplicate vertices from this object's geometry.
+
+        Note that this does not affect any assigned Apertures, Doors or Shades.
+
+        Args:
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered colinear. Default: 0.01,
+                suitable for objects in meters.
+        """
+        self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        self._punched_geometry = None  # reset so that it can be re-computed
+
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check that sub-faces are co-planar with this Face within the Face boundary.
 
@@ -1119,8 +1132,6 @@ class Face(_BaseWithShade):
         self._duplicate_child_shades(new_f)
         new_f._punched_geometry = self._punched_geometry
         new_f._properties._duplicate_extension_attr(self._properties)
-        if self.user_data is not None:
-            base['user_data'] = self.user_data
         return new_f
 
     def __repr__(self):

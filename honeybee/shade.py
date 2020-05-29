@@ -223,6 +223,16 @@ class Shade(_Base):
         self._geometry = self.geometry.scale(factor, origin)
         self.properties.scale(factor, origin)
 
+    def remove_colinear_vertices(self, tolerance=0.01):
+        """Remove all colinear and duplicate vertices from this object's geometry.
+
+        Args:
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered colinear. Default: 0.01,
+                suitable for objects in meters.
+        """
+        self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Shade's vertices lie within the same plane.
 

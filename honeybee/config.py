@@ -39,14 +39,14 @@ class Folders(object):
         # set the mute value
         self.mute = bool(mute)
 
-        # load paths from the config JSON file 
-        self.config_file  = config_file
+        # load paths from the config JSON file
+        self.config_file = config_file
 
     @property
     def default_simulation_folder(self):
         """Get or set the path to the default simulation folder."""
         return self._default_simulation_folder
-    
+
     @default_simulation_folder.setter
     def default_simulation_folder(self, path):
         if not path:  # check the default location for simulations
@@ -57,11 +57,11 @@ class Folders(object):
         if not self.mute and self._default_simulation_folder:
             print('Path to the default simulation folder is set to: '
                   '{}'.format(self._default_simulation_folder))
-    
-    @property 
+
+    @property
     def config_file(self):
         """Get or set the path to the config.json file from which folders are loaded.
-        
+
         Setting this to None will result in using the config.json module included
         in this package.
         """
@@ -86,7 +86,7 @@ class Folders(object):
 
     def _load_from_file(self, file_path):
         """Set all of the the properties of this object from a config JSON file.
-        
+
         Args:
             file_path: Path to a JSON file containing the file paths. A sample of this
                 JSON is the config.json file within this package.

@@ -10,7 +10,7 @@ class _AltNumber(object):
     @property
     def name(self):
         return self.__class__.__name__
-    
+
     def to_dict(self):
         """Get the object as a dictionary."""
         return {'type': self.name}
@@ -36,7 +36,7 @@ class NoLimit(_AltNumber):
 
 class Autocalculate(_AltNumber):
     """Object representing when a certain numerical value is automatically calculated.
-    
+
     Typically, this means that the value is determined from other variables.
     """
     __slots__ = ()

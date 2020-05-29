@@ -28,6 +28,7 @@ except ImportError:
 def validate():
     pass
 
+
 @validate.command('model')
 @click.argument('model-json')
 def validate_model(model_json):
@@ -39,7 +40,7 @@ def validate_model(model_json):
     try:
         # check that the file is there
         assert os.path.isfile(model_json), 'No JSON file found at {}.'.format(model_json)
-    
+
         # validate the Model JSON
         click.echo('Validating Model JSON ...')
         schema_model.Model.parse_file(model_json)
