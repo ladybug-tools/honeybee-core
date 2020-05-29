@@ -258,7 +258,6 @@ class Door(_BaseWithShade):
                            in self._boundary_condition._boundary_condition_objects)
             self._boundary_condition = Surface(new_bc_objs, True)
 
-
     def set_adjacency(self, other_door):
         """Set this door to be adjacent to another (and vice versa).
 
@@ -376,6 +375,18 @@ class Door(_BaseWithShade):
         self._geometry = self.geometry.scale(factor, origin)
         self.scale_shades(factor, origin)
         self.properties.scale(factor, origin)
+
+    def remove_colinear_vertices(self, tolerance=0.01):
+        """Remove all colinear and duplicate vertices from this object's geometry.
+
+        Note that this does not affect any assigned Shades.
+
+        Args:
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered colinear. Default: 0.01,
+                suitable for objects in meters.
+        """
+        self._geometry = self.geometry.remove_colinear_vertices(tolerance)
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Door's vertices lie within the same plane.

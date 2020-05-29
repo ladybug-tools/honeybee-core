@@ -197,6 +197,22 @@ def test_reflect():
     assert test_2.geometry[1].z == pytest.approx(2, rel=1e-3)
 
 
+def test_remove_colinear_vertices():
+    """Test the remove_colinear_vertices method."""
+    pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2), Point3D(0, 2))
+    pts_2 = (Point3D(0, 0), Point3D(1, 0), Point3D(2, 0), Point3D(2, 2),
+             Point3D(0, 2))
+    shade_1 = Shade('TestShade1', Face3D(pts_1))
+    shade_2 = Shade('TestShade1', Face3D(pts_2))
+
+    assert len(shade_1.geometry.vertices) == 4
+    assert len(shade_2.geometry.vertices) == 5
+    shade_1.remove_colinear_vertices(0.0001)
+    shade_2.remove_colinear_vertices(0.0001)
+    assert len(shade_1.geometry.vertices) == 4
+    assert len(shade_2.geometry.vertices) == 4
+
+
 def test_check_planar():
     """Test the check_planar method."""
     pts_1 = (Point3D(0, 0, 2), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))

@@ -94,7 +94,7 @@ class _FaceTypes(object):
             raise ValueError(
                 '"{}" is not a valid face type name.\nChoose from the following'
                 ': {}'.format(face_type_name, list(self._type_name_dict.keys())))
-    
+
     def _build_type_name_dict(self):
         """Build a dictionary that can be used to lookup face types by name."""
         attr = [atr for atr in dir(self) if not atr.startswith('_')]

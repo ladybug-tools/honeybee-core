@@ -1,22 +1,18 @@
 # coding: utf-8
 """Honeybee Model."""
 from ._base import _Base
-from .typing import clean_string
 from .properties import ModelProperties
 from .room import Room
 from .face import Face
 from .shade import Shade
 from .aperture import Aperture
 from .door import Door
-from .typing import float_in_range, float_positive
+from .typing import float_positive
 from .boundarycondition import Surface
 from .facetype import AirBoundary
 import honeybee.writer.model as writer
 
-from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.face import Face3D
-
-import math
 
 
 class Model(_Base):
@@ -633,8 +629,8 @@ class Model(_Base):
     def convert_to_units(self, units='Meters'):
         """Convert all of the geometry in this model to certain units.
 
-        Thins involves both scaling the geometry and changing the Model's
-        units property.
+        This involves scaling the geometry, scaling the Model tolerance, and
+        changing the Model's units property.
 
         Args:
             units: Text for the units to which the Model geometry should be
@@ -651,6 +647,7 @@ class Model(_Base):
             scale_fac2 = self.conversion_factor_to_meters(units)
             scale_fac = scale_fac1 / scale_fac2
             self.scale(scale_fac)
+            self.tolerance = self.tolerance * scale_fac
             self.units = units
 
     def check_duplicate_room_identifiers(self, raise_exception=True):
@@ -1195,7 +1192,7 @@ class Model(_Base):
             [shade.duplicate() for shade in self._orphaned_shades],
             [aperture.duplicate() for aperture in self._orphaned_apertures],
             [door.duplicate() for door in self._orphaned_doors],
-             self.units, self.tolerance, self.angle_tolerance)
+            self.units, self.tolerance, self.angle_tolerance)
         new_model._display_name = self.display_name
         new_model._user_data = None if self.user_data is None else self.user_data.copy()
         new_model._properties._duplicate_extension_attr(self._properties)

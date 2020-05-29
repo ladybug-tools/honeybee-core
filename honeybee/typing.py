@@ -34,7 +34,7 @@ def valid_string(value, input_name=''):
 
 def valid_rad_string(value, input_name=''):
     """Check that a string is valid for Radiance.
-    
+
     This is used for radiance modifier names, etc.
     """
     try:
@@ -43,7 +43,7 @@ def valid_rad_string(value, input_name=''):
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
             input_name, type(value), value))
     assert illegal_match is None, 'Illegal character "{}" found in {}'.format(
-            illegal_match.group(0), input_name)
+        illegal_match.group(0), input_name)
     assert len(value) > 0, 'Input {} "{}" contains no characters.'.format(
         input_name, value)
     return value
@@ -51,7 +51,7 @@ def valid_rad_string(value, input_name=''):
 
 def valid_ep_string(value, input_name=''):
     """Check that a string is valid for EnergyPlus.
-    
+
     This is used for energy material names, schedule names, etc.
     """
     try:

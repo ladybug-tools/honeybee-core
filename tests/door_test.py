@@ -8,7 +8,6 @@ from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
 import uuid as py_uuid
-import json
 import pytest
 
 
@@ -236,6 +235,22 @@ def test_reflect():
     assert test_2.geometry[1].x == pytest.approx(-1, rel=1e-3)
     assert test_2.geometry[1].y == pytest.approx(-1, rel=1e-3)
     assert test_2.geometry[1].z == pytest.approx(2, rel=1e-3)
+
+
+def test_remove_colinear_vertices():
+    """Test the remove_colinear_vertices method."""
+    pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2), Point3D(0, 2))
+    pts_2 = (Point3D(0, 0), Point3D(1, 0), Point3D(2, 0), Point3D(2, 2),
+             Point3D(0, 2))
+    door_1 = Door('TestDoor1', Face3D(pts_1))
+    door_2 = Door('TestDoor1', Face3D(pts_2))
+
+    assert len(door_1.geometry.vertices) == 4
+    assert len(door_2.geometry.vertices) == 5
+    door_1.remove_colinear_vertices(0.0001)
+    door_2.remove_colinear_vertices(0.0001)
+    assert len(door_1.geometry.vertices) == 4
+    assert len(door_2.geometry.vertices) == 4
 
 
 def test_check_planar():

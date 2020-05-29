@@ -22,7 +22,7 @@ steps:
 
 The good practice is to group all your extention commands in a command group named after
 the extension. This will make the commands organized under extension namespace. For
-instance commands for `honeybee-radiance` will be called like ``honeybee radiance [radiance-command]``. 
+instance commands for `honeybee-radiance` will be called like ``honeybee radiance [radiance-command]``.
 
 
 .. code-block:: python
