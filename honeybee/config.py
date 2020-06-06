@@ -11,6 +11,8 @@ Usage:
     print(folders.default_simulation_folder)
     folders.default_simulation_folder = "C:/my_sim_folder"
 """
+import ladybug.config as lb_config
+
 import os
 import sys
 import json
@@ -81,8 +83,22 @@ class Folders(object):
 
     @property
     def python_exe_path(self):
-        """Get the path to the Python.exe file."""
-        return sys.executable
+        """Get the path to the Python executable to be used for Ladybug Tools CLI calls.
+
+        If a version of Python is found within the ladybug_tools installation folder,
+        this will be the path to that version of Python. Otherwise, it will be
+        assumed that this is package is installed in cPython outside of the ladybug_tools
+        folder and the sys.executable will be returned.
+        """
+        # check the ladybug_tools folder for a Python installation
+        lb_install = lb_config.folders.ladybug_tools_folder
+        if os.path.isdir(lb_install):
+            py_exe_file = os.path.join(lb_install, 'python', 'python.exe') \
+                if os.name == 'nt' else \
+                os.path.join(lb_install, 'python', 'bin', 'python3')
+            if os.path.isfile(py_exe_file):
+                return py_exe_file
+        return sys.executable  # assume we are on some other cPython
 
     def _load_from_file(self, file_path):
         """Set all of the the properties of this object from a config JSON file.
@@ -121,7 +137,7 @@ class Folders(object):
         An attempt will be made to create the directory if it does not already exist.
         """
         home_folder = os.getenv('HOME') or os.path.expanduser('~')
-        sim_folder = os.path.join(home_folder, 'honeybee', 'simulation')
+        sim_folder = os.path.join(home_folder, 'simulation')
         if not os.path.isdir(sim_folder):
             try:
                 os.makedirs(sim_folder)
