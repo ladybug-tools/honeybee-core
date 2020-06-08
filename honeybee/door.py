@@ -75,6 +75,7 @@ class Door(_BaseWithShade):
         assert data['type'] == 'Door', 'Expected Door dictionary. ' \
             'Got {}.'.format(data['type'])
 
+        # serialize the door
         is_glass = data['is_glass'] if 'is_glass' in data else False
         if data['boundary_condition']['type'] == 'Outdoors':
             boundary_condition = Outdoors.from_dict(data['boundary_condition'])
@@ -92,6 +93,7 @@ class Door(_BaseWithShade):
             door.user_data = data['user_data']
         door._recover_shades_from_dict(data)
 
+        # assign extension properties
         if data['properties']['type'] == 'DoorProperties':
             door.properties._load_extension_attr_from_dict(data['properties'])
         return door

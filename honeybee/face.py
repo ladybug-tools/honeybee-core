@@ -99,31 +99,32 @@ class Face(_BaseWithShade):
         assert data['type'] == 'Face', 'Expected Face dictionary. ' \
             'Got {}.'.format(data['type'])
 
+        # first serialize it with an outdoor boundary condition
         face_type = face_types.by_name(data['face_type'])
+        face = cls(data['identifier'], Face3D.from_dict(data['geometry']),
+                   face_type, boundary_conditions.outdoors)
+        if 'display_name' in data and data['display_name'] is not None:
+            face.display_name = data['display_name']
+        if 'user_data' in data and data['user_data'] is not None:
+            face.user_data = data['user_data']
+
+        # add sub-faces and shades
+        if 'apertures' in data and data['apertures'] is not None:
+            face.add_apertures([Aperture.from_dict(ap) for ap in data['apertures']])
+        if 'doors' in data and data['doors'] is not None:
+            face.add_doors([Door.from_dict(dr) for dr in data['doors']])
+        face._recover_shades_from_dict(data)
+
+        # get the boundary condition and assign it
         try:
             bc_class = getattr(hbc, data['boundary_condition']['type'])
         except AttributeError:
             raise ValueError(
                 'Boundary condition "{}" is not supported in this honeybee '
                 'installation.'.format(data['boundary_condition']['type']))
-        bc = bc_class.from_dict(data['boundary_condition'])
-        face = cls(data['identifier'], Face3D.from_dict(data['geometry']), face_type, bc)
-        if 'display_name' in data and data['display_name'] is not None:
-            face.display_name = data['display_name']
-        if 'user_data' in data and data['user_data'] is not None:
-            face.user_data = data['user_data']
+        face.boundary_condition = bc_class.from_dict(data['boundary_condition'])
 
-        # add sub-faces and shades to faces
-        if 'apertures' in data and data['apertures'] is not None:
-            face._apertures = [Aperture.from_dict(ap) for ap in data['apertures']]
-            for ap in face._apertures:
-                ap._parent = face
-        if 'doors' in data and data['doors'] is not None:
-            face._doors = [Door.from_dict(dr) for dr in data['doors']]
-            for dr in face._doors:
-                dr._parent = face
-        face._recover_shades_from_dict(data)
-
+        # assign extension properties
         if data['properties']['type'] == 'FaceProperties':
             face.properties._load_extension_attr_from_dict(data['properties'])
         return face
