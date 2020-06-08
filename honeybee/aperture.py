@@ -75,6 +75,7 @@ class Aperture(_BaseWithShade):
         assert data['type'] == 'Aperture', 'Expected Aperture dictionary. ' \
             'Got {}.'.format(data['type'])
 
+        # serialize the aperture
         is_operable = data['is_operable'] if 'is_operable' in data else False
         if data['boundary_condition']['type'] == 'Outdoors':
             boundary_condition = Outdoors.from_dict(data['boundary_condition'])
@@ -92,6 +93,7 @@ class Aperture(_BaseWithShade):
             aperture.user_data = data['user_data']
         aperture._recover_shades_from_dict(data)
 
+        # assign extension properties
         if data['properties']['type'] == 'ApertureProperties':
             aperture.properties._load_extension_attr_from_dict(data['properties'])
         return aperture
