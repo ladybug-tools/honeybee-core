@@ -686,7 +686,8 @@ def test_check_self_intersecting():
     pts_4 = [Point3D(10, 10, 0), Point3D(0, 10, 0), Point3D(0, 10, 3), Point3D(10, 10, 3)]
     pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
     pts_6 = [Point3D(10, 0, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 0, 3)]
-    pts_7 = [Point3D(10, 0, 3), Point3D(0, 10, 3), Point3D(10, 10, 3), Point3D(0, 0, 3)]
+    pts_7 = [Point3D(10, 0, 3), Point3D(0, 5, 3), Point3D(10, 10, 3), Point3D(0, 0, 3)]
+    pts_8 = [Point3D(0, 5, 3), Point3D(10, 10, 3), Point3D(10, 0, 3)]
     face_1 = Face('Face1', Face3D(pts_1))
     face_2 = Face('Face2', Face3D(pts_2))
     face_3 = Face('Face3', Face3D(pts_3))
@@ -694,10 +695,11 @@ def test_check_self_intersecting():
     face_5 = Face('Face5', Face3D(pts_5))
     face_6 = Face('Face6', Face3D(pts_6))
     face_7 = Face('Face7', Face3D(pts_7))
+    face_8 = Face('Face8', Face3D(pts_8))
     room_1 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_6], 0.01, 1)
     room_2 = Room('ZoneSHOE_BOX920980',
-                  [face_1, face_2, face_3, face_4, face_5, face_7], 0.01, 1)
+                  [face_1, face_2, face_3, face_4, face_5, face_7, face_8], 0.01, 1)
 
     model_1 = Model('SouthHouse', [room_1])
     model_2 = Model('NorthHouse', [room_2])
