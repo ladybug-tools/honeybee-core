@@ -8,6 +8,7 @@ from .shade import Shade
 from .aperture import Aperture
 from .door import Door
 from .typing import float_positive
+from .config import folders
 from .boundarycondition import Surface
 from .facetype import AirBoundary
 import honeybee.writer.model as writer
@@ -1080,6 +1081,7 @@ class Model(_Base):
                 that also have parent Rooms since orphaned Apertures and Faces are
                 not relevant for energy simulation. Default: False.
         """
+        # write all of the geometry objects and their properties
         base = {'type': 'Model'}
         base['identifier'] = self.identifier
         base['display_name'] = self.display_name
@@ -1105,6 +1107,7 @@ class Model(_Base):
         if self.angle_tolerance != 0:
             base['angle_tolerance'] = self.angle_tolerance
 
+        # triangulate sub-faces if this was requested
         if triangulate_sub_faces:
             apertures, parents_to_edit = self.triangulated_apertures()
             for tri_aps, edit_infos in zip(apertures, parents_to_edit):
@@ -1137,8 +1140,11 @@ class Model(_Base):
                     face['doors'].extend(
                         [dr.to_dict(True, included_prop) for dr in tri_drs])
 
+        # write in the optional keys if they are not None
         if self.user_data is not None:
             base['user_data'] = self.user_data
+        if folders.honeybee_schema_version is not None:
+            base['version'] = folders.honeybee_schema_version_str
 
         return base
 
