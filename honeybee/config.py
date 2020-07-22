@@ -31,10 +31,12 @@ class Folders(object):
 
     Properties:
         * default_simulation_folder
-        * config_file
-        * mute
+        * honeybee_schema_version
+        * honeybee_schema_version_str
         * python_package_path
         * python_exe_path
+        * config_file
+        * mute
     """
 
     def __init__(self, config_file=None, mute=True):
@@ -43,6 +45,9 @@ class Folders(object):
 
         # load paths from the config JSON file
         self.config_file = config_file
+
+        # search for the version of honeybee-schema
+        self._honeybee_schema_version = self._find_honeybee_schema_version()
 
     @property
     def default_simulation_folder(self):
@@ -61,20 +66,24 @@ class Folders(object):
                   '{}'.format(self._default_simulation_folder))
 
     @property
-    def config_file(self):
-        """Get or set the path to the config.json file from which folders are loaded.
+    def honeybee_schema_version(self):
+        """Get a tuple for the installed version of honeybee-schema (eg. (1, 35, 0)).
 
-        Setting this to None will result in using the config.json module included
-        in this package.
+        This will be None if the version could not be sensed (it was not installed
+        via pip) or if no honeybee-schema installation was found next to the
+        honeybee-core installation.
         """
-        return self._config_file
+        return self._honeybee_schema_version
 
-    @config_file.setter
-    def config_file(self, cfg):
-        if cfg is None:
-            cfg = os.path.join(os.path.dirname(__file__), 'config.json')
-        self._load_from_file(cfg)
-        self._config_file = cfg
+    @property
+    def honeybee_schema_version_str(self):
+        """Get a string for the installed version of honeybee-schema (eg. "1.35.0").
+
+        This will be None if the version could not be sensed.
+        """
+        if self._honeybee_schema_version is not None:
+            return '.'.join([str(item) for item in self._honeybee_schema_version])
+        return None
 
     @property
     def python_package_path(self):
@@ -99,6 +108,22 @@ class Folders(object):
             if os.path.isfile(py_exe_file):
                 return py_exe_file
         return sys.executable  # assume we are on some other cPython
+
+    @property
+    def config_file(self):
+        """Get or set the path to the config.json file from which folders are loaded.
+
+        Setting this to None will result in using the config.json module included
+        in this package.
+        """
+        return self._config_file
+
+    @config_file.setter
+    def config_file(self, cfg):
+        if cfg is None:
+            cfg = os.path.join(os.path.dirname(__file__), 'config.json')
+        self._load_from_file(cfg)
+        self._config_file = cfg
 
     def _load_from_file(self, file_path):
         """Set all of the the properties of this object from a config JSON file.
@@ -145,6 +170,20 @@ class Folders(object):
                 raise OSError('Failed to create default simulation '
                               'folder: %s\n%s' % (sim_folder, e))
         return sim_folder
+
+    def _find_honeybee_schema_version(self):
+        """Get a tuple of 3 integers for the version of honeybee_schema if installed."""
+        schema_info_folder = None
+        for item in os.listdir(self.python_package_path):
+            if item.startswith('honeybee_schema-') and item.endswith('.dist-info'):
+                if os.path.isdir(os.path.join(self.python_package_path, item)):
+                    schema_info_folder = item
+        if schema_info_folder is not None:
+            schema_info_folder = schema_info_folder.replace('.dist-info', '')
+            ver = ''.join(s for s in schema_info_folder if (s.isdigit() or s == '.'))
+            if ver:  # version was found in the file path name
+                return tuple(int(d) for d in ver.split('.'))
+        return None
 
 
 """Object possesing all key folders within the configuration."""
