@@ -2,7 +2,8 @@
 from honeybee.typing import clean_string, clean_rad_string, clean_ep_string, \
     float_in_range, int_in_range, float_positive, int_positive, \
     tuple_with_length, list_with_length, normpath, \
-    clean_and_id_string, clean_and_id_rad_string, clean_and_id_ep_string
+    clean_and_id_string, clean_and_id_rad_string, clean_and_id_ep_string, \
+    float_in_range_excl, float_in_range_excl_incl, float_in_range_incl_excl
 
 import pytest
 
@@ -96,6 +97,52 @@ def test_float_in_range():
 
     try:
         float_in_range(2, 0, 1, 'test number')
+    except AssertionError as e:
+        assert 'test number' in str(e)
+
+
+def test_float_in_range_excl():
+    """Test the float_in_range_excl method."""
+    assert isinstance(float_in_range_excl(1.0, 0, 10, 'test number'), float)
+    assert isinstance(float_in_range_excl('1', 0, 10, 'test number'), float)
+
+    with pytest.raises(AssertionError):
+        assert isinstance(float_in_range_excl(0, 0, 10, 'test number'), float)
+    with pytest.raises(AssertionError):
+        assert isinstance(float_in_range_excl(10, 0, 10, 'test number'), float)
+
+    try:
+        float_in_range_excl(2, 0, 1, 'test number')
+    except AssertionError as e:
+        assert 'test number' in str(e)
+
+
+def test_float_in_range_excl_incl():
+    """Test the float_in_range_excl_incl method."""
+    assert isinstance(float_in_range_excl_incl(1, 0, 10, 'test number'), float)
+    assert isinstance(float_in_range_excl_incl(10, 0, 10, 'test number'), float)
+    assert isinstance(float_in_range_excl_incl('1', 0, 10, 'test number'), float)
+
+    with pytest.raises(AssertionError):
+        assert isinstance(float_in_range_excl_incl(0, 0, 10, 'test number'), float)
+
+    try:
+        float_in_range_excl_incl(2, 0, 1, 'test number')
+    except AssertionError as e:
+        assert 'test number' in str(e)
+
+
+def test_float_in_range_incl_excl():
+    """Test the float_in_range_incl_excl method."""
+    assert isinstance(float_in_range_incl_excl(1, 0, 10, 'test number'), float)
+    assert isinstance(float_in_range_incl_excl(0, 0, 10, 'test number'), float)
+    assert isinstance(float_in_range_incl_excl('1', 0, 10, 'test number'), float)
+
+    with pytest.raises(AssertionError):
+        assert isinstance(float_in_range_incl_excl(10, 0, 10, 'test number'), float)
+
+    try:
+        float_in_range_incl_excl(2, 0, 1, 'test number')
     except AssertionError as e:
         assert 'test number' in str(e)
 
