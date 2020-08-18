@@ -71,15 +71,45 @@ def valid_ep_string(value, input_name=''):
     return value
 
 
-def float_in_range(value, mi=INFNEG, ma=INFPOS, input_name=''):
-    """Check a float value to be between minimum and maximum."""
+def _number_check(value, input_name):
+    """Check if value is a number."""
     try:
         number = float(value)
     except (ValueError, TypeError):
         raise TypeError('Input {} must be a number. Got {}: {}.'.format(
             input_name, type(value), value))
+    return number
+
+
+def float_in_range(value, mi=INFNEG, ma=INFPOS, input_name=''):
+    """Check a float value to be between minimum and maximum."""
+    number = _number_check(value, input_name)
     assert mi <= number <= ma, 'Input number {} must be between {} and {}. ' \
         'Got {}'.format(input_name, mi, ma, value)
+    return number
+
+
+def float_in_range_excl(value, mi=INFNEG, ma=INFPOS, input_name=''):
+    """Check a float value to be greater than minimum and less than maximum."""
+    number = _number_check(value, input_name)
+    assert mi < number < ma, 'Input number {} must be greater than {} ' \
+        'and less than {}. Got {}'.format(input_name, mi, ma, value)
+    return number
+
+
+def float_in_range_excl_incl(value, mi=INFNEG, ma=INFPOS, input_name=''):
+    """Check a float value to be greater than minimum and less than/equal to maximum."""
+    number = _number_check(value, input_name)
+    assert mi < number <= ma, 'Input number {} must be greater than {} and less than ' \
+        'or equal to {}. Got {}'.format(input_name, mi, ma, value)
+    return number
+
+
+def float_in_range_incl_excl(value, mi=INFNEG, ma=INFPOS, input_name=''):
+    """Check a float value to be greater than/equal to minimum and less than maximum."""
+    number = _number_check(value, input_name)
+    assert mi <= number < ma, 'Input number {} must be greater than or equal to {} ' \
+        'and less than {}. Got {}'.format(input_name, mi, ma, value)
     return number
 
 
