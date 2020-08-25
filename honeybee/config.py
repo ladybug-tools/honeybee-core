@@ -34,6 +34,7 @@ class Folders(object):
         * honeybee_schema_version
         * honeybee_schema_version_str
         * python_package_path
+        * python_scripts_path
         * python_exe_path
         * config_file
         * mute
@@ -89,6 +90,24 @@ class Folders(object):
     def python_package_path(self):
         """Get the path to where this Python package is installed."""
         return os.path.split(os.path.dirname(__file__))[0]
+
+    @property
+    def python_scripts_path(self):
+        """Get the path to where Python CLI executable files are installed.
+
+        This can be used to call command line interface (CLI) executable files
+        directly (instead of using their usual entry points).
+        """
+        # check the ladybug_tools folder for a Python installation
+        lb_install = lb_config.folders.ladybug_tools_folder
+        if os.path.isdir(lb_install):
+            py_scripts = os.path.join(lb_install, 'python', 'Scripts') \
+                if os.name == 'nt' else \
+                os.path.join(lb_install, 'python', 'bin')
+            if os.path.isdir(py_scripts):
+                return py_scripts
+        sys_dir = os.path.dirname(sys.executable)  # assume we are on some other cPython
+        return os.path.join(sys_dir, 'Scripts') if os.name == 'nt' else sys_dir
 
     @property
     def python_exe_path(self):
