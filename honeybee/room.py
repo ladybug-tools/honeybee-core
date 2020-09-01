@@ -320,8 +320,8 @@ class Room(_BaseWithShade):
     def average_floor_height(self):
         """Get the height of the room floor averaged over all floor faces in the room.
 
-        Will be None if the room posseses no floors. Resulting value is weighted by
-        the area of each of the floor faces.
+        The resulting value is weighted by the area of each of the floor faces.
+        Will be the minimum Z value of the Room volume if the room posseses no floors.
         """
         heights = 0
         areas = 0
@@ -329,7 +329,7 @@ class Room(_BaseWithShade):
             if isinstance(face.type, Floor):
                 heights += face.center.z * face.area
                 areas += face.area
-        return heights / areas if areas != 0 else None
+        return heights / areas if areas != 0 else self.geometry.min.z
 
     @property
     def has_parent(self):
