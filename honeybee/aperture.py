@@ -1,5 +1,7 @@
 # coding: utf-8
 """Honeybee Aperture."""
+from __future__ import division
+
 from ._basewithshade import _BaseWithShade
 from .typing import clean_string
 from .properties import ApertureProperties

@@ -1,5 +1,7 @@
 # coding: utf-8
 """Honeybee Face."""
+from __future__ import division
+
 from ._basewithshade import _BaseWithShade
 from .typing import clean_string
 from .properties import FaceProperties
@@ -47,6 +49,7 @@ class Face(_BaseWithShade):
         * outdoor_shades
         * parent
         * has_parent
+        * has_sub_faces
         * geometry
         * punched_geometry
         * vertices
@@ -199,6 +202,11 @@ class Face(_BaseWithShade):
     def has_parent(self):
         """Get a boolean noting whether this Face has a parent Room."""
         return self._parent is not None
+
+    @property
+    def has_sub_faces(self):
+        """Get a boolean noting whether this Face has Apertures or Doors."""
+        return not (self._apertures == [] and self._doors == [])
 
     @property
     def geometry(self):

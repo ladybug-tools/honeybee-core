@@ -1,5 +1,7 @@
 # coding: utf-8
 """Honeybee Room."""
+from __future__ import division
+
 from ._basewithshade import _BaseWithShade
 from .typing import float_in_range, int_in_range, valid_string, clean_string
 from .properties import RoomProperties
@@ -89,7 +91,15 @@ class Room(_BaseWithShade):
             # replace honeybee face geometry with versions that are facing outwards
             if room_polyface.is_solid:
                 for i, correct_face3d in enumerate(room_polyface.faces):
-                    faces[i]._geometry = correct_face3d
+                    face = faces[i]
+                    norm_init = face._geometry.normal
+                    face._geometry = correct_face3d
+                    if face.has_sub_faces:  # flip sub-faces to align with parent Face
+                        if norm_init.angle(face._geometry.normal) > (math.pi / 2):
+                            for ap in face._apertures:
+                                ap._geometry = ap._geometry.flip()
+                            for dr in face._doors:
+                                dr._geometry = dr._geometry.flip()
             self._faces = faces
             self._geometry = room_polyface
 
