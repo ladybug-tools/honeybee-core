@@ -1,5 +1,7 @@
 # coding: utf-8
 """Honeybee Shade."""
+from __future__ import division
+
 from ._base import _Base
 from .typing import clean_string
 from .properties import ShadeProperties

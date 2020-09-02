@@ -1,5 +1,7 @@
 # coding: utf-8
 """Honeybee Model."""
+from __future__ import division
+
 from ._base import _Base
 from .properties import ModelProperties
 from .room import Room
