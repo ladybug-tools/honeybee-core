@@ -621,15 +621,14 @@ def test_check_missing_adjacencies():
     assert len(model_1.rooms) == 1
     assert len(model_1.faces) == 6
     assert len(model_1.apertures) == 2
-    assert not model_1.check_missing_adjacencies(False)
     with pytest.raises(ValueError):
-        model_1.check_missing_adjacencies(True)
+        model_1.check_missing_adjacencies()
 
     model_1.add_model(model_2)
     assert len(model_1.rooms) == 2
     assert len(model_1.faces) == 12
     assert len(model_1.apertures) == 3
-    assert model_1.check_missing_adjacencies(True)
+    assert model_1.check_missing_adjacencies()
 
 
 def test_check_all_air_boundaries_adjacent():

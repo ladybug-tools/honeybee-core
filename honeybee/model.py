@@ -3,6 +3,7 @@
 from __future__ import division
 
 from ._base import _Base
+from .checkdup import check_duplicate_identifiers
 from .properties import ModelProperties
 from .room import Room
 from .face import Face
@@ -439,66 +440,66 @@ class Model(_Base):
         """Get a list of Room objects in the model given the Room identifiers."""
         rooms = []
         model_rooms = self._rooms
-        for identifier in identifiers:
+        for obj_id in identifiers:
             for room in model_rooms:
-                if room.identifier == identifier:
+                if room.identifier == obj_id:
                     rooms.append(room)
                     break
             else:
-                raise ValueError('Room "{}" was not found in the model.'.format(identifier))
+                raise ValueError('Room "{}" was not found in the model.'.format(obj_id))
         return rooms
 
     def get_faces_by_identifier(self, identifiers):
         """Get a list of Face objects in the model given the Face identifiers."""
         faces = []
         model_faces = self.faces
-        for identifier in identifiers:
+        for obj_id in identifiers:
             for face in model_faces:
-                if face.identifier == identifier:
+                if face.identifier == obj_id:
                     faces.append(face)
                     break
             else:
-                raise ValueError('Face "{}" was not found in the model.'.format(identifier))
+                raise ValueError('Face "{}" was not found in the model.'.format(obj_id))
         return faces
 
     def get_shades_by_identifier(self, identifiers):
         """Get a list of Shade objects in the model given the Shade identifiers."""
         shades = []
         model_shades = self.shades
-        for identifier in identifiers:
+        for obj_id in identifiers:
             for face in model_shades:
-                if face.identifier == identifier:
+                if face.identifier == obj_id:
                     shades.append(face)
                     break
             else:
-                raise ValueError('Shade "{}" was not found in the model.'.format(identifier))
+                raise ValueError('Shade "{}" was not found in the model.'.format(obj_id))
         return shades
 
     def get_apertures_by_identifier(self, identifiers):
         """Get a list of Aperture objects in the model given the Aperture identifiers."""
         apertures = []
         model_apertures = self.apertures
-        for identifier in identifiers:
+        for obj_id in identifiers:
             for aperture in model_apertures:
-                if aperture.identifier == identifier:
+                if aperture.identifier == obj_id:
                     apertures.append(aperture)
                     break
             else:
                 raise ValueError(
-                    'Aperture "{}" was not found in the model.'.format(identifier))
+                    'Aperture "{}" was not found in the model.'.format(obj_id))
         return apertures
 
     def get_doors_by_identifier(self, identifiers):
         """Get a list of Door objects in the model given the Door identifiers."""
         doors = []
         model_doors = self.doors
-        for identifier in identifiers:
+        for obj_id in identifiers:
             for door in model_doors:
-                if door.identifier == identifier:
+                if door.identifier == obj_id:
                     doors.append(door)
                     break
             else:
-                raise ValueError('Door "{}" was not found in the model.'.format(identifier))
+                raise ValueError('Door "{}" was not found in the model.'.format(obj_id))
         return doors
 
     def move(self, moving_vec):
@@ -655,51 +656,15 @@ class Model(_Base):
 
     def check_duplicate_room_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Room identifiers in the model."""
-        room_identifiers = set()
-        duplicate_identifiers = set()
-        for room in self._rooms:
-            if room.identifier not in room_identifiers:
-                room_identifiers.add(room.identifier)
-            else:
-                duplicate_identifiers.add(room.identifier)
-        if len(duplicate_identifiers) != 0:
-            if raise_exception:
-                raise ValueError('The model has the following duplicated '
-                                 'Room identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
-            return False
-        return True
+        return check_duplicate_identifiers(self._rooms, raise_exception, 'Room')
 
     def check_duplicate_face_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Face identifiers in the model."""
-        face_identifiers = set()
-        duplicate_identifiers = set()
-        for face in self.faces:
-            if face.identifier not in face_identifiers:
-                face_identifiers.add(face.identifier)
-            else:
-                duplicate_identifiers.add(face.identifier)
-        if len(duplicate_identifiers) != 0:
-            if raise_exception:
-                raise ValueError('The model has the following duplicated '
-                                 'Face identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
-            return False
-        return True
+        return check_duplicate_identifiers(self.faces, raise_exception, 'Face')
 
     def check_duplicate_shade_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Shade identifiers in the model."""
-        shade_identifiers = set()
-        duplicate_identifiers = set()
-        for shade in self.shades:
-            if shade.identifier not in shade_identifiers:
-                shade_identifiers.add(shade.identifier)
-            else:
-                duplicate_identifiers.add(shade.identifier)
-        if len(duplicate_identifiers) != 0:
-            if raise_exception:
-                raise ValueError('The model has the following duplicated '
-                                 'Shade identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
-            return False
-        return True
+        return check_duplicate_identifiers(self.shades, raise_exception, 'Shade')
 
     def check_duplicate_sub_face_identifiers(self, raise_exception=True):
         """Check that there are no duplicate sub-face identifiers in the model.
@@ -708,35 +673,31 @@ class Model(_Base):
         are counted together by EnergyPlus.
         """
         sub_faces = self.apertures + self.doors
-        sub_face_identifiers = set()
-        duplicate_identifiers = set()
-        for sub_face in sub_faces:
-            if sub_face.identifier not in sub_face_identifiers:
-                sub_face_identifiers.add(sub_face.identifier)
-            else:
-                duplicate_identifiers.add(sub_face.identifier)
-        if len(duplicate_identifiers) != 0:
-            if raise_exception:
-                raise ValueError('The model has the following duplicated sub-face '
-                                 'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
-            return False
-        return True
+        return check_duplicate_identifiers(sub_faces, raise_exception, 'sub-face')
 
-    def check_missing_adjacencies(self, raise_exception=True):
-        """Check that all Faces have adjacent objects that exist in the model."""
-        bc_obj_identifiers = []
+    def check_missing_adjacencies(self):
+        """Check that all Faces Apertures, and Doors have adjacent objects in the model.
+        """
+        face_bc_ids = []
+        ap_bc_ids = []
+        door_bc_ids = []
         for room in self._rooms:
             for face in room._faces:
                 if isinstance(face.boundary_condition, Surface):
-                    bc_obj_identifiers.append(
-                        face.boundary_condition.boundary_condition_object)
-        try:
-            self.get_faces_by_identifier(bc_obj_identifiers)
-        except ValueError as e:
-            if raise_exception:
-                raise ValueError('A Face has an adjacent object that is missing '
-                                 'from the model:\n{}'.format(e))
-            return False
+                    self._self_adj_check(face, face_bc_ids)
+                    for ap in face.apertures:
+                        assert isinstance(ap.boundary_condition, Surface), \
+                            'Aperture "{}" must have Surface boundary condition ' \
+                            'if the parent Face has a Surface BC.'.format(ap.identifier)
+                        self._self_adj_check(ap, ap_bc_ids)
+                    for dr in face.doors:
+                        assert isinstance(dr.boundary_condition, Surface), \
+                            'Door "{}" must have Surface boundary condition ' \
+                            'if the parent Face has a Surface BC.'.format(dr.identifier)
+                        self._self_adj_check(dr, door_bc_ids)
+        self._missing_adj_check(self.get_faces_by_identifier, face_bc_ids, 'Face')
+        self._missing_adj_check(self.get_apertures_by_identifier, ap_bc_ids, 'Aperture')
+        self._missing_adj_check(self.get_doors_by_identifier, door_bc_ids, 'Door')
         return True
 
     def check_all_air_boundaries_adjacent(self, raise_exception=True):
@@ -1182,6 +1143,23 @@ class Model(_Base):
             raise ValueError(
                 "You're kidding me! What units are you using?" + units + "?\n"
                 "Please use Meters, Millimeters, Centimeters, Feet or Inches.")
+
+    @staticmethod
+    def _self_adj_check(hb_obj, bc_ids):
+        """Check that an adjacent object is referencing itself."""
+        bc_obj = hb_obj.boundary_condition.boundary_condition_object
+        bc_ids.append(bc_obj)
+        assert hb_obj.identifier != bc_obj, '"{}" cannot reference ' \
+            'itself in its Surface boundary condition.'.format(bc_obj)
+
+    @staticmethod
+    def _missing_adj_check(id_checking_function, bc_ids, obj_name='Face'):
+        """Check whether adjacencies are missing from a model."""
+        try:
+            id_checking_function(bc_ids)
+        except ValueError as e:
+            raise ValueError('A {} has an adjacent object that is missing '
+                             'from the model:\n{}'.format(obj_name, e))
 
     def __add__(self, other):
         new_model = self.duplicate()
