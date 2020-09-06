@@ -43,12 +43,21 @@ def validate_model(model_json):
 
         # validate the Model JSON
         click.echo('Validating Model JSON ...')
+        # first check the JSON against the OpenAPI specification
         schema_model.Model.parse_file(model_json)
         click.echo('Pydantic validation passed.')
+        # re-serialize the Model to make sure no errors are found in re-serialization
         with open(model_json) as json_file:
             data = json.load(json_file)
         parsed_model = Model.from_dict(data)
-        parsed_model.check_missing_adjacencies(raise_exception=True)
+        # perform several other checks for key honeybee model schema rules
+        parsed_model.check_duplicate_room_identifiers(raise_exception=True)
+        parsed_model.check_duplicate_face_identifiers(raise_exception=True)
+        parsed_model.check_duplicate_sub_face_identifiers(raise_exception=True)
+        parsed_model.check_duplicate_shade_identifiers(raise_exception=True)
+        parsed_model.check_missing_adjacencies()
+        parsed_model.check_all_air_boundaries_adjacent(raise_exception=True)
+        # if we made it to this point, report that the model is valid
         click.echo('Python re-serialization passed.')
         click.echo('Congratulations! Your Model JSON is valid!')
     except Exception as e:

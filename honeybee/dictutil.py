@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Utilities to convertint any dictionary to Python objects.
+"""Utilities to convert any dictionary to Python objects.
 
 Note that importing this module will import almost all modules within the
 library in order to be able to re-serialize almost any dictionary produced
