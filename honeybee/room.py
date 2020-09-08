@@ -6,7 +6,7 @@ from ._basewithshade import _BaseWithShade
 from .typing import float_in_range, int_in_range, valid_string, clean_string
 from .properties import RoomProperties
 from .face import Face
-from .facetype import get_type_from_normal, Wall, Floor
+from .facetype import get_type_from_normal, Wall, Floor, RoofCeiling
 from .boundarycondition import get_bc_from_position, Outdoors, Surface
 from honeybee.orientation import angles_from_num_orient, orient_index
 import honeybee.writer.room as writer
@@ -61,6 +61,8 @@ class Room(_BaseWithShade):
         * exposed_area
         * exterior_wall_area
         * exterior_aperture_area
+        * exterior_wall_aperture_area
+        * exterior_skylight_aperture_area
         * average_floor_height
         * user_data
     """
@@ -281,8 +283,8 @@ class Room(_BaseWithShade):
     def volume(self):
         """Get the volume of the room.
 
-        Note that, if this room faces do not form a closed solid (with all face normals
-        pointing outward), the value of this property will not be accurate.
+        Note that, if this room faces do not form a closed solid the value of this
+        property will not be accurate.
         """
         return self.geometry.volume
 
@@ -305,26 +307,57 @@ class Room(_BaseWithShade):
     def exterior_wall_area(self):
         """Get the combined area of all exterior walls on the room.
 
-        Useful for calculating glazing ratios.
+        This is NOT the area of the wall's punched_geometry and it includes BOTH
+        the area of opaque and transparent parts of the walls.
         """
-        wall_areas = []
-        for face in self._faces:
-            if isinstance(face.boundary_condition, Outdoors) and \
-                    isinstance(face.type, Wall):
-                wall_areas.append(face.area)
-        return sum(wall_areas)
+        wall_areas = 0
+        for f in self._faces:
+            if isinstance(f.boundary_condition, Outdoors) and isinstance(f.type, Wall):
+                wall_areas += f.area
+        return wall_areas
+
+    @property
+    def exterior_roof_area(self):
+        """Get the combined area of all exterior roofs on the room.
+
+        This is NOT the area of the roof's punched_geometry and it includes BOTH
+        the area of opaque and transparent parts of the roofs.
+        """
+        wall_areas = 0
+        for f in self._faces:
+            if isinstance(f.boundary_condition, Outdoors) and \
+                    isinstance(f.type, RoofCeiling):
+                wall_areas += f.area
+        return wall_areas
 
     @property
     def exterior_aperture_area(self):
-        """Get the combined area of all exterior apertures on the room.
-
-        Useful for calculating glazing ratios.
-        """
-        ap_areas = []
+        """Get the combined area of all exterior apertures on the room."""
+        ap_areas = 0
         for face in self._faces:
-            if isinstance(face.boundary_condition, Outdoors) and len(face.apertures) > 0:
-                ap_areas.extend([ap.area for ap in face._apertures])
-        return sum(ap_areas)
+            if isinstance(face.boundary_condition, Outdoors) and len(face._apertures) > 0:
+                ap_areas += sum(ap.area for ap in face._apertures)
+        return ap_areas
+
+    @property
+    def exterior_wall_aperture_area(self):
+        """Get the combined area of all apertures on exterior walls of the room."""
+        ap_areas = 0
+        for face in self._faces:
+            if isinstance(face.boundary_condition, Outdoors) and \
+                    isinstance(face.type, Wall) and len(face._apertures) > 0:
+                ap_areas += sum(ap.area for ap in face._apertures)
+        return ap_areas
+
+    @property
+    def exterior_skylight_aperture_area(self):
+        """Get the combined area of all apertures on exterior roofs of the room."""
+        ap_areas = 0
+        for face in self._faces:
+            if isinstance(face.boundary_condition, Outdoors) and \
+                    isinstance(face.type, RoofCeiling) and len(face._apertures) > 0:
+                ap_areas += sum(ap.area for ap in face._apertures)
+        return ap_areas
 
     @property
     def average_floor_height(self):
@@ -444,6 +477,61 @@ class Room(_BaseWithShade):
             return Mesh3D.join_meshes(floor_grids)
         return None
 
+    def wall_apertures_by_ratio(self, ratio, tolerance=0.01):
+        """Add apertures to all exterior walls given a ratio of aperture to face area.
+
+        Note this method removes any existing apertures and doors on the Room's walls.
+        This method attempts to generate as few apertures as necessary to meet the ratio.
+
+        Args:
+            ratio: A number between 0 and 1 (but not perfectly equal to 1)
+                for the desired ratio between aperture area and face area.
+            tolerance: The maximum difference between point values for them to be
+                considered a part of a rectangle. This is used in the event that
+                this face is concave and an attempt to subdivide the face into a
+                rectangle is made. It does not affect the ability to produce apertures
+                for convex Faces. Default: 0.01, suitable for objects in meters.
+
+        Usage:
+
+        .. code-block:: python
+
+            room = Room.from_box(3.0, 6.0, 3.2, 180)
+            room.wall_apertures_by_ratio(0.4)
+        """
+        for face in self._faces:
+            if isinstance(face.boundary_condition, Outdoors) and \
+                    isinstance(face.type, Wall):
+                face.apertures_by_ratio(ratio, tolerance)
+
+    def skylight_apertures_by_ratio(self, ratio, tolerance=0.01):
+        """Add apertures to all exterior roofs given a ratio of aperture to face area.
+
+        Note this method removes any existing apertures and overhead doors on the
+        Room's roofs. This method attempts to generate as few apertures as
+        necessary to meet the ratio.
+
+        Args:
+            ratio: A number between 0 and 1 (but not perfectly equal to 1)
+                for the desired ratio between aperture area and face area.
+            tolerance: The maximum difference between point values for them to be
+                considered a part of a rectangle. This is used in the event that
+                this face is concave and an attempt to subdivide the face into a
+                rectangle is made. It does not affect the ability to produce apertures
+                for convex Faces. Default: 0.01, suitable for objects in meters.
+
+        Usage:
+
+        .. code-block:: python
+
+            room = Room.from_box(3.0, 6.0, 3.2, 180)
+            room.skylight_apertures_by_ratio(0.05)
+        """
+        for face in self._faces:
+            if isinstance(face.boundary_condition, Outdoors) and \
+                    isinstance(face.type, RoofCeiling):
+                face.apertures_by_ratio(ratio, tolerance)
+
     def move(self, moving_vec):
         """Move this Room along a vector.
 
@@ -543,8 +631,7 @@ class Room(_BaseWithShade):
 
         Args:
             tolerance: tolerance: The maximum difference between x, y, and z values
-                at which face vertices are considered equivalent. This is used in
-                determining whether the faces form a closed volume. Default: 0.01,
+                at which face vertices are considered equivalent. Default: 0.01,
                 suitable for objects in meters.
             angle_tolerance: The max angle difference in degrees that vertices are
                 allowed to differ from one another in order to consider them colinear.
@@ -567,6 +654,28 @@ class Room(_BaseWithShade):
                 'Room "{}" is not closed to within {} tolerance and {} angle '
                 'tolerance.'.format(self.display_name, tolerance, angle_tolerance))
         return False
+
+    def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
+                              raise_exception=True):
+        """Check that room's sub-faces are co-planar with faces and in the face boundary.
+
+        Note this does not check the planarity of the sub-faces themselves, whether
+        they self-intersect, or whether they have a non-zero area.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
+            angle_tolerance: The max angle in degrees that the plane normals can
+                differ from one another in order for them to be considered coplanar.
+                Default: 1 degree.
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if an sub-face is not valid.
+        """
+        for f in self._faces:
+            if not f.check_sub_faces_valid(tolerance, angle_tolerance, raise_exception):
+                return False
+        return True
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check that all of the Room's geometry components are planar.

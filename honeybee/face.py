@@ -59,6 +59,8 @@ class Face(_BaseWithShade):
         * center
         * area
         * perimeter
+        * aperture_area
+        * aperture_ratio
         * user_data
     """
     TYPES = face_types
@@ -285,6 +287,17 @@ class Face(_BaseWithShade):
         """
         return self._geometry.perimeter
 
+    @property
+    def aperture_area(self):
+        """Get the combined area of the face's apertures."""
+        return sum([ap.area for ap in self._apertures])
+
+    @property
+    def aperture_ratio(self):
+        """Get a number between 0 and 1 for the area ratio of the apertures to the face.
+        """
+        return self.aperture_area / self.area
+
     def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
         """Get a number between 0 and 360 for the orientation of the face in degrees.
 
@@ -494,19 +507,17 @@ class Face(_BaseWithShade):
     def apertures_by_ratio(self, ratio, tolerance=0.01):
         """Add apertures to this Face given a ratio of aperture area to facea area.
 
-        Note that this method removes any existing apertures on the Face.
-
+        Note that this method removes any existing apertures and doors on the Face.
         This method attempts to generate as few apertures as necessary to meet the ratio.
-        Note that this method will remove all existing apertures and doors on this face.
 
         Args:
-            ratio: A number between 0 and 1  (but not perfectly equal to 1)
+            ratio: A number between 0 and 1 (but not perfectly equal to 1)
                 for the desired ratio between aperture area and face area.
             tolerance: The maximum difference between point values for them to be
-                considered a part of a rectangle. This is used in the event that
-                this face is concave and an attempt to subdivide the face into a
-                rectangle is made. It does not affect the ability to produce apertures
-                for convex Faces. Default: 0.01, suitable for objects in meters.
+                considered the same. This is used in the event that this face is
+                concave and an attempt to subdivide the face into a rectangle is
+                made. It does not affect the ability to produce apertures for
+                convex Faces. Default: 0.01, suitable for objects in meters.
 
         Usage:
 
