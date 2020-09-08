@@ -72,6 +72,14 @@ class Model(_Base):
         * orphaned_apertures
         * orphaned_doors
         * stories
+        * volume
+        * floor_area
+        * exposed_area
+        * exterior_wall_area
+        * exterior_roof_area
+        * exterior_aperture_area
+        * exterior_wall_aperture_area
+        * exterior_skylight_aperture_area
         * user_data
     """
     __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
@@ -388,6 +396,64 @@ class Model(_Base):
                 _stories.add(room.story)
         return list(_stories)
 
+    @property
+    def volume(self):
+        """Get the combined volume of all rooms in the Model.
+
+        Note that, if this model's rooms are not closed solids, the value of this
+        property will not be accurate.
+        """
+        return sum([room.volume for room in self._rooms])
+
+    @property
+    def floor_area(self):
+        """Get the combined area of all room floor faces in the Model."""
+        return sum([room.floor_area for room in self._rooms])
+
+    @property
+    def exposed_area(self):
+        """Get the combined area of all room faces with outdoor boundary conditions.
+
+        Useful for estimating infiltration, often expressed as a flow per
+        unit exposed envelope area.
+        """
+        return sum([room.exposed_area for room in self._rooms])
+
+    @property
+    def exterior_wall_area(self):
+        """Get the combined area of all exterior walls on the model's rooms.
+
+        This is NOT the area of the wall's punched_geometry and it includes BOTH
+        the area of opaque and transparent parts of the walls.
+        """
+        return sum([room.exterior_wall_area for room in self._rooms])
+
+    @property
+    def exterior_roof_area(self):
+        """Get the combined area of all exterior roofs on the model's rooms.
+
+        This is NOT the area of the roof's punched_geometry and it includes BOTH
+        the area of opaque and transparent parts of the roofs.
+        """
+        return sum([room.exterior_roof_area for room in self._rooms])
+
+    @property
+    def exterior_aperture_area(self):
+        """Get the combined area of all exterior apertures on the model's rooms."""
+        return sum([room.exterior_aperture_area for room in self._rooms])
+
+    @property
+    def exterior_wall_aperture_area(self):
+        """Get the combined area of all apertures on exterior walls of the model's rooms.
+        """
+        return sum([room.exterior_wall_aperture_area for room in self._rooms])
+
+    @property
+    def exterior_skylight_aperture_area(self):
+        """Get the combined area of all apertures on exterior roofs of the model's rooms.
+        """
+        return sum([room.exterior_skylight_aperture_area for room in self._rooms])
+
     def add_model(self, other_model):
         """Add another Model object to this model."""
         assert isinstance(other_model, Model), \
@@ -409,34 +475,125 @@ class Model(_Base):
         self._rooms.append(obj)
 
     def add_face(self, obj):
-        """Add a Face object without a parent to the model."""
+        """Add an orphaned Face object without a parent to the model."""
         assert isinstance(obj, Face), 'Expected Face. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Face "{}"" has a parent Room. Add the Room to '\
             'the model instead of the Face.'.format(obj.display_name)
         self._orphaned_faces.append(obj)
 
-    def add_shade(self, obj):
-        """Add an Shade object to the model."""
-        assert isinstance(obj, Shade), 'Expected Shade. Got {}.'.format(type(obj))
-        assert not obj.has_parent, 'Shade "{}"" has a parent object. Add the object to '\
-            'the model instead of the Shade.'.format(obj.display_name)
-        self._orphaned_shades.append(obj)
-
     def add_aperture(self, obj):
-        """Add an Aperture object to the model."""
+        """Add an orphaned Aperture object to the model."""
         assert isinstance(obj, Aperture), 'Expected Aperture. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Aperture "{}"" has a parent Face. Add the Face to '\
             'the model instead of the Aperture.'.format(obj.display_name)
         self._orphaned_apertures.append(obj)
 
     def add_door(self, obj):
-        """Add an Door object to the model."""
+        """Add an orphaned Door object to the model."""
         assert isinstance(obj, Door), 'Expected Door. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Door "{}"" has a parent Face. Add the Face to '\
             'the model instead of the Door.'.format(obj.display_name)
         self._orphaned_doors.append(obj)
 
-    def get_rooms_by_identifier(self, identifiers):
+    def add_shade(self, obj):
+        """Add an orphaned Shade object to the model, typically representing context."""
+        assert isinstance(obj, Shade), 'Expected Shade. Got {}.'.format(type(obj))
+        assert not obj.has_parent, 'Shade "{}"" has a parent object. Add the object to '\
+            'the model instead of the Shade.'.format(obj.display_name)
+        self._orphaned_shades.append(obj)
+
+    def remove_rooms(self):
+        """Remove all Rooms from the model."""
+        self._rooms = []
+
+    def remove_faces(self):
+        """Remove all orphaned Faces from the model."""
+        self._orphaned_faces = []
+
+    def remove_apertures(self):
+        """Remove all orphaned Apertures from the model."""
+        self._orphaned_apertures = []
+
+    def remove_doors(self):
+        """Remove all orphaned Doors from the model."""
+        self._orphaned_doors = []
+
+    def remove_shades(self):
+        """Remove all orphaned Shades from the model, typically representing context."""
+        self._orphaned_shades = []
+
+    def remove_assigned_apertures(self):
+        """Remove all Apertures assigned to the model's Faces.
+
+        This includes nested apertures like those assigned to Faces with parent Rooms.
+        """
+        for room in self._rooms:
+            for face in room.faces:
+                face.remove_apertures()
+        for face in self._orphaned_faces:
+            face.remove_apertures()
+
+    def remove_assigned_doors(self):
+        """Remove all Doors assigned to the model's Faces.
+
+        This includes nested doors like those assigned to Faces with parent Rooms.
+        """
+        for room in self._rooms:
+            for face in room.faces:
+                face.remove_doors()
+        for face in self._orphaned_faces:
+            face.remove_doors()
+
+    def remove_assigned_shades(self):
+        """Remove all Shades assigned to the model's Rooms, Faces, Apertures and Doors.
+
+        This includes nested shades like those assigned to Apertures with parent
+        Faces that have parent Rooms.
+        """
+        for room in self._rooms:
+            room.remove_shades()
+            for face in room.faces:
+                face.remove_shades()
+                for ap in face.apertures:
+                    ap.remove_shades()
+                for dr in face.doors:
+                    dr.remove_shades()
+        for face in self._orphaned_faces:
+            face.remove_shades()
+            for ap in face.apertures:
+                ap.remove_shades()
+            for dr in face.doors:
+                dr.remove_shades()
+        for aperture in self._orphaned_apertures:
+            aperture.remove_shades()
+        for door in self._orphaned_doors:
+            door.remove_shades()
+
+    def remove_all_apertures(self):
+        """Remove all Apertures from the model.
+
+        This includes assigned apertures as well as orphaned apertures.
+        """
+        self.remove_apertures()
+        self.remove_assigned_apertures()
+
+    def remove_all_doors(self):
+        """Remove all Doors from the model.
+
+        This includes assigned doors as well as orphaned doors.
+        """
+        self.remove_doors()
+        self.remove_assigned_doors()
+
+    def remove_all_shades(self):
+        """Remove all Shades from the model.
+
+        This includes assigned shades as well as orphaned shades.
+        """
+        self.remove_shades()
+        self.remove_assigned_shades()
+
+    def rooms_by_identifier(self, identifiers):
         """Get a list of Room objects in the model given the Room identifiers."""
         rooms = []
         model_rooms = self._rooms
@@ -449,7 +606,7 @@ class Model(_Base):
                 raise ValueError('Room "{}" was not found in the model.'.format(obj_id))
         return rooms
 
-    def get_faces_by_identifier(self, identifiers):
+    def faces_by_identifier(self, identifiers):
         """Get a list of Face objects in the model given the Face identifiers."""
         faces = []
         model_faces = self.faces
@@ -462,20 +619,7 @@ class Model(_Base):
                 raise ValueError('Face "{}" was not found in the model.'.format(obj_id))
         return faces
 
-    def get_shades_by_identifier(self, identifiers):
-        """Get a list of Shade objects in the model given the Shade identifiers."""
-        shades = []
-        model_shades = self.shades
-        for obj_id in identifiers:
-            for face in model_shades:
-                if face.identifier == obj_id:
-                    shades.append(face)
-                    break
-            else:
-                raise ValueError('Shade "{}" was not found in the model.'.format(obj_id))
-        return shades
-
-    def get_apertures_by_identifier(self, identifiers):
+    def apertures_by_identifier(self, identifiers):
         """Get a list of Aperture objects in the model given the Aperture identifiers."""
         apertures = []
         model_apertures = self.apertures
@@ -489,7 +633,7 @@ class Model(_Base):
                     'Aperture "{}" was not found in the model.'.format(obj_id))
         return apertures
 
-    def get_doors_by_identifier(self, identifiers):
+    def doors_by_identifier(self, identifiers):
         """Get a list of Door objects in the model given the Door identifiers."""
         doors = []
         model_doors = self.doors
@@ -501,6 +645,19 @@ class Model(_Base):
             else:
                 raise ValueError('Door "{}" was not found in the model.'.format(obj_id))
         return doors
+
+    def shades_by_identifier(self, identifiers):
+        """Get a list of Shade objects in the model given the Shade identifiers."""
+        shades = []
+        model_shades = self.shades
+        for obj_id in identifiers:
+            for face in model_shades:
+                if face.identifier == obj_id:
+                    shades.append(face)
+                    break
+            else:
+                raise ValueError('Shade "{}" was not found in the model.'.format(obj_id))
+        return shades
 
     def move(self, moving_vec):
         """Move this Model along a vector.
@@ -605,6 +762,44 @@ class Model(_Base):
             door.scale(factor, origin)
         self.properties.scale(factor, origin)
 
+    def wall_apertures_by_ratio(self, ratio, tolerance=0.01):
+        """Add apertures to all exterior walls given a ratio of aperture to face area.
+
+        Note this method only affects the Models rooms (no orphaned faces) and it
+        removes any existing apertures and doors on the room's exterior walls.
+        This method attempts to generate as few apertures as necessary to meet the ratio.
+
+        Args:
+            ratio: A number between 0 and 1 (but not perfectly equal to 1)
+                for the desired ratio between aperture area and face area.
+            tolerance: The maximum difference between point values for them to be
+                considered a part of a rectangle. This is used in the event that
+                this face is concave and an attempt to subdivide the face into a
+                rectangle is made. It does not affect the ability to produce apertures
+                for convex Faces. Default: 0.01, suitable for objects in meters.
+        """
+        for room in self._rooms:
+            room.wall_apertures_by_ratio(ratio, tolerance)
+
+    def skylight_apertures_by_ratio(self, ratio, tolerance=0.01):
+        """Add apertures to all exterior roofs given a ratio of aperture to face area.
+
+        Note this method only affects the Models rooms (no orphaned faces) and
+        removes any existing apertures and overhead doors on the Room's roofs.
+        This method attempts to generate as few apertures as necessary to meet the ratio.
+
+        Args:
+            ratio: A number between 0 and 1 (but not perfectly equal to 1)
+                for the desired ratio between aperture area and face area.
+            tolerance: The maximum difference between point values for them to be
+                considered a part of a rectangle. This is used in the event that
+                this face is concave and an attempt to subdivide the face into a
+                rectangle is made. It does not affect the ability to produce apertures
+                for convex Faces. Default: 0.01, suitable for objects in meters.
+        """
+        for room in self._rooms:
+            room.skylight_apertures_by_ratio(ratio, tolerance)
+
     def assign_stories_by_floor_height(self, min_difference=2.0, overwrite=False):
         """Assign story properties to the rooms of this Model using their floor heights.
 
@@ -695,9 +890,9 @@ class Model(_Base):
                             'Door "{}" must have Surface boundary condition ' \
                             'if the parent Face has a Surface BC.'.format(dr.identifier)
                         self._self_adj_check(dr, door_bc_ids)
-        self._missing_adj_check(self.get_faces_by_identifier, face_bc_ids, 'Face')
-        self._missing_adj_check(self.get_apertures_by_identifier, ap_bc_ids, 'Aperture')
-        self._missing_adj_check(self.get_doors_by_identifier, door_bc_ids, 'Door')
+        self._missing_adj_check(self.faces_by_identifier, face_bc_ids, 'Face')
+        self._missing_adj_check(self.apertures_by_identifier, ap_bc_ids, 'Aperture')
+        self._missing_adj_check(self.doors_by_identifier, door_bc_ids, 'Door')
         return True
 
     def check_all_air_boundaries_adjacent(self, raise_exception=True):
@@ -711,6 +906,49 @@ class Model(_Base):
                 if raise_exception:
                     raise ValueError('Face "{}" is an AirBoundary but is not adjacent '
                                      'to another Face.'.format(face.display_name))
+                return False
+        return True
+
+    def check_rooms_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
+        """Check whether the Model's rooms are closed solid to within tolerances.
+
+        Args:
+            tolerance: tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. Default: 0.01,
+                suitable for objects in meters.
+            angle_tolerance: The max angle difference in degrees that vertices are
+                allowed to differ from one another in order to consider them colinear.
+                Default: 1 degree.
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if the room geometry does not form a closed solid.
+        """
+        for room in self._rooms:
+            if not room.check_solid(tolerance, angle_tolerance, raise_exception):
+                return False
+        return True
+
+    def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
+                              raise_exception=True):
+        """Check that model's sub-faces are co-planar with faces and in the face boundary.
+
+        Note this does not check the planarity of the sub-faces themselves, whether
+        they self-intersect, or whether they have a non-zero area.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
+            angle_tolerance: The max angle in degrees that the plane normals can
+                differ from one another in order for them to be considered coplanar.
+                Default: 1 degree.
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if an sub-face is not valid.
+        """
+        for rm in self._rooms:
+            if not rm.check_sub_faces_valid(tolerance, angle_tolerance, raise_exception):
+                return False
+        for f in self._orphaned_faces:
+            if not f.check_sub_faces_valid(tolerance, angle_tolerance, raise_exception):
                 return False
         return True
 

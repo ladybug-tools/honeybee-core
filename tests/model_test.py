@@ -8,7 +8,6 @@ from honeybee.door import Door
 from honeybee.boundarycondition import Surface
 from honeybee.facetype import face_types
 
-from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
@@ -59,6 +58,16 @@ def test_model_init():
     assert len(model.orphaned_shades) == 0
     assert len(model.orphaned_apertures) == 0
     assert len(model.orphaned_doors) == 0
+
+    assert len(model.stories) == 0
+    assert model.volume == pytest.approx(150, rel=1e-3)
+    assert model.floor_area == pytest.approx(50, rel=1e-3)
+    assert model.exposed_area == pytest.approx(140, rel=1e-3)
+    assert model.exterior_wall_area == pytest.approx(90, rel=1e-3)
+    assert model.exterior_roof_area == pytest.approx(50, rel=1e-3)
+    assert model.exterior_aperture_area == pytest.approx(9, rel=1e-3)
+    assert model.exterior_wall_aperture_area == pytest.approx(9, rel=1e-3)
+    assert model.exterior_skylight_aperture_area == 0
 
 
 def test_model_properties_setability():
@@ -213,30 +222,47 @@ def test_model_init_from_objects():
     assert len(model.orphaned_apertures) == 1
     assert len(model.orphaned_doors) == 1
 
+    model.remove_shades()
+    assert len(model.shades) == 2
+    model.remove_all_shades()
+    assert len(model.shades) == 0
+    model.remove_apertures()
+    assert len(model.apertures) == 1
+    model.remove_all_apertures()
+    assert len(model.apertures) == 0
+    model.remove_doors()
+    assert len(model.doors) == 0
+    model.remove_faces()
+    assert len(model.faces) == 0
 
-def test_get_rooms_by_identifier():
-    """Test the get_rooms_by_identifier method."""
+
+def test_rooms_by_identifier():
+    """Test the rooms_by_identifier method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
     model = Model('TinyHouse', [room])
 
-    assert len(model.get_rooms_by_identifier(['TinyHouseZone'])) == 1
+    assert len(model.rooms_by_identifier(['TinyHouseZone'])) == 1
     with pytest.raises(ValueError):
-        model.get_rooms_by_identifier(['NotARoom'])
+        model.rooms_by_identifier(['NotARoom'])
+
+    model.remove_rooms()
+    with pytest.raises(ValueError):
+        model.shades_by_identifier(['TinyHouseZone'])
 
 
-def test_get_faces_by_identifier():
-    """Test the get_faces_by_identifier method."""
+def test_faces_by_identifier():
+    """Test the faces_by_identifier method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
     model = Model('TinyHouse', [room])
 
     assert len(
-        model.get_faces_by_identifier(['TinyHouseZone_Front', 'TinyHouseZone_Back'])) == 2
+        model.faces_by_identifier(['TinyHouseZone_Front', 'TinyHouseZone_Back'])) == 2
     with pytest.raises(ValueError):
-        model.get_faces_by_identifier(['NotAFace'])
+        model.faces_by_identifier(['NotAFace'])
 
 
-def test_get_shades_by_identifier():
-    """Test the get_shades_by_identifier method."""
+def test_shades_by_identifier():
+    """Test the shades_by_identifier method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
     south_face = room[3]
     south_face.apertures_by_ratio(0.4, 0.01)
@@ -244,25 +270,33 @@ def test_get_shades_by_identifier():
     south_face.apertures[0].move_shades(Vector3D(0, 0, -0.5))
     model = Model('TinyHouse', [room])
 
-    assert len(model.get_shades_by_identifier(['TinyHouseZone_Back_Glz0_OutOverhang0'])) == 1
+    assert len(model.shades_by_identifier(['TinyHouseZone_Back_Glz0_OutOverhang0'])) == 1
     with pytest.raises(ValueError):
-        model.get_shades_by_identifier(['NotAShade'])
+        model.shades_by_identifier(['NotAShade'])
+
+    model.remove_assigned_shades()
+    with pytest.raises(ValueError):
+        model.shades_by_identifier(['TinyHouseZone_Back_Glz0_OutOverhang0'])
 
 
-def test_get_apertures_by_identifier():
-    """Test the get_apertures_by_identifier method."""
+def test_apertures_by_identifier():
+    """Test the apertures_by_identifier method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
     south_face = room[3]
     south_face.apertures_by_ratio(0.4, 0.01)
     model = Model('TinyHouse', [room])
 
-    assert len(model.get_apertures_by_identifier(['TinyHouseZone_Back_Glz0'])) == 1
+    assert len(model.apertures_by_identifier(['TinyHouseZone_Back_Glz0'])) == 1
     with pytest.raises(ValueError):
-        model.get_apertures_by_identifier(['NotAnAperture'])
+        model.apertures_by_identifier(['NotAnAperture'])
+
+    model.remove_assigned_apertures()
+    with pytest.raises(ValueError):
+        model.shades_by_identifier(['TinyHouseZone_Back_Glz0'])
 
 
-def test_get_doors_by_identifier():
-    """Test the get_doors_by_identifier method."""
+def test_doors_by_identifier():
+    """Test the doors_by_identifier method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
     north_face = room[1]
     door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
@@ -271,9 +305,13 @@ def test_get_doors_by_identifier():
     north_face.add_door(door)
     model = Model('TinyHouse', [room])
 
-    assert len(model.get_doors_by_identifier(['FrontDoor'])) == 1
+    assert len(model.doors_by_identifier(['FrontDoor'])) == 1
     with pytest.raises(ValueError):
-        model.get_doors_by_identifier(['NotADoor'])
+        model.doors_by_identifier(['NotADoor'])
+
+    model.remove_assigned_doors()
+    with pytest.raises(ValueError):
+        model.shades_by_identifier(['FrontDoor'])
 
 
 def test_move():
@@ -351,6 +389,38 @@ def test_scale():
         model.rooms[0][3].apertures[0].outdoor_shades[0].area * 2 ** 2
     assert room[3].apertures[0].area == model.rooms[0][3].apertures[0].area * 2 ** 2
     assert room[1].doors[0].area == model.rooms[0][1].doors[0].area * 2 ** 2
+
+
+def test_apertures_by_ratio():
+    """Test the apertures_by_ratio methods."""
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.apertures[0].move_shades(Vector3D(0, 0, -0.5))
+    north_face = room[1]
+    door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
+                  Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+    aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
+                      Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+    door = Door('FrontDoor', Face3D(door_verts))
+    north_face.add_door(door)
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
+    north_face.add_aperture(aperture)
+
+    model = Model('TinyHouse', [room])
+
+    assert model.exterior_aperture_area / model.exterior_wall_area == \
+        pytest.approx(0.1, rel=1e-3)
+    model.wall_apertures_by_ratio(0.4)
+    assert model.exterior_aperture_area / model.exterior_wall_area == \
+        pytest.approx(0.4, rel=1e-3)
+
+    assert model.exterior_skylight_aperture_area / model.exterior_roof_area == 0
+    model.skylight_apertures_by_ratio(0.05)
+    assert model.exterior_skylight_aperture_area / model.exterior_roof_area == \
+        pytest.approx(0.05, rel=1e-3)
 
 
 def test_convert_to_units():

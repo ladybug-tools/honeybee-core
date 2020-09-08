@@ -173,6 +173,7 @@ def test_face_add_prefix():
     for dr in face.doors:
         assert dr.identifier.startswith(prefix)
 
+
 def test_add_remove_door():
     """Test the adding and removing of an door to a Face."""
     face_face3d = Face3D.from_rectangle(10, 10, Plane(o=Point3D(0, 0, 3)))
@@ -358,7 +359,8 @@ def test_apertures_by_ratio():
 
     assert len(face.apertures) == 1
     assert len(face.apertures[0].geometry.vertices) == 4
-    assert sum([ap.area for ap in face.apertures]) == pytest.approx(15 * 0.4, rel=1e-2)
+    assert face.aperture_area == pytest.approx(15 * 0.4, rel=1e-2)
+    assert face.aperture_ratio == pytest.approx(0.4, rel=1e-2)
     assert face.punched_geometry.area == pytest.approx(15 * 0.6, rel=1e-2)
 
 
