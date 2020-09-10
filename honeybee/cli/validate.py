@@ -66,11 +66,13 @@ def validate_model(model_json):
         tol = parsed_model.tolerance
         ang_tol = parsed_model.angle_tolerance
         # perform several checks for key geometry rules
-        parsed_model.check_non_zero(tol, raise_exception=True)
         parsed_model.check_self_intersecting(raise_exception=True)
         parsed_model.check_planar(tol, raise_exception=True)
         parsed_model.check_sub_faces_valid(tol, ang_tol, raise_exception=True)
         parsed_model.check_rooms_solid(tol, ang_tol, raise_exception=True)
+        # remove colinear vertices to ensure that this doesn't create faces with 2 edges
+        for room in parsed_model.rooms:
+            room.remove_colinear_vertices_envelope(tol)
         click.echo('Model geometry checks passed.')
         # if we made it to this point, report that the model is valid
         click.echo('Congratulations! Your Model JSON is valid!')
@@ -144,11 +146,13 @@ def validate_model_geometry(model_json):
         tol = parsed_model.tolerance
         ang_tol = parsed_model.angle_tolerance
         # perform several checks for key geometry rules
-        parsed_model.check_non_zero(tol, raise_exception=True)
         parsed_model.check_self_intersecting(raise_exception=True)
         parsed_model.check_planar(tol, raise_exception=True)
         parsed_model.check_sub_faces_valid(tol, ang_tol, raise_exception=True)
         parsed_model.check_rooms_solid(tol, ang_tol, raise_exception=True)
+        # remove colinear vertices to ensure that this doesn't create faces with 2 edges
+        for room in parsed_model.rooms:
+            room.remove_colinear_vertices_envelope(tol)
         # if we made it to this point, report that the model is valid
         click.echo('Congratulations! The geometry of your Model JSON is valid!')
     except Exception as e:
