@@ -61,6 +61,11 @@ except ImportError:
         'click module is not installed. Try `pip install honeybee-core[cli]` command.'
     )
 
+import sys
+import logging
+import json
+
+from ..config import folders
 from honeybee.cli.validate import validate
 
 # TODO: Comment out and use for logging once we are adding commands to this file.
@@ -72,6 +77,32 @@ from honeybee.cli.validate import validate
 @click.version_option()
 def main():
     pass
+
+
+_logger = logging.getLogger(__name__)
+
+
+@main.command('config')
+@click.option('--output-file', help='Optional file to output the JSON string of '
+              'the config object. By default, it will be printed out to stdout',
+              type=click.File('w'), default='-', show_default=True)
+def config(output_file):
+    """Get a JSON object with all configuration information"""
+    try:
+        config_dict = {
+            'default_simulation_folder': folders.default_simulation_folder,
+            'honeybee_schema_version': folders.honeybee_schema_version_str,
+            'python_package_path': folders.python_package_path,
+            'python_scripts_path': folders.python_scripts_path,
+            'python_exe_path': folders.python_exe_path,
+            'python_version': folders.python_version_str
+        }
+        output_file.write(json.dumps(config_dict, indent=4))
+    except Exception as e:
+        _logger.exception('Failed to retrieve configurations.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 
 @main.command('viz')

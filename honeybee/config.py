@@ -15,6 +15,7 @@ import ladybug.config as lb_config
 
 import os
 import sys
+import subprocess
 import json
 
 
@@ -36,6 +37,8 @@ class Folders(object):
         * python_package_path
         * python_scripts_path
         * python_exe_path
+        * python_version
+        * python_version_str
         * config_file
         * mute
     """
@@ -49,6 +52,10 @@ class Folders(object):
 
         # search for the version of honeybee-schema
         self._honeybee_schema_version = self._find_honeybee_schema_version()
+
+        # set python version to only be retrived if requested
+        self._python_version = None
+        self._python_version_str = None
 
     @property
     def default_simulation_folder(self):
@@ -129,6 +136,28 @@ class Folders(object):
         return sys.executable  # assume we are on some other cPython
 
     @property
+    def python_version(self):
+        """Get a tuple for the version of python (eg. (3, 8, 2)).
+
+        This will be None if the version could not be sensed or if no Python
+        installation was found.
+        """
+        if self._python_version_str is None and self.python_exe_path:
+            self._python_version_from_cli()
+        return self._python_version
+
+    @property
+    def python_version_str(self):
+        """Get text for the full version of python (eg."3.8.2").
+
+        This will be None if the version could not be sensed or if no Python
+        installation was found.
+        """
+        if self._python_version_str is None and self.python_exe_path:
+            self._python_version_from_cli()
+        return self._python_version_str
+
+    @property
     def config_file(self):
         """Get or set the path to the config.json file from which folders are loaded.
 
@@ -173,6 +202,19 @@ class Folders(object):
 
         # set paths for the default_simulation_folder
         self.default_simulation_folder = default_path["default_simulation_folder"]
+
+    def _python_version_from_cli(self):
+        """Set this object's Python version by making a call to a Python command."""
+        cmds = [self.python_exe_path, '--version']
+        process = subprocess.Popen(cmds, stdout=subprocess.PIPE)
+        stdout = process.communicate()
+        base_str = str(stdout[0]).replace("b'", '').replace(r"\r\n'", '')
+        self._python_version_str = base_str.split(' ')[-1]
+        try:
+            self._python_version = \
+                tuple(int(i) for i in self._python_version_str.split('.'))
+        except Exception:
+            pass  # failed to parse the version into values
 
     @staticmethod
     def _find_default_simulation_folder():

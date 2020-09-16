@@ -7,9 +7,10 @@ http://click.palletsprojects.com/en/7.x/testing/
 
 """
 import sys
+import json
 
 from click.testing import CliRunner
-from honeybee.cli import viz
+from honeybee.cli import viz, config
 from honeybee.cli.validate import validate_model, validate_model_basic, \
     validate_model_geometry
 
@@ -20,6 +21,14 @@ def test_viz():
     assert result.exit_code == 0
     assert result.output.startswith('vi')
     assert result.output.endswith('z!\n')
+
+
+def test_config():
+    runner = CliRunner()
+    result = runner.invoke(config)
+    assert result.exit_code == 0
+    config_dict = json.loads(result.output)
+    assert len(config_dict) >= 5
 
 
 def test_validate_model():
