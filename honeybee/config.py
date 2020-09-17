@@ -206,7 +206,8 @@ class Folders(object):
     def _python_version_from_cli(self):
         """Set this object's Python version by making a call to a Python command."""
         cmds = [self.python_exe_path, '--version']
-        process = subprocess.Popen(cmds, stdout=subprocess.PIPE)
+        use_shell = True if os.name == 'nt' else False
+        process = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=use_shell)
         stdout = process.communicate()
         base_str = str(stdout[0]).replace("b'", '').replace(r"\r\n'", '')
         self._python_version_str = base_str.split(' ')[-1]
