@@ -5,8 +5,6 @@ from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
-import uuid as py_uuid
-import json
 import pytest
 
 
@@ -27,6 +25,7 @@ def test_shade_init():
     assert shade.perimeter == 8
     assert not shade.has_parent
     assert not shade.is_indoor
+    assert not shade.is_detached
 
 
 def test_shade_from_vertices():
@@ -50,13 +49,14 @@ def test_shade_from_vertices():
 def test_shade_duplicate():
     """Test the duplication of shade objects."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
-    shd_1 = Shade('TestShade', Face3D(pts))
+    shd_1 = Shade('TestShade', Face3D(pts), True)
     shd_2 = shd_1.duplicate()
 
     assert shd_1 is not shd_2
     for i, pt in enumerate(shd_1.vertices):
         assert pt == shd_2.vertices[i]
     assert shd_1.identifier == shd_2.identifier
+    assert shd_1.is_detached == shd_2.is_detached
 
     shd_2.move(Vector3D(0, 1, 0))
     for i, pt in enumerate(shd_1.vertices):
@@ -271,7 +271,7 @@ def test_check_non_zero():
 def test_to_dict():
     """Test the shade to_dict method."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    shd = Shade.from_vertices('RectangleShade', vertices)
+    shd = Shade.from_vertices('RectangleShade', vertices, True)
 
     shd = shd.to_dict()
     assert shd['type'] == 'Shade'
@@ -281,12 +281,14 @@ def test_to_dict():
     assert len(shd['geometry']['boundary']) == len(vertices)
     assert 'properties' in shd
     assert shd['properties']['type'] == 'ShadeProperties'
+    assert 'is_detached' in shd
+    assert shd['is_detached']
 
 
 def test_to_from_dict():
     """Test the to/from dict of Shade objects."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
-    shd = Shade.from_vertices('RectangleShade', vertices)
+    shd = Shade.from_vertices('RectangleShade', vertices, True)
 
     shd_dict = shd.to_dict()
     new_shd = Shade.from_dict(shd_dict)

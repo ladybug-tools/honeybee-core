@@ -20,13 +20,17 @@ class Shade(_Base):
         identifier: Text string for a unique Shade ID. Must be < 100 characters and
             not contain any spaces or special characters.
         geometry: A ladybug-geometry Face3D.
+        is_detached: Boolean to note whether this object is detached from other
+            geometry. Cases where this should be True include shade representing
+            surrounding buildings or context. (Default: False).
 
     Properties:
         * identifier
         * display_name
+        * is_detached
         * parent
-        * is_indoor
         * has_parent
+        * is_indoor
         * geometry
         * vertices
         * upper_left_vertices
@@ -36,18 +40,19 @@ class Shade(_Base):
         * perimeter
         * user_data
     """
-    __slots__ = ('_geometry', '_parent', '_is_indoor')
+    __slots__ = ('_geometry', '_parent', '_is_indoor', '_is_detached')
 
-    def __init__(self, identifier, geometry):
+    def __init__(self, identifier, geometry, is_detached=False):
         """A single planar shade."""
         _Base.__init__(self, identifier)  # process the identifier
 
-        # process the geometry
+        # process the geometry and basic properties
         assert isinstance(geometry, Face3D), \
             'Expected ladybug_geometry Face3D. Got {}'.format(type(geometry))
         self._geometry = geometry
         self._parent = None  # _parent will be set when the Shade is added to an object
         self._is_indoor = False  # this will be set by the _parent
+        self.is_detached = is_detached
 
         # initialize properties for extensions
         self._properties = ShadeProperties(self)
@@ -63,7 +68,8 @@ class Shade(_Base):
         assert data['type'] == 'Shade', 'Expected Shade dictionary. ' \
             'Got {}.'.format(data['type'])
 
-        shade = cls(data['identifier'], Face3D.from_dict(data['geometry']))
+        is_detached = data['is_detached'] if 'is_detached' in data else False
+        shade = cls(data['identifier'], Face3D.from_dict(data['geometry']), is_detached)
         if 'display_name' in data and data['display_name'] is not None:
             shade.display_name = data['display_name']
         if 'user_data' in data and data['user_data'] is not None:
@@ -74,7 +80,7 @@ class Shade(_Base):
         return shade
 
     @classmethod
-    def from_vertices(cls, identifier, vertices):
+    def from_vertices(cls, identifier, vertices, is_detached=False):
         """Create a Shade from vertices with each vertex as an iterable of 3 floats.
 
         Note that this method is not recommended for a shade with one or more holes
@@ -85,9 +91,32 @@ class Shade(_Base):
             identifier: Text string for a unique Shade ID. Must be < 100 characters and
                 not contain any spaces or special characters.
             vertices: A flattened list of 3 or more vertices as (x, y, z).
+            is_detached: Boolean to note whether this object is detached from other
+                geometry. Cases where this should be True include shade representing
+                surrounding buildings or context. (Default: False).
         """
         geometry = Face3D(tuple(Point3D(*v) for v in vertices))
-        return cls(identifier, geometry)
+        return cls(identifier, geometry, is_detached)
+
+    @property
+    def is_detached(self):
+        """Get or set a boolean for whether this object is detached from other geometry.
+
+        This will automatically be set to False if the shade is assigned to
+        parent objects.
+        """
+        return self._is_detached
+
+    @is_detached.setter
+    def is_detached(self, value):
+        try:
+            self._is_detached = bool(value)
+            if self._is_detached:
+                assert not self.has_parent, 'Shade cannot be detached when it has ' \
+                    'a parent Room, Face, Aperture or Door.'
+        except TypeError:
+            raise TypeError(
+                'Expected boolean for Shade.is_detached. Got {}.'.format(value))
 
     @property
     def parent(self):
@@ -316,12 +345,14 @@ class Shade(_Base):
         base['properties'] = self.properties.to_dict(abridged, included_prop)
         enforce_upper_left = True if 'energy' in base['properties'] else False
         base['geometry'] = self._geometry.to_dict(False, enforce_upper_left)
+        if self.is_detached:
+            base['is_detached'] = self.is_detached
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
 
     def __copy__(self):
-        new_shade = Shade(self.identifier, self.geometry)
+        new_shade = Shade(self.identifier, self.geometry, self.is_detached)
         new_shade._display_name = self.display_name
         new_shade._user_data = None if self.user_data is None else self.user_data.copy()
         new_shade._properties._duplicate_extension_attr(self._properties)

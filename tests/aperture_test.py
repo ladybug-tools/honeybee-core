@@ -73,6 +73,23 @@ def test_aperture_duplicate():
         assert pt != ap_2.vertices[i]
 
 
+def test_aperture_add_shade():
+    """Test the addition of shade Aperture objects."""
+    pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
+    pts_2 = (Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 2, 3))
+
+    aperture = Aperture('RectangleWindow', Face3D(pts_1))
+    shade = Shade('TriangleShade', Face3D(pts_2), is_detached=True)
+    assert shade.is_detached
+    assert not shade.is_indoor
+
+    aperture.add_indoor_shade(shade)
+    assert shade.has_parent
+    assert shade.parent.identifier == aperture.identifier
+    assert not shade.is_detached
+    assert shade.is_indoor
+
+
 def test_aperture_add_prefix():
     """Test the aperture add_prefix method."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
