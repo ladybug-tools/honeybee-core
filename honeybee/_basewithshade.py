@@ -76,6 +76,7 @@ class _BaseWithShade(_Base):
             'Expected Shade for outdoor_shade. Got {}.'.format(type(shade))
         assert shade.parent is None, 'Shade cannot have more than one parent object.'
         shade._parent = self
+        shade._is_detached = False
         self._outdoor_shades.append(shade)
 
     def add_indoor_shade(self, shade):
@@ -94,6 +95,7 @@ class _BaseWithShade(_Base):
             'Expected Shade for indoor_shade. Got {}.'.format(type(shade))
         assert shade.parent is None, 'Shade cannot have more than one parent object.'
         shade._parent = self
+        shade._is_detached = False
         shade._is_indoor = True
         self._indoor_shades.append(shade)
 
