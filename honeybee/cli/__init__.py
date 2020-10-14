@@ -67,6 +67,8 @@ import json
 
 from ..config import folders
 from honeybee.cli.validate import validate
+from honeybee.cli.create import create
+from honeybee.cli.edit import edit
 
 # TODO: Comment out and use for logging once we are adding commands to this file.
 # import logging
@@ -112,6 +114,8 @@ def viz():
 
 
 main.add_command(validate)
+main.add_command(create)
+main.add_command(edit)
 
 
 if __name__ == "__main__":

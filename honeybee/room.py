@@ -757,7 +757,12 @@ class Room(_BaseWithShade):
 
     @staticmethod
     def solve_adjacency(rooms, tolerance=0.01):
-        """Solve for all adjacencies between a list of input rooms.
+        """Solve for adjacencies between a list of rooms.
+
+        Note that this method will mutate the input roooms by setting Surface
+        boundary conditions for any adjacent objects. However, it does NOT overwrite
+        existing Surface boundary conditions and only adds new ones if faces are
+        found to be adjacent with equivalent areas.
 
         Args:
             rooms: A list of rooms for which adjacencies will be solved.
@@ -766,7 +771,8 @@ class Room(_BaseWithShade):
                 suitable for objects in meters.
 
         Returns:
-            A dictionary of adjacency information with the following keys.
+            A dictionary of information about the objects that had their adjacency set.
+            The dictionary has the following keys.
 
             -   adjacent_faces - A list of tuples with each tuple containing 2 objects
                 for Faces paired in the process of solving adjacency. This data can
@@ -806,6 +812,41 @@ class Room(_BaseWithShade):
             except IndexError:
                 pass  # we have reached the end of the list of zones
         return adj_info
+
+    @staticmethod
+    def find_adjacency(rooms, tolerance=0.01):
+        """Get a list with all adjacent pairs of Faces between input rooms.
+
+        Note that this method does not change any boundary conditions of the input
+        rooms or mutate them in any way. It's purely a geometric analysis of the
+        faces between rooms.
+
+        Args:
+            rooms: A list of rooms for which adjacencies will be solved.
+            tolerance: The minimum difference between the coordinate values of two
+                faces at which they can be considered centered adjacent. Default: 0.01,
+                suitable for objects in meters.
+
+        Returns:
+            A list of tuples with each tuple containing 2 objects for Faces that
+            are adjacent to one another.
+        """
+        adj_faces = []  # lists of adjacencies to track
+        for i, room_1 in enumerate(rooms):
+            try:
+                for room_2 in rooms[i + 1:]:
+                    if not Polyface3D.overlapping_bounding_boxes(
+                            room_1.geometry, room_2.geometry, tolerance):
+                        continue  # no overlap in bounding box; adjacency impossible
+                    for face_1 in room_1._faces:
+                        for face_2 in room_2._faces:
+                            if face_1.geometry.is_centered_adjacent(
+                                    face_2.geometry, tolerance):
+                                adj_faces.append((face_1, face_2))
+                                break
+            except IndexError:
+                pass  # we have reached the end of the list of zones
+        return adj_faces
 
     @staticmethod
     def group_by_orientation(rooms, group_count=None, north_vector=Vector2D(0, 1)):
