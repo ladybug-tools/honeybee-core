@@ -1,11 +1,4 @@
-"""Test cli.
-
-honeybee-core currently doesn't have many commands but nevertheless it is good to have a
-sample code for reference. For more information see Click's documentation:
-
-http://click.palletsprojects.com/en/7.x/testing/
-
-"""
+"""Test basic CLI commands and the validate group"""
 import sys
 import json
 

@@ -543,6 +543,26 @@ def test_solve_adjacency_aperture():
     assert len(adj_info['adjacent_doors']) == 0
 
 
+def test_find_adjacency():
+    """Test the find adjacency method."""
+    room_south = Room.from_box('SouthZone', 5, 5, 3, origin=Point3D(0, 0, 0))
+    room_north = Room.from_box('NorthZone', 5, 5, 3, origin=Point3D(0, 5, 0))
+
+    assert room_south[1].boundary_condition == boundary_conditions.outdoors
+    assert room_north[3].boundary_condition == boundary_conditions.outdoors
+
+    adj_faces = Room.find_adjacency([room_south, room_north], 0.01)
+    assert len(adj_faces) == 1
+    assert len(adj_faces[0]) == 2
+
+    adj_info = Room.solve_adjacency([room_south, room_north], 0.01)
+
+    # make sure it all still works after the Surface BC is already set
+    adj_faces = Room.find_adjacency([room_south, room_north], 0.01)
+    assert len(adj_faces) == 1
+    assert len(adj_faces[0]) == 2
+
+
 def test_group_by_orientation():
     """Test the group_by_orientation method."""
     pts_1 = (Point3D(0, 0), Point3D(15, 0), Point3D(10, 5), Point3D(5, 5))

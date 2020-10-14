@@ -20,7 +20,8 @@ setuptools.setup(
     include_package_data=True,
     install_requires=requirements,
     extras_require={
-        'cli': ['click==7.1.2', "honeybee-schema==1.39.0;python_version>='3.6'"]
+        'cli': ['click==7.1.2', "honeybee-schema==1.39.0;python_version>='3.6'",
+                'ladybug-geometry-polyskel==1.3.11']
     },
     entry_points={
         "console_scripts": ["honeybee = honeybee.cli:main"]

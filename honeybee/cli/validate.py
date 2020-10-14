@@ -30,7 +30,8 @@ def validate():
 
 
 @validate.command('model')
-@click.argument('model-json')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 def validate_model(model_json):
     """Validate all properties of a Model JSON file against the Honeybee schema.\b
     This includes basic properties like adjacency checks AND all geometry checks.
@@ -39,10 +40,8 @@ def validate_model(model_json):
         model_json: Full path to a Model JSON file.
     """
     try:
-        # check that the file is there
-        assert os.path.isfile(model_json), 'No JSON file found at {}.'.format(model_json)
-        click.echo('Validating Model JSON ...')
         # first check the JSON against the OpenAPI specification
+        click.echo('Validating Model JSON ...')
         schema_model.Model.parse_file(model_json)
         click.echo('Pydantic validation passed.')
         # re-serialize the Model to make sure no errors are found in re-serialization
@@ -84,7 +83,8 @@ def validate_model(model_json):
 
 
 @validate.command('model-basic')
-@click.argument('model-json')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 def validate_model_basic(model_json):
     """Validate basic properties of a Model JSON against the Honeybee schema.\b
     This includes basic re-serialization, unique identifier checks, and adjacency checks.
@@ -93,10 +93,8 @@ def validate_model_basic(model_json):
         model_json: Full path to a Model JSON file.
     """
     try:
-        # check that the file is there
-        assert os.path.isfile(model_json), 'No JSON file found at {}.'.format(model_json)
-        click.echo('Validating Model JSON ...')
         # first check the JSON against the OpenAPI specification
+        click.echo('Validating Model JSON ...')
         schema_model.Model.parse_file(model_json)
         click.echo('Pydantic validation passed.')
         # re-serialize the Model to make sure no errors are found in re-serialization
@@ -122,7 +120,8 @@ def validate_model_basic(model_json):
 
 
 @validate.command('model-geometry')
-@click.argument('model-json')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 def validate_model_geometry(model_json):
     """Validate geometry of a Model JSON against the Honeybee schema.\b
     This includes checks that the 5 honeybee geometry rules are upheld.
@@ -131,10 +130,8 @@ def validate_model_geometry(model_json):
         model_json: Full path to a Model JSON file.
     """
     try:
-        # check that the file is there
-        assert os.path.isfile(model_json), 'No JSON file found at {}.'.format(model_json)
-        click.echo('Validating Model JSON ...')
         # re-serialize the Model to make sure no errors are found in re-serialization
+        click.echo('Validating Model JSON ...')
         with open(model_json) as json_file:
             data = json.load(json_file)
         parsed_model = Model.from_dict(data)
