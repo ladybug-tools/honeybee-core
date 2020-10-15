@@ -165,17 +165,41 @@ def test_aperture_extruded_border():
     assert all(shd.is_indoor for shd in aperture_2.indoor_shades)
 
 
+def test_aperture_louvers_by_count():
+    """Test the creation of a louvers_by_count for Face objects."""
+    pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
+    aperture = Aperture('RectangleWindow', Face3D(pts_1))
+    aperture.louvers_by_count(3, 0.2, 0.1, 5)
+
+    assert len(aperture.outdoor_shades) == 3
+    for louver in aperture.outdoor_shades:
+        assert isinstance(louver, Shade)
+        assert louver.area == 5 * 0.2
+        assert louver.has_parent
+
+
 def test_aperture_louvers_by_distance_between():
     """Test the creation of a louvers_by_distance_between for Aperture objects."""
     pts_1 = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
     aperture = Aperture('RectangleWindow', Face3D(pts_1))
     aperture.louvers_by_distance_between(0.5, 0.2, 0.1)
-
     assert len(aperture.outdoor_shades) == 6
     for louver in aperture.outdoor_shades:
         assert isinstance(louver, Shade)
         assert louver.area == 5 * 0.2
         assert louver.has_parent
+
+    aperture.remove_shades()
+    aperture.louvers_by_distance_between(0.5, 0.2, 0.1, max_count=3)
+    assert len(aperture.outdoor_shades) == 3
+    for louver in aperture.outdoor_shades:
+        assert isinstance(louver, Shade)
+        assert louver.area == 5 * 0.2
+        assert louver.has_parent
+
+    aperture.remove_shades()
+    aperture.louvers_by_distance_between(0.5, 0.2, 0.1, max_count=10)
+    assert len(aperture.outdoor_shades) == 6
 
 
 def test_move():

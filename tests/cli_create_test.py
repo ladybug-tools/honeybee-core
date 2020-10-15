@@ -16,7 +16,7 @@ def test_shoe_box_simple():
     model_dict = json.loads(result.output)
     new_model = Model.from_dict(model_dict)
     assert len(new_model.rooms) == 1
-    assert len(new_model.apertures) == 1
+    assert len(new_model.apertures) == 0
 
 
 def test_shoe_box_detailed():

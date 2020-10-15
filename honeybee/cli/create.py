@@ -47,7 +47,8 @@ def create():
               'South, 270=West).', type=float, default=0, show_default=True)
 @click.option('--window-ratio', '-wr', help='A number between 0 and 1 (but not equal to 1) '
               'for the ratio between aperture area and area of the face pointing towards'
-              ' the orientation-angle.', type=float, default=0.4, show_default=True)
+              ' the orientation-angle. Using 0 will generate no windows',
+              type=float, default=0, show_default=True)
 @click.option('--adiabatic/--outdoors', ' /-o', help='Flag to note whether the faces that '
               'are not in the direction of the orientation-angle are adiabatic or '
               'outdoors.', default=True, show_default=True)
