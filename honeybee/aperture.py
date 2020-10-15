@@ -449,7 +449,8 @@ class Aperture(_BaseWithShade):
 
     def louvers_by_distance_between(
             self, distance, depth, offset=0, angle=0, contour_vector=Vector2D(0, 1),
-            flip_start_side=False, indoor=False, tolerance=0.01, base_name=None):
+            flip_start_side=False, indoor=False, tolerance=0.01, max_count=None,
+            base_name=None):
         """Add a series of louvered Shade objects covering this Aperture.
 
         Args:
@@ -474,22 +475,34 @@ class Aperture(_BaseWithShade):
             tolerance: An optional value to remove any louvers with a length less
                 than the tolerance. Default is 0, which will include all louvers
                 no matter how small.
+            max_count: Optional integer to set the maximum number of louvers that
+                will be generated. If None, louvers will cover the entire aperture.
             base_name: Optional base name for the shade objects. If None, the default
                 is InShd or OutShd depending on whether indoor is True.
 
         Returns:
             A list of the new Shade objects that have been generated.
         """
+        # set defaults
         angle = math.radians(angle)
-        louvers = []
         ap_geo = self.geometry if indoor is False else self.geometry.flip()
-        shade_faces = ap_geo.countour_fins_by_distance_between(
-            distance, depth, offset, angle,
-            contour_vector, flip_start_side, tolerance)
         if base_name is None:
             shd_name_base = '{}_InShd{}' if indoor else '{}_OutShd{}'
         else:
             shd_name_base = '{}_' + str(base_name) + '{}'
+
+        # generate shade geometries
+        shade_faces = ap_geo.countour_fins_by_distance_between(
+            distance, depth, offset, angle,
+            contour_vector, flip_start_side, tolerance)
+        if max_count:
+            try:
+                shade_faces = shade_faces[:max_count]
+            except IndexError:  # fewer shades were generated than the max count
+                pass
+
+        # create the shade objects
+        louvers = []
         for i, shade_geo in enumerate(shade_faces):
             louvers.append(Shade(shd_name_base.format(self.identifier, i), shade_geo))
         if indoor:

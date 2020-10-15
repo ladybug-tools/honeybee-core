@@ -7,6 +7,7 @@ except ImportError:
         'click is not installed. Try `pip install . [cli]` command.'
     )
 
+from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 
 from honeybee.model import Model
@@ -241,6 +242,46 @@ def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
         sys.exit(0)
 
 
+@edit.command('extruded-border')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.argument('depth', type=float)
+@click.option('--outdoor/--indoor', ' /-i', help='Flag to note whether the borders '
+              'should be on the indoors.', default=True, show_default=True)
+@click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
+              ' with borders. By default it will be printed out to stdout',
+              type=click.File('w'), default='-')
+def extruded_border(model_json, depth, outdoor, output_file):
+    """Add extruded borders to all windows in walls.\n
+    \n
+    Args:\n
+        model_json: Full path to a Model JSON file.\n
+        depth: A number for the extrusion depth.
+    """
+    try:
+        # serialize the Model to Python
+        with open(model_json) as json_file:
+            data = json.load(json_file)
+        parsed_model = Model.from_dict(data)
+        indoor = not outdoor
+
+        # generate the overhangs for all walls of rooms
+        for room in parsed_model.rooms:
+            for face in room.faces:
+                if isinstance(face.boundary_condition, Outdoors) and \
+                        isinstance(face.type, Wall):
+                    for ap in face.apertures:
+                        ap.extruded_border(depth, indoor)
+
+        # write the new model out to the file or stdout
+        output_file.write(json.dumps(parsed_model.to_dict()))
+    except Exception as e:
+        _logger.exception('Model extruded border failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
 @edit.command('overhang')
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
@@ -302,6 +343,151 @@ def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor, out
         output_file.write(json.dumps(parsed_model.to_dict()))
     except Exception as e:
         _logger.exception('Model overhang failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@edit.command('louvers-by-count')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.argument('louver-count', type=int)
+@click.argument('depth', type=float)
+@click.option('--angle', '-a', help='A number for the for an angle to rotate the '
+              'louvers in degrees. Positive numbers indicate a downward rotation while '
+              'negative numbers indicate an upward rotation.',
+              type=float, default=0, show_default=True)
+@click.option('--offset', '-o', help='An optional number for the offset of the louvers '
+              'from base Face or Aperture.', type=float, default=0, show_default=True)
+@click.option('--horizontal/--vertical', ' /-v', help='Flag to note wh.',
+              default=True, show_default=True)
+@click.option('--per-window/--per-wall', ' /-pw', help='Flag to note whether the '
+              'louvers should be generated per aperture or per wall.',
+              default=True, show_default=True)
+@click.option('--outdoor/--indoor', ' /-i', help='Flag to note whether the louvers '
+              'should be on the indoors like a light shelf.',
+              default=True, show_default=True)
+@click.option('--no-flip/--flip-start', ' /-fs', help='Flag to note whether the '
+              'the side that the louvers start from should be flipped. If not flipped, '
+              'louvers will start from top or right. If flipped, they will start from '
+              'the bottom or left.', default=True, show_default=True)
+@click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
+              ' with louvers. By default it will be printed out to stdout',
+              type=click.File('w'), default='-')
+def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
+                     per_window, outdoor, no_flip, output_file):
+    """Add louvers to all outdoor walls or windows in walls.\n
+    \n
+    Args:\n
+        model_json: Full path to a Model JSON file.\n
+        louver_count: A positive integer for the number of louvers to generate.\n
+        depth: A number for the depth to extrude the louvers.
+    """
+    try:
+        # serialize the Model to Python
+        with open(model_json) as json_file:
+            data = json.load(json_file)
+        parsed_model = Model.from_dict(data)
+        # check the Model tolerance
+        assert parsed_model.tolerance != 0, \
+            'Model must have a non-zero tolerance to use overhang.'
+        tol = parsed_model.tolerance
+        indoor = not outdoor
+        flip_start = not no_flip
+        cont_vec = Vector2D(0, 1) if horizontal else Vector2D(1, 0)
+
+        # generate the overhangs for all walls of rooms
+        for room in parsed_model.rooms:
+            for face in room.faces:
+                if isinstance(face.boundary_condition, Outdoors) and \
+                        isinstance(face.type, Wall):
+                    if per_window:
+                        for ap in face.apertures:
+                            ap.louvers_by_count(louver_count, depth, offset, angle,
+                                                cont_vec, flip_start, indoor, tol)
+                    else:
+                        face.louvers_by_count(louver_count, depth, offset, angle,
+                                              cont_vec, flip_start, indoor, tol)
+
+        # write the new model out to the file or stdout
+        output_file.write(json.dumps(parsed_model.to_dict()))
+    except Exception as e:
+        _logger.exception('Model louver generation failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@edit.command('louvers-by-distance')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.argument('distance', type=float)
+@click.argument('depth', type=float)
+@click.option('--angle', '-a', help='A number for the for an angle to rotate the '
+              'louvers in degrees. Positive numbers indicate a downward rotation while '
+              'negative numbers indicate an upward rotation.',
+              type=float, default=0, show_default=True)
+@click.option('--offset', '-o', help='An optional number for the offset of the louvers '
+              'from base Face or Aperture.', type=float, default=0, show_default=True)
+@click.option('--horizontal/--vertical', ' /-v', help='Flag to note wh.',
+              default=True, show_default=True)
+@click.option('--max-count', '-m', help='Optional integer to set the maximum number of '
+              'louvers that will be generated. If 0, louvers will cover the entire face.',
+              type=int, default=0, show_default=True)
+@click.option('--per-window/--per-wall', ' /-pw', help='Flag to note whether the '
+              'louvers should be generated per aperture or per wall.',
+              default=True, show_default=True)
+@click.option('--outdoor/--indoor', ' /-i', help='Flag to note whether the louvers '
+              'should be on the indoors like a light shelf.',
+              default=True, show_default=True)
+@click.option('--no-flip/--flip-start', ' /-fs', help='Flag to note whether the '
+              'the side that the louvers start from should be flipped. If not flipped, '
+              'louvers will start from top or right. If flipped, they will start from '
+              'the bottom or left.', default=True, show_default=True)
+@click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
+              ' with louvers. By default it will be printed out to stdout',
+              type=click.File('w'), default='-')
+def louvers_by_distance(model_json, distance, depth, angle, offset, horizontal,
+                        max_count, per_window, outdoor, no_flip, output_file):
+    """Add louvers to all outdoor walls or windows in walls.\n
+    \n
+    Args:\n
+        model_json: Full path to a Model JSON file.\n
+        distance: A number for the approximate distance between each louver.\n
+        depth: A number for the depth to extrude the louvers.
+    """
+    try:
+        # serialize the Model to Python
+        with open(model_json) as json_file:
+            data = json.load(json_file)
+        parsed_model = Model.from_dict(data)
+        # check the Model tolerance
+        assert parsed_model.tolerance != 0, \
+            'Model must have a non-zero tolerance to use overhang.'
+        tol = parsed_model.tolerance
+        indoor = not outdoor
+        flip_start = not no_flip
+        cont_vec = Vector2D(0, 1) if horizontal else Vector2D(1, 0)
+
+        # generate the overhangs for all walls of rooms
+        for room in parsed_model.rooms:
+            for face in room.faces:
+                if isinstance(face.boundary_condition, Outdoors) and \
+                        isinstance(face.type, Wall):
+                    if per_window:
+                        for ap in face.apertures:
+                            ap.louvers_by_distance_between(
+                                distance, depth, offset, angle, cont_vec,
+                                flip_start, indoor, tol, max_count)
+                    else:
+                        face.louvers_by_distance_between(
+                            distance, depth, offset, angle, cont_vec, flip_start,
+                            indoor, tol, max_count)
+
+        # write the new model out to the file or stdout
+        output_file.write(json.dumps(parsed_model.to_dict()))
+    except Exception as e:
+        _logger.exception('Model louver generation failed.\n{}'.format(e))
         sys.exit(1)
     else:
         sys.exit(0)
