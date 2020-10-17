@@ -46,9 +46,10 @@ def edit():
               type=click.File('w'), default='-')
 def convert_units(model_json, units, scale, output_file):
     """Convert a Model to a given units system.
-    \n
-    Args:\n
-        model_json: Full path to a Model JSON file.\n
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
         units: Text for the units system to which the model will be converted.
             Choose from (Meters, Millimeters, Feet, Inches, Centimeters).
     """
@@ -90,8 +91,9 @@ def convert_units(model_json, units, scale, output_file):
               type=click.File('w'), default='-')
 def solve_adjacency(model_json, wall, surface, no_overwrite, output_file):
     """Solve adjacency between Rooms of a Model JSON file.
-    \n
-    Args:\n
+    
+    \b
+    Args:
         model_json: Full path to a Model JSON file.
     """
     try:
@@ -143,12 +145,14 @@ def solve_adjacency(model_json, wall, surface, no_overwrite, output_file):
               ' with windows. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
 def windows_by_ratio(model_json, ratio, output_file):
-    """Add apertures to all outdoor walls of a model given a ratio.\n
-    Note that this method removes any existing apertures and doors from the Walls.\n
-    This method attempts to generate as few apertures as necessary to meet the ratio.\n
-    \n
-    Args:\n
-        model_json: Full path to a Model JSON file.\n
+    """Add apertures to all outdoor walls of a model given a ratio.
+
+    Note that this method removes any existing apertures and doors from the Walls.
+    This method attempts to generate as few apertures as necessary to meet the ratio.
+    
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
         ratio: A number between 0 and 1 (but not perfectly equal to 1)
             for the desired ratio between wall area and face area.
     """
@@ -193,13 +197,15 @@ def windows_by_ratio(model_json, ratio, output_file):
               type=click.File('w'), default='-')
 def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
                           horizontal_separation, vertical_separation, output_file):
-    """Add apertures to all outdoor walls of a model given a ratio.\n
-    Note that this method removes any existing apertures and doors from the Walls.\n
+    """Add apertures to all outdoor walls of a model given a ratio.
+
+    Note that this method removes any existing apertures and doors from the Walls.
     Any rectangular portions of walls will have customized rectangular apertures
-    using the various inputs.\n
-    \n
-    Args:\n
-        model_json: Full path to a Model JSON file.\n
+    using the various inputs.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
         ratio: A number between 0 and 1 (but not perfectly equal to 1)
             for the desired ratio between wall area and face area.
         aperture_height: A number for the target height of the output apertures.
@@ -252,10 +258,11 @@ def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
               ' with borders. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
 def extruded_border(model_json, depth, outdoor, output_file):
-    """Add extruded borders to all windows in walls.\n
-    \n
-    Args:\n
-        model_json: Full path to a Model JSON file.\n
+    """Add extruded borders to all windows in walls.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
         depth: A number for the extrusion depth.
     """
     try:
@@ -304,10 +311,11 @@ def extruded_border(model_json, depth, outdoor, output_file):
               ' with overhangs. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
 def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor, output_file):
-    """Add overhangs to all outdoor walls or windows in walls.\n
-    \n
-    Args:\n
-        model_json: Full path to a Model JSON file.\n
+    """Add overhangs to all outdoor walls or windows in walls.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
         depth: A number for the overhang depth.
     """
     try:
@@ -376,11 +384,12 @@ def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor, out
               type=click.File('w'), default='-')
 def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
                      per_window, outdoor, no_flip, output_file):
-    """Add louvers to all outdoor walls or windows in walls.\n
-    \n
-    Args:\n
-        model_json: Full path to a Model JSON file.\n
-        louver_count: A positive integer for the number of louvers to generate.\n
+    """Add louvers to all outdoor walls or windows in walls.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
+        louver_count: A positive integer for the number of louvers to generate.
         depth: A number for the depth to extrude the louvers.
     """
     try:
@@ -449,11 +458,12 @@ def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
               type=click.File('w'), default='-')
 def louvers_by_distance(model_json, distance, depth, angle, offset, horizontal,
                         max_count, per_window, outdoor, no_flip, output_file):
-    """Add louvers to all outdoor walls or windows in walls.\n
-    \n
-    Args:\n
-        model_json: Full path to a Model JSON file.\n
-        distance: A number for the approximate distance between each louver.\n
+    """Add louvers to all outdoor walls or windows in walls.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
+        distance: A number for the approximate distance between each louver.
         depth: A number for the depth to extrude the louvers.
     """
     try:
