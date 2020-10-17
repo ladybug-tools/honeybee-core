@@ -64,10 +64,11 @@ def create():
 def shoe_box(width, depth, height, orientation_angle, window_ratio, adiabatic,
              units, tolerance, output_file):
     """Create a model with a single shoe box Room.
-    \n
-    Args:\n
-        width: Number for the width of the box (in the X direction).\n
-        depth: Number for the depth of the box (in the Y direction).\n
+
+    \b
+    Args:
+        width: Number for the width of the box (in the X direction).
+        depth: Number for the depth of the box (in the Y direction).
         height: Number for the height of the box (in the Z direction).
     """
     try:
@@ -129,13 +130,15 @@ def shoe_box(width, depth, height, orientation_angle, window_ratio, adiabatic,
 def rectangle_plan(width, length, floor_to_floor_height, perimeter_offset, story_count,
                    orientation_angle, outdoor_roof, ground_floor, units, tolerance,
                    output_file):
-    """Create a model with a rectangular floor plan.\n
+    """Create a model with a rectangular floor plan.
+
     Note that the resulting Rooms in the model won't have any windows or solved
-    adjacencies and the edit commands should be used for this purpose.\n
-    \n
-    Args:\n
-        width: Number for the width of the plan (in the X direction).\n
-        depth: Number for the depth of the plan (in the Y direction).\n
+    adjacencies. The edit commands should be used for this purpose.
+
+    \b
+    Args:
+        width: Number for the width of the plan (in the X direction).
+        depth: Number for the depth of the plan (in the Y direction).
         floor_to_floor_height: Number for the height of each floor of the model
             (in the Z direction).
     """

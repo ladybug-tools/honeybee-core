@@ -33,8 +33,10 @@ def validate():
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 def validate_model(model_json):
-    """Validate all properties of a Model JSON file against the Honeybee schema.\b
+    """Validate all properties of a Model JSON file against the Honeybee schema.
+
     This includes basic properties like adjacency checks AND all geometry checks.
+
     \b
     Args:
         model_json: Full path to a Model JSON file.
@@ -86,8 +88,10 @@ def validate_model(model_json):
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 def validate_model_basic(model_json):
-    """Validate basic properties of a Model JSON against the Honeybee schema.\b
+    """Validate basic properties of a Model JSON against the Honeybee schema.
+
     This includes basic re-serialization, unique identifier checks, and adjacency checks.
+
     \b
     Args:
         model_json: Full path to a Model JSON file.
@@ -123,8 +127,10 @@ def validate_model_basic(model_json):
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 def validate_model_geometry(model_json):
-    """Validate geometry of a Model JSON against the Honeybee schema.\b
+    """Validate geometry of a Model JSON against the Honeybee schema.
+
     This includes checks that the 5 honeybee geometry rules are upheld.
+
     \b
     Args:
         model_json: Full path to a Model JSON file.
