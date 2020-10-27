@@ -7,11 +7,10 @@
 
 # honeybee-core
 
-Honeybee is a collection of Python libraries to create, run and visualize
-daylight ([RADIANCE](https://radiance-online.org//)) and energy
-([EnergyPlus](https://energyplus.net/)/[OpenStudio](https://www.openstudio.net/)) models.
+Honeybee is a collection of Python libraries to create representations of buildings
+following [honeybee-schema](https://github.com/ladybug-tools/honeybee-schema/wiki).
 
-This repository is the core repository that provides honeybee's common functionalities.
+This package is the core library that provides honeybee's common functionalities.
 To extend these functionalities you should install available Honeybee extensions or write
 your own.
 
@@ -19,7 +18,6 @@ Here are a number of frequently used extensions for Honeybee:
 
 - [honeybee-energy](https://github.com/ladybug-tools/honeybee-energy): Adds Energy simulation to Honeybee.
 - [honeybee-radiance](https://github.com/ladybug-tools/honeybee-radiance): Adds daylight simulation to Honeybee.
-
 
 # Installation
 
