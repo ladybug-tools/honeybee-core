@@ -4,9 +4,12 @@ Welcome to Honeybee's documentation!
 
 .. image:: http://www.ladybug.tools/assets/img/honeybee.png
 
-Honeybee is a collection of Python libraries to create, run and visualize the results of
-daylight `RADIANCE <https://radiance-online.org/>`_ and energy analysis
-`EnergyPlus <https://energyplus.net/>`_ / `OpenStudio <https://www.openstudio.net/>`_.
+Honeybee is a collection of Python libraries to create representations of buildings
+following `honeybee-schema <https://github.com/ladybug-tools/honeybee-schema/wiki>`_.
+
+This package is the core library that provides honeybee's common functionalities.
+To extend these functionalities you should install available Honeybee extensions or write
+your own.
 
 Installation
 ============
