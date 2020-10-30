@@ -7,12 +7,14 @@ from .typing import float_in_range, int_in_range, valid_string, clean_string
 from .properties import RoomProperties
 from .face import Face
 from .facetype import get_type_from_normal, Wall, Floor, RoofCeiling
-from .boundarycondition import get_bc_from_position, Outdoors, Surface
+from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, \
+    boundary_conditions
 from honeybee.orientation import angles_from_num_orient, orient_index
 import honeybee.writer.room as writer
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
+from ladybug_geometry.geometry3d.ray import Ray3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.mesh import Mesh3D
 from ladybug_geometry.geometry3d.polyface import Polyface3D
@@ -531,6 +533,47 @@ class Room(_BaseWithShade):
             if isinstance(face.boundary_condition, Outdoors) and \
                     isinstance(face.type, RoofCeiling):
                 face.apertures_by_ratio(ratio, tolerance)
+
+    def ground_by_custom_surface(self, ground_geometry, tolerance=0.01,
+                                 angle_tolerance=1.0):
+        """Set ground boundary conditions using an array of Face3D for the ground.
+
+        Room faces that are coplanar with the ground surface or lie completely below it
+        will get a Ground boundary condition while those above will get an Outdoors
+        boundary condition. Existing Faces with an indoor boundary condition will
+        be unaffected.
+
+        Args:
+            ground_geometry: An array of ladybug_geometry Face3D that together
+                represent the ground surface.
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
+            angle_tolerance: The max angle in degrees that the plane normals can
+                differ from one another in order for them to be considered
+                coplanar. (Default: 1)
+        """
+        # default values used throughout the check
+        ang_tol = math.degrees(angle_tolerance)
+        up_vec = Vector3D(0, 0, 1)
+
+        # loop through the faces and check their relation to the ground geometry
+        for face in self.faces:
+            if isinstance(face.boundary_condition, (Outdoors, Ground)):
+                ray = Ray3D(face.center, up_vec)
+                for grnd_geo in ground_geometry:
+                    # first check if the surface is below the ground surface
+                    if grnd_geo.intersect_line_ray(ray):
+                        face.boundary_condition = boundary_conditions.ground
+                        break
+                    # then check if the Face is coplanar with the ground face
+                    pl1, pl2 = face.geometry.plane, grnd_geo.plane
+                    if pl1.is_coplanar_tolerance(pl2, tolerance, ang_tol):
+                        if grnd_geo.is_point_on_face(face.center, tolerance):
+                            face.boundary_condition = boundary_conditions.ground
+                            break
+                else:
+                    face.boundary_condition = boundary_conditions.outdoors
 
     def move(self, moving_vec):
         """Move this Room along a vector.
