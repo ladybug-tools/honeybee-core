@@ -3,7 +3,7 @@ from honeybee.face import Face
 from honeybee.aperture import Aperture
 from honeybee.shade import Shade
 from honeybee.room import Room
-from honeybee.boundarycondition import boundary_conditions, Surface
+from honeybee.boundarycondition import boundary_conditions, Surface, Outdoors, Ground
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
@@ -268,7 +268,7 @@ def test_apertures_and_shades():
     assert len(room.outdoor_shades) == 0
 
 
-def generate_grid():
+def test_generate_grid():
     """Test the generate_grid method."""
     room = Room.from_box('ShoeBoxZone', 5, 10, 3)
     mesh_grid = room.generate_grid(1)
@@ -283,6 +283,23 @@ def generate_grid():
     room = Room.from_box('ShoeBoxZone', 5, 10, 3, 45)
     mesh_grid = room.generate_grid(1)
     assert len(mesh_grid.faces) == 50
+
+
+def test_ground_by_custom_surface():
+    """Test the ground_by_custom_surface method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3, origin=Point3D(0, 0, 3))
+    grd_face1 = Face3D([Point3D(-10, -10, 3), Point3D(-10, 10, 3),
+                         Point3D(10, 10, 3), Point3D(10, -10, 3)])
+    grd_face2 = Face3D([Point3D(-10, 10, 3), Point3D(10, 10, 3),
+                         Point3D(10, 10, 6), Point3D(-10, 10, 6)])
+    
+    assert isinstance(room[0].boundary_condition, Outdoors)
+    assert isinstance(room[1].boundary_condition, Outdoors)
+    room.ground_by_custom_surface([grd_face1, grd_face2])
+    assert isinstance(room[0].boundary_condition, Ground)
+    assert isinstance(room[1].boundary_condition, Ground)
+    for face in room[2:]:
+        assert isinstance(face.boundary_condition, Outdoors)
 
 
 def test_move():

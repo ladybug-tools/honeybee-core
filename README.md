@@ -1,6 +1,6 @@
 ![Honeybee](https://www.ladybug.tools/assets/img/honeybee.png)
 
-[![Build Status](https://travis-ci.org/ladybug-tools/honeybee-core.svg?branch=master)](https://travis-ci.org/ladybug-tools/honeybee-core)
+[![Build Status](https://travis-ci.com/ladybug-tools/honeybee-core.svg?branch=master)](https://travis-ci.com/ladybug-tools/honeybee-core)
 [![Coverage Status](https://coveralls.io/repos/github/ladybug-tools/honeybee-core/badge.svg?branch=master)](https://coveralls.io/github/ladybug-tools/honeybee-core)
 
 [![Python 2.7](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-270/) [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/) [![IronPython](https://img.shields.io/badge/ironpython-2.7-red.svg)](https://github.com/IronLanguages/ironpython2/releases/tag/ipy-2.7.8/)
@@ -21,20 +21,18 @@ Here are a number of frequently used extensions for Honeybee:
 
 # Installation
 
-To install the core library try:
+To install the core library use:
 
 `pip install -U honeybee-core`
 
-If you want to also include the command line interface try:
+If you want to also include the command line interface use:
 
 `pip install -U honeybee-core[cli]`
 
-To check if Honeybee command line is installed correctly try `honeybee viz` and you
+To check if Honeybee command line is installed correctly use `honeybee viz` and you
 should get a `viiiiiiiiiiiiizzzzzzzzz!` back in response! :bee:
 
-
 # [API Documentation](https://www.ladybug.tools/honeybee-core/docs/)
-
 
 ## Local Development
 1. Clone this repo locally
