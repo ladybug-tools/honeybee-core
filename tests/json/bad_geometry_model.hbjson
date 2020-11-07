@@ -2176,7 +2176,6 @@
 }
 ], 
 "type": "Model", 
-"version": "1.38.2", 
 "units": "Meters", 
 "properties": {
 "radiance": {
