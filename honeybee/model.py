@@ -1,6 +1,7 @@
 # coding: utf-8
 """Honeybee Model."""
 from __future__ import division
+import json
 
 from ._base import _Base
 from .checkdup import check_duplicate_identifiers
@@ -141,17 +142,20 @@ class Model(_Base):
             rooms = [Room.from_dict(r, tol, angle_tol) for r in data['rooms']]
         orphaned_faces = None  # import orphaned faces
         if 'orphaned_faces' in data and data['orphaned_faces'] is not None:
-            orphaned_faces = [Face.from_dict(f) for f in data['orphaned_faces']]
+            orphaned_faces = [Face.from_dict(f)
+                              for f in data['orphaned_faces']]
         orphaned_shades = None  # import orphaned shades
         if 'orphaned_shades' in data and data['orphaned_shades'] is not None:
-            orphaned_shades = [Shade.from_dict(s) for s in data['orphaned_shades']]
+            orphaned_shades = [Shade.from_dict(s)
+                               for s in data['orphaned_shades']]
         orphaned_apertures = None  # import orphaned apertures
         if 'orphaned_apertures' in data and data['orphaned_apertures'] is not None:
             orphaned_apertures = [Aperture.from_dict(a) for
                                   a in data['orphaned_apertures']]
         orphaned_doors = None  # import orphaned doors
         if 'orphaned_doors' in data and data['orphaned_doors'] is not None:
-            orphaned_doors = [Door.from_dict(d) for d in data['orphaned_doors']]
+            orphaned_doors = [Door.from_dict(d)
+                              for d in data['orphaned_doors']]
 
         # import the units
         units = 'Meters' if 'units' not in data else data['units']
@@ -471,33 +475,38 @@ class Model(_Base):
 
     def add_room(self, obj):
         """Add a Room object to the model."""
-        assert isinstance(obj, Room), 'Expected Room. Got {}.'.format(type(obj))
+        assert isinstance(
+            obj, Room), 'Expected Room. Got {}.'.format(type(obj))
         self._rooms.append(obj)
 
     def add_face(self, obj):
         """Add an orphaned Face object without a parent to the model."""
-        assert isinstance(obj, Face), 'Expected Face. Got {}.'.format(type(obj))
+        assert isinstance(
+            obj, Face), 'Expected Face. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Face "{}"" has a parent Room. Add the Room to '\
             'the model instead of the Face.'.format(obj.display_name)
         self._orphaned_faces.append(obj)
 
     def add_aperture(self, obj):
         """Add an orphaned Aperture object to the model."""
-        assert isinstance(obj, Aperture), 'Expected Aperture. Got {}.'.format(type(obj))
+        assert isinstance(
+            obj, Aperture), 'Expected Aperture. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Aperture "{}"" has a parent Face. Add the Face to '\
             'the model instead of the Aperture.'.format(obj.display_name)
         self._orphaned_apertures.append(obj)
 
     def add_door(self, obj):
         """Add an orphaned Door object to the model."""
-        assert isinstance(obj, Door), 'Expected Door. Got {}.'.format(type(obj))
+        assert isinstance(
+            obj, Door), 'Expected Door. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Door "{}"" has a parent Face. Add the Face to '\
             'the model instead of the Door.'.format(obj.display_name)
         self._orphaned_doors.append(obj)
 
     def add_shade(self, obj):
         """Add an orphaned Shade object to the model, typically representing context."""
-        assert isinstance(obj, Shade), 'Expected Shade. Got {}.'.format(type(obj))
+        assert isinstance(
+            obj, Shade), 'Expected Shade. Got {}.'.format(type(obj))
         assert not obj.has_parent, 'Shade "{}"" has a parent object. Add the object to '\
             'the model instead of the Shade.'.format(obj.display_name)
         self._orphaned_shades.append(obj)
@@ -603,7 +612,8 @@ class Model(_Base):
                     rooms.append(room)
                     break
             else:
-                raise ValueError('Room "{}" was not found in the model.'.format(obj_id))
+                raise ValueError(
+                    'Room "{}" was not found in the model.'.format(obj_id))
         return rooms
 
     def faces_by_identifier(self, identifiers):
@@ -616,7 +626,8 @@ class Model(_Base):
                     faces.append(face)
                     break
             else:
-                raise ValueError('Face "{}" was not found in the model.'.format(obj_id))
+                raise ValueError(
+                    'Face "{}" was not found in the model.'.format(obj_id))
         return faces
 
     def apertures_by_identifier(self, identifiers):
@@ -643,7 +654,8 @@ class Model(_Base):
                     doors.append(door)
                     break
             else:
-                raise ValueError('Door "{}" was not found in the model.'.format(obj_id))
+                raise ValueError(
+                    'Door "{}" was not found in the model.'.format(obj_id))
         return doors
 
     def shades_by_identifier(self, identifiers):
@@ -656,7 +668,8 @@ class Model(_Base):
                     shades.append(face)
                     break
             else:
-                raise ValueError('Shade "{}" was not found in the model.'.format(obj_id))
+                raise ValueError(
+                    'Shade "{}" was not found in the model.'.format(obj_id))
         return shades
 
     def move(self, moving_vec):
@@ -883,15 +896,18 @@ class Model(_Base):
                     for ap in face.apertures:
                         assert isinstance(ap.boundary_condition, Surface), \
                             'Aperture "{}" must have Surface boundary condition ' \
-                            'if the parent Face has a Surface BC.'.format(ap.identifier)
+                            'if the parent Face has a Surface BC.'.format(
+                                ap.identifier)
                         self._self_adj_check(ap, ap_bc_ids)
                     for dr in face.doors:
                         assert isinstance(dr.boundary_condition, Surface), \
                             'Door "{}" must have Surface boundary condition ' \
-                            'if the parent Face has a Surface BC.'.format(dr.identifier)
+                            'if the parent Face has a Surface BC.'.format(
+                                dr.identifier)
                         self._self_adj_check(dr, door_bc_ids)
         self._missing_adj_check(self.faces_by_identifier, face_bc_ids, 'Face')
-        self._missing_adj_check(self.apertures_by_identifier, ap_bc_ids, 'Aperture')
+        self._missing_adj_check(
+            self.apertures_by_identifier, ap_bc_ids, 'Aperture')
         self._missing_adj_check(self.doors_by_identifier, door_bc_ids, 'Door')
         return True
 
@@ -1064,9 +1080,12 @@ class Model(_Base):
             elif ap.identifier not in adj_check:
                 # generate the new triangulated apertures
                 ap_mesh3d = ap.triangulated_mesh3d
-                new_verts = [[ap_mesh3d[v] for v in face] for face in ap_mesh3d.faces]
-                new_ap_geo = [Face3D(verts, ap.geometry.plane) for verts in new_verts]
-                new_aps, parent_edit_info = self._replace_aperture(ap, new_ap_geo)
+                new_verts = [[ap_mesh3d[v] for v in face]
+                             for face in ap_mesh3d.faces]
+                new_ap_geo = [Face3D(verts, ap.geometry.plane)
+                              for verts in new_verts]
+                new_aps, parent_edit_info = self._replace_aperture(
+                    ap, new_ap_geo)
                 triangulated_apertures.append(new_aps)
                 if parent_edit_info is not None:
                     parents_to_edit.append(parent_edit_info)
@@ -1078,7 +1097,8 @@ class Model(_Base):
                             adj_ap = other_ap
                             break
                     new_adj_ap_geo = [face.flip() for face in new_ap_geo]
-                    new_adj_aps, edit_in = self._replace_aperture(adj_ap, new_adj_ap_geo)
+                    new_adj_aps, edit_in = self._replace_aperture(
+                        adj_ap, new_adj_ap_geo)
                     for new_ap, new_adj_ap in zip(new_aps, new_adj_aps):
                         new_ap.set_adjacency(new_adj_ap)
                     triangulated_apertures.append(new_adj_aps)
@@ -1124,8 +1144,10 @@ class Model(_Base):
             elif dr.identifier not in adj_check:
                 # generate the new triangulated doors
                 dr_mesh3d = dr.triangulated_mesh3d
-                new_verts = [[dr_mesh3d[v] for v in face] for face in dr_mesh3d.faces]
-                new_dr_geo = [Face3D(verts, dr.geometry.plane) for verts in new_verts]
+                new_verts = [[dr_mesh3d[v] for v in face]
+                             for face in dr_mesh3d.faces]
+                new_dr_geo = [Face3D(verts, dr.geometry.plane)
+                              for verts in new_verts]
                 new_drs, parent_edit_info = self._replace_door(dr, new_dr_geo)
                 triangulated_doors.append(new_drs)
                 if parent_edit_info is not None:
@@ -1138,7 +1160,8 @@ class Model(_Base):
                             adj_dr = other_dr
                             break
                     new_adj_dr_geo = [face.flip() for face in new_dr_geo]
-                    new_adj_drs, edit_in = self._replace_door(adj_dr, new_adj_dr_geo)
+                    new_adj_drs, edit_in = self._replace_door(
+                        adj_dr, new_adj_dr_geo)
                     for new_dr, new_adj_dr in zip(new_drs, new_adj_drs):
                         new_dr.set_adjacency(new_adj_dr)
                     triangulated_doors.append(new_adj_drs)
@@ -1296,13 +1319,16 @@ class Model(_Base):
                 [f.to_dict(True, included_prop) for f in self._orphaned_faces]
         if self._orphaned_shades != []:
             base['orphaned_shades'] = \
-                [shd.to_dict(True, included_prop) for shd in self._orphaned_shades]
+                [shd.to_dict(True, included_prop)
+                 for shd in self._orphaned_shades]
         if self._orphaned_apertures != []:
             base['orphaned_apertures'] = \
-                [ap.to_dict(True, included_prop) for ap in self._orphaned_apertures]
+                [ap.to_dict(True, included_prop)
+                 for ap in self._orphaned_apertures]
         if self._orphaned_doors != []:
             base['orphaned_doors'] = \
-                [dr.to_dict(True, included_prop) for dr in self._orphaned_doors]
+                [dr.to_dict(True, included_prop)
+                 for dr in self._orphaned_doors]
         if self.tolerance != 0:
             base['tolerance'] = self.tolerance
         if self.angle_tolerance != 0:
@@ -1348,6 +1374,21 @@ class Model(_Base):
             base['version'] = folders.honeybee_schema_version_str
 
         return base
+
+    @staticmethod
+    def to_json(hb_dict, folder_path, name="unnamed"):
+        """Writes a Honeybee model dictionary to hbjson
+
+        Args:
+            hb_dict (dictionary): A Honeybee model in the form of a dictionary
+            folder_path (A text string): Folder location where json will be written
+            name (str, optional): File name. Defaults to "unnamed".
+        """
+        file_name = '{}.hbjson'.format(name)
+        folder = folder_path if folder_path is not None else folders.default_simulation_folder
+        hb_file = os.path.join(folder, file_name)
+        with open(hb_file, 'w') as fp:
+            json.dump(hb_dict, fp)
 
     @staticmethod
     def conversion_factor_to_meters(units):
