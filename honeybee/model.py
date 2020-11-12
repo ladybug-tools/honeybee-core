@@ -1,6 +1,8 @@
 # coding: utf-8
 """Honeybee Model."""
 from __future__ import division
+import os
+import json
 
 from ._base import _Base
 from .checkdup import check_duplicate_identifiers
@@ -1381,7 +1383,47 @@ class Model(_Base):
             raise ValueError(
                 "You're kidding me! What units are you using?" + units + "?\n"
                 "Please use Meters, Millimeters, Centimeters, Feet or Inches.")
+            
+        def to_hbjson(self, folder_path=None, name="unnamed", indent=None, included_prop=None, triangulate_sub_faces=False):
+        """Writes a Honeybee model to HBJSON.
 
+        Args:
+            folder_path: A text string of path to folder where HBJSOn will be written. Defaults to None.
+            name: A text string that will be the name of the HBJSOn. Defaults to "unnamed".
+            indent: A positive integer to set the indentation used in the
+                resulting HBJSON file. If None or 0, the JSON will be a single line. Defaults to None.
+            included_prop: List of properties to filter keys that must be included in
+                output dictionary. For example ['energy'] will include 'energy' key if
+                available in properties to_dict. By default all the keys will be
+                included. To exclude all the keys from extensions use an empty list.
+            triangulate_sub_faces: Boolean to note whether sub-faces (including
+                Apertures and Doors) should be triangulated if they have more than
+                4 sides (True) or whether they should be left as they are (False).
+                This triangulation is necessary when exporting directly to EnergyPlus
+                since it cannot accept sub-faces with more than 4 vertices. Note that
+                setting this to True will only triangulate sub-faces with parent Faces
+                that also have parent Rooms since orphaned Apertures and Faces are
+                not relevant for energy simulation. Default: False.
+        """
+        # Create dictionary from the Honeybee Model
+        hb_dict = self.to_dict(included_prop=None, triangulate_sub_faces=False)
+
+        # Setting up a name for the HBJSON
+        if not name.lower().endswith('.hbjson'):
+            file_name = '{}.hbjson'.format(name)
+        else:
+            name = name[:-7]
+            file_name = '{}.hbjson'.format(name)
+
+        # Folder path & indent
+        folder = folder_path if folder_path is not None else folders.default_simulation_folder
+        hb_file = os.path.join(folder, file_name)
+        indent = indent if indent is not None else 0
+
+        # write HBJSON
+        with open(hb_file, 'w') as fp:
+            json.dump(hb_dict, fp, indent=indent)
+           
     @staticmethod
     def _self_adj_check(hb_obj, bc_ids):
         """Check that an adjacent object is referencing itself."""
