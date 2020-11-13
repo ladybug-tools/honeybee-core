@@ -1373,7 +1373,8 @@ class Model(_Base):
                 not relevant for energy simulation. Default: False.
         """
         # Create dictionary from the Honeybee Model
-        hb_dict = self.to_dict(included_prop=None, triangulate_sub_faces=False)
+        hb_dict = self.to_dict(included_prop=included_prop,
+                               triangulate_sub_faces=triangulate_sub_faces)
 
         # Setting up a name for the HBJSON
         if not name.lower().endswith('.hbjson'):
