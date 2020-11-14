@@ -1351,12 +1351,12 @@ class Model(_Base):
 
         return base
 
-    def to_hbjson(self, folder_path=None, name="unnamed", indent=None, included_prop=None, triangulate_sub_faces=False):
+    def to_hbjson(self, name="unnamed", folder_path=None, indent=None, included_prop=None, triangulate_sub_faces=False):
         """Writes a Honeybee model to HBJSON.
 
         Args:
-            folder_path: A text string of path to folder where HBJSOn will be written. Defaults to None.
             name: A text string that will be the name of the HBJSOn. Defaults to "unnamed".
+            folder_path: A text string of path to folder where HBJSOn will be written. Defaults to None.
             indent: A positive integer to set the indentation used in the
                 resulting HBJSON file. If None or 0, the JSON will be a single line. Defaults to None.
             included_prop: List of properties to filter keys that must be included in
@@ -1377,10 +1377,9 @@ class Model(_Base):
                                triangulate_sub_faces=triangulate_sub_faces)
 
         # Setting up a name for the HBJSON
-        if not name.lower().endswith('.hbjson'):
-            file_name = '{}.hbjson'.format(name)
+        if name.lower().endswith('.hbjson'):
+            file_name = name
         else:
-            name = name[:-7]
             file_name = '{}.hbjson'.format(name)
 
         # Folder path & indent
