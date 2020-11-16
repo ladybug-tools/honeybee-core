@@ -1351,14 +1351,20 @@ class Model(_Base):
 
         return base
 
-    def to_hbjson(self, name="unnamed", folder_path=None, indent=None, included_prop=None, triangulate_sub_faces=False):
+    def to_hbjson(self, name="unnamed", folder_path=None, indent=0,
+                  included_prop=None, triangulate_sub_faces=False):
         """Writes a Honeybee model to HBJSON.
 
         Args:
-            name: A text string that will be the name of the HBJSOn. Defaults to "unnamed".
-            folder_path: A text string of path to folder where HBJSOn will be written. Defaults to None.
+            name: A text string that will be the name of the HBJSON.
+                Defaults to "unnamed" for the file name for HBJSON.
+            folder_path: A text string of path to folder where HBJSON will be written.
+                Defaults to None. If folder_path is not specified, the default simulation
+                folder will be used to write the HBJSON. This default simulation folder
+                is at "C:\\Users\\USERNAME\\simulation."
             indent: A positive integer to set the indentation used in the
-                resulting HBJSON file. If None or 0, the JSON will be a single line. Defaults to None.
+                resulting HBJSON file. If 0, the JSON will be a single line.
+                Defaults to 0.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
@@ -1377,15 +1383,13 @@ class Model(_Base):
                                triangulate_sub_faces=triangulate_sub_faces)
 
         # Setting up a name for the HBJSON
-        if name.lower().endswith('.hbjson'):
-            file_name = name
-        else:
-            file_name = '{}.hbjson'.format(name)
+        file_name = name if name.lower().endswith('.hbjson') or \
+            name.lower().endswith('.json') else '{}.hbjson'.format(name)
 
-        # Folder path & indent
-        folder = folder_path if folder_path is not None else folders.default_simulation_folder
+        # Folder path
+        folder = folder_path if folder_path is not None \
+            else folders.default_simulation_folder
         hb_file = os.path.join(folder, file_name)
-        indent = indent if indent is not None else 0
 
         # write HBJSON
         with open(hb_file, 'w') as fp:
