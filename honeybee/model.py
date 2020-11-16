@@ -50,11 +50,13 @@ class Model(_Base):
 
         tolerance: The maximum difference between x, y, and z values at which
             vertices are considered equivalent. Zero indicates that no tolerance
-            checks should be performed. Default: 0.
-        angle_tolerance: The max angle difference in degrees that vertices are
-            allowed to differ from one another in order to consider them colinear.
-            Zero indicates that no angle tolerance checks should be performed.
-            Default: 0.
+            checks should be performed. None indicates that the tolerance will be
+            set based on the units above, with the tolerance consistently being
+            between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
+            SDK). (Default: None).
+        angle_tolerance: The max angle difference in degrees that vertices are allowed
+            to differ from one another in order to consider them colinear. Zero indicates
+            that no angle tolerance checks should be performed. (Default: 1.0).
 
     Properties:
         * identifier
@@ -88,10 +90,12 @@ class Model(_Base):
                  '_orphaned_doors', '_units', '_tolerance', '_angle_tolerance')
 
     UNITS = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')
+    UNITS_TOLERANCES = {'Meters': 0.01, 'Millimeters': 1.0, 'Feet': 0.01,
+                        'Inches':0.1, 'Centimeters':1.0}
 
     def __init__(self, identifier, rooms=None, orphaned_faces=None, orphaned_shades=None,
                  orphaned_apertures=None, orphaned_doors=None,
-                 units='Meters', tolerance=0, angle_tolerance=0):
+                 units='Meters', tolerance=None, angle_tolerance=1.0):
         """A collection of Rooms, Faces, Apertures, and Doors for an entire model."""
         _Base.__init__(self, identifier)  # process the identifier
 
@@ -241,7 +245,8 @@ class Model(_Base):
 
     @tolerance.setter
     def tolerance(self, value):
-        self._tolerance = float_positive(value, 'model tolerance')
+        self._tolerance = float_positive(value, 'model tolerance') if value is not None \
+            else self.UNITS_TOLERANCES[self.units]
 
     @property
     def angle_tolerance(self):
@@ -1043,12 +1048,13 @@ class Model(_Base):
                 triangle Apertures meant to replace an Aperture with more than
                 4 sides in the model.
 
-            -   parents_to_edit: An list of lists that parellels the triangulated_apertures
-                in that each item represents an Aperture that has been triangulated
-                in the model. However, each of these lists holds between 1 and 3 values
-                for the identifiers of the original aperture and parents of the aperture.
-                This information is intended to help edit parent faces that have had
-                their child faces triangulated. The 3 values are as follows:
+            -   parents_to_edit: An list of lists that parellels the triangulated
+                aperturesin that each item represents an Aperture that has been
+                triangulated in the model. However, each of these lists holds between
+                1 and 3 values for the identifiers of the original aperture and parents
+                of the aperture. This information is intended to help edit parent
+                faces that have had their child faces triangulated. The 3 values
+                are as follows:
 
                 * 0 = The identifier of the original Aperture that was triangulated.
                 * 1 = The identifier of the parent Face of the original Aperture
@@ -1060,7 +1066,7 @@ class Model(_Base):
         parents_to_edit = []
         all_apertures = self.apertures
         adj_check = []  # confirms when interior apertures are triangulated by adjacency
-        for i, ap in enumerate(all_apertures):
+        for ap in all_apertures:
             if len(ap.geometry) <= 4:
                 pass
             elif ap.identifier not in adj_check:
@@ -1120,7 +1126,7 @@ class Model(_Base):
         parents_to_edit = []
         all_doors = self.doors
         adj_check = []  # confirms when interior doors are triangulated by adjacency
-        for i, dr in enumerate(all_doors):
+        for dr in all_doors:
             if len(dr.geometry) <= 4:
                 pass
             elif dr.identifier not in adj_check:
@@ -1166,8 +1172,9 @@ class Model(_Base):
 
             -   new_aps: A list of the new Aperture objects.
 
-            -   parent_edit_info: An array of up to 3 values meant to help edit parents that
-                have had their child faces triangulated. The 3 values are as follows:
+            -   parent_edit_info: An array of up to 3 values meant to help edit
+                parents that have had their child faces triangulated. The 3 values
+                are as follows:
 
                 * 0 = The identifier of the original Aperture that was triangulated.
                 * 1 = The identifier of the parent Face of the original Aperture
@@ -1218,8 +1225,9 @@ class Model(_Base):
 
             -   new_drs: A list of the new Door objects.
 
-            -   parent_edit_info: An array of up to 3 values meant to help edit parents that
-                have had their child faces triangulated. The 3 values are as follows:
+            -   parent_edit_info: An array of up to 3 values meant to help edit
+                parents that have had their child faces triangulated. The 3 values
+                are as follows:
 
                 * 0 = The identifier of the original Door that was triangulated.
                 * 1 = The identifier of the parent Face of the original Door

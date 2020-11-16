@@ -13,7 +13,7 @@ def test_any_keywords_in_string():
 
     assert any_keywords_in_string(elements, keywords_1)
     assert any_keywords_in_string(elements, keywords_2)
-    assert any_keywords_in_string(elements, keywords_3)
+    assert not any_keywords_in_string(elements, keywords_3)
     assert not any_keywords_in_string(elements, keywords_4)
     assert not any_keywords_in_string(elements, keywords_5)
 
@@ -29,9 +29,9 @@ def test_filter_array_by_keywords():
     keywords_6 = ('Hydrogen', 'Helium')
 
     assert filter_array_by_keywords(elements, keywords_1) == ['Fire']
-    assert filter_array_by_keywords(elements, keywords_2) == ['Fire', 'Water']
-    assert filter_array_by_keywords(elements, keywords_3) == ['Water']
-    assert filter_array_by_keywords(elements, keywords_4) == ['Fire']
+    assert filter_array_by_keywords(elements, keywords_2) == []
+    assert filter_array_by_keywords(elements, keywords_3) == []
+    assert filter_array_by_keywords(elements, keywords_4) == []
     assert filter_array_by_keywords(elements, keywords_4, False) == []
     assert filter_array_by_keywords(elements, keywords_5) == []
     assert filter_array_by_keywords(elements, keywords_6) == []

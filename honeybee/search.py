@@ -46,10 +46,7 @@ def any_keywords_in_string(name, keywords):
         keywords: An array of strings representing keywords, which will be searched for
             in the name.
     """
-    for kw in keywords:
-        if kw in name:
-            return True
-    return False
+    return all(kw in name for kw in keywords)
 
 
 def get_attr_nested(obj_instance, attr_name, decimal_count=None):
