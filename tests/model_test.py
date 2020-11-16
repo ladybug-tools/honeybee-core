@@ -40,8 +40,8 @@ def test_model_init():
     assert model.identifier == 'TinyHouse'
     assert model.display_name == 'TinyHouse'
     assert model.units == 'Meters'
-    assert model.tolerance == 0
-    assert model.angle_tolerance == 0
+    assert model.tolerance == 0.01
+    assert model.angle_tolerance == 1.0
     assert len(model.rooms) == 1
     assert isinstance(model.rooms[0], Room)
     assert len(model.faces) == 6
@@ -82,10 +82,12 @@ def test_model_properties_setability():
     assert model.display_name == 'TestBox'
     model.units = 'Feet'
     assert model.units == 'Feet'
-    model.tolerance = 0.01
-    assert model.tolerance == 0.01
+    model.tolerance = 0.1
+    assert model.tolerance == 0.1
     model.angle_tolerance = 0.01
     assert model.angle_tolerance == 0.01
+    model.tolerance = None
+    assert model.tolerance == 0.01
 
 
 def test_model_init_orphaned_objects():
