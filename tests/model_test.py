@@ -14,6 +14,8 @@ from ladybug_geometry.geometry3d.face import Face3D
 
 import math
 import pytest
+import os
+import json
 
 
 def test_model_init():
@@ -931,6 +933,48 @@ def test_to_from_dict_methods():
     assert len(new_model.orphaned_shades) == 0
     assert len(new_model.orphaned_apertures) == 0
     assert len(new_model.orphaned_doors) == 0
+
+
+def test_to_hbjson():
+    """Test the Model to_hbjson method."""
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.apertures[0].move_shades(Vector3D(0, 0, -0.5))
+    north_face = room[1]
+    door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
+                  Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+    aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
+                      Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+    door = Door('FrontDoor', Face3D(door_verts))
+    north_face.add_door(door)
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
+    north_face.add_aperture(aperture)
+    model = Model('TinyHouse', [room])
+
+    path = './tests/json'
+    model_hbjson = model.to_hbjson("test", path)
+    file_path = os.path.join(path, 'test.hbjson')
+    assert os.path.isfile(file_path)
+    with open(file_path) as f:
+        model_dict = json.load(f)
+    assert model_dict['type'] == 'Model'
+    assert model_dict['identifier'] == 'TinyHouse'
+    assert model_dict['display_name'] == 'TinyHouse'
+    assert 'rooms' in model_dict
+    assert len(model_dict['rooms']) == 1
+    assert 'faces' in model_dict['rooms'][0]
+    assert len(model_dict['rooms'][0]['faces']) == 6
+    assert 'apertures' in model_dict['rooms'][0]['faces'][3]
+    assert len(model_dict['rooms'][0]['faces'][3]['apertures']) == 1
+    assert 'doors' in model_dict['rooms'][0]['faces'][1]
+    assert len(model_dict['rooms'][0]['faces'][1]['doors']) == 1
+    assert 'outdoor_shades' in model_dict['rooms'][0]['faces'][3]['apertures'][0]
+    assert len(model_dict['rooms'][0]['faces'][3]['apertures'][0]['outdoor_shades']) == 1
+    assert 'properties' in model_dict
+    assert model_dict['properties']['type'] == 'ModelProperties'
 
 
 def test_writer():
