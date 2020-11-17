@@ -1,6 +1,8 @@
 # coding: utf-8
 """Honeybee Model."""
 from __future__ import division
+import os
+import json
 
 from ._base import _Base
 from .checkdup import check_duplicate_identifiers
@@ -1348,6 +1350,50 @@ class Model(_Base):
             base['version'] = folders.honeybee_schema_version_str
 
         return base
+
+    def to_hbjson(self, name="unnamed", folder_path=None, indent=0,
+                  included_prop=None, triangulate_sub_faces=False):
+        """Writes a Honeybee model to HBJSON.
+
+        Args:
+            name: A text string that will be the name of the HBJSON.
+                Defaults to "unnamed" for the file name for HBJSON.
+            folder_path: A text string of path to folder where HBJSON will be written.
+                Defaults to None. If folder_path is not specified, the default simulation
+                folder will be used to write the HBJSON. This default simulation folder
+                is at "C:\\Users\\USERNAME\\simulation."
+            indent: A positive integer to set the indentation used in the
+                resulting HBJSON file. If 0, the JSON will be a single line.
+                Defaults to 0.
+            included_prop: List of properties to filter keys that must be included in
+                output dictionary. For example ['energy'] will include 'energy' key if
+                available in properties to_dict. By default all the keys will be
+                included. To exclude all the keys from extensions use an empty list.
+            triangulate_sub_faces: Boolean to note whether sub-faces (including
+                Apertures and Doors) should be triangulated if they have more than
+                4 sides (True) or whether they should be left as they are (False).
+                This triangulation is necessary when exporting directly to EnergyPlus
+                since it cannot accept sub-faces with more than 4 vertices. Note that
+                setting this to True will only triangulate sub-faces with parent Faces
+                that also have parent Rooms since orphaned Apertures and Faces are
+                not relevant for energy simulation. Default: False.
+        """
+        # Create dictionary from the Honeybee Model
+        hb_dict = self.to_dict(included_prop=included_prop,
+                               triangulate_sub_faces=triangulate_sub_faces)
+
+        # Setting up a name for the HBJSON
+        file_name = name if name.lower().endswith('.hbjson') or \
+            name.lower().endswith('.json') else '{}.hbjson'.format(name)
+
+        # Folder path
+        folder = folder_path if folder_path is not None \
+            else folders.default_simulation_folder
+        hb_file = os.path.join(folder, file_name)
+
+        # write HBJSON
+        with open(hb_file, 'w') as fp:
+            json.dump(hb_dict, fp, indent=indent)
 
     @staticmethod
     def conversion_factor_to_meters(units):
