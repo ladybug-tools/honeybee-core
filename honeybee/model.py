@@ -3,6 +3,7 @@
 from __future__ import division
 import os
 import json
+import warnings
 
 from ._base import _Base
 from .checkdup import check_duplicate_identifiers
@@ -1387,9 +1388,14 @@ class Model(_Base):
                 not relevant for energy simulation. Default: False.
         """
         # Create dictionary from the Honeybee Model
-        hb_dict = self.to_dict(included_prop=included_prop,
-                               triangulate_sub_faces=triangulate_sub_faces)
-
+        if self:
+            hb_dict = self.to_dict(included_prop=included_prop,
+                                triangulate_sub_faces=triangulate_sub_faces)
+        else:
+            warnings.warn(
+                'Honeybee model not found.'
+            )
+            hb_dict = {}
         # Setting up a name for the HBJSON
         file_name = name if name.lower().endswith('.hbjson') or \
             name.lower().endswith('.json') else '{}.hbjson'.format(name)
