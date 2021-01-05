@@ -1,2 +1,2 @@
 ladybug-core==0.35.3
-ladybug-geometry-polyskel==1.3.18
+ladybug-geometry-polyskel==1.3.19
