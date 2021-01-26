@@ -977,6 +977,7 @@ def test_to_hbjson():
     assert len(model_dict['rooms'][0]['faces'][3]['apertures'][0]['outdoor_shades']) == 1
     assert 'properties' in model_dict
     assert model_dict['properties']['type'] == 'ModelProperties'
+    os.remove(file_path)
 
 
 def test_writer():
