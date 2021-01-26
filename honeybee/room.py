@@ -1017,7 +1017,7 @@ class Room(_BaseWithShade):
             A list of the unique story names that were assigned to the input rooms.
         """
         # group the rooms by floor height
-        new_rooms, new_flr_hgts = Room.group_by_floor_height(rooms, min_difference)
+        new_rooms, _ = Room.group_by_floor_height(rooms, min_difference)
 
         # assign the story property to each of the groups
         story_names = []
