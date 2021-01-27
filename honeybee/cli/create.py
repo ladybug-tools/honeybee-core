@@ -16,7 +16,6 @@ from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
 from honeybee.model import Model
 from honeybee.room import Room
-from honeybee.facetype import face_types as fts
 from honeybee.boundarycondition import boundary_conditions as bcs
 try:
     ad_bc = bcs.adiabatic
@@ -24,7 +23,6 @@ except AttributeError:  # honeybee_energy is not loaded and adiabatic does not e
     ad_bc = None
 
 import sys
-import os
 import logging
 import json
 import math
@@ -45,21 +43,21 @@ def create():
 @click.option('--orientation-angle', '-a', help='A number between 0 and 360 for the '
               'clockwise orientation of the box in degrees. (0=North, 90=East, 180='
               'South, 270=West).', type=float, default=0, show_default=True)
-@click.option('--window-ratio', '-wr', help='A number between 0 and 1 (but not equal to 1) '
-              'for the ratio between aperture area and area of the face pointing towards'
-              ' the orientation-angle. Using 0 will generate no windows',
+@click.option('--window-ratio', '-wr', help='A number between 0 and 1 (but not equal '
+              'to 1) for the ratio between aperture area and area of the face pointing '
+              'towards the orientation-angle. Using 0 will generate no windows',
               type=float, default=0, show_default=True)
-@click.option('--adiabatic/--outdoors', ' /-o', help='Flag to note whether the faces that '
-              'are not in the direction of the orientation-angle are adiabatic or '
+@click.option('--adiabatic/--outdoors', ' /-o', help='Flag to note whether the faces '
+              'that are not in the direction of the orientation-angle are adiabatic or '
               'outdoors.', default=True, show_default=True)
 @click.option('--units', '-u', help=' Text for the units system in which the model '
-              'geometry exists. Must be (Meters, Millimeters, Feet, Inches, Centimeters).',
-              type=str, default='Meters', show_default=True)
+              'geometry exists. Must be (Meters, Millimeters, Feet, Inches, '
+              'Centimeters).', type=str, default='Meters', show_default=True)
 @click.option('--tolerance', '-t', help='The maximum difference between x, y, and z '
               'values at which vertices are considered equivalent.',
               type=float, default=0.01, show_default=True)
-@click.option('--output-file', '-f', help='Optional file to output the Model JSON string.'
-              ' By default it will be printed out to stdout',
+@click.option('--output-file', '-f', help='Optional file to output the Model JSON '
+              'string. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
 def shoe_box(width, depth, height, orientation_angle, window_ratio, adiabatic,
              units, tolerance, output_file):
@@ -119,8 +117,8 @@ def shoe_box(width, depth, height, orientation_angle, window_ratio, adiabatic,
               'the floor faces of the bottom floor should be ground or adiabatic.',
               default=True, show_default=True)
 @click.option('--units', '-u', help=' Text for the units system in which the model '
-              'geometry exists. Must be (Meters, Millimeters, Feet, Inches, Centimeters).',
-              type=str, default='Meters', show_default=True)
+              'geometry exists. Must be (Meters, Millimeters, Feet, Inches, '
+              'Centimeters).', type=str, default='Meters', show_default=True)
 @click.option('--tolerance', '-t', help='The maximum difference between x, y, and z '
               'values at which vertices are considered equivalent.',
               type=float, default=0.01, show_default=True)
@@ -155,9 +153,9 @@ def rectangle_plan(width, length, floor_to_floor_height, perimeter_offset, story
                 for s_poly in sub_polys_perim + sub_polys_core:
                     sub_face = Face3D([Point3D(pt.x, pt.y, 0) for pt in s_poly])
                     footprint.append(sub_face)
-            except RuntimeError as e:
+            except RuntimeError:
                 pass
-        
+
         # create the honeybee rooms
         unique_id = str(uuid.uuid4())[:8]  # unique identifier for the model
         rm_ids = ['Room'] if len(footprint) == 1 else ['Front', 'Right', 'Back', 'Left']
@@ -203,8 +201,8 @@ def rectangle_plan(width, length, floor_to_floor_height, perimeter_offset, story
               'the floor faces of the bottom floor should be ground or adiabatic.',
               default=True, show_default=True)
 @click.option('--units', '-u', help=' Text for the units system in which the model '
-              'geometry exists. Must be (Meters, Millimeters, Feet, Inches, Centimeters).',
-              type=str, default='Meters', show_default=True)
+              'geometry exists. Must be (Meters, Millimeters, Feet, Inches, '
+              'Centimeters).', type=str, default='Meters', show_default=True)
 @click.option('--tolerance', '-t', help='The maximum difference between x, y, and z '
               'values at which vertices are considered equivalent.',
               type=float, default=0.01, show_default=True)
@@ -246,9 +244,9 @@ def l_shaped_plan(width_1, length_1, width_2, length_2, floor_to_floor_height,
                 for s_poly in sub_polys_perim + sub_polys_core:
                     sub_face = Face3D([Point3D(pt.x, pt.y, 0) for pt in s_poly])
                     footprint.append(sub_face)
-            except RuntimeError as e:
+            except RuntimeError:
                 pass
-        
+
         # create the honeybee rooms
         unique_id = str(uuid.uuid4())[:8]  # unique identifier for the model
         rm_ids = ['Room'] if len(footprint) == 1 else \
