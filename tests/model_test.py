@@ -937,6 +937,16 @@ def test_to_from_dict_methods():
     assert len(new_model.orphaned_doors) == 0
 
 
+def test_from_dict_method_extensions():
+    """Test from_dict method with a bunch of un-serialize-able extension properties."""
+    model_json = './tests/json/model_with_adiabatic.hbjson'
+    with open(model_json) as json_file:
+        data = json.load(json_file)
+    parsed_model = Model.from_dict(data)
+
+    assert isinstance(parsed_model, Model)
+
+
 def test_to_hbjson():
     """Test the Model to_hbjson method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
