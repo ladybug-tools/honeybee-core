@@ -123,11 +123,9 @@ class Face(_BaseWithShade):
         # get the boundary condition and assign it
         try:
             bc_class = getattr(hbc, data['boundary_condition']['type'])
-        except AttributeError:
-            raise ValueError(
-                'Boundary condition "{}" is not supported in this honeybee '
-                'installation.'.format(data['boundary_condition']['type']))
-        face.boundary_condition = bc_class.from_dict(data['boundary_condition'])
+            face.boundary_condition = bc_class.from_dict(data['boundary_condition'])
+        except AttributeError:  # boundary condition from extension; default to Outdoors
+            pass
 
         # assign extension properties
         if data['properties']['type'] == 'FaceProperties':
