@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.extensionutil &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee.extensionutil</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+<span class="sd">&quot;&quot;&quot;A series of utility functions that are useful across several honeybee extensions.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="model_extension_dicts"><a class="viewcode-back" href="../../honeybee.extensionutil.html#honeybee.extensionutil.model_extension_dicts">[docs]</a><span class="k">def</span> <span class="nf">model_extension_dicts</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">room_ext_dicts</span><span class="p">,</span> <span class="n">face_ext_dicts</span><span class="p">,</span>
+                          <span class="n">shade_ext_dicts</span><span class="p">,</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">door_ext_dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all Model property dictionaries of an extension organized by geometry type.</span>
+
+<span class="sd">    Note that the order in which dictionaries appear in the output lists is the</span>
+<span class="sd">    same order as the geometry objects appear when requested from the model.</span>
+<span class="sd">    For example, the shade_ext_dicts align with the model.shades.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: A dictionary representation of an entire honeybee-core Model.</span>
+<span class="sd">        extension_key: Text for the key of the extension (eg. &quot;energy&quot;, &quot;radiance&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with five elements</span>
+
+<span class="sd">        -   room_ext_dicts: A list of Room extension property dictionaries that</span>
+<span class="sd">            align with the serialized model.rooms.</span>
+
+<span class="sd">        -   face_ext_dicts: A list of Face extension property dictionaries that</span>
+<span class="sd">            align with the serialized model.faces.</span>
+
+<span class="sd">        -   shade_ext_dicts: A list of Shade extension property dictionaries that</span>
+<span class="sd">            align with the serialized model.shades.</span>
+
+<span class="sd">        -   aperture_ext_dicts: A list of Aperture extension property dictionaries that</span>
+<span class="sd">            align with the serialized model.apertures.</span>
+
+<span class="sd">        -   door_ext_dicts: A list of Door extension property dictionaries that</span>
+<span class="sd">            align with the serialized model.doors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Model&#39;</span><span class="p">,</span> \
+        <span class="s1">&#39;Expected Model dictionary. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+
+    <span class="c1"># loop through the model dictionary using the same logic that the</span>
+    <span class="c1"># model does when you request rooms, faces, shades, apertures and doors.</span>
+    <span class="k">if</span> <span class="s1">&#39;rooms&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;rooms&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">room_extension_dicts</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;rooms&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">room_ext_dicts</span><span class="p">,</span>
+                             <span class="n">face_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">,</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span>
+                             <span class="n">door_ext_dicts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;orphaned_faces&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;orphaned_faces&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">face_extension_dicts</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;orphaned_faces&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">face_ext_dicts</span><span class="p">,</span>
+                             <span class="n">shade_ext_dicts</span><span class="p">,</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">door_ext_dicts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;orphaned_apertures&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;orphaned_apertures&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">aperture_extension_dicts</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;orphaned_apertures&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span>
+                                 <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;orphaned_doors&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;orphaned_doors&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">door_extension_dicts</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;orphaned_doors&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">door_ext_dicts</span><span class="p">,</span>
+                             <span class="n">shade_ext_dicts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;orphaned_shades&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;orphaned_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;orphaned_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">room_ext_dicts</span><span class="p">,</span> <span class="n">face_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">,</span> \
+        <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">door_ext_dicts</span></div>
+
+
+<div class="viewcode-block" id="room_extension_dicts"><a class="viewcode-back" href="../../honeybee.extensionutil.html#honeybee.extensionutil.room_extension_dicts">[docs]</a><span class="k">def</span> <span class="nf">room_extension_dicts</span><span class="p">(</span><span class="n">room_list</span><span class="p">,</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">room_ext_dicts</span><span class="p">,</span> <span class="n">face_ext_dicts</span><span class="p">,</span>
+                         <span class="n">shade_ext_dicts</span><span class="p">,</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">door_ext_dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all Room property dictionaires of an extension organized by geometry type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        room_list: A list of Room dictionaries.</span>
+<span class="sd">        extension_key: Text for the key of the extension (eg. &quot;energy&quot;, &quot;radiance&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with five elements</span>
+
+<span class="sd">        -   room_ext_dicts: A list with the Room extension property dictionaries.</span>
+
+<span class="sd">        -   face_ext_dicts: A list with Face extension property dictionaries.</span>
+
+<span class="sd">        -   shade_ext_dicts: A list with Shade extension property dictionaries.</span>
+
+<span class="sd">        -   aperture_ext_dicts: A list with Aperture extension property dictionaries.</span>
+
+<span class="sd">        -   door_ext_dicts: A list with Door extension property dictionaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">room_dict</span> <span class="ow">in</span> <span class="n">room_list</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">room_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">room_dict</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="n">extension_key</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">room_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;outdoor_shades&#39;</span> <span class="ow">in</span> <span class="n">room_dict</span> <span class="ow">and</span> <span class="n">room_dict</span><span class="p">[</span><span class="s1">&#39;outdoor_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">room_dict</span><span class="p">[</span><span class="s1">&#39;outdoor_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span>
+                                  <span class="n">shade_ext_dicts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;indoor_shades&#39;</span> <span class="ow">in</span> <span class="n">room_dict</span> <span class="ow">and</span> <span class="n">room_dict</span><span class="p">[</span><span class="s1">&#39;indoor_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">room_dict</span><span class="p">[</span><span class="s1">&#39;indoor_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span>
+                                  <span class="n">shade_ext_dicts</span><span class="p">)</span>
+        <span class="n">face_extension_dicts</span><span class="p">(</span><span class="n">room_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">face_ext_dicts</span><span class="p">,</span>
+                             <span class="n">shade_ext_dicts</span><span class="p">,</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">door_ext_dicts</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">room_ext_dicts</span><span class="p">,</span> <span class="n">face_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">,</span> \
+        <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">door_ext_dicts</span></div>
+
+
+<div class="viewcode-block" id="face_extension_dicts"><a class="viewcode-back" href="../../honeybee.extensionutil.html#honeybee.extensionutil.face_extension_dicts">[docs]</a><span class="k">def</span> <span class="nf">face_extension_dicts</span><span class="p">(</span><span class="n">face_list</span><span class="p">,</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">face_ext_dicts</span><span class="p">,</span>
+                         <span class="n">shade_ext_dicts</span><span class="p">,</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">door_ext_dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all Face property dictionaires of an extension organized by geometry type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        face_list: A list of Room dictionaries.</span>
+<span class="sd">        extension_key: Text for the key of the extension (eg. &quot;energy&quot;, &quot;radiance&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with four elements</span>
+
+<span class="sd">        -   face_ext_dicts: A list with Face extension property dictionaries.</span>
+
+<span class="sd">        -   shade_ext_dicts: A list with Shade extension property dictionaries.</span>
+
+<span class="sd">        -   aperture_ext_dicts: A list with Aperture extension property dictionaries.</span>
+
+<span class="sd">        -   door_ext_dicts: A list with Door extension property dictionaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">face_dict</span> <span class="ow">in</span> <span class="n">face_list</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">face_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="n">extension_key</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">face_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;outdoor_shades&#39;</span> <span class="ow">in</span> <span class="n">face_dict</span> <span class="ow">and</span> <span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;outdoor_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;outdoor_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span>
+                                  <span class="n">shade_ext_dicts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;indoor_shades&#39;</span> <span class="ow">in</span> <span class="n">face_dict</span> <span class="ow">and</span> <span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;indoor_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;indoor_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span>
+                                  <span class="n">shade_ext_dicts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;apertures&#39;</span> <span class="ow">in</span> <span class="n">face_dict</span> <span class="ow">and</span> <span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;apertures&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aperture_extension_dicts</span><span class="p">(</span><span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;apertures&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span>
+                                     <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;doors&#39;</span> <span class="ow">in</span> <span class="n">face_dict</span> <span class="ow">and</span> <span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;doors&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">door_extension_dicts</span><span class="p">(</span><span class="n">face_dict</span><span class="p">[</span><span class="s1">&#39;doors&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span>
+                                 <span class="n">door_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">face_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">,</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">door_ext_dicts</span></div>
+
+
+<div class="viewcode-block" id="shade_extension_dicts"><a class="viewcode-back" href="../../honeybee.extensionutil.html#honeybee.extensionutil.shade_extension_dicts">[docs]</a><span class="k">def</span> <span class="nf">shade_extension_dicts</span><span class="p">(</span><span class="n">shade_list</span><span class="p">,</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all Shade property dictionaires of an extension organized by geometry type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        shade_list: A list of Shade dictionaries.</span>
+<span class="sd">        extension_key: Text for the key of the extension (eg. &quot;energy&quot;, &quot;radiance&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        shade_ext_dicts -- A list with Shade extension property dictionaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">shd_dict</span> <span class="ow">in</span> <span class="n">shade_list</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shade_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shd_dict</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="n">extension_key</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">shade_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">shade_ext_dicts</span></div>
+
+
+<div class="viewcode-block" id="aperture_extension_dicts"><a class="viewcode-back" href="../../honeybee.extensionutil.html#honeybee.extensionutil.aperture_extension_dicts">[docs]</a><span class="k">def</span> <span class="nf">aperture_extension_dicts</span><span class="p">(</span><span class="n">aperture_list</span><span class="p">,</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span>
+                             <span class="n">shade_ext_dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all Aperture property dictionaires of an extension organized by geometry type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        aperture_list: A list of Aperture dictionaries.</span>
+<span class="sd">        extension_key: Text for the key of the extension (eg. &quot;energy&quot;, &quot;radiance&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with two elements</span>
+
+<span class="sd">        -   aperture_ext_dicts: A list with Aperture extension property dictionaries.</span>
+
+<span class="sd">        -   shade_ext_dicts: A list with Shade extension property dictionaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ap_dict</span> <span class="ow">in</span> <span class="n">aperture_list</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">aperture_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap_dict</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="n">extension_key</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">aperture_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;outdoor_shades&#39;</span> <span class="ow">in</span> <span class="n">ap_dict</span> <span class="ow">and</span> <span class="n">ap_dict</span><span class="p">[</span><span class="s1">&#39;outdoor_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">ap_dict</span><span class="p">[</span><span class="s1">&#39;outdoor_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;indoor_shades&#39;</span> <span class="ow">in</span> <span class="n">ap_dict</span> <span class="ow">and</span> <span class="n">ap_dict</span><span class="p">[</span><span class="s1">&#39;indoor_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">ap_dict</span><span class="p">[</span><span class="s1">&#39;indoor_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aperture_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span></div>
+
+
+<div class="viewcode-block" id="door_extension_dicts"><a class="viewcode-back" href="../../honeybee.extensionutil.html#honeybee.extensionutil.door_extension_dicts">[docs]</a><span class="k">def</span> <span class="nf">door_extension_dicts</span><span class="p">(</span><span class="n">door_list</span><span class="p">,</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">door_ext_dicts</span><span class="p">,</span>
+                         <span class="n">shade_ext_dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all Door property dictionaires of an extension organized by geometry type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        door_list: A list of Door dictionaries.</span>
+<span class="sd">        extension_key: Text for the key of the extension (eg. &quot;energy&quot;, &quot;radiance&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with two elements</span>
+
+<span class="sd">        -   door_ext_dicts: A list with Door extension property dictionaries.</span>
+
+<span class="sd">        -   shade_ext_dicts: A list with Shade extension property dictionaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">dr_dict</span> <span class="ow">in</span> <span class="n">door_list</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">door_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dr_dict</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="n">extension_key</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">door_ext_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;outdoor_shades&#39;</span> <span class="ow">in</span> <span class="n">dr_dict</span> <span class="ow">and</span> <span class="n">dr_dict</span><span class="p">[</span><span class="s1">&#39;outdoor_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">dr_dict</span><span class="p">[</span><span class="s1">&#39;outdoor_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;indoor_shades&#39;</span> <span class="ow">in</span> <span class="n">dr_dict</span> <span class="ow">and</span> <span class="n">dr_dict</span><span class="p">[</span><span class="s1">&#39;indoor_shades&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shade_extension_dicts</span><span class="p">(</span><span class="n">dr_dict</span><span class="p">[</span><span class="s1">&#39;indoor_shades&#39;</span><span class="p">],</span> <span class="n">extension_key</span><span class="p">,</span> <span class="n">shade_ext_dicts</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">door_ext_dicts</span><span class="p">,</span> <span class="n">shade_ext_dicts</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

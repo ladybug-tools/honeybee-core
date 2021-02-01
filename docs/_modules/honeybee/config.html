@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.config &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee.config</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Honeybee configurations.</span>
+
+<span class="sd">Import this into every module where access configurations are needed.</span>
+
+<span class="sd">Usage:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    from honeybee.config import folders</span>
+<span class="sd">    print(folders.python_exe_path)</span>
+<span class="sd">    print(folders.default_simulation_folder)</span>
+<span class="sd">    folders.default_simulation_folder = &quot;C:/my_sim_folder&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">ladybug.config</span> <span class="k">as</span> <span class="nn">lb_config</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+
+<div class="viewcode-block" id="Folders"><a class="viewcode-back" href="../../honeybee.config.html#honeybee.config.Folders">[docs]</a><span class="k">class</span> <span class="nc">Folders</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Honeybee folders.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_file: The path to the config.json file from which folders are loaded.</span>
+<span class="sd">            If None, the config.json module included in this package will be used.</span>
+<span class="sd">            Default: None.</span>
+<span class="sd">        mute: If False, the paths to the various folders will be printed as they</span>
+<span class="sd">            are found. If True, no printing will occur upon initialization of this</span>
+<span class="sd">            class. Default: True.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * default_simulation_folder</span>
+<span class="sd">        * honeybee_schema_version</span>
+<span class="sd">        * honeybee_schema_version_str</span>
+<span class="sd">        * python_package_path</span>
+<span class="sd">        * python_scripts_path</span>
+<span class="sd">        * python_exe_path</span>
+<span class="sd">        * python_version</span>
+<span class="sd">        * python_version_str</span>
+<span class="sd">        * config_file</span>
+<span class="sd">        * mute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mute</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="c1"># set the mute value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mute</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">mute</span><span class="p">)</span>
+
+        <span class="c1"># load paths from the config JSON file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_file</span> <span class="o">=</span> <span class="n">config_file</span>
+
+        <span class="c1"># search for the version of honeybee-schema</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_honeybee_schema_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_honeybee_schema_version</span><span class="p">()</span>
+
+        <span class="c1"># set python version to only be retrived if requested</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_python_version</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_python_version_str</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">default_simulation_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set the path to the default simulation folder.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_simulation_folder</span>
+
+    <span class="nd">@default_simulation_folder</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">default_simulation_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>  <span class="c1"># check the default location for simulations</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_default_simulation_folder</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_simulation_folder</span> <span class="o">=</span> <span class="n">path</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mute</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_simulation_folder</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Path to the default simulation folder is set to: &#39;</span>
+                  <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_simulation_folder</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">honeybee_schema_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a tuple for the installed version of honeybee-schema (eg. (1, 35, 0)).</span>
+
+<span class="sd">        This will be None if the version could not be sensed (it was not installed</span>
+<span class="sd">        via pip) or if no honeybee-schema installation was found next to the</span>
+<span class="sd">        honeybee-core installation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_honeybee_schema_version</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">honeybee_schema_version_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a string for the installed version of honeybee-schema (eg. &quot;1.35.0&quot;).</span>
+
+<span class="sd">        This will be None if the version could not be sensed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_honeybee_schema_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_honeybee_schema_version</span><span class="p">])</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">python_package_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path to where this Python package is installed.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">python_scripts_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path to where Python CLI executable files are installed.</span>
+
+<span class="sd">        This can be used to call command line interface (CLI) executable files</span>
+<span class="sd">        directly (instead of using their usual entry points).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check the ladybug_tools folder for a Python installation</span>
+        <span class="n">lb_install</span> <span class="o">=</span> <span class="n">lb_config</span><span class="o">.</span><span class="n">folders</span><span class="o">.</span><span class="n">ladybug_tools_folder</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">lb_install</span><span class="p">):</span>
+            <span class="n">py_scripts</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lb_install</span><span class="p">,</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;Scripts&#39;</span><span class="p">)</span> \
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span> <span class="k">else</span> \
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lb_install</span><span class="p">,</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;bin&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">py_scripts</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">py_scripts</span>
+        <span class="n">sys_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span>  <span class="c1"># assume we are on some other cPython</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys_dir</span><span class="p">,</span> <span class="s1">&#39;Scripts&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span> <span class="k">else</span> <span class="n">sys_dir</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">python_exe_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path to the Python executable to be used for Ladybug Tools CLI calls.</span>
+
+<span class="sd">        If a version of Python is found within the ladybug_tools installation folder,</span>
+<span class="sd">        this will be the path to that version of Python. Otherwise, it will be</span>
+<span class="sd">        assumed that this is package is installed in cPython outside of the ladybug_tools</span>
+<span class="sd">        folder and the sys.executable will be returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check the ladybug_tools folder for a Python installation</span>
+        <span class="n">lb_install</span> <span class="o">=</span> <span class="n">lb_config</span><span class="o">.</span><span class="n">folders</span><span class="o">.</span><span class="n">ladybug_tools_folder</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">lb_install</span><span class="p">):</span>
+            <span class="n">py_exe_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lb_install</span><span class="p">,</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;python.exe&#39;</span><span class="p">)</span> \
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span> <span class="k">else</span> \
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lb_install</span><span class="p">,</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;bin&#39;</span><span class="p">,</span> <span class="s1">&#39;python3&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">py_exe_file</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">py_exe_file</span>
+        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>  <span class="c1"># assume we are on some other cPython</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a tuple for the version of python (eg. (3, 8, 2)).</span>
+
+<span class="sd">        This will be None if the version could not be sensed or if no Python</span>
+<span class="sd">        installation was found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_python_version_str</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_exe_path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_python_version_from_cli</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_python_version</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">python_version_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get text for the full version of python (eg.&quot;3.8.2&quot;).</span>
+
+<span class="sd">        This will be None if the version could not be sensed or if no Python</span>
+<span class="sd">        installation was found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_python_version_str</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_exe_path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_python_version_from_cli</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_python_version_str</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set the path to the config.json file from which folders are loaded.</span>
+
+<span class="sd">        Setting this to None will result in using the config.json module included</span>
+<span class="sd">        in this package.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_file</span>
+
+    <span class="nd">@config_file</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cfg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cfg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;config.json&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_from_file</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config_file</span> <span class="o">=</span> <span class="n">cfg</span>
+
+    <span class="k">def</span> <span class="nf">_load_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set all of the the properties of this object from a config JSON file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Path to a JSON file containing the file paths. A sample of this</span>
+<span class="sd">                JSON is the config.json file within this package.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check the default file path</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> \
+            <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No file found at </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
+
+        <span class="c1"># set the default paths to be all blank</span>
+        <span class="n">default_path</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;default_simulation_folder&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;&#39;</span>
+        <span class="p">}</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cfg</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">paths</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Failed to load paths from </span><span class="si">{}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">They will be set to defaults &#39;</span>
+                      <span class="s1">&#39;instead</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                        <span class="n">default_path</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># set paths for the default_simulation_folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_simulation_folder</span> <span class="o">=</span> <span class="n">default_path</span><span class="p">[</span><span class="s2">&quot;default_simulation_folder&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_python_version_from_cli</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set this object&#39;s Python version by making a call to a Python command.&quot;&quot;&quot;</span>
+        <span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">python_exe_path</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">]</span>
+        <span class="n">use_shell</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="n">use_shell</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="n">base_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">stdout</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;b&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\r\n&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_python_version_str</span> <span class="o">=</span> <span class="n">base_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_python_version</span> <span class="o">=</span> \
+                <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_python_version_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># failed to parse the version into values</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_find_default_simulation_folder</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;Find the the default simulation folder in its usual location.</span>
+
+<span class="sd">        An attempt will be made to create the directory if it does not already exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">home_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;HOME&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">)</span>
+        <span class="n">sim_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_folder</span><span class="p">,</span> <span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">sim_folder</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sim_folder</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s1">&#39;Failed to create default simulation &#39;</span>
+                              <span class="s1">&#39;folder: </span><span class="si">%s</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sim_folder</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">sim_folder</span>
+
+    <span class="k">def</span> <span class="nf">_find_honeybee_schema_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a tuple of 3 integers for the version of honeybee_schema if installed.&quot;&quot;&quot;</span>
+        <span class="n">schema_info_folder</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python_package_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;honeybee_schema-&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.dist-info&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python_package_path</span><span class="p">,</span> <span class="n">item</span><span class="p">)):</span>
+                    <span class="n">schema_info_folder</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="k">if</span> <span class="n">schema_info_folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">schema_info_folder</span> <span class="o">=</span> <span class="n">schema_info_folder</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.dist-info&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">ver</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">schema_info_folder</span> <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">ver</span><span class="p">:</span>  <span class="c1"># version was found in the file path name</span>
+                <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">ver</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;Object possesing all key folders within the configuration.&quot;&quot;&quot;</span>
+<span class="n">folders</span> <span class="o">=</span> <span class="n">Folders</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

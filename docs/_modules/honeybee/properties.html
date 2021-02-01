@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.properties &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee.properties</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+<span class="sd">&quot;&quot;&quot;Extension properties for Model, Room, Face, Shade, Aperture, Door.</span>
+
+<span class="sd">These objects hold all attributes assigned by extensions like honeybee-radiance</span>
+<span class="sd">and honeybee-energy.  Note that these Property objects are not intended to exist</span>
+<span class="sd">on their own but should have a host object.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">_Properties</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all Properties classes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        host: A honeybee-core geometry object that hosts these properties</span>
+<span class="sd">            (ie. Model, Room, Face, Shade, Aperture, Door).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_exclude</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="s1">&#39;host&#39;</span><span class="p">,</span> <span class="s1">&#39;move&#39;</span><span class="p">,</span> <span class="s1">&#39;rotate&#39;</span><span class="p">,</span> <span class="s1">&#39;rotate_xy&#39;</span><span class="p">,</span> <span class="s1">&#39;reflect&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;add_prefix&#39;</span><span class="p">,</span> <span class="s1">&#39;reset_to_default&#39;</span><span class="p">,</span> <span class="s1">&#39;to_dict&#39;</span><span class="p">,</span> <span class="s1">&#39;ToString&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize properties.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="n">host</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">host</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the object hosting these properties.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_host</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_extension_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">atr</span> <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">atr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">atr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exclude</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">moving_vec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply a move transform to extension attributes.</span>
+
+<span class="sd">        This is useful in cases where extension attributes possess geometric data</span>
+<span class="sd">        that should be moved alongside the host object. For example, dynamic</span>
+<span class="sd">        geometry within the honeybee-radiance state of an aperture should be</span>
+<span class="sd">        moved if the host aperture is moved.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            moving_vec: A ladybug_geometry Vector3D with the direction and distance</span>
+<span class="sd">                to move the face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;move&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to move </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply a rotatation transform to extension attributes.</span>
+
+<span class="sd">        This is useful in cases where extension attributes possess geometric data</span>
+<span class="sd">        that should be rotated alongside the host object. For example, dynamic</span>
+<span class="sd">        geometry within the honeybee-radiance state of an aperture should be</span>
+<span class="sd">        rotated if the host aperture is rotated.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            axis: A ladybug_geometry Vector3D axis representing the axis of rotation.</span>
+<span class="sd">            angle: An angle for rotation in degrees.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin around which the</span>
+<span class="sd">                object will be rotated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;rotate&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to rotate </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">rotate_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply a rotatation in the XY plane to extension attributes.</span>
+
+<span class="sd">        This is useful in cases where extension attributes possess geometric data</span>
+<span class="sd">        that should be rotated alongside the host object. For example, dynamic</span>
+<span class="sd">        geometry within the honeybee-radiance state of an aperture should be</span>
+<span class="sd">        rotated if the host aperture is rotated.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            angle: An angle in degrees.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin around which the</span>
+<span class="sd">                object will be rotated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;rotate_xy&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to rotate </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">reflect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply a reflection transform to extension attributes.</span>
+
+<span class="sd">        This is useful in cases where extension attributes possess geometric data</span>
+<span class="sd">        that should be reflected alongside the host object. For example, dynamic</span>
+<span class="sd">        geometry within the honeybee-radiance state of an aperture should be</span>
+<span class="sd">        reflected if the host aperture is reflected.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            plane: A ladybug_geometry Plane across which the object will</span>
+<span class="sd">                be reflected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;reflect&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to reflect </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply a scale transform to extension attributes.</span>
+
+<span class="sd">        This is useful in cases where extension attributes possess geometric data</span>
+<span class="sd">        that should be scaled alongside the host object. For example, dynamic</span>
+<span class="sd">        geometry within the honeybee-radiance state of an aperture should be</span>
+<span class="sd">        scaled if the host aperture is scaled.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            factor: A number representing how much the object should be scaled.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D representing the origin from which</span>
+<span class="sd">                to scale. If None, it will be scaled from the World origin (0, 0, 0).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to scale </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_duplicate_extension_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_properties</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Duplicate the attributes added by extensions.</span>
+
+<span class="sd">        This method should be called within the duplicate or __copy__ methods of</span>
+<span class="sd">        each honeybee-core geometry object after the core object has been duplicated.</span>
+<span class="sd">        This method only needs to be called on the new (duplicated) core object and</span>
+<span class="sd">        the extension properties of the original core object should be passed to</span>
+<span class="sd">        this method as the original_properties.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            original_properties: The properties object of the original core</span>
+<span class="sd">                object from which the duplicate was derived.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">original_properties</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;duplicate&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">atr</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="n">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to duplicate </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_add_prefix_extension_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the name extension attributes unique to this object by adding a prefix.</span>
+
+<span class="sd">        This is particularly useful in workflows where you duplicate and edit</span>
+<span class="sd">        a starting object and then want to combine it with the original object</span>
+<span class="sd">        into one Model (like making a model of repeated rooms).</span>
+
+<span class="sd">        Notably, this method only adds the prefix to extension attributes that must</span>
+<span class="sd">        be unique to the object and does not add the prefix to attributes that are</span>
+<span class="sd">        shared across several objects.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of the extension attributes&#39;</span>
+<span class="sd">                name. It is recommended that this name be short to avoid maxing</span>
+<span class="sd">                out the 100 allowable characters for honeybee names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;add_prefix&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to add prefix to </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_reset_extension_attr_to_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset all extension attributes for the object to be default.</span>
+
+<span class="sd">        This is useful in cases where properties that are hard-assigned to a specific</span>
+<span class="sd">        object might be illegal in combination with other properties and so they</span>
+<span class="sd">        should be reset upon the setting of the other properties. For example,</span>
+<span class="sd">        setting a Face type to AirBoundary typically makes certain types of energy</span>
+<span class="sd">        and radiance properties illegal. So calling this function whenever setting</span>
+<span class="sd">        Face type to AirBoundary will reset the extension attributes to the legal</span>
+<span class="sd">        default values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;reset_to_default&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">reset_to_default</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to reset_to_default for </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_add_extension_attr_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">include</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add attributes for extensions to the base dictionary.</span>
+
+<span class="sd">        This method should be called within the to_dict method of each honeybee-core</span>
+<span class="sd">        geometry object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            base: The dictionary of the core object without any extension attributes.</span>
+<span class="sd">                This method will add extension attributes to this dictionary. For</span>
+<span class="sd">                example, energy properties will appear under base[&#39;properties&#39;][&#39;energy&#39;].</span>
+<span class="sd">            abridged: Boolean to note whether the attributes of the extensions should</span>
+<span class="sd">                be abridged (True) or full (False). For example, if a Room&#39;s energy</span>
+<span class="sd">                properties are abridged, the program_type attribute under the energy</span>
+<span class="sd">                properties dictionary will just be the identifier of the program_type. If</span>
+<span class="sd">                it is full (not abridged), the program_type will be a complete</span>
+<span class="sd">                dictionary following the ProgramType schema. Abridged dictionaries</span>
+<span class="sd">                should be used within the Model.to_dict but full dictionaries should</span>
+<span class="sd">                be used within the to_dict methods of individual objects.</span>
+<span class="sd">            include: List of properties to filter keys that must be included in</span>
+<span class="sd">                output dictionary. For example [&#39;energy&#39;] will include &#39;energy&#39; key if</span>
+<span class="sd">                available in properties to_dict. By default all the keys will be</span>
+<span class="sd">                included. To exclude all the keys from extensions use an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">include</span> <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;to_dict&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">base</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">abridged</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to convert </span><span class="si">{}</span><span class="s1"> to a dict: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">base</span>
+
+    <span class="k">def</span> <span class="nf">_load_extension_attr_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get attributes for extensions from a dictionary of the properties.</span>
+
+<span class="sd">        This method should be called within the from_dict method of each honeybee-core</span>
+<span class="sd">        geometry object. Specifically, this method should be called on the core</span>
+<span class="sd">        object after it has been created from a dictionary but lacks any of the</span>
+<span class="sd">        extension attributes in the dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            property_dict: A dictionary of properties for the object (ie.</span>
+<span class="sd">                FaceProperties, RoomProperties). These will be used to load</span>
+<span class="sd">                attributes from the dictionary and assign them to the object on</span>
+<span class="sd">                which this method is called.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;from_dict&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">atr</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+                    <span class="n">property_dict</span><span class="p">[</span><span class="n">atr</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># the property_dict possesses no properties for that extension</span>
+
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Properties representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;BaseProperties&#39;</span>
+
+
+<div class="viewcode-block" id="ModelProperties"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ModelProperties">[docs]</a><span class="k">class</span> <span class="nc">ModelProperties</span><span class="p">(</span><span class="n">_Properties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Honeybee Model Properties.</span>
+
+<span class="sd">    Model properties. This class will be extended by extensions.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        model = Model(&#39;New Elementary School&#39;, list_of_rooms)</span>
+<span class="sd">        model.properties -&gt; ModelProperties</span>
+<span class="sd">        model.properties.radiance -&gt; ModelRadianceProperties</span>
+<span class="sd">        model.properties.energy -&gt; ModelEnergyProperties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ModelProperties.to_dict"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ModelProperties.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert properties to dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            include: A list of keys to be included in dictionary.</span>
+<span class="sd">                If None all the available keys will be included.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;ModelProperties&#39;</span><span class="p">}</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">include</span> <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;to_dict&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">base</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>  <span class="c1"># no abridged dictionary for model</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to convert </span><span class="si">{}</span><span class="s1"> to a dict: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+<div class="viewcode-block" id="ModelProperties.apply_properties_from_dict"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ModelProperties.apply_properties_from_dict">[docs]</a>    <span class="k">def</span> <span class="nf">apply_properties_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply extension properties from a Model dictionary to the host Model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary representation of an entire honeybee-core Model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extension_attributes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="n">atr</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;apply_properties_from_dict&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">apply_properties_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s1">&#39;Failed to apply </span><span class="si">{}</span><span class="s1"> properties to the Model: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atr</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Properties representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;ModelProperties: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RoomProperties"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.RoomProperties">[docs]</a><span class="k">class</span> <span class="nc">RoomProperties</span><span class="p">(</span><span class="n">_Properties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Honeybee Room Properties.</span>
+
+<span class="sd">    Room properties. This class will be extended by extensions.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        room = Room(&#39;Bedroom&#39;, geometry)</span>
+<span class="sd">        room.properties -&gt; RoomProperties</span>
+<span class="sd">        room.properties.radiance -&gt; RoomRadianceProperties</span>
+<span class="sd">        room.properties.energy -&gt; RoomEnergyProperties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RoomProperties.to_dict"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.RoomProperties.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abridged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert properties to dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abridged: Boolean to note whether the full dictionary describing the</span>
+<span class="sd">                object should be returned (False) or just an abridged version (True).</span>
+<span class="sd">                Default: False.</span>
+<span class="sd">            include: A list of keys to be included in dictionary.</span>
+<span class="sd">                If None all the available keys will be included.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;RoomProperties&#39;</span><span class="p">}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">abridged</span> <span class="k">else</span> \
+            <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;RoomPropertiesAbridged&#39;</span><span class="p">}</span>
+
+        <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_extension_attr_to_dict</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">include</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+<div class="viewcode-block" id="RoomProperties.add_prefix"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.RoomProperties.add_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the identifier extension attributes unique to this object by adding a prefix.</span>
+
+<span class="sd">        Notably, this method only adds the prefix to extension attributes that must</span>
+<span class="sd">        be unique to the Room (eg. single-room HVAC systems) and does not add the</span>
+<span class="sd">        prefix to attributes that are shared across several Rooms (eg. ConstructionSets).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of extension attribute identifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_prefix_extension_attr</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RoomProperties.reset_to_default"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.RoomProperties.reset_to_default">[docs]</a>    <span class="k">def</span> <span class="nf">reset_to_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset the extension properties assigned at the level of this Room to default.</span>
+
+<span class="sd">        This typically means erasing any ConstructionSets or ModifierSets assigned</span>
+<span class="sd">        to this Room among other properties.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_extension_attr_to_default</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Properties representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;RoomProperties: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FaceProperties"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.FaceProperties">[docs]</a><span class="k">class</span> <span class="nc">FaceProperties</span><span class="p">(</span><span class="n">_Properties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Honeybee Face Properties.</span>
+
+<span class="sd">    Face properties. This class will be extended by extensions.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        face = Face(&#39;South Bedroom Wall&#39;, geometry)</span>
+<span class="sd">        face.properties -&gt; FaceProperties</span>
+<span class="sd">        face.properties.radiance -&gt; FaceRadianceProperties</span>
+<span class="sd">        face.properties.energy -&gt; FaceEnergyProperties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FaceProperties.to_dict"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.FaceProperties.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abridged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert properties to dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abridged: Boolean to note whether the full dictionary describing the</span>
+<span class="sd">                object should be returned (False) or just an abridged version (True).</span>
+<span class="sd">                Default: False.</span>
+<span class="sd">            include: A list of keys to be included in dictionary besides Face type</span>
+<span class="sd">                and boundary_condition. If None all the available keys will be included.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;FaceProperties&#39;</span><span class="p">}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">abridged</span> <span class="k">else</span> \
+            <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;FacePropertiesAbridged&#39;</span><span class="p">}</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_extension_attr_to_dict</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">include</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+<div class="viewcode-block" id="FaceProperties.add_prefix"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.FaceProperties.add_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the identifier extension attributes unique to this object by adding a prefix.</span>
+
+<span class="sd">        Notably, this method only adds the prefix to extension attributes that must</span>
+<span class="sd">        be unique to the Face and does not add the prefix to attributes that are</span>
+<span class="sd">        shared across several Faces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of extension attribute identifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_prefix_extension_attr</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FaceProperties.reset_to_default"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.FaceProperties.reset_to_default">[docs]</a>    <span class="k">def</span> <span class="nf">reset_to_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset the extension properties assigned at the level of this Face to default.</span>
+
+<span class="sd">        This typically means erasing any Constructions or Modifiers assigned to this</span>
+<span class="sd">        Face (having them instead assigned by ConstructionSets and ModifierSets).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_extension_attr_to_default</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Properties representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;FaceProperties: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ShadeProperties"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ShadeProperties">[docs]</a><span class="k">class</span> <span class="nc">ShadeProperties</span><span class="p">(</span><span class="n">_Properties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Honeybee Shade Properties.</span>
+
+<span class="sd">    Shade properties. This class will be extended by extensions.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        shade = Shade(&#39;Deep Overhang&#39;, geometry)</span>
+<span class="sd">        shade.properties -&gt; ShadeProperties</span>
+<span class="sd">        shade.properties.radiance -&gt; ShadeRadianceProperties</span>
+<span class="sd">        shade.properties.energy -&gt; ShadeEnergyProperties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ShadeProperties.to_dict"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ShadeProperties.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abridged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert properties to dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abridged: Boolean to note whether the full dictionary describing the</span>
+<span class="sd">                object should be returned (False) or just an abridged version (True).</span>
+<span class="sd">                Default: False.</span>
+<span class="sd">            include: A list of keys to be included in dictionary.</span>
+<span class="sd">                If None all the available keys will be included.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;ShadeProperties&#39;</span><span class="p">}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">abridged</span> <span class="k">else</span> \
+            <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;ShadePropertiesAbridged&#39;</span><span class="p">}</span>
+
+        <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_extension_attr_to_dict</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">include</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+<div class="viewcode-block" id="ShadeProperties.add_prefix"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ShadeProperties.add_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the identifier extension attributes unique to this object by adding a prefix.</span>
+
+<span class="sd">        Notably, this method only adds the prefix to extension attributes that must</span>
+<span class="sd">        be unique to the Shade and does not add the prefix to attributes that are</span>
+<span class="sd">        shared across several Shades.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of extension attribute identifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_prefix_extension_attr</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ShadeProperties.reset_to_default"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ShadeProperties.reset_to_default">[docs]</a>    <span class="k">def</span> <span class="nf">reset_to_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset the extension properties assigned at the level of this Shade to default.</span>
+
+<span class="sd">        This typically means erasing any Constructions or Modifiers assigned to this</span>
+<span class="sd">        Shade (having them instead assigned by ConstructionSets and ModifierSets).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_extension_attr_to_default</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Properties representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;ShadeProperties: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ApertureProperties"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ApertureProperties">[docs]</a><span class="k">class</span> <span class="nc">ApertureProperties</span><span class="p">(</span><span class="n">_Properties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Honeybee Aperture Properties.</span>
+
+<span class="sd">    Aperture properties. This class will be extended by extensions.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        aperture = Aperture(&#39;Window to My Soul&#39;, geometry)</span>
+<span class="sd">        aperture.properties -&gt; ApertureProperties</span>
+<span class="sd">        aperture.properties.radiance -&gt; ApertureRadianceProperties</span>
+<span class="sd">        aperture.properties.energy -&gt; ApertureEnergyProperties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ApertureProperties.to_dict"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ApertureProperties.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abridged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert properties to dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abridged: Boolean to note whether the full dictionary describing the</span>
+<span class="sd">                object should be returned (False) or just an abridged version (True).</span>
+<span class="sd">                Default: False.</span>
+<span class="sd">            include: A list of keys to be included in dictionary.</span>
+<span class="sd">                If None all the available keys will be included.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;ApertureProperties&#39;</span><span class="p">}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">abridged</span> <span class="k">else</span> \
+            <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;AperturePropertiesAbridged&#39;</span><span class="p">}</span>
+
+        <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_extension_attr_to_dict</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">include</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+<div class="viewcode-block" id="ApertureProperties.add_prefix"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ApertureProperties.add_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the identifier extension attributes unique to this object by adding a prefix.</span>
+
+<span class="sd">        Notably, this method only adds the prefix to extension attributes that must</span>
+<span class="sd">        be unique to the Aperture and does not add the prefix to attributes that are</span>
+<span class="sd">        shared across several Apertures.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of extension attribute identifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_prefix_extension_attr</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ApertureProperties.reset_to_default"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.ApertureProperties.reset_to_default">[docs]</a>    <span class="k">def</span> <span class="nf">reset_to_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset the extension properties assigned to this Aperture to default.</span>
+
+<span class="sd">        This typically means erasing any Constructions or Modifiers assigned to this</span>
+<span class="sd">        Aperture (having them instead assigned by ConstructionSets and ModifierSets).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_extension_attr_to_default</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Properties representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;ApertureProperties: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DoorProperties"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.DoorProperties">[docs]</a><span class="k">class</span> <span class="nc">DoorProperties</span><span class="p">(</span><span class="n">_Properties</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Honeybee Door Properties.</span>
+
+<span class="sd">    Door properties. This class will be extended by extensions.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        door = Door(&#39;Front Door&#39;, geometry)</span>
+<span class="sd">        door.properties -&gt; DoorProperties</span>
+<span class="sd">        door.properties.radiance -&gt; DoorRadianceProperties</span>
+<span class="sd">        door.properties.energy -&gt; DoorEnergyProperties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DoorProperties.to_dict"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.DoorProperties.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abridged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert properties to dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abridged: Boolean to note whether the full dictionary describing the</span>
+<span class="sd">                object should be returned (False) or just an abridged version (True).</span>
+<span class="sd">                Default: False.</span>
+<span class="sd">            include: A list of keys to be included in dictionary.</span>
+<span class="sd">                If None all the available keys will be included.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;DoorProperties&#39;</span><span class="p">}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">abridged</span> <span class="k">else</span> \
+            <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;DoorPropertiesAbridged&#39;</span><span class="p">}</span>
+
+        <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_extension_attr_to_dict</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">include</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+<div class="viewcode-block" id="DoorProperties.add_prefix"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.DoorProperties.add_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the identifier extension attributes unique to this object by adding a prefix.</span>
+
+<span class="sd">        Notably, this method only adds the prefix to extension attributes that must</span>
+<span class="sd">        be unique to the Door and does not add the prefix to attributes that are</span>
+<span class="sd">        shared across several Doors.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of extension attribute identifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_prefix_extension_attr</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DoorProperties.reset_to_default"><a class="viewcode-back" href="../../honeybee.properties.html#honeybee.properties.DoorProperties.reset_to_default">[docs]</a>    <span class="k">def</span> <span class="nf">reset_to_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset the extension properties assigned to this Door to default.</span>
+
+<span class="sd">        This typically means erasing any Constructions or Modifiers assigned to this</span>
+<span class="sd">        Door (having them instead assigned by ConstructionSets and ModifierSets).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_extension_attr_to_default</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Properties representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;DoorProperties: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

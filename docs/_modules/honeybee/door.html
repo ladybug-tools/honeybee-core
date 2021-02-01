@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.door &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee.door</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+<span class="sd">&quot;&quot;&quot;Honeybee Door.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">from</span> <span class="nn">._basewithshade</span> <span class="kn">import</span> <span class="n">_BaseWithShade</span>
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">clean_string</span>
+<span class="kn">from</span> <span class="nn">.properties</span> <span class="kn">import</span> <span class="n">DoorProperties</span>
+<span class="kn">from</span> <span class="nn">.boundarycondition</span> <span class="kn">import</span> <span class="n">boundary_conditions</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">,</span> <span class="n">Surface</span>
+<span class="kn">from</span> <span class="nn">.shade</span> <span class="kn">import</span> <span class="n">Shade</span>
+<span class="kn">import</span> <span class="nn">honeybee.writer.door</span> <span class="k">as</span> <span class="nn">writer</span>
+
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry2d.pointvector</span> <span class="kn">import</span> <span class="n">Vector2D</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.pointvector</span> <span class="kn">import</span> <span class="n">Point3D</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.face</span> <span class="kn">import</span> <span class="n">Face3D</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+<div class="viewcode-block" id="Door"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door">[docs]</a><span class="k">class</span> <span class="nc">Door</span><span class="p">(</span><span class="n">_BaseWithShade</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A single planar Door in a Face.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        identifier: Text string for a unique Door ID. Must be &lt; 100 characters and</span>
+<span class="sd">            not contain any spaces or special characters.</span>
+<span class="sd">        geometry: A ladybug-geometry Face3D.</span>
+<span class="sd">        boundary_condition: Boundary condition object (Outdoors, Surface, etc.).</span>
+<span class="sd">            Default: Outdoors.</span>
+<span class="sd">        is_glass: Boolean to note whether this object is a glass door as opposed</span>
+<span class="sd">            to an opaque door. Default: False.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * identifier</span>
+<span class="sd">        * display_name</span>
+<span class="sd">        * boundary_condition</span>
+<span class="sd">        * is_glass</span>
+<span class="sd">        * indoor_shades</span>
+<span class="sd">        * outdoor_shades</span>
+<span class="sd">        * parent</span>
+<span class="sd">        * has_parent</span>
+<span class="sd">        * geometry</span>
+<span class="sd">        * vertices</span>
+<span class="sd">        * upper_left_vertices</span>
+<span class="sd">        * triangulated_mesh3d</span>
+<span class="sd">        * normal</span>
+<span class="sd">        * center</span>
+<span class="sd">        * area</span>
+<span class="sd">        * perimeter</span>
+<span class="sd">        * user_data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_geometry&#39;</span><span class="p">,</span> <span class="s1">&#39;_parent&#39;</span><span class="p">,</span> <span class="s1">&#39;_boundary_condition&#39;</span><span class="p">,</span> <span class="s1">&#39;_is_glass&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_glass</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A single planar Door in a Face.&quot;&quot;&quot;</span>
+        <span class="n">_BaseWithShade</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">)</span>  <span class="c1"># process the identifier</span>
+
+        <span class="c1"># process the geometry</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Face3D</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected ladybug_geometry Face3D. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">geometry</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">geometry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># _parent will be set when the Face is added to a Face</span>
+
+        <span class="c1"># process the boundary condition and type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">boundary_condition</span> <span class="ow">or</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">outdoors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_glass</span> <span class="o">=</span> <span class="n">is_glass</span>
+
+        <span class="c1"># initialize properties for extensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span> <span class="o">=</span> <span class="n">DoorProperties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Door.from_dict"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize an Door from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary representation of an Door object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check the type of dictionary</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Door&#39;</span><span class="p">,</span> <span class="s1">&#39;Expected Door dictionary. &#39;</span> \
+            <span class="s1">&#39;Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+
+        <span class="c1"># serialize the door</span>
+        <span class="n">is_glass</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;is_glass&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;is_glass&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Outdoors&#39;</span><span class="p">:</span>
+            <span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">Outdoors</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Surface&#39;</span><span class="p">:</span>
+            <span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">Surface</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Boundary condition &quot;</span><span class="si">{}</span><span class="s1">&quot; is not supported for Door.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]))</span>
+        <span class="n">door</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">],</span> <span class="n">Face3D</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]),</span>
+                   <span class="n">boundary_condition</span><span class="p">,</span> <span class="n">is_glass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;display_name&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">door</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;user_data&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">door</span><span class="o">.</span><span class="n">user_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span>
+        <span class="n">door</span><span class="o">.</span><span class="n">_recover_shades_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># assign extension properties</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DoorProperties&#39;</span><span class="p">:</span>
+            <span class="n">door</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">_load_extension_attr_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">door</span></div>
+
+<div class="viewcode-block" id="Door.from_vertices"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.from_vertices">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_vertices</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_glass</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a Door from vertices with each vertex as an iterable of 3 floats.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            identifier: Text string for a unique Door ID. Must be &lt; 100 characters and</span>
+<span class="sd">                not contain any spaces or special characters.</span>
+<span class="sd">            vertices: A flattened list of 3 or more vertices as (x, y, z).</span>
+<span class="sd">            boundary_condition: Boundary condition object (eg. Outdoors, Surface).</span>
+<span class="sd">                Default: Outdoors.</span>
+<span class="sd">            is_glass: Boolean to note whether this object is a glass door as opposed</span>
+<span class="sd">                to an opaque door. Default: False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">Point3D</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vertices</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="p">,</span> <span class="n">is_glass</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">boundary_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set the boundary condition of this door.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span>
+
+    <span class="nd">@boundary_condition</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">boundary_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Surface</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">boundary_condition_objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Surface boundary &#39;</span> \
+                    <span class="s1">&#39;condition for Door must have 3 boundary_condition_objects.&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Door only supports Outdoor or Surface boundary &#39;</span>
+                                 <span class="s1">&#39;condition. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_glass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set a boolean to note whether this object is a glass door.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_glass</span>
+
+    <span class="nd">@is_glass</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">is_glass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_glass</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Expected boolean for Door.is_glass. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the parent Face if assigned. None if not assigned.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether this Door has a parent Face.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Face3D object representing the door.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of vertices for the door (in counter-clockwise order).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">vertices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">upper_left_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of vertices starting from the upper-left corner.</span>
+
+<span class="sd">        This property should be used when exporting to EnergyPlus / OpenStudio.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">upper_left_counter_clockwise_vertices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">triangulated_mesh3d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Mesh3D of the door geometry composed of triangles.</span>
+
+<span class="sd">        In EnergyPlus / OpenStudio workflows, this property is used to subdivide</span>
+<span class="sd">        the door when it has more than 4 vertices. This is necessary since</span>
+<span class="sd">        EnergyPlus cannot accept sub-faces with more than 4 vertices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">triangulated_mesh3d</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">normal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Vector3D for the direction the door is pointing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">normal</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Point3D for the center of the door.</span>
+
+<span class="sd">        Note that this is the center of the bounding rectangle around this geometry</span>
+<span class="sd">        and not the area centroid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">center</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the area of the door.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">area</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">perimeter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the perimeter of the door.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">perimeter</span>
+
+<div class="viewcode-block" id="Door.horizontal_orientation"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.horizontal_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">north_vector</span><span class="o">=</span><span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;Get a number between 0 and 360 for the orientation of the door in degrees.</span>
+
+<span class="sd">        0 = North, 90 = East, 180 = South, 270 = West</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            north_vector: A ladybug_geometry Vector2D for the north direction.</span>
+<span class="sd">                Default is the Y-axis (0, 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span>
+            <span class="n">north_vector</span><span class="o">.</span><span class="n">angle_clockwise</span><span class="p">(</span><span class="n">Vector2D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="Door.cardinal_direction"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.cardinal_direction">[docs]</a>    <span class="k">def</span> <span class="nf">cardinal_direction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">north_vector</span><span class="o">=</span><span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;Get text description for the cardinal direction that the door is pointing.</span>
+
+<span class="sd">        Will be one of the following: (&#39;North&#39;, &#39;NorthEast&#39;, &#39;East&#39;, &#39;SouthEast&#39;,</span>
+<span class="sd">        &#39;South&#39;, &#39;SouthWest&#39;, &#39;West&#39;, &#39;NorthWest&#39;).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            north_vector: A ladybug_geometry Vector2D for the north direction.</span>
+<span class="sd">                Default is the Y-axis (0, 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">orient</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_orientation</span><span class="p">(</span><span class="n">north_vector</span><span class="p">)</span>
+        <span class="n">orient_text</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;North&#39;</span><span class="p">,</span> <span class="s1">&#39;NorthEast&#39;</span><span class="p">,</span> <span class="s1">&#39;East&#39;</span><span class="p">,</span> <span class="s1">&#39;SouthEast&#39;</span><span class="p">,</span> <span class="s1">&#39;South&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;SouthWest&#39;</span><span class="p">,</span> <span class="s1">&#39;West&#39;</span><span class="p">,</span> <span class="s1">&#39;NorthWest&#39;</span><span class="p">)</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="p">(</span><span class="mf">22.5</span><span class="p">,</span> <span class="mf">67.5</span><span class="p">,</span> <span class="mf">112.5</span><span class="p">,</span> <span class="mf">157.5</span><span class="p">,</span> <span class="mf">202.5</span><span class="p">,</span> <span class="mf">247.5</span><span class="p">,</span> <span class="mf">292.5</span><span class="p">,</span> <span class="mf">337.5</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ang</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">angles</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">orient</span> <span class="o">&lt;</span> <span class="n">ang</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">orient_text</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">orient_text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Door.add_prefix"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.add_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the identifier of this object and all child objects by inserting a prefix.</span>
+
+<span class="sd">        This is particularly useful in workflows where you duplicate and edit</span>
+<span class="sd">        a starting object and then want to combine it with the original object</span>
+<span class="sd">        into one Model (like making a model of repeated rooms) since all objects</span>
+<span class="sd">        within a Model must have unique identifiers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of this object&#39;s</span>
+<span class="sd">                (and child objects&#39;) identifier and display_name. It is recommended</span>
+<span class="sd">                that this prefix be short to avoid maxing out the 100 allowable</span>
+<span class="sd">                characters for honeybee identifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="n">clean_string</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_prefix_shades</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span><span class="p">,</span> <span class="n">Surface</span><span class="p">):</span>
+            <span class="n">new_bc_objs</span> <span class="o">=</span> <span class="p">(</span><span class="n">clean_string</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">adj_name</span><span class="p">))</span> <span class="k">for</span> <span class="n">adj_name</span>
+                           <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span><span class="o">.</span><span class="n">_boundary_condition_objects</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span> <span class="o">=</span> <span class="n">Surface</span><span class="p">(</span><span class="n">new_bc_objs</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Door.set_adjacency"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.set_adjacency">[docs]</a>    <span class="k">def</span> <span class="nf">set_adjacency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_door</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set this door to be adjacent to another (and vice versa).</span>
+
+<span class="sd">        Note that this method does not verify whether the other_door geometry is</span>
+<span class="sd">        co-planar or compatible with this one so it is recommended that a test</span>
+<span class="sd">        be performed before using this method in order to verify these criteria.</span>
+<span class="sd">        The Face3D.is_centered_adjacent() or the Face3D.is_geometrically_equivalent()</span>
+<span class="sd">        methods are both suitable for this purpose.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other_door: Another Door object to be set adjacent to this one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_door</span><span class="p">,</span> <span class="n">Door</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected Door. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other_door</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">other_door</span><span class="o">.</span><span class="n">is_glass</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_glass</span><span class="p">,</span> \
+            <span class="s1">&#39;Adjacent doors must have matching is_glass properties.&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span> <span class="o">=</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">surface</span><span class="p">(</span><span class="n">other_door</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">other_door</span><span class="o">.</span><span class="n">_boundary_condition</span> <span class="o">=</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Door.overhang"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.overhang">[docs]</a>    <span class="k">def</span> <span class="nf">overhang</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">indoor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a single overhang for this Door. Can represent entryway awnings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            depth: A number for the overhang depth.</span>
+<span class="sd">            angle: A number for the for an angle to rotate the overhang in degrees.</span>
+<span class="sd">                Positive numbers indicate a downward rotation while negative numbers</span>
+<span class="sd">                indicate an upward rotation. Default is 0 for no rotation.</span>
+<span class="sd">            indoor: Boolean for whether the overhang should be generated facing the</span>
+<span class="sd">                opposite direction of the aperture normal (typically meaning</span>
+<span class="sd">                indoor geometry). Default: False.</span>
+<span class="sd">            tolerance: An optional value to return None if the overhang has a length less</span>
+<span class="sd">                than the tolerance. Default: 0.01, suitable for objects in meters.</span>
+<span class="sd">            base_name: Optional base name for the shade objects. If None, the default</span>
+<span class="sd">                is InOverhang or OutOverhang depending on whether indoor is True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the new Shade objects that have been generated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get a name for the shade</span>
+        <span class="k">if</span> <span class="n">base_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base_name</span> <span class="o">=</span> <span class="s1">&#39;InOverhang&#39;</span> <span class="k">if</span> <span class="n">indoor</span> <span class="k">else</span> <span class="s1">&#39;OutOverhang&#39;</span>
+        <span class="n">shd_name_base</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">base_name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span>
+
+        <span class="c1"># create the shade geometry</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">dr_geo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="k">if</span> <span class="n">indoor</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+        <span class="n">shade_faces</span> <span class="o">=</span> <span class="n">dr_geo</span><span class="o">.</span><span class="n">countour_fins_by_number</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+
+        <span class="c1"># create the Shade objects</span>
+        <span class="n">overhang</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">shade_geo</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shade_faces</span><span class="p">):</span>
+            <span class="n">overhang</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Shade</span><span class="p">(</span><span class="n">shd_name_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">shade_geo</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">indoor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_indoor_shades</span><span class="p">(</span><span class="n">overhang</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_outdoor_shades</span><span class="p">(</span><span class="n">overhang</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">overhang</span></div>
+
+<div class="viewcode-block" id="Door.move"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">moving_vec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Move this Door along a vector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            moving_vec: A ladybug_geometry Vector3D with the direction and distance</span>
+<span class="sd">                to move the face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_shades</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Door.rotate"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rotate this Door by a certain angle around an axis and origin.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            axis: A ladybug_geometry Vector3D axis representing the axis of rotation.</span>
+<span class="sd">            angle: An angle for rotation in degrees.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin around which the</span>
+<span class="sd">                object will be rotated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_shades</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Door.rotate_xy"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.rotate_xy">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rotate this Door counterclockwise in the world XY plane by a certain angle.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            angle: An angle in degrees.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin around which the</span>
+<span class="sd">                object will be rotated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_xy_shades</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Door.reflect"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.reflect">[docs]</a>    <span class="k">def</span> <span class="nf">reflect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reflect this Door across a plane.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            plane: A ladybug_geometry Plane across which the object will</span>
+<span class="sd">                be reflected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">plane</span><span class="o">.</span><span class="n">o</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reflect_shades</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Door.scale"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scale this Door by a factor from an origin point.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            factor: A number representing how much the object should be scaled.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D representing the origin from which</span>
+<span class="sd">                to scale. If None, it will be scaled from the World origin (0, 0, 0).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_shades</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Door.remove_colinear_vertices"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.remove_colinear_vertices">[docs]</a>    <span class="k">def</span> <span class="nf">remove_colinear_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all colinear and duplicate vertices from this object&#39;s geometry.</span>
+
+<span class="sd">        Note that this does not affect any assigned Shades.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum distance between a vertex and the boundary segments</span>
+<span class="sd">                at which point the vertex is considered colinear. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">remove_colinear_vertices</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Door.check_planar"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.check_planar">[docs]</a>    <span class="k">def</span> <span class="nf">check_planar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether all of the Door&#39;s vertices lie within the same plane.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum distance between a given vertex and a the</span>
+<span class="sd">                object&#39;s plane at which the vertex is said to lie in the plane.</span>
+<span class="sd">                Default: 0.01, suitable for objects in meters.</span>
+<span class="sd">            raise_exception: Boolean to note whether an ValueError should be</span>
+<span class="sd">                raised if a vertex does not lie within the object&#39;s plane.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">check_planar</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Door &quot;</span><span class="si">{}</span><span class="s1">&quot; is not planar.</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Door.check_self_intersecting"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.check_self_intersecting">[docs]</a>    <span class="k">def</span> <span class="nf">check_self_intersecting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the edges of the Door intersect one another (like a bowtie).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            raise_exception: If True, a ValueError will be raised if the object</span>
+<span class="sd">                intersects with itself. Default: True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_self_intersecting</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Door &quot;</span><span class="si">{}</span><span class="s1">&quot; has self-intersecting edges.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Door.check_non_zero"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.check_non_zero">[docs]</a>    <span class="k">def</span> <span class="nf">check_non_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the area of the Door is above a certain &quot;zero&quot; tolerance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum acceptable area of the object. Default is 0.0001,</span>
+<span class="sd">                which is equal to 1 cm2 when model units are meters. This is just</span>
+<span class="sd">                above the smallest size that OpenStudio will accept.</span>
+<span class="sd">            raise_exception: If True, a ValueError will be raised if the object</span>
+<span class="sd">                area is below the tolerance. Default: True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">&lt;</span> <span class="n">tolerance</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Door &quot;</span><span class="si">{}</span><span class="s1">&quot; geometry is too small. Area must be at least </span><span class="si">{}</span><span class="s1">. &#39;</span>
+                    <span class="s1">&#39;Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Door writer object.</span>
+
+<span class="sd">        Use this method to access Writer class to write the door in different formats.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            door.to.idf(door) -&gt; idf string.</span>
+<span class="sd">            door.to.radiance(door) -&gt; Radiance string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">writer</span>
+
+<div class="viewcode-block" id="Door.to_dict"><a class="viewcode-back" href="../../honeybee.door.html#honeybee.door.Door.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abridged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">included_prop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return Door as a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abridged: Boolean to note whether the extension properties of the</span>
+<span class="sd">                object (ie. materials, constructions) should be included in detail</span>
+<span class="sd">                (False) or just referenced by identifier (True). Default: False.</span>
+<span class="sd">            included_prop: List of properties to filter keys that must be included in</span>
+<span class="sd">                output dictionary. For example [&#39;energy&#39;] will include &#39;energy&#39; key if</span>
+<span class="sd">                available in properties to_dict. By default all the keys will be</span>
+<span class="sd">                included. To exclude all the keys from extensions use an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Door&#39;</span><span class="p">}</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span>
+        <span class="n">enforce_upper_left</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;energy&#39;</span> <span class="ow">in</span> <span class="n">base</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">enforce_upper_left</span><span class="p">)</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;is_glass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_glass</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> \
+                <span class="s1">&#39;energy&#39;</span> <span class="ow">in</span> <span class="n">base</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_shades_to_dict</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">new_door</span> <span class="o">=</span> <span class="n">Door</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_glass</span><span class="p">)</span>
+        <span class="n">new_door</span><span class="o">.</span><span class="n">_display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span>
+        <span class="n">new_door</span><span class="o">.</span><span class="n">_user_data</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duplicate_child_shades</span><span class="p">(</span><span class="n">new_door</span><span class="p">)</span>
+        <span class="n">new_door</span><span class="o">.</span><span class="n">_properties</span><span class="o">.</span><span class="n">_duplicate_extension_attr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_door</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Door: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.room &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee.room</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+<span class="sd">&quot;&quot;&quot;Honeybee Room.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">from</span> <span class="nn">._basewithshade</span> <span class="kn">import</span> <span class="n">_BaseWithShade</span>
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">float_in_range</span><span class="p">,</span> <span class="n">int_in_range</span><span class="p">,</span> <span class="n">valid_string</span><span class="p">,</span> <span class="n">clean_string</span>
+<span class="kn">from</span> <span class="nn">.properties</span> <span class="kn">import</span> <span class="n">RoomProperties</span>
+<span class="kn">from</span> <span class="nn">.face</span> <span class="kn">import</span> <span class="n">Face</span>
+<span class="kn">from</span> <span class="nn">.facetype</span> <span class="kn">import</span> <span class="n">get_type_from_normal</span><span class="p">,</span> <span class="n">Wall</span><span class="p">,</span> <span class="n">Floor</span><span class="p">,</span> <span class="n">RoofCeiling</span>
+<span class="kn">from</span> <span class="nn">.boundarycondition</span> <span class="kn">import</span> <span class="n">get_bc_from_position</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">,</span> <span class="n">Ground</span><span class="p">,</span> <span class="n">Surface</span><span class="p">,</span> \
+    <span class="n">boundary_conditions</span>
+<span class="kn">from</span> <span class="nn">honeybee.orientation</span> <span class="kn">import</span> <span class="n">angles_from_num_orient</span><span class="p">,</span> <span class="n">orient_index</span>
+<span class="kn">import</span> <span class="nn">honeybee.writer.room</span> <span class="k">as</span> <span class="nn">writer</span>
+
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry2d.pointvector</span> <span class="kn">import</span> <span class="n">Vector2D</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.pointvector</span> <span class="kn">import</span> <span class="n">Vector3D</span><span class="p">,</span> <span class="n">Point3D</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.ray</span> <span class="kn">import</span> <span class="n">Ray3D</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.plane</span> <span class="kn">import</span> <span class="n">Plane</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.mesh</span> <span class="kn">import</span> <span class="n">Mesh3D</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.polyface</span> <span class="kn">import</span> <span class="n">Polyface3D</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+<div class="viewcode-block" id="Room"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room">[docs]</a><span class="k">class</span> <span class="nc">Room</span><span class="p">(</span><span class="n">_BaseWithShade</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A volume enclosed by faces, representing a single room or space.</span>
+
+<span class="sd">    Note that, if zero is input for tolerance and angle_tolerance, no checks</span>
+<span class="sd">    will be performed to determine whether the room is a closed volume</span>
+<span class="sd">    and no attempt will be made to flip faces in the event that they are not</span>
+<span class="sd">    facing outward from the room volume.  As such, an input tolerance of 0</span>
+<span class="sd">    is intended for workflows where the solidity of the room volume has been</span>
+<span class="sd">    evaluated elsewhere.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        identifier: Text string for a unique Room ID. Must be &lt; 100 characters and</span>
+<span class="sd">            not contain any spaces or special characters.</span>
+<span class="sd">        faces: A list or tuple of honeybee Face objects that together form the</span>
+<span class="sd">            closed volume of a room.</span>
+<span class="sd">        tolerance: The maximum difference between x, y, and z values</span>
+<span class="sd">            at which vertices of adjacent faces are considered equivalent. This is</span>
+<span class="sd">            used in determining whether the faces form a closed volume. Default</span>
+<span class="sd">            is 0, which makes no attempt to evaluate whether the Room volume</span>
+<span class="sd">            is closed.</span>
+<span class="sd">        angle_tolerance: The max angle difference in degrees that vertices are</span>
+<span class="sd">            allowed to differ from one another in order to consider them colinear.</span>
+<span class="sd">            Default is 0, which makes no attempt to evaluate whether the Room</span>
+<span class="sd">            volume is closed.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * identifier</span>
+<span class="sd">        * display_name</span>
+<span class="sd">        * faces</span>
+<span class="sd">        * multiplier</span>
+<span class="sd">        * story</span>
+<span class="sd">        * indoor_furniture</span>
+<span class="sd">        * indoor_shades</span>
+<span class="sd">        * outdoor_shades</span>
+<span class="sd">        * geometry</span>
+<span class="sd">        * center</span>
+<span class="sd">        * volume</span>
+<span class="sd">        * floor_area</span>
+<span class="sd">        * exposed_area</span>
+<span class="sd">        * exterior_wall_area</span>
+<span class="sd">        * exterior_aperture_area</span>
+<span class="sd">        * exterior_wall_aperture_area</span>
+<span class="sd">        * exterior_skylight_aperture_area</span>
+<span class="sd">        * average_floor_height</span>
+<span class="sd">        * user_data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_geometry&#39;</span><span class="p">,</span> <span class="s1">&#39;_faces&#39;</span><span class="p">,</span> <span class="s1">&#39;_multiplier&#39;</span><span class="p">,</span> <span class="s1">&#39;_story&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Room.&quot;&quot;&quot;</span>
+        <span class="n">_BaseWithShade</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">)</span>  <span class="c1"># process the identifier</span>
+
+        <span class="c1"># process the zone volume geometry</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">faces</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">faces</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">faces</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="n">faces</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">Face</span><span class="p">),</span> \
+                <span class="s1">&#39;Expected honeybee Face. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">face</span><span class="p">))</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="k">if</span> <span class="n">tolerance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span> <span class="o">=</span> <span class="n">faces</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># calculated later from faces or added by classmethods</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># try to get a closed volume between the faces</span>
+            <span class="n">room_polyface</span> <span class="o">=</span> <span class="n">Polyface3D</span><span class="o">.</span><span class="n">from_faces</span><span class="p">(</span>
+                <span class="nb">tuple</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">geometry</span> <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="n">faces</span><span class="p">),</span> <span class="n">tolerance</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">room_polyface</span><span class="o">.</span><span class="n">is_solid</span> <span class="ow">and</span> <span class="n">angle_tolerance</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ang_tol</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle_tolerance</span><span class="p">)</span>
+                <span class="n">room_polyface</span> <span class="o">=</span> <span class="n">room_polyface</span><span class="o">.</span><span class="n">merge_overlapping_edges</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">ang_tol</span><span class="p">)</span>
+            <span class="c1"># replace honeybee face geometry with versions that are facing outwards</span>
+            <span class="k">if</span> <span class="n">room_polyface</span><span class="o">.</span><span class="n">is_solid</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">correct_face3d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">room_polyface</span><span class="o">.</span><span class="n">faces</span><span class="p">):</span>
+                    <span class="n">face</span> <span class="o">=</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">norm_init</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">normal</span>
+                    <span class="n">face</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">correct_face3d</span>
+                    <span class="k">if</span> <span class="n">face</span><span class="o">.</span><span class="n">has_sub_faces</span><span class="p">:</span>  <span class="c1"># flip sub-faces to align with parent Face</span>
+                        <span class="k">if</span> <span class="n">norm_init</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">):</span>
+                            <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+                                <span class="n">ap</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+                            <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+                                <span class="n">dr</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span> <span class="o">=</span> <span class="n">faces</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">room_polyface</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_multiplier</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># default value that can be overridden later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_story</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># default value that can be overridden later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span> <span class="o">=</span> <span class="n">RoomProperties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># properties for extensions</span>
+
+<div class="viewcode-block" id="Room.from_dict"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize an Room from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary representation of a Room object.</span>
+<span class="sd">            tolerance: The maximum difference between x, y, and z values</span>
+<span class="sd">                at which vertices of adjacent faces are considered equivalent. This is</span>
+<span class="sd">                used in determining whether the faces form a closed volume. Default</span>
+<span class="sd">                is 0, which makes no attempt to evaluate whether the Room volume</span>
+<span class="sd">                is closed.</span>
+<span class="sd">            angle_tolerance: The max angle difference in degrees that vertices are</span>
+<span class="sd">                allowed to differ from one another in order to consider them colinear.</span>
+<span class="sd">                Default is 0, which makes no attempt to evaluate whether the Room</span>
+<span class="sd">                volume is closed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check the type of dictionary</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Room&#39;</span><span class="p">,</span> <span class="s1">&#39;Expected Room dictionary. &#39;</span> \
+            <span class="s1">&#39;Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+
+        <span class="n">room</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">Face</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">f_dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">f_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">]],</span>
+                   <span class="n">tolerance</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;display_name&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">room</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;user_data&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">room</span><span class="o">.</span><span class="n">user_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;multiplier&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiplier&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">room</span><span class="o">.</span><span class="n">_multiplier</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiplier&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;story&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;story&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">room</span><span class="o">.</span><span class="n">_story</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;story&#39;</span><span class="p">]</span>
+        <span class="n">room</span><span class="o">.</span><span class="n">_recover_shades_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;RoomProperties&#39;</span><span class="p">:</span>
+            <span class="n">room</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">_load_extension_attr_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">room</span></div>
+
+<div class="viewcode-block" id="Room.from_polyface3d"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.from_polyface3d">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_polyface3d</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">polyface</span><span class="p">,</span> <span class="n">roof_angle</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">floor_angle</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+                        <span class="n">ground_depth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a Room from a ladybug_geometry Polyface3D object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            identifier: Text string for a unique Room ID. Must be &lt; 100 characters and</span>
+<span class="sd">                not contain any spaces or special characters.</span>
+<span class="sd">            polyface: A ladybug_geometry Polyface3D object representing the closed</span>
+<span class="sd">                volume of a room. The Polyface3D.is_solid property can be used to</span>
+<span class="sd">                determine whether the polyface is a closed solid before input here.</span>
+<span class="sd">            roof_angle: Cutting angle for roof from Z axis in degrees. Default: 30.</span>
+<span class="sd">            floor_angle: Cutting angle for floor from Z axis in degrees. Default: 150.</span>
+<span class="sd">            ground_depth: The Z value above which faces are considered Outdoors</span>
+<span class="sd">                instead of Ground. Faces will have a Ground boundary condition if</span>
+<span class="sd">                all of their vertices lie at or below this value. Default: 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">polyface</span><span class="p">,</span> <span class="n">Polyface3D</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected ladybug_geometry Polyface3D. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">polyface</span><span class="p">))</span>
+        <span class="n">faces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">polyface</span><span class="o">.</span><span class="n">faces</span><span class="p">):</span>
+            <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Face</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">..Face</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">face</span><span class="p">,</span>
+                              <span class="n">get_type_from_normal</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">normal</span><span class="p">,</span> <span class="n">roof_angle</span><span class="p">,</span> <span class="n">floor_angle</span><span class="p">),</span>
+                              <span class="n">get_bc_from_position</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary</span><span class="p">,</span> <span class="n">ground_depth</span><span class="p">)))</span>
+        <span class="n">room</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">faces</span><span class="p">)</span>
+        <span class="n">room</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">polyface</span>
+        <span class="k">return</span> <span class="n">room</span></div>
+
+<div class="viewcode-block" id="Room.from_box"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.from_box">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_box</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">3.2</span><span class="p">,</span>
+                 <span class="n">orientation_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="n">Point3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a Room from parameters describing a box.</span>
+
+<span class="sd">        The resulting faces of the room will always be ordered as follows:</span>
+<span class="sd">        (Bottom, Front, Right, Back, Left, Top) where the front is facing the</span>
+<span class="sd">        cardinal direction of the orientation_angle.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            identifier: Text string for a unique Room ID. Must be &lt; 100 characters and</span>
+<span class="sd">                not contain any spaces or special characters.</span>
+<span class="sd">            width: Number for the width of the box (in the X direction). Default: 3.0.</span>
+<span class="sd">            depth: Number for the depth of the box (in the Y direction). Default: 6.0.</span>
+<span class="sd">            height: Number for the height of the box (in the Z direction). Default: 3.2.</span>
+<span class="sd">            orientation_angle: A number between 0 and 360 for the clockwise</span>
+<span class="sd">                orientation of the box in degrees.</span>
+<span class="sd">                (0 = North, 90 = East, 180 = South, 270 = West)</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin of the room.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create a box Polyface3D</span>
+        <span class="n">x_axis</span> <span class="o">=</span> <span class="n">Vector3D</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">orientation_angle</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span>
+                <span class="n">float_in_range</span><span class="p">(</span><span class="n">orientation_angle</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="s1">&#39;orientation_angle&#39;</span><span class="p">))</span>
+            <span class="n">x_axis</span> <span class="o">=</span> <span class="n">x_axis</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">base_plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">origin</span><span class="p">,</span> <span class="n">x_axis</span><span class="p">)</span>
+        <span class="n">polyface</span> <span class="o">=</span> <span class="n">Polyface3D</span><span class="o">.</span><span class="n">from_box</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">base_plane</span><span class="p">)</span>
+
+        <span class="c1"># create the honeybee Faces</span>
+        <span class="n">directions</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;Front&#39;</span><span class="p">,</span> <span class="s1">&#39;Right&#39;</span><span class="p">,</span> <span class="s1">&#39;Back&#39;</span><span class="p">,</span> <span class="s1">&#39;Left&#39;</span><span class="p">,</span> <span class="s1">&#39;Top&#39;</span><span class="p">)</span>
+        <span class="n">faces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">face</span><span class="p">,</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">polyface</span><span class="o">.</span><span class="n">faces</span><span class="p">,</span> <span class="n">directions</span><span class="p">):</span>
+            <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Face</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">dir</span><span class="p">),</span> <span class="n">face</span><span class="p">,</span>
+                              <span class="n">get_type_from_normal</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">normal</span><span class="p">),</span>
+                              <span class="n">get_bc_from_position</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary</span><span class="p">)))</span>
+        <span class="n">room</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">faces</span><span class="p">)</span>
+        <span class="n">room</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">polyface</span>
+        <span class="k">return</span> <span class="n">room</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a tuple of all honeybee Faces making up this room volume.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">multiplier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set an integer noting how many times this Room is repeated.</span>
+
+<span class="sd">        Multipliers are used to speed up the calculation when similar Rooms are</span>
+<span class="sd">        repeated more than once. Essentially, a given simulation with the</span>
+<span class="sd">        Room is run once and then the result is mutliplied by the multiplier.</span>
+<span class="sd">        This means that the &quot;repetition&quot; isn&#39;t in a particular direction (it&#39;s</span>
+<span class="sd">        essentially in the exact same location) and this comes with some</span>
+<span class="sd">        inaccuracy. However, this error might not be too large if the Rooms</span>
+<span class="sd">        are similar enough and it can often be worth it since it can greatly</span>
+<span class="sd">        speed up the calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multiplier</span>
+
+    <span class="nd">@multiplier</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">multiplier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_multiplier</span> <span class="o">=</span> <span class="n">int_in_range</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">input_name</span><span class="o">=</span><span class="s1">&#39;room multiplier&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">story</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set text for the story identifier to which this Room belongs.</span>
+
+<span class="sd">        Rooms sharing the same story identifier are considered part of the same</span>
+<span class="sd">        story in a Model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_story</span>
+
+    <span class="nd">@story</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">story</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">valid_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;honeybee room story identifier&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_story</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">indoor_furniture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Array of all indoor furniture Shade objects assigned to this Room.</span>
+
+<span class="sd">        Note that this property is identical to the indoor_shades property but</span>
+<span class="sd">        it is provided here under an alternate name to make it clear that indoor</span>
+<span class="sd">        furniture objects should be added here to the Room.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_indoor_shades</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Polyface3D object representing the room.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">Polyface3D</span><span class="o">.</span><span class="n">from_faces</span><span class="p">(</span>
+                <span class="nb">tuple</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">geometry</span> <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># use 0 tolerance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Point3D for the center of the room.</span>
+
+<span class="sd">        Note that this is the center of the bounding box around the room geometry</span>
+<span class="sd">        and not the volume centroid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">center</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the volume of the room.</span>
+
+<span class="sd">        Note that, if this room faces do not form a closed solid the value of this</span>
+<span class="sd">        property will not be accurate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">volume</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">floor_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the combined area of all room floor faces.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">face</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">Floor</span><span class="p">)])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exposed_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the combined area of all room faces with outdoor boundary conditions.</span>
+
+<span class="sd">        Useful for estimating infiltration, often expressed as a flow per</span>
+<span class="sd">        unit exposed envelope area.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">face</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span> <span class="k">if</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exterior_wall_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the combined area of all exterior walls on the room.</span>
+
+<span class="sd">        This is NOT the area of the wall&#39;s punched_geometry and it includes BOTH</span>
+<span class="sd">        the area of opaque and transparent parts of the walls.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wall_areas</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">Wall</span><span class="p">):</span>
+                <span class="n">wall_areas</span> <span class="o">+=</span> <span class="n">f</span><span class="o">.</span><span class="n">area</span>
+        <span class="k">return</span> <span class="n">wall_areas</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exterior_roof_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the combined area of all exterior roofs on the room.</span>
+
+<span class="sd">        This is NOT the area of the roof&#39;s punched_geometry and it includes BOTH</span>
+<span class="sd">        the area of opaque and transparent parts of the roofs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wall_areas</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">RoofCeiling</span><span class="p">):</span>
+                <span class="n">wall_areas</span> <span class="o">+=</span> <span class="n">f</span><span class="o">.</span><span class="n">area</span>
+        <span class="k">return</span> <span class="n">wall_areas</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exterior_aperture_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the combined area of all exterior apertures on the room.&quot;&quot;&quot;</span>
+        <span class="n">ap_areas</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ap_areas</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ap_areas</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exterior_wall_aperture_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the combined area of all apertures on exterior walls of the room.&quot;&quot;&quot;</span>
+        <span class="n">ap_areas</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">Wall</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ap_areas</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ap_areas</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exterior_skylight_aperture_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the combined area of all apertures on exterior roofs of the room.&quot;&quot;&quot;</span>
+        <span class="n">ap_areas</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">RoofCeiling</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ap_areas</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ap_areas</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">average_floor_height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the height of the room floor averaged over all floor faces in the room.</span>
+
+<span class="sd">        The resulting value is weighted by the area of each of the floor faces.</span>
+<span class="sd">        Will be the minimum Z value of the Room volume if the room posseses no floors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">heights</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">areas</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">Floor</span><span class="p">):</span>
+                <span class="n">heights</span> <span class="o">+=</span> <span class="n">face</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">z</span> <span class="o">*</span> <span class="n">face</span><span class="o">.</span><span class="n">area</span>
+                <span class="n">areas</span> <span class="o">+=</span> <span class="n">face</span><span class="o">.</span><span class="n">area</span>
+        <span class="k">return</span> <span class="n">heights</span> <span class="o">/</span> <span class="n">areas</span> <span class="k">if</span> <span class="n">areas</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">z</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Always False as Rooms cannot have parents.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Room.average_orientation"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.average_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">average_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">north_vector</span><span class="o">=</span><span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;Get a number between 0 and 360 for the average orientation of exposed walls.</span>
+
+<span class="sd">        0 = North, 90 = East, 180 = South, 270 = West.  Will be None if the zone has</span>
+<span class="sd">        no exterior walls. Resulting value is weighted by the area of each of the</span>
+<span class="sd">        wall faces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            north_vector: A ladybug_geometry Vector2D for the north direction.</span>
+<span class="sd">                Default is the Y-axis (0, 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">orientations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">areas</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">Wall</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">):</span>
+                <span class="n">orientations</span> <span class="o">+=</span> <span class="n">face</span><span class="o">.</span><span class="n">horizontal_orientation</span><span class="p">(</span><span class="n">north_vector</span><span class="p">)</span> <span class="o">*</span> <span class="n">face</span><span class="o">.</span><span class="n">area</span>
+                <span class="n">areas</span> <span class="o">+=</span> <span class="n">face</span><span class="o">.</span><span class="n">area</span>
+        <span class="k">return</span> <span class="n">orientations</span> <span class="o">/</span> <span class="n">areas</span> <span class="k">if</span> <span class="n">areas</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Room.add_prefix"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.add_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the identifier of this object and all child objects by inserting a prefix.</span>
+
+<span class="sd">        This is particularly useful in workflows where you duplicate and edit</span>
+<span class="sd">        a starting object and then want to combine it with the original object</span>
+<span class="sd">        into one Model (like making a model of repeated rooms) since all objects</span>
+<span class="sd">        within a Model must have unique identifiers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of this object&#39;s</span>
+<span class="sd">                (and child objects&#39;) identifier and display_name. It is recommended</span>
+<span class="sd">                that this prefix be short to avoid maxing out the 100 allowable</span>
+<span class="sd">                characters for honeybee identifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="n">clean_string</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_prefix_shades</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.remove_indoor_furniture"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.remove_indoor_furniture">[docs]</a>    <span class="k">def</span> <span class="nf">remove_indoor_furniture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all indoor furniture assigned to this Room.</span>
+
+<span class="sd">        Note that this method is identical to the remove_indoor_shade method but</span>
+<span class="sd">        it is provided here under an alternate name to make it clear that indoor</span>
+<span class="sd">        furniture objects should be added here to the Room.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_indoor_shades</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Room.add_indoor_furniture"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.add_indoor_furniture">[docs]</a>    <span class="k">def</span> <span class="nf">add_indoor_furniture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shade</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a Shade object representing furniture to the Room.</span>
+
+<span class="sd">        Note that this method is identical to the add_indoor_shade method but</span>
+<span class="sd">        it is provided here under an alternate name to make it clear that indoor</span>
+<span class="sd">        furniture objects should be added here to the Room.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            shade: A Shade object to add to the indoors of this Room, representing</span>
+<span class="sd">                furniture, desks, partitions, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_indoor_shade</span><span class="p">(</span><span class="n">shade</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.generate_grid"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.generate_grid">[docs]</a>    <span class="k">def</span> <span class="nf">generate_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of gridded Mesh3D objects offset from the floors of this room.</span>
+
+<span class="sd">        Note that the x_dim and y_dim refer to dimensions within the XY coordinate</span>
+<span class="sd">        system of the floor faces&#39;s planes. So rotating the planes of the floor faces</span>
+<span class="sd">        will result in rotated grid cells.</span>
+
+<span class="sd">        Will be None if the Room has no floor faces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_dim: The x dimension of the grid cells as a number.</span>
+<span class="sd">            y_dim: The y dimension of the grid cells as a number. Default is None,</span>
+<span class="sd">                which will assume the same cell dimension for y as is set for x.</span>
+<span class="sd">            offset: A number for how far to offset the grid from the base face.</span>
+<span class="sd">                Default is 1.0, which will not offset the grid to be 1 unit above</span>
+<span class="sd">                the floor.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room = Room.from_box(3.0, 6.0, 3.2, 180)</span>
+<span class="sd">            floor_mesh = room.generate_grid(0.5, 0.5, 1)</span>
+<span class="sd">            test_points = floor_mesh.face_centroids</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">floor_grids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">Floor</span><span class="p">):</span>
+                <span class="n">floor_grids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">mesh_grid</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">floor_grids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">floor_grids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">floor_grids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Mesh3D</span><span class="o">.</span><span class="n">join_meshes</span><span class="p">(</span><span class="n">floor_grids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Room.wall_apertures_by_ratio"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.wall_apertures_by_ratio">[docs]</a>    <span class="k">def</span> <span class="nf">wall_apertures_by_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add apertures to all exterior walls given a ratio of aperture to face area.</span>
+
+<span class="sd">        Note this method removes any existing apertures and doors on the Room&#39;s walls.</span>
+<span class="sd">        This method attempts to generate as few apertures as necessary to meet the ratio.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ratio: A number between 0 and 1 (but not perfectly equal to 1)</span>
+<span class="sd">                for the desired ratio between aperture area and face area.</span>
+<span class="sd">            tolerance: The maximum difference between point values for them to be</span>
+<span class="sd">                considered a part of a rectangle. This is used in the event that</span>
+<span class="sd">                this face is concave and an attempt to subdivide the face into a</span>
+<span class="sd">                rectangle is made. It does not affect the ability to produce apertures</span>
+<span class="sd">                for convex Faces. Default: 0.01, suitable for objects in meters.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room = Room.from_box(3.0, 6.0, 3.2, 180)</span>
+<span class="sd">            room.wall_apertures_by_ratio(0.4)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">Wall</span><span class="p">):</span>
+                <span class="n">face</span><span class="o">.</span><span class="n">apertures_by_ratio</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.skylight_apertures_by_ratio"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.skylight_apertures_by_ratio">[docs]</a>    <span class="k">def</span> <span class="nf">skylight_apertures_by_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add apertures to all exterior roofs given a ratio of aperture to face area.</span>
+
+<span class="sd">        Note this method removes any existing apertures and overhead doors on the</span>
+<span class="sd">        Room&#39;s roofs. This method attempts to generate as few apertures as</span>
+<span class="sd">        necessary to meet the ratio.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ratio: A number between 0 and 1 (but not perfectly equal to 1)</span>
+<span class="sd">                for the desired ratio between aperture area and face area.</span>
+<span class="sd">            tolerance: The maximum difference between point values for them to be</span>
+<span class="sd">                considered a part of a rectangle. This is used in the event that</span>
+<span class="sd">                this face is concave and an attempt to subdivide the face into a</span>
+<span class="sd">                rectangle is made. It does not affect the ability to produce apertures</span>
+<span class="sd">                for convex Faces. Default: 0.01, suitable for objects in meters.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room = Room.from_box(3.0, 6.0, 3.2, 180)</span>
+<span class="sd">            room.skylight_apertures_by_ratio(0.05)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">RoofCeiling</span><span class="p">):</span>
+                <span class="n">face</span><span class="o">.</span><span class="n">apertures_by_ratio</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.ground_by_custom_surface"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.ground_by_custom_surface">[docs]</a>    <span class="k">def</span> <span class="nf">ground_by_custom_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ground_geometry</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                                 <span class="n">angle_tolerance</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set ground boundary conditions using an array of Face3D for the ground.</span>
+
+<span class="sd">        Room faces that are coplanar with the ground surface or lie completely below it</span>
+<span class="sd">        will get a Ground boundary condition while those above will get an Outdoors</span>
+<span class="sd">        boundary condition. Existing Faces with an indoor boundary condition will</span>
+<span class="sd">        be unaffected.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ground_geometry: An array of ladybug_geometry Face3D that together</span>
+<span class="sd">                represent the ground surface.</span>
+<span class="sd">            tolerance: The minimum difference between the coordinate values of two</span>
+<span class="sd">                vertices at which they can be considered equivalent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">            angle_tolerance: The max angle in degrees that the plane normals can</span>
+<span class="sd">                differ from one another in order for them to be considered</span>
+<span class="sd">                coplanar. (Default: 1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># default values used throughout the check</span>
+        <span class="n">ang_tol</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_tolerance</span><span class="p">)</span>
+        <span class="n">up_vec</span> <span class="o">=</span> <span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># loop through the faces and check their relation to the ground geometry</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="p">(</span><span class="n">Outdoors</span><span class="p">,</span> <span class="n">Ground</span><span class="p">)):</span>
+                <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray3D</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> <span class="n">up_vec</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">grnd_geo</span> <span class="ow">in</span> <span class="n">ground_geometry</span><span class="p">:</span>
+                    <span class="c1"># first check if the surface is below the ground surface</span>
+                    <span class="k">if</span> <span class="n">grnd_geo</span><span class="o">.</span><span class="n">intersect_line_ray</span><span class="p">(</span><span class="n">ray</span><span class="p">):</span>
+                        <span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">ground</span>
+                        <span class="k">break</span>
+                    <span class="c1"># then check if the Face is coplanar with the ground face</span>
+                    <span class="n">pl1</span><span class="p">,</span> <span class="n">pl2</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">plane</span><span class="p">,</span> <span class="n">grnd_geo</span><span class="o">.</span><span class="n">plane</span>
+                    <span class="k">if</span> <span class="n">pl1</span><span class="o">.</span><span class="n">is_coplanar_tolerance</span><span class="p">(</span><span class="n">pl2</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">ang_tol</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">grnd_geo</span><span class="o">.</span><span class="n">is_point_on_face</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+                            <span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">ground</span>
+                            <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">outdoors</span></div>
+
+<div class="viewcode-block" id="Room.move"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">moving_vec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Move this Room along a vector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            moving_vec: A ladybug_geometry Vector3D with the direction and distance</span>
+<span class="sd">                to move the room.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_shades</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.rotate"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rotate this Room by a certain angle around an axis and origin.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            axis: A ladybug_geometry Vector3D axis representing the axis of rotation.</span>
+<span class="sd">            angle: An angle for rotation in degrees.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin around which the</span>
+<span class="sd">                object will be rotated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_shades</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">origin</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.rotate_xy"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.rotate_xy">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rotate this Room counterclockwise in the world XY plane by a certain angle.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            angle: An angle in degrees.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin around which the</span>
+<span class="sd">                object will be rotated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_xy_shades</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">origin</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.reflect"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.reflect">[docs]</a>    <span class="k">def</span> <span class="nf">reflect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reflect this Room across a plane.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            plane: A ladybug_geometry Plane across which the object will</span>
+<span class="sd">                be reflected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reflect_shades</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">plane</span><span class="o">.</span><span class="n">o</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.scale"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scale this Room by a factor from an origin point.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            factor: A number representing how much the object should be scaled.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D representing the origin from which</span>
+<span class="sd">                to scale. If None, it will be scaled from the World origin (0, 0, 0).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_shades</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.remove_colinear_vertices_envelope"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.remove_colinear_vertices_envelope">[docs]</a>    <span class="k">def</span> <span class="nf">remove_colinear_vertices_envelope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove colinear and duplicate vertices from this object&#39;s Faces and Sub-faces.</span>
+
+<span class="sd">        Note that this does not affect any assigned Shades.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum distance between a vertex and the boundary segments</span>
+<span class="sd">                at which point the vertex is considered colinear. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">remove_colinear_vertices</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+                <span class="n">ap</span><span class="o">.</span><span class="n">remove_colinear_vertices</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+                <span class="n">dr</span><span class="o">.</span><span class="n">remove_colinear_vertices</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">Polyface3D</span><span class="o">.</span><span class="n">from_faces</span><span class="p">(</span>
+                <span class="nb">tuple</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">geometry</span> <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">),</span> <span class="n">tolerance</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.check_solid"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.check_solid">[docs]</a>    <span class="k">def</span> <span class="nf">check_solid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the Room is a closed solid to within the input tolerances.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: tolerance: The maximum difference between x, y, and z values</span>
+<span class="sd">                at which face vertices are considered equivalent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">            angle_tolerance: The max angle difference in degrees that vertices are</span>
+<span class="sd">                allowed to differ from one another in order to consider them colinear.</span>
+<span class="sd">                Default: 1 degree.</span>
+<span class="sd">            raise_exception: Boolean to note whether a ValueError should be raised</span>
+<span class="sd">                if the room geometry does not form a closed solid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_solid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">face_geometries</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">geometry</span> <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">Polyface3D</span><span class="o">.</span><span class="n">from_faces</span><span class="p">(</span><span class="n">face_geometries</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_solid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">ang_tol</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle_tolerance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">merge_overlapping_edges</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">ang_tol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_solid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Room &quot;</span><span class="si">{}</span><span class="s1">&quot; is not closed to within </span><span class="si">{}</span><span class="s1"> tolerance and </span><span class="si">{}</span><span class="s1"> angle &#39;</span>
+                <span class="s1">&#39;tolerance.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Room.check_sub_faces_valid"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.check_sub_faces_valid">[docs]</a>    <span class="k">def</span> <span class="nf">check_sub_faces_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                              <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that room&#39;s sub-faces are co-planar with faces and in the face boundary.</span>
+
+<span class="sd">        Note this does not check the planarity of the sub-faces themselves, whether</span>
+<span class="sd">        they self-intersect, or whether they have a non-zero area.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum difference between the coordinate values of two</span>
+<span class="sd">                vertices at which they can be considered equivalent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">            angle_tolerance: The max angle in degrees that the plane normals can</span>
+<span class="sd">                differ from one another in order for them to be considered coplanar.</span>
+<span class="sd">                Default: 1 degree.</span>
+<span class="sd">            raise_exception: Boolean to note whether a ValueError should be raised</span>
+<span class="sd">                if an sub-face is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">check_sub_faces_valid</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Room.check_planar"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.check_planar">[docs]</a>    <span class="k">def</span> <span class="nf">check_planar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that all of the Room&#39;s geometry components are planar.</span>
+
+<span class="sd">        This includes all of the Room&#39;s Faces, Apertures, Doors and Shades.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum distance between a given vertex and a the</span>
+<span class="sd">                object&#39;s plane at which the vertex is said to lie in the plane.</span>
+<span class="sd">                Default: 0.01, suitable for objects in meters.</span>
+<span class="sd">            raise_exception: Boolean to note whether an ValueError should be</span>
+<span class="sd">                raised if a vertex does not lie within the object&#39;s plane.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">face</span><span class="o">.</span><span class="n">check_planar</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ap</span><span class="o">.</span><span class="n">check_planar</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ap</span><span class="o">.</span><span class="n">_check_planar_shades</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">dr</span><span class="o">.</span><span class="n">check_planar</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">face</span><span class="o">.</span><span class="n">_check_planar_shades</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_planar_shades</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.check_self_intersecting"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.check_self_intersecting">[docs]</a>    <span class="k">def</span> <span class="nf">check_self_intersecting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that no edges of the Room&#39;s geometry components self-intersect.</span>
+
+<span class="sd">        This includes all of the Room&#39;s Faces, Apertures, Doors and Shades.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            raise_exception: If True, a ValueError will be raised if an object</span>
+<span class="sd">                intersects with itself (like a bowtie). Default: True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">face</span><span class="o">.</span><span class="n">check_self_intersecting</span><span class="p">(</span><span class="n">raise_exception</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ap</span><span class="o">.</span><span class="n">check_self_intersecting</span><span class="p">(</span><span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ap</span><span class="o">.</span><span class="n">_check_self_intersecting_shades</span><span class="p">(</span><span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">dr</span><span class="o">.</span><span class="n">check_self_intersecting</span><span class="p">(</span><span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">face</span><span class="o">.</span><span class="n">_check_self_intersecting_shades</span><span class="p">(</span><span class="n">raise_exception</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_self_intersecting_shades</span><span class="p">(</span><span class="n">raise_exception</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.check_non_zero"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.check_non_zero">[docs]</a>    <span class="k">def</span> <span class="nf">check_non_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that the Room&#39;s geometry components are above a &quot;zero&quot; area tolerance.</span>
+
+<span class="sd">        This includes all of the Room&#39;s Faces, Apertures, Doors and Shades.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum acceptable area of the object. Default is 0.0001,</span>
+<span class="sd">                which is equal to 1 cm2 when model units are meters. This is just</span>
+<span class="sd">                above the smallest size that OpenStudio will accept.</span>
+<span class="sd">            raise_exception: If True, a ValueError will be raised if the object</span>
+<span class="sd">                area is below the tolerance. Default: True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">face</span><span class="o">.</span><span class="n">check_non_zero</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ap</span><span class="o">.</span><span class="n">check_non_zero</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ap</span><span class="o">.</span><span class="n">_check_non_zero_shades</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">dr</span><span class="o">.</span><span class="n">check_non_zero</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">face</span><span class="o">.</span><span class="n">_check_non_zero_shades</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_non_zero_shades</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Room.solve_adjacency"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.solve_adjacency">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">solve_adjacency</span><span class="p">(</span><span class="n">rooms</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Solve for adjacencies between a list of rooms.</span>
+
+<span class="sd">        Note that this method will mutate the input roooms by setting Surface</span>
+<span class="sd">        boundary conditions for any adjacent objects. However, it does NOT overwrite</span>
+<span class="sd">        existing Surface boundary conditions and only adds new ones if faces are</span>
+<span class="sd">        found to be adjacent with equivalent areas.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rooms: A list of rooms for which adjacencies will be solved.</span>
+<span class="sd">            tolerance: The minimum difference between the coordinate values of two</span>
+<span class="sd">                faces at which they can be considered centered adjacent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary of information about the objects that had their adjacency set.</span>
+<span class="sd">            The dictionary has the following keys.</span>
+
+<span class="sd">            -   adjacent_faces - A list of tuples with each tuple containing 2 objects</span>
+<span class="sd">                for Faces paired in the process of solving adjacency. This data can</span>
+<span class="sd">                be used to assign custom properties to the new adjacent Faces (like</span>
+<span class="sd">                making all adjacencies an AirBoundary face type or assigning custom</span>
+<span class="sd">                materials/constructions).</span>
+
+<span class="sd">            -   adjacent_apertures - A list of tuples with each tuple containing 2</span>
+<span class="sd">                objects for Apertures paired in the process of solving adjacency.</span>
+
+<span class="sd">            -   adjacent_doors - A list of tuples with each tuple containing 2 objects</span>
+<span class="sd">                for Doors paired in the process of solving adjacency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># lists of adjacencies to track</span>
+        <span class="n">adj_info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;adjacent_faces&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;adjacent_apertures&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s1">&#39;adjacent_doors&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="c1"># solve all adjacencies between rooms</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">room_1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">room_2</span> <span class="ow">in</span> <span class="n">rooms</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">Polyface3D</span><span class="o">.</span><span class="n">overlapping_bounding_boxes</span><span class="p">(</span>
+                            <span class="n">room_1</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">room_2</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+                        <span class="k">continue</span>  <span class="c1"># no overlap in bounding box; adjacency impossible</span>
+                    <span class="k">for</span> <span class="n">face_1</span> <span class="ow">in</span> <span class="n">room_1</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">face_2</span> <span class="ow">in</span> <span class="n">room_2</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face_2</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Surface</span><span class="p">):</span>
+                                <span class="k">if</span> <span class="n">face_1</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_centered_adjacent</span><span class="p">(</span>
+                                        <span class="n">face_2</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+                                    <span class="n">face_info</span> <span class="o">=</span> <span class="n">face_1</span><span class="o">.</span><span class="n">set_adjacency</span><span class="p">(</span><span class="n">face_2</span><span class="p">)</span>
+                                    <span class="n">adj_info</span><span class="p">[</span><span class="s1">&#39;adjacent_faces&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">face_1</span><span class="p">,</span> <span class="n">face_2</span><span class="p">))</span>
+                                    <span class="n">adj_info</span><span class="p">[</span><span class="s1">&#39;adjacent_apertures&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                                        <span class="n">face_info</span><span class="p">[</span><span class="s1">&#39;adjacent_apertures&#39;</span><span class="p">])</span>
+                                    <span class="n">adj_info</span><span class="p">[</span><span class="s1">&#39;adjacent_doors&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                                        <span class="n">face_info</span><span class="p">[</span><span class="s1">&#39;adjacent_doors&#39;</span><span class="p">])</span>
+                                    <span class="k">break</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># we have reached the end of the list of zones</span>
+        <span class="k">return</span> <span class="n">adj_info</span></div>
+
+<div class="viewcode-block" id="Room.find_adjacency"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.find_adjacency">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">find_adjacency</span><span class="p">(</span><span class="n">rooms</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list with all adjacent pairs of Faces between input rooms.</span>
+
+<span class="sd">        Note that this method does not change any boundary conditions of the input</span>
+<span class="sd">        rooms or mutate them in any way. It&#39;s purely a geometric analysis of the</span>
+<span class="sd">        faces between rooms.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rooms: A list of rooms for which adjacencies will be solved.</span>
+<span class="sd">            tolerance: The minimum difference between the coordinate values of two</span>
+<span class="sd">                faces at which they can be considered centered adjacent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of tuples with each tuple containing 2 objects for Faces that</span>
+<span class="sd">            are adjacent to one another.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">adj_faces</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># lists of adjacencies to track</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">room_1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">room_2</span> <span class="ow">in</span> <span class="n">rooms</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">Polyface3D</span><span class="o">.</span><span class="n">overlapping_bounding_boxes</span><span class="p">(</span>
+                            <span class="n">room_1</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">room_2</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+                        <span class="k">continue</span>  <span class="c1"># no overlap in bounding box; adjacency impossible</span>
+                    <span class="k">for</span> <span class="n">face_1</span> <span class="ow">in</span> <span class="n">room_1</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">face_2</span> <span class="ow">in</span> <span class="n">room_2</span><span class="o">.</span><span class="n">_faces</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">face_1</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_centered_adjacent</span><span class="p">(</span>
+                                    <span class="n">face_2</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+                                <span class="n">adj_faces</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">face_1</span><span class="p">,</span> <span class="n">face_2</span><span class="p">))</span>
+                                <span class="k">break</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># we have reached the end of the list of zones</span>
+        <span class="k">return</span> <span class="n">adj_faces</span></div>
+
+<div class="viewcode-block" id="Room.group_by_orientation"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.group_by_orientation">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">group_by_orientation</span><span class="p">(</span><span class="n">rooms</span><span class="p">,</span> <span class="n">group_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">north_vector</span><span class="o">=</span><span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;Group Rooms with the same average outdoor wall orientation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rooms: A list of honeybee rooms to be grouped by orientation.</span>
+<span class="sd">            group_count: An optional positive integer to set the number of orientation</span>
+<span class="sd">                groups to use. For example, setting this to 4 will result in rooms</span>
+<span class="sd">                being grouped by four orientations (North, East, South, West). If None,</span>
+<span class="sd">                the maximum number of unique groups will be used.</span>
+<span class="sd">            north_vector: A ladybug_geometry Vector2D for the north direction.</span>
+<span class="sd">                Default is the Y-axis (0, 1).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple with three items.</span>
+
+<span class="sd">            -   grouped_rooms - A list of lists of honeybee rooms with each sub-list</span>
+<span class="sd">                representing a different orientation.</span>
+
+<span class="sd">            -   core_rooms - A list of honeybee rooms with no identifiable orientation.</span>
+
+<span class="sd">            -   orientations - A list of numbers between 0 and 360 with one orientation</span>
+<span class="sd">                for each branch of the output grouped_rooms. This will be a list of</span>
+<span class="sd">                angle ranges if a value is input for group_count.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># loop through each of the rooms and get the orientation</span>
+        <span class="n">orient_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">core_rooms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">room</span> <span class="ow">in</span> <span class="n">rooms</span><span class="p">:</span>
+            <span class="n">ori</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class="n">average_orientation</span><span class="p">(</span><span class="n">north_vector</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ori</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">core_rooms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">room</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">orient_dict</span><span class="p">[</span><span class="n">ori</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">room</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">orient_dict</span><span class="p">[</span><span class="n">ori</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">orient_dict</span><span class="p">[</span><span class="n">ori</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">room</span><span class="p">)</span>
+
+        <span class="c1"># sort the rooms by orientation values</span>
+        <span class="n">room_mtx</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">orient_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">orientations</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r_tup</span> <span class="ow">in</span> <span class="n">room_mtx</span><span class="p">]</span>
+        <span class="n">grouped_rooms</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r_tup</span> <span class="ow">in</span> <span class="n">room_mtx</span><span class="p">]</span>
+
+        <span class="c1"># group orientations if there is an input group_count</span>
+        <span class="k">if</span> <span class="n">group_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">angs</span> <span class="o">=</span> <span class="n">angles_from_num_orient</span><span class="p">(</span><span class="n">group_count</span><span class="p">)</span>
+            <span class="n">p_rooms</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">group_count</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">ori</span><span class="p">,</span> <span class="n">rm</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">orientations</span><span class="p">,</span> <span class="n">grouped_rooms</span><span class="p">):</span>
+                <span class="n">or_ind</span> <span class="o">=</span> <span class="n">orient_index</span><span class="p">(</span><span class="n">ori</span><span class="p">,</span> <span class="n">angs</span><span class="p">)</span>
+                <span class="n">p_rooms</span><span class="p">[</span><span class="n">or_ind</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span>
+            <span class="n">orientations</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> - </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">angs</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">angs</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">group_count</span><span class="p">)]</span>
+            <span class="n">grouped_rooms</span> <span class="o">=</span> <span class="n">p_rooms</span>
+        <span class="k">return</span> <span class="n">grouped_rooms</span><span class="p">,</span> <span class="n">core_rooms</span><span class="p">,</span> <span class="n">orientations</span></div>
+
+<div class="viewcode-block" id="Room.group_by_floor_height"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.group_by_floor_height">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">group_by_floor_height</span><span class="p">(</span><span class="n">rooms</span><span class="p">,</span> <span class="n">min_difference</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Group Rooms according to their average floor height.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rooms: A list of honeybee rooms to be grouped by floor height.</span>
+<span class="sd">            min_difference: An float value to denote the minimum difference</span>
+<span class="sd">                in floor heights that is considered meaningful. This can be used</span>
+<span class="sd">                to ensure rooms like those representing stair landings are grouped</span>
+<span class="sd">                with those below them. Default: 0.01, which means that virtually</span>
+<span class="sd">                any minor difference in floor heights will result in a new group.</span>
+<span class="sd">                This assumption is suitable for models in meters.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple with two items.</span>
+
+<span class="sd">            -   grouped_rooms - A list of lists of honeybee rooms with each sub-list</span>
+<span class="sd">                representing a different floor height.</span>
+
+<span class="sd">            -   floor_heights - A list of floor heights with one floor height for each</span>
+<span class="sd">                sub-list of the output grouped_rooms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># loop through each of the rooms and get the floor height</span>
+        <span class="n">flrhgt_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">room</span> <span class="ow">in</span> <span class="n">rooms</span><span class="p">:</span>
+            <span class="n">flrhgt</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class="n">average_floor_height</span>
+            <span class="k">try</span><span class="p">:</span>  <span class="c1"># assume there is already a story with the room&#39;s floor height</span>
+                <span class="n">flrhgt_dict</span><span class="p">[</span><span class="n">flrhgt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">room</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># this is the first room with this floor height</span>
+                <span class="n">flrhgt_dict</span><span class="p">[</span><span class="n">flrhgt</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">flrhgt_dict</span><span class="p">[</span><span class="n">flrhgt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">room</span><span class="p">)</span>
+
+        <span class="c1"># sort the rooms by floor heights</span>
+        <span class="n">room_mtx</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">flrhgt_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">flr_hgts</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r_tup</span> <span class="ow">in</span> <span class="n">room_mtx</span><span class="p">]</span>
+        <span class="n">rooms</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r_tup</span> <span class="ow">in</span> <span class="n">room_mtx</span><span class="p">]</span>
+
+        <span class="c1"># group floor heights if they differ by less than the min_difference</span>
+        <span class="n">floor_heights</span> <span class="o">=</span> <span class="p">[</span><span class="n">flr_hgts</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">grouped_rooms</span> <span class="o">=</span> <span class="p">[</span><span class="n">rooms</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">flrh</span><span class="p">,</span> <span class="n">rm</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">flr_hgts</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">rooms</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="k">if</span> <span class="n">flrh</span> <span class="o">-</span> <span class="n">floor_heights</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_difference</span><span class="p">:</span>
+                <span class="n">grouped_rooms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">grouped_rooms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span>
+                <span class="n">floor_heights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flrh</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grouped_rooms</span><span class="p">,</span> <span class="n">floor_heights</span></div>
+
+<div class="viewcode-block" id="Room.stories_by_floor_height"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.stories_by_floor_height">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">stories_by_floor_height</span><span class="p">(</span><span class="n">rooms</span><span class="p">,</span> <span class="n">min_difference</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assign story properties to a set of Rooms using their floor heights.</span>
+
+<span class="sd">        Stories will be named with a standard convention (&#39;Floor1&#39;, &#39;Floor2&#39;, etc.).</span>
+<span class="sd">        Note that this method will only assign stories to Rooms that do not have</span>
+<span class="sd">        a story identifier already assigned to them.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rooms: A list of rooms for which story properties will be automatically</span>
+<span class="sd">                assigned.</span>
+<span class="sd">            min_difference: An float value to denote the minimum difference</span>
+<span class="sd">                in floor heights that is considered meaningful. This can be used</span>
+<span class="sd">                to ensure rooms like those representing stair landings are grouped</span>
+<span class="sd">                with those below them. Default: 2.0, which means that any difference</span>
+<span class="sd">                in floor heights less than 2.0 will be considered a part of the</span>
+<span class="sd">                same story. This assumption is suitable for models in meters.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the unique story names that were assigned to the input rooms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># group the rooms by floor height</span>
+        <span class="n">new_rooms</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Room</span><span class="o">.</span><span class="n">group_by_floor_height</span><span class="p">(</span><span class="n">rooms</span><span class="p">,</span> <span class="n">min_difference</span><span class="p">)</span>
+
+        <span class="c1"># assign the story property to each of the groups</span>
+        <span class="n">story_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">room_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">new_rooms</span><span class="p">):</span>
+            <span class="n">story_name</span> <span class="o">=</span> <span class="s1">&#39;Floor</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">story_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">story_name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">room</span> <span class="ow">in</span> <span class="n">room_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">room</span><span class="o">.</span><span class="n">story</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>  <span class="c1"># preserve any existing user-assigned story values</span>
+                <span class="n">room</span><span class="o">.</span><span class="n">story</span> <span class="o">=</span> <span class="n">story_name</span>
+        <span class="k">return</span> <span class="n">story_names</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Room writer object.</span>
+
+<span class="sd">        Use this method to access Writer class to write the room in other formats.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room.to.idf(room) -&gt; idf string.</span>
+<span class="sd">            room.to.radiance(room) -&gt; Radiance string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">writer</span>
+
+<div class="viewcode-block" id="Room.to_dict"><a class="viewcode-back" href="../../honeybee.room.html#honeybee.room.Room.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abridged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">included_prop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return Room as a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abridged: Boolean to note whether the extension properties of the</span>
+<span class="sd">                object (ie. construction sets) should be included in detail</span>
+<span class="sd">                (False) or just referenced by identifier (True). Default: False.</span>
+<span class="sd">            included_prop: List of properties to filter keys that must be included in</span>
+<span class="sd">                output dictionary. For example [&#39;energy&#39;] will include &#39;energy&#39; key if</span>
+<span class="sd">                available in properties to_dict. By default all the keys will be</span>
+<span class="sd">                included. To exclude all the keys from extensions use an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Room&#39;</span><span class="p">}</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_shades_to_dict</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;multiplier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">story</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;story&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">story</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">new_r</span> <span class="o">=</span> <span class="n">Room</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span> <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">))</span>
+        <span class="n">new_r</span><span class="o">.</span><span class="n">_display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span>
+        <span class="n">new_r</span><span class="o">.</span><span class="n">_user_data</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new_r</span><span class="o">.</span><span class="n">_multiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span>
+        <span class="n">new_r</span><span class="o">.</span><span class="n">_story</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">story</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duplicate_child_shades</span><span class="p">(</span><span class="n">new_r</span><span class="p">)</span>
+        <span class="n">new_r</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span>
+        <span class="n">new_r</span><span class="o">.</span><span class="n">_properties</span><span class="o">.</span><span class="n">_duplicate_extension_attr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_r</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Room: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.boundarycondition &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee.boundarycondition</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Boundary Condition for Face, Aperture, Door.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">float_in_range</span><span class="p">,</span> <span class="n">tuple_with_length</span>
+<span class="kn">from</span> <span class="nn">.altnumber</span> <span class="kn">import</span> <span class="n">autocalculate</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<span class="k">class</span> <span class="nc">_BoundaryCondition</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base boundary condition class.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Boundary condition.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the name of the boundary condition (ie. &#39;Outdoors&#39;, &#39;Ground&#39;).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">view_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the view factor to the ground.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;autocalculate&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sun_exposure_idf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a text string for sun exposure, which is write-able into an IDF.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;NoSun&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wind_exposure_idf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get a text string for wind exposure, which is write-able into an IDF.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;NoWind&#39;</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the boundary condition as a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+
+<div class="viewcode-block" id="Outdoors"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Outdoors">[docs]</a><span class="k">class</span> <span class="nc">Outdoors</span><span class="p">(</span><span class="n">_BoundaryCondition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Outdoor boundary condition.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sun_exposure: A boolean noting whether the boundary is exposed to sun.</span>
+<span class="sd">            Default: True.</span>
+<span class="sd">        wind_exposure: A boolean noting whether the boundary is exposed to wind.</span>
+<span class="sd">            Default: True.</span>
+<span class="sd">        view_factor: A number between 0 and 1 for the view factor to the ground.</span>
+<span class="sd">            This input can also be an Autocalculate object to signify that the view</span>
+<span class="sd">            factor automatically calculated.  Default: autocalculate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_sun_exposure&#39;</span><span class="p">,</span> <span class="s1">&#39;_wind_exposure&#39;</span><span class="p">,</span> <span class="s1">&#39;_view_factor&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sun_exposure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">wind_exposure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">view_factor</span><span class="o">=</span><span class="n">autocalculate</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Outdoors boundary condition.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sun_exposure</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span> \
+            <span class="s1">&#39;Input sun_exposure must be a Boolean. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sun_exposure</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sun_exposure</span> <span class="o">=</span> <span class="n">sun_exposure</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wind_exposure</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span> \
+            <span class="s1">&#39;Input wind_exposure must be a Boolean. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">wind_exposure</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wind_exposure</span> <span class="o">=</span> <span class="n">wind_exposure</span>
+        <span class="k">if</span> <span class="n">view_factor</span> <span class="o">==</span> <span class="n">autocalculate</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_view_factor</span> <span class="o">=</span> <span class="n">autocalculate</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_view_factor</span> <span class="o">=</span> <span class="n">float_in_range</span><span class="p">(</span>
+                <span class="n">view_factor</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;view factor to ground&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Outdoors.from_dict"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Outdoors.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Outdoors BoundaryCondition from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary representation of the boundary condition.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Outdoors&#39;</span><span class="p">,</span> <span class="s1">&#39;Expected dictionary for Outdoors boundary &#39;</span> \
+            <span class="s1">&#39;condition. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+        <span class="n">sun_exposure</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;sun_exposure&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;sun_exposure&#39;</span><span class="p">]</span>
+        <span class="n">wind_exposure</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;wind_exposure&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;wind_exposure&#39;</span><span class="p">]</span>
+        <span class="n">view_factor</span> <span class="o">=</span> <span class="n">autocalculate</span> <span class="k">if</span> <span class="s1">&#39;view_factor&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">or</span> \
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;view_factor&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">autocalculate</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;view_factor&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sun_exposure</span><span class="p">,</span> <span class="n">wind_exposure</span><span class="p">,</span> <span class="n">view_factor</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sun_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether the boundary is exposed to sun.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sun_exposure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wind_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether the boundary is exposed to wind.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wind_exposure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">view_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the view factor to the ground as a number or &#39;autocalculate&#39;.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_view_factor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sun_exposure_idf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a text string for sun exposure, which is write-able into an IDF.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;NoSun&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_exposure</span> <span class="k">else</span> <span class="s1">&#39;SunExposed&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wind_exposure_idf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a text string for wind exposure, which is write-able into an IDF.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;NoWind&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_exposure</span> <span class="k">else</span> <span class="s1">&#39;WindExposed&#39;</span>
+
+<div class="viewcode-block" id="Outdoors.to_dict"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Outdoors.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the boundary condition as a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            full: Set to True to get the full dictionary which includes energy</span>
+<span class="sd">                simulation specific keys such as sun_exposure, wind_exposure and</span>
+<span class="sd">                view_factor. Default: False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">full</span><span class="p">:</span>
+            <span class="n">bc_dict</span><span class="p">[</span><span class="s1">&#39;sun_exposure&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_exposure</span>
+            <span class="n">bc_dict</span><span class="p">[</span><span class="s1">&#39;wind_exposure&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_exposure</span>
+            <span class="n">bc_dict</span><span class="p">[</span><span class="s1">&#39;view_factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">autocalculate</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">view_factor</span> <span class="o">==</span> <span class="n">autocalculate</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_factor</span>
+        <span class="k">return</span> <span class="n">bc_dict</span></div></div>
+
+
+<div class="viewcode-block" id="Surface"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Surface">[docs]</a><span class="k">class</span> <span class="nc">Surface</span><span class="p">(</span><span class="n">_BoundaryCondition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Boundary condition when an object is adjacent to another object.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_boundary_condition_objects&#39;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">boundary_condition_objects</span><span class="p">,</span> <span class="n">sub_face</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Surface boundary condition.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            boundary_condition_objects: A list of up to 3 object identifiers that are adjacent</span>
+<span class="sd">                to this one. The first object is always the one that is immediately</span>
+<span class="sd">                adjacent and is of the same object type (Face, Aperture, Door). When</span>
+<span class="sd">                this boundary condition is applied to a Face, the second object in the</span>
+<span class="sd">                tuple will be the parent Room of the adjacent object. When the boundary</span>
+<span class="sd">                condition is applied to a sub-face (Door or Aperture), the second object</span>
+<span class="sd">                will be the parent Face of the adjacent sub-face and the third object</span>
+<span class="sd">                 will be the parent Room of the adjacent sub-face.</span>
+<span class="sd">            sub_face: Boolean to note whether this boundary condition is applied to a</span>
+<span class="sd">                sub-face (an Aperture or a Door) instead of a Face. Default: False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sub_face</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition_objects</span> <span class="o">=</span> <span class="n">tuple_with_length</span><span class="p">(</span>
+                <span class="n">boundary_condition_objects</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span>
+                <span class="s1">&#39;boundary_condition_objects for Apertures or Doors&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition_objects</span> <span class="o">=</span> <span class="n">tuple_with_length</span><span class="p">(</span>
+                <span class="n">boundary_condition_objects</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span>
+                <span class="s1">&#39;boundary_condition_objects for Faces&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Surface.from_dict"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Surface.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">sub_face</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Surface BoundaryCondition from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary representation of the boundary condition.</span>
+<span class="sd">            sub_face: Boolean to note whether this boundary condition is applied to a</span>
+<span class="sd">                sub-face (an Aperture or a Door) instead of a Face. Default: False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Surface&#39;</span><span class="p">,</span> <span class="s1">&#39;Expected dictionary for Surface boundary &#39;</span> \
+            <span class="s1">&#39;condition. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;boundary_condition_objects&#39;</span><span class="p">],</span> <span class="n">sub_face</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Surface.from_other_object"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Surface.from_other_object">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_other_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">other_object</span><span class="p">,</span> <span class="n">sub_face</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Surface boundary condition from an adjacent other object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other_object: Another object (Face, Aperture, Door) of the same type</span>
+<span class="sd">                that this boundary condition is assigned.  This other_object will be</span>
+<span class="sd">                set as the adjacent object in this boundary condition.</span>
+<span class="sd">            sub_face: Boolean to note whether this boundary condition is applied to a</span>
+<span class="sd">                sub-face (an Aperture or a Door) instead of a Face. Default: False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;Surface boundary conditions can only be assigned to objects&#39;</span> \
+            <span class="s1">&#39; with parent Rooms.&#39;</span>
+        <span class="n">bc_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_object</span><span class="o">.</span><span class="n">identifier</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">other_object</span><span class="o">.</span><span class="n">has_parent</span><span class="p">:</span>
+            <span class="n">bc_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other_object</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sub_face</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">other_object</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">has_parent</span><span class="p">:</span>
+                    <span class="n">bc_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other_object</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">bc_objects</span><span class="p">,</span> <span class="n">sub_face</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">boundary_condition_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a tuple of up to 3 object identifiers that are adjacent to this one.</span>
+
+<span class="sd">        The first object is always the one that is immediately adjacent and is of</span>
+<span class="sd">        the same object type (Face, Aperture, Door).</span>
+<span class="sd">        When this boundary condition is applied to a Face, the second object in the</span>
+<span class="sd">        tuple will be the parent Room of the adjacent object.</span>
+<span class="sd">        When the boundary condition is applied to a sub-face (Door or Aperture),</span>
+<span class="sd">        the second object will be the parent Face of the sub-face and the third</span>
+<span class="sd">        object will be the parent Room of the adjacent sub-face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition_objects</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">boundary_condition_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the identifier of the object adjacent to this one.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition_objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Surface.to_dict"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Surface.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the boundary condition as a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            full: Set to True to get the full dictionary which includes energy</span>
+<span class="sd">                simulation specific keys such as sun_exposure, wind_exposure and</span>
+<span class="sd">                view_factor. Default: False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s1">&#39;boundary_condition_objects&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition_objects</span><span class="p">}</span></div></div>
+
+
+<div class="viewcode-block" id="Ground"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Ground">[docs]</a><span class="k">class</span> <span class="nc">Ground</span><span class="p">(</span><span class="n">_BoundaryCondition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ground boundary condition.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: A dictionary representation of the boundary condition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+<div class="viewcode-block" id="Ground.from_dict"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.Ground.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Ground BoundaryCondition from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Ground&#39;</span><span class="p">,</span> <span class="s1">&#39;Expected dictionary for Ground boundary &#39;</span> \
+            <span class="s1">&#39;condition. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">_BoundaryConditions</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Boundary conditions.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outdoors</span> <span class="o">=</span> <span class="n">Outdoors</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ground</span> <span class="o">=</span> <span class="n">Ground</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bc_name_dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outdoors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Default outdoor boundary condition.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outdoors</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ground</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Default ground boundary condition.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ground</span>
+
+    <span class="k">def</span> <span class="nf">surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_object</span><span class="p">,</span> <span class="n">sub_face</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a Surface boundary condition.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other_object: The other object that is adjacent to the one that will</span>
+<span class="sd">                bear this Surface boundary condition.</span>
+<span class="sd">            sub_face: Boolean to note whether</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Surface</span><span class="o">.</span><span class="n">from_other_object</span><span class="p">(</span><span class="n">other_object</span><span class="p">,</span> <span class="n">sub_face</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bc_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boundary condition object instance by its name.</span>
+
+<span class="sd">        This method will correct for capitalization as well as the presence of</span>
+<span class="sd">        spaces and underscores. Note that this method only works for boundary</span>
+<span class="sd">        conditions with all of their inputs defaulted.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bc_name: A boundary condition name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bc_name_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_build_bc_name_dict</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bc_name_dict</span><span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[\s_]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">bc_name</span><span class="o">.</span><span class="n">lower</span><span class="p">())]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;&quot;</span><span class="si">{}</span><span class="s1">&quot; is not a valid boundary condition name.</span><span class="se">\n</span><span class="s1">Choose from the &#39;</span>
+                <span class="s1">&#39;following: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bc_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bc_name_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+    <span class="k">def</span> <span class="nf">_build_bc_name_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build a dictionary that can be used to lookup boundary conditions by name.&quot;&quot;&quot;</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="p">[</span><span class="n">atr</span> <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">atr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
+        <span class="n">clean_attr</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[\s_]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">atr</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="k">for</span> <span class="n">atr</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bc_name_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">atr_name</span><span class="p">,</span> <span class="n">atr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">clean_attr</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">full_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">atr</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_bc_name_dict</span><span class="p">[</span><span class="n">atr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_attr</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># callable method that has no static default object</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">_BoundaryCondition</span><span class="p">)</span>
+
+
+<span class="n">boundary_conditions</span> <span class="o">=</span> <span class="n">_BoundaryConditions</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="get_bc_from_position"><a class="viewcode-back" href="../../honeybee.boundarycondition.html#honeybee.boundarycondition.get_bc_from_position">[docs]</a><span class="k">def</span> <span class="nf">get_bc_from_position</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">ground_depth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a boundary condition based on the relationship to a ground plane.</span>
+
+<span class="sd">    Positions that are entirely at or below the ground_depth will get a Ground</span>
+<span class="sd">    boundary condition. If there are any positions above the ground_depth, an</span>
+<span class="sd">    Outdoors boundary condition will be returned.</span>
+
+<span class="sd">    args:</span>
+<span class="sd">        positions: A list of ladybug_geometry Point3D objects represeting the</span>
+<span class="sd">            vertices of an object.</span>
+<span class="sd">        ground_depth: The Z value above which positions are considered Outdoors</span>
+<span class="sd">            instead of Ground.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Face type instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">position</span><span class="o">.</span><span class="n">z</span> <span class="o">&gt;</span> <span class="n">ground_depth</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">outdoors</span>
+    <span class="k">return</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">ground</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

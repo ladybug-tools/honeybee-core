@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.boundarycondition module &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="honeybee.checkdup module" href="honeybee.checkdup.html" />
+    <link rel="prev" title="honeybee.aperture module" href="honeybee.aperture.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="honeybee.aperture.html" title="Previous Chapter: honeybee.aperture module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; honeybee.aper...</span>
+    </a>
+  </li>
+  <li>
+    <a href="honeybee.checkdup.html" title="Next Chapter: honeybee.checkdup module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">honeybee.chec... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/honeybee.boundarycondition.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <div class="section" id="module-honeybee.boundarycondition">
+<span id="honeybee-boundarycondition-module"></span><h1>honeybee.boundarycondition module<a class="headerlink" href="#module-honeybee.boundarycondition" title="Permalink to this headline">¶</a></h1>
+<p>Boundary Condition for Face, Aperture, Door.</p>
+<dl class="py class">
+<dt id="honeybee.boundarycondition.Ground">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.boundarycondition.</code><code class="sig-name descname">Ground</code><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Ground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Ground" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.boundarycondition._BoundaryCondition</span></code></p>
+<p>Ground boundary condition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – A dictionary representation of the boundary condition.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Ground.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.boundarycondition.Ground.ToString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Ground.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Ground.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Ground.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize Ground BoundaryCondition from a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Ground.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.boundarycondition.Ground.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the boundary condition as a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Ground.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#honeybee.boundarycondition.Ground.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of the boundary condition (ie. ‘Outdoors’, ‘Ground’).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Ground.sun_exposure_idf">
+<em class="property">property </em><code class="sig-name descname">sun_exposure_idf</code><a class="headerlink" href="#honeybee.boundarycondition.Ground.sun_exposure_idf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a text string for sun exposure, which is write-able into an IDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Ground.view_factor">
+<em class="property">property </em><code class="sig-name descname">view_factor</code><a class="headerlink" href="#honeybee.boundarycondition.Ground.view_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the view factor to the ground.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Ground.wind_exposure_idf">
+<em class="property">property </em><code class="sig-name descname">wind_exposure_idf</code><a class="headerlink" href="#honeybee.boundarycondition.Ground.wind_exposure_idf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a text string for wind exposure, which is write-able into an IDF.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="honeybee.boundarycondition.Outdoors">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.boundarycondition.</code><code class="sig-name descname">Outdoors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sun_exposure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">wind_exposure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">view_factor</span><span class="o">=</span><span class="default_value">Autocalculate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Outdoors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Outdoors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.boundarycondition._BoundaryCondition</span></code></p>
+<p>Outdoor boundary condition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sun_exposure</strong> – A boolean noting whether the boundary is exposed to sun.
+Default: True.</p></li>
+<li><p><strong>wind_exposure</strong> – A boolean noting whether the boundary is exposed to wind.
+Default: True.</p></li>
+<li><p><strong>view_factor</strong> – A number between 0 and 1 for the view factor to the ground.
+This input can also be an Autocalculate object to signify that the view
+factor automatically calculated.  Default: autocalculate.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.ToString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Outdoors.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize Outdoors BoundaryCondition from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – A dictionary representation of the boundary condition.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">full</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Outdoors.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the boundary condition as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>full</strong> – Set to True to get the full dictionary which includes energy
+simulation specific keys such as sun_exposure, wind_exposure and
+view_factor. Default: False.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of the boundary condition (ie. ‘Outdoors’, ‘Ground’).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.sun_exposure">
+<em class="property">property </em><code class="sig-name descname">sun_exposure</code><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.sun_exposure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a boolean noting whether the boundary is exposed to sun.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.sun_exposure_idf">
+<em class="property">property </em><code class="sig-name descname">sun_exposure_idf</code><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.sun_exposure_idf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a text string for sun exposure, which is write-able into an IDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.view_factor">
+<em class="property">property </em><code class="sig-name descname">view_factor</code><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.view_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the view factor to the ground as a number or ‘autocalculate’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.wind_exposure">
+<em class="property">property </em><code class="sig-name descname">wind_exposure</code><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.wind_exposure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a boolean noting whether the boundary is exposed to wind.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Outdoors.wind_exposure_idf">
+<em class="property">property </em><code class="sig-name descname">wind_exposure_idf</code><a class="headerlink" href="#honeybee.boundarycondition.Outdoors.wind_exposure_idf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a text string for wind exposure, which is write-able into an IDF.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="honeybee.boundarycondition.Surface">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.boundarycondition.</code><code class="sig-name descname">Surface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">boundary_condition_objects</span></em>, <em class="sig-param"><span class="n">sub_face</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.boundarycondition._BoundaryCondition</span></code></p>
+<p>Boundary condition when an object is adjacent to another object.</p>
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.boundarycondition.Surface.ToString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">sub_face</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Surface.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Surface.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize Surface BoundaryCondition from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – A dictionary representation of the boundary condition.</p></li>
+<li><p><strong>sub_face</strong> – Boolean to note whether this boundary condition is applied to a
+sub-face (an Aperture or a Door) instead of a Face. Default: False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.from_other_object">
+<em class="property">classmethod </em><code class="sig-name descname">from_other_object</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other_object</span></em>, <em class="sig-param"><span class="n">sub_face</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Surface.from_other_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Surface.from_other_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize Surface boundary condition from an adjacent other object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other_object</strong> – Another object (Face, Aperture, Door) of the same type
+that this boundary condition is assigned.  This other_object will be
+set as the adjacent object in this boundary condition.</p></li>
+<li><p><strong>sub_face</strong> – Boolean to note whether this boundary condition is applied to a
+sub-face (an Aperture or a Door) instead of a Face. Default: False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#Surface.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.Surface.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the boundary condition as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>full</strong> – Set to True to get the full dictionary which includes energy
+simulation specific keys such as sun_exposure, wind_exposure and
+view_factor. Default: False.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.boundary_condition_object">
+<em class="property">property </em><code class="sig-name descname">boundary_condition_object</code><a class="headerlink" href="#honeybee.boundarycondition.Surface.boundary_condition_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the identifier of the object adjacent to this one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.boundary_condition_objects">
+<em class="property">property </em><code class="sig-name descname">boundary_condition_objects</code><a class="headerlink" href="#honeybee.boundarycondition.Surface.boundary_condition_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a tuple of up to 3 object identifiers that are adjacent to this one.</p>
+<p>The first object is always the one that is immediately adjacent and is of
+the same object type (Face, Aperture, Door).
+When this boundary condition is applied to a Face, the second object in the
+tuple will be the parent Room of the adjacent object.
+When the boundary condition is applied to a sub-face (Door or Aperture),
+the second object will be the parent Face of the sub-face and the third
+object will be the parent Room of the adjacent sub-face.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#honeybee.boundarycondition.Surface.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of the boundary condition (ie. ‘Outdoors’, ‘Ground’).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.sun_exposure_idf">
+<em class="property">property </em><code class="sig-name descname">sun_exposure_idf</code><a class="headerlink" href="#honeybee.boundarycondition.Surface.sun_exposure_idf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a text string for sun exposure, which is write-able into an IDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.view_factor">
+<em class="property">property </em><code class="sig-name descname">view_factor</code><a class="headerlink" href="#honeybee.boundarycondition.Surface.view_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the view factor to the ground.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.boundarycondition.Surface.wind_exposure_idf">
+<em class="property">property </em><code class="sig-name descname">wind_exposure_idf</code><a class="headerlink" href="#honeybee.boundarycondition.Surface.wind_exposure_idf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a text string for wind exposure, which is write-able into an IDF.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="honeybee.boundarycondition.get_bc_from_position">
+<code class="sig-prename descclassname">honeybee.boundarycondition.</code><code class="sig-name descname">get_bc_from_position</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">positions</span></em>, <em class="sig-param"><span class="n">ground_depth</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/boundarycondition.html#get_bc_from_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.boundarycondition.get_bc_from_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a boundary condition based on the relationship to a ground plane.</p>
+<p>Positions that are entirely at or below the ground_depth will get a Ground
+boundary condition. If there are any positions above the ground_depth, an
+Outdoors boundary condition will be returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>positions</strong> – A list of ladybug_geometry Point3D objects represeting the
+vertices of an object.</p></li>
+<li><p><strong>ground_depth</strong> – The Z value above which positions are considered Outdoors
+instead of Ground.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Face type instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

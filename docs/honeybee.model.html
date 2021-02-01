@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.model module &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="honeybee.orientation module" href="honeybee.orientation.html" />
+    <link rel="prev" title="honeybee.logutil module" href="honeybee.logutil.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="honeybee.logutil.html" title="Previous Chapter: honeybee.logutil module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; honeybee.logu...</span>
+    </a>
+  </li>
+  <li>
+    <a href="honeybee.orientation.html" title="Next Chapter: honeybee.orientation module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">honeybee.orie... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/honeybee.model.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <div class="section" id="module-honeybee.model">
+<span id="honeybee-model-module"></span><h1>honeybee.model module<a class="headerlink" href="#module-honeybee.model" title="Permalink to this headline">¶</a></h1>
+<p>Honeybee Model.</p>
+<dl class="py class">
+<dt id="honeybee.model.Model">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.model.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span></em>, <em class="sig-param"><span class="n">rooms</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">orphaned_faces</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">orphaned_shades</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">orphaned_apertures</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">orphaned_doors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">units</span><span class="o">=</span><span class="default_value">'Meters'</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee._base._Base</span></code></p>
+<p>A collection of Rooms, Faces, Shades, Apertures, and Doors representing a model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> – Text string for a unique Model ID. Must be &lt; 100 characters and
+not contain any spaces or special characters.</p></li>
+<li><p><strong>rooms</strong> – A list of Room objects in the model.</p></li>
+<li><p><strong>orphaned_faces</strong> – A list of the Face objects in the model that lack
+a parent Room. Note that orphaned Faces are not acceptable for
+Models that are to be exported for energy simulation.</p></li>
+<li><p><strong>orphaned_shades</strong> – A list of the Shade objects in the model that lack
+a parent.</p></li>
+<li><p><strong>orphaned_apertures</strong> – A list of the Aperture objects in the model that lack
+a parent Face. Note that orphaned Apertures are not acceptable for
+Models that are to be exported for energy simulation.</p></li>
+<li><p><strong>orphaned_doors</strong> – A list of the Door objects in the model that lack
+a parent Face. Note that orphaned Doors are not acceptable for
+Models that are to be exported for energy simulation.</p></li>
+<li><p><strong>units</strong> – <p>Text for the units system in which the model geometry
+exists. Default: ‘Meters’. Choose from the following:</p>
+<ul>
+<li><p>Meters</p></li>
+<li><p>Millimeters</p></li>
+<li><p>Feet</p></li>
+<li><p>Inches</p></li>
+<li><p>Centimeters</p></li>
+</ul>
+</p></li>
+<li><p><strong>tolerance</strong> – The maximum difference between x, y, and z values at which
+vertices are considered equivalent. Zero indicates that no tolerance
+checks should be performed. None indicates that the tolerance will be
+set based on the units above, with the tolerance consistently being
+between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
+SDK). (Default: None).</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle difference in degrees that vertices are allowed
+to differ from one another in order to consider them colinear. Zero indicates
+that no angle tolerance checks should be performed. (Default: 1.0).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Properties:</dt><dd><ul class="simple">
+<li><p>identifier</p></li>
+<li><p>display_name</p></li>
+<li><p>units</p></li>
+<li><p>tolerance</p></li>
+<li><p>angle_tolerance</p></li>
+<li><p>rooms</p></li>
+<li><p>faces</p></li>
+<li><p>apertures</p></li>
+<li><p>doors</p></li>
+<li><p>shades</p></li>
+<li><p>indoor_shades</p></li>
+<li><p>outdoor_shades</p></li>
+<li><p>orphaned_faces</p></li>
+<li><p>orphaned_shades</p></li>
+<li><p>orphaned_apertures</p></li>
+<li><p>orphaned_doors</p></li>
+<li><p>stories</p></li>
+<li><p>volume</p></li>
+<li><p>floor_area</p></li>
+<li><p>exposed_area</p></li>
+<li><p>exterior_wall_area</p></li>
+<li><p>exterior_roof_area</p></li>
+<li><p>exterior_aperture_area</p></li>
+<li><p>exterior_wall_aperture_area</p></li>
+<li><p>exterior_skylight_aperture_area</p></li>
+<li><p>user_data</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="honeybee.model.Model.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.model.Model.ToString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.add_aperture">
+<code class="sig-name descname">add_aperture</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.add_aperture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.add_aperture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an orphaned Aperture object to the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.add_door">
+<code class="sig-name descname">add_door</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.add_door"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.add_door" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an orphaned Door object to the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.add_face">
+<code class="sig-name descname">add_face</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.add_face"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.add_face" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an orphaned Face object without a parent to the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.add_model">
+<code class="sig-name descname">add_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.add_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.add_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add another Model object to this model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.add_room">
+<code class="sig-name descname">add_room</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.add_room"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.add_room" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a Room object to the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.add_shade">
+<code class="sig-name descname">add_shade</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.add_shade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.add_shade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an orphaned Shade object to the model, typically representing context.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.apertures_by_identifier">
+<code class="sig-name descname">apertures_by_identifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifiers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.apertures_by_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.apertures_by_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of Aperture objects in the model given the Aperture identifiers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.assign_stories_by_floor_height">
+<code class="sig-name descname">assign_stories_by_floor_height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_difference</span><span class="o">=</span><span class="default_value">2.0</span></em>, <em class="sig-param"><span class="n">overwrite</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.assign_stories_by_floor_height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.assign_stories_by_floor_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign story properties to the rooms of this Model using their floor heights.</p>
+<p>Stories will be named with a standard convention (‘Floor1’, ‘Floor2’, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_difference</strong> – An float value to denote the minimum difference
+in floor heights that is considered meaningful. This can be used
+to ensure rooms like those representing stair landings are grouped
+with floors. Default: 2.0, which means that any difference in
+floor heights less than 2.0 will be considered a part of the
+same story. This assumption is suitable for models in meters.</p></li>
+<li><p><strong>overwrite</strong> – If True, all story properties of this model’s rooms will
+be overwritten by this method. If False, this method will only
+assign stories to Rooms that do not already have a story identifier
+already assigned to them. (Default: False).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of the unique story names that were assigned to the input rooms.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_all_air_boundaries_adjacent">
+<code class="sig-name descname">check_all_air_boundaries_adjacent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_all_air_boundaries_adjacent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_all_air_boundaries_adjacent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all Faces with the AirBoundary type are adjacent to other Faces.</p>
+<p>This is a requirement for energy simulation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_duplicate_face_identifiers">
+<code class="sig-name descname">check_duplicate_face_identifiers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_duplicate_face_identifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_duplicate_face_identifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that there are no duplicate Face identifiers in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_duplicate_room_identifiers">
+<code class="sig-name descname">check_duplicate_room_identifiers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_duplicate_room_identifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_duplicate_room_identifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that there are no duplicate Room identifiers in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_duplicate_shade_identifiers">
+<code class="sig-name descname">check_duplicate_shade_identifiers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_duplicate_shade_identifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_duplicate_shade_identifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that there are no duplicate Shade identifiers in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_duplicate_sub_face_identifiers">
+<code class="sig-name descname">check_duplicate_sub_face_identifiers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_duplicate_sub_face_identifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_duplicate_sub_face_identifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that there are no duplicate sub-face identifiers in the model.</p>
+<p>Note that both Apertures and Doors are checked for duplicates since the two
+are counted together by EnergyPlus.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_missing_adjacencies">
+<code class="sig-name descname">check_missing_adjacencies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_missing_adjacencies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_missing_adjacencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all Faces Apertures, and Doors have adjacent objects in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_non_zero">
+<code class="sig-name descname">check_non_zero</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_non_zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_non_zero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that the Model’s geometry components are above a “zero” area tolerance.</p>
+<p>This includes all of the Model’s Faces, Apertures, Doors and Shades.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tolerance</strong> – The minimum acceptable area of the object. Default is 0.0001,
+which is equal to 1 cm2 when model units are meters. This is just
+above the smallest size that OpenStudio will accept.</p></li>
+<li><p><strong>raise_exception</strong> – If True, a ValueError will be raised if the object
+area is below the tolerance. Default: True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_planar">
+<code class="sig-name descname">check_planar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span></em>, <em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_planar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_planar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all of the Model’s geometry components are planar.</p>
+<p>This includes all of the Model’s Faces, Apertures, Doors and Shades.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tolerance</strong> – The minimum distance between a given vertex and a the
+object’s plane at which the vertex is said to lie in the plane.</p></li>
+<li><p><strong>raise_exception</strong> – Boolean to note whether an ValueError should be
+raised if a vertex does not lie within the object’s plane.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_rooms_solid">
+<code class="sig-name descname">check_rooms_solid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_rooms_solid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_rooms_solid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the Model’s rooms are closed solid to within tolerances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tolerance</strong> – tolerance: The maximum difference between x, y, and z values
+at which face vertices are considered equivalent. Default: 0.01,
+suitable for objects in meters.</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle difference in degrees that vertices are
+allowed to differ from one another in order to consider them colinear.
+Default: 1 degree.</p></li>
+<li><p><strong>raise_exception</strong> – Boolean to note whether a ValueError should be raised
+if the room geometry does not form a closed solid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_self_intersecting">
+<code class="sig-name descname">check_self_intersecting</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_self_intersecting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_self_intersecting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that no edges of the Model’s geometry components self-intersect.</p>
+<p>This includes all of the Model’s Faces, Apertures, Doors and Shades.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>raise_exception</strong> – If True, a ValueError will be raised if an object
+intersects with itself (like a bowtie). Default: True.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.check_sub_faces_valid">
+<code class="sig-name descname">check_sub_faces_valid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.check_sub_faces_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.check_sub_faces_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that model’s sub-faces are co-planar with faces and in the face boundary.</p>
+<p>Note this does not check the planarity of the sub-faces themselves, whether
+they self-intersect, or whether they have a non-zero area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tolerance</strong> – The minimum difference between the coordinate values of two
+vertices at which they can be considered equivalent. Default: 0.01,
+suitable for objects in meters.</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle in degrees that the plane normals can
+differ from one another in order for them to be considered coplanar.
+Default: 1 degree.</p></li>
+<li><p><strong>raise_exception</strong> – Boolean to note whether a ValueError should be raised
+if an sub-face is not valid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.conversion_factor_to_meters">
+<em class="property">static </em><code class="sig-name descname">conversion_factor_to_meters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">units</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.conversion_factor_to_meters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.conversion_factor_to_meters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the conversion factor to meters based on input units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>units</strong> – <p>Text for the units. Choose from the following:</p>
+<ul class="simple">
+<li><p>Meters</p></li>
+<li><p>Millimeters</p></li>
+<li><p>Feet</p></li>
+<li><p>Inches</p></li>
+<li><p>Centimeters</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A number for the conversion factor, which should be multiplied by
+all distance units taken from Rhino geometry in order to convert
+them to meters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.convert_to_units">
+<code class="sig-name descname">convert_to_units</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">units</span><span class="o">=</span><span class="default_value">'Meters'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.convert_to_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.convert_to_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert all of the geometry in this model to certain units.</p>
+<p>This involves scaling the geometry, scaling the Model tolerance, and
+changing the Model’s units property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>units</strong> – <p>Text for the units to which the Model geometry should be
+converted. Default: Meters. Choose from the following:</p>
+<ul class="simple">
+<li><p>Meters</p></li>
+<li><p>Millimeters</p></li>
+<li><p>Feet</p></li>
+<li><p>Inches</p></li>
+<li><p>Centimeters</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.doors_by_identifier">
+<code class="sig-name descname">doors_by_identifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifiers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.doors_by_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.doors_by_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of Door objects in the model given the Door identifiers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.duplicate">
+<code class="sig-name descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.model.Model.duplicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a copy of this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.faces_by_identifier">
+<code class="sig-name descname">faces_by_identifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifiers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.faces_by_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.faces_by_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of Face objects in the model given the Face identifiers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a Model from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – A dictionary representation of a Model object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.from_objects">
+<em class="property">classmethod </em><code class="sig-name descname">from_objects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span></em>, <em class="sig-param"><span class="n">objects</span></em>, <em class="sig-param"><span class="n">units</span><span class="o">=</span><span class="default_value">'Meters'</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.from_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.from_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a Model from a list of any type of honeybee-core geometry objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> – Text string for a unique Model ID. Must be &lt; 100 characters and
+not contain any spaces or special characters.</p></li>
+<li><p><strong>objects</strong> – A list of honeybee Rooms, Faces, Shades, Apertures and Doors.</p></li>
+<li><p><strong>units</strong> – <p>Text for the units system in which the model geometry
+exists. Default: ‘Meters’. Choose from the following:</p>
+<ul>
+<li><p>Meters</p></li>
+<li><p>Millimeters</p></li>
+<li><p>Feet</p></li>
+<li><p>Inches</p></li>
+<li><p>Centimeters</p></li>
+</ul>
+</p></li>
+<li><p><strong>tolerance</strong> – The maximum difference between x, y, and z values at which
+vertices are considered equivalent. Zero indicates that no tolerance
+checks should be performed. Default: 0.</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle difference in degrees that vertices are
+allowed to differ from one another in order to consider them colinear.
+Zero indicates that no angle tolerance checks should be performed.
+Default: 0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move this Model along a vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the Model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.reflect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reflect this Model across a plane with the input normal vector and origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_all_apertures">
+<code class="sig-name descname">remove_all_apertures</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_all_apertures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_all_apertures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all Apertures from the model.</p>
+<p>This includes assigned apertures as well as orphaned apertures.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_all_doors">
+<code class="sig-name descname">remove_all_doors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_all_doors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_all_doors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all Doors from the model.</p>
+<p>This includes assigned doors as well as orphaned doors.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_all_shades">
+<code class="sig-name descname">remove_all_shades</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_all_shades"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_all_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all Shades from the model.</p>
+<p>This includes assigned shades as well as orphaned shades.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_apertures">
+<code class="sig-name descname">remove_apertures</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_apertures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_apertures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all orphaned Apertures from the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_assigned_apertures">
+<code class="sig-name descname">remove_assigned_apertures</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_assigned_apertures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_assigned_apertures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all Apertures assigned to the model’s Faces.</p>
+<p>This includes nested apertures like those assigned to Faces with parent Rooms.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_assigned_doors">
+<code class="sig-name descname">remove_assigned_doors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_assigned_doors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_assigned_doors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all Doors assigned to the model’s Faces.</p>
+<p>This includes nested doors like those assigned to Faces with parent Rooms.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_assigned_shades">
+<code class="sig-name descname">remove_assigned_shades</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_assigned_shades"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_assigned_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all Shades assigned to the model’s Rooms, Faces, Apertures and Doors.</p>
+<p>This includes nested shades like those assigned to Apertures with parent
+Faces that have parent Rooms.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_doors">
+<code class="sig-name descname">remove_doors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_doors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_doors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all orphaned Doors from the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_faces">
+<code class="sig-name descname">remove_faces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_faces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_faces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all orphaned Faces from the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_rooms">
+<code class="sig-name descname">remove_rooms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_rooms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_rooms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all Rooms from the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.remove_shades">
+<code class="sig-name descname">remove_shades</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.remove_shades"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.remove_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all orphaned Shades from the model, typically representing context.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.rooms_by_identifier">
+<code class="sig-name descname">rooms_by_identifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifiers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.rooms_by_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.rooms_by_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of Room objects in the model given the Room identifiers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate this Model by a certain angle around an axis and origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.rotate_xy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate this Model counterclockwise in the world XY plane by a certain angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale this Model by a factor from an origin point.</p>
+<p>Note that using this method does NOT scale the model tolerance and, if
+it is desired that this tolerance be scaled with the model geometry,
+it must be scaled separately.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.shades_by_identifier">
+<code class="sig-name descname">shades_by_identifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifiers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.shades_by_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.shades_by_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of Shade objects in the model given the Shade identifiers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.skylight_apertures_by_ratio">
+<code class="sig-name descname">skylight_apertures_by_ratio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ratio</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.skylight_apertures_by_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.skylight_apertures_by_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add apertures to all exterior roofs given a ratio of aperture to face area.</p>
+<p>Note this method only affects the Models rooms (no orphaned faces) and
+removes any existing apertures and overhead doors on the Room’s roofs.
+This method attempts to generate as few apertures as necessary to meet the ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> – A number between 0 and 1 (but not perfectly equal to 1)
+for the desired ratio between aperture area and face area.</p></li>
+<li><p><strong>tolerance</strong> – The maximum difference between point values for them to be
+considered a part of a rectangle. This is used in the event that
+this face is concave and an attempt to subdivide the face into a
+rectangle is made. It does not affect the ability to produce apertures
+for convex Faces. Default: 0.01, suitable for objects in meters.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">included_prop</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">triangulate_sub_faces</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Model as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>included_prop</strong> – List of properties to filter keys that must be included in
+output dictionary. For example [‘energy’] will include ‘energy’ key if
+available in properties to_dict. By default all the keys will be
+included. To exclude all the keys from extensions use an empty list.</p></li>
+<li><p><strong>triangulate_sub_faces</strong> – Boolean to note whether sub-faces (including
+Apertures and Doors) should be triangulated if they have more than
+4 sides (True) or whether they should be left as they are (False).
+This triangulation is necessary when exporting directly to EnergyPlus
+since it cannot accept sub-faces with more than 4 vertices. Note that
+setting this to True will only triangulate sub-faces with parent Faces
+that also have parent Rooms since orphaned Apertures and Faces are
+not relevant for energy simulation. Default: False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.to_hbjson">
+<code class="sig-name descname">to_hbjson</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'unnamed'</span></em>, <em class="sig-param"><span class="n">folder_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">indent</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">included_prop</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">triangulate_sub_faces</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.to_hbjson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.to_hbjson" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a Honeybee model to HBJSON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – A text string that will be the name of the HBJSON.
+Defaults to “unnamed” for the file name for HBJSON.</p></li>
+<li><p><strong>folder_path</strong> – A text string of path to folder where HBJSON will be written.
+Defaults to None. If folder_path is not specified, the default simulation
+folder will be used to write the HBJSON. This default simulation folder
+is at “C:UsersUSERNAMEsimulation.”</p></li>
+<li><p><strong>indent</strong> – A positive integer to set the indentation used in the
+resulting HBJSON file. If 0, the JSON will be a single line.
+Defaults to 0.</p></li>
+<li><p><strong>included_prop</strong> – List of properties to filter keys that must be included in
+output dictionary. For example [‘energy’] will include ‘energy’ key if
+available in properties to_dict. By default all the keys will be
+included. To exclude all the keys from extensions use an empty list.</p></li>
+<li><p><strong>triangulate_sub_faces</strong> – Boolean to note whether sub-faces (including
+Apertures and Doors) should be triangulated if they have more than
+4 sides (True) or whether they should be left as they are (False).
+This triangulation is necessary when exporting directly to EnergyPlus
+since it cannot accept sub-faces with more than 4 vertices. Note that
+setting this to True will only triangulate sub-faces with parent Faces
+that also have parent Rooms since orphaned Apertures and Faces are
+not relevant for energy simulation. Default: False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.triangulated_apertures">
+<code class="sig-name descname">triangulated_apertures</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.triangulated_apertures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.triangulated_apertures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get triangulated versions of the model Apertures that have more than 4 sides.</p>
+<p>This is necessary for energy simulation since EnergyPlus cannot accept
+sub-faces with more than 4 sides. Note that this method does not alter the
+Apertures within the Model object but just returns a list of modified
+Apertures that all have 3 or 4 sides.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>A tuple with two elements</p>
+<ul class="simple">
+<li><p>triangulated_apertures: A list of lists where each list is a set of
+triangle Apertures meant to replace an Aperture with more than
+4 sides in the model.</p></li>
+<li><p>parents_to_edit: An list of lists that parellels the triangulated
+aperturesin that each item represents an Aperture that has been
+triangulated in the model. However, each of these lists holds between
+1 and 3 values for the identifiers of the original aperture and parents
+of the aperture. This information is intended to help edit parent
+faces that have had their child faces triangulated. The 3 values
+are as follows:</p>
+<ul>
+<li><p>0 = The identifier of the original Aperture that was triangulated.</p></li>
+<li><p>1 = The identifier of the parent Face of the original Aperture
+(if it exists).</p></li>
+<li><p>2 = The identifier of the parent Room of the parent Face of the
+original Aperture (if it exists).</p></li>
+</ul>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.triangulated_doors">
+<code class="sig-name descname">triangulated_doors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.triangulated_doors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.triangulated_doors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get triangulated versions of the model Doors that have more than 4 sides.</p>
+<p>This is necessary for energy simulation since EnergyPlus cannot accept
+sub-faces with more than 4 sides. Note that this method does not alter the
+Doors within the Model object but just returns a list of Doors that
+all have 3 or 4 sides.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>A tuple with two elements</p>
+<ul class="simple">
+<li><p>triangulated_doors: A list of lists where each list is a set of triangle
+Doors meant to replace a Door with more than 4 sides in the model.</p></li>
+<li><p>parents_to_edit: An list of lists that parellels the triangulated_doors
+in that each item represents a Door that has been triangulated
+in the model. However, each of these lists holds between 1 and 3 values
+for the identifiers of the original door and parents of the door.
+This information is intended to help edit parent faces that have had
+their child faces triangulated. The 3 values are as follows:</p>
+<ul>
+<li><p>0 = The identifier of the original Door that was triangulated.</p></li>
+<li><p>1 = The identifier of the parent Face of the original Door
+(if it exists).</p></li>
+<li><p>2 = The identifier of the parent Room of the parent Face of the
+original Door (if it exists).</p></li>
+</ul>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.wall_apertures_by_ratio">
+<code class="sig-name descname">wall_apertures_by_ratio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ratio</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/model.html#Model.wall_apertures_by_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.model.Model.wall_apertures_by_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add apertures to all exterior walls given a ratio of aperture to face area.</p>
+<p>Note this method only affects the Models rooms (no orphaned faces) and it
+removes any existing apertures and doors on the room’s exterior walls.
+This method attempts to generate as few apertures as necessary to meet the ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> – A number between 0 and 1 (but not perfectly equal to 1)
+for the desired ratio between aperture area and face area.</p></li>
+<li><p><strong>tolerance</strong> – The maximum difference between point values for them to be
+considered a part of a rectangle. This is used in the event that
+this face is concave and an attempt to subdivide the face into a
+rectangle is made. It does not affect the ability to produce apertures
+for convex Faces. Default: 0.01, suitable for objects in meters.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee.model.Model.UNITS">
+<code class="sig-name descname">UNITS</code><em class="property"> = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')</em><a class="headerlink" href="#honeybee.model.Model.UNITS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee.model.Model.UNITS_TOLERANCES">
+<code class="sig-name descname">UNITS_TOLERANCES</code><em class="property"> = {'Centimeters': 1.0, 'Feet': 0.01, 'Inches': 0.1, 'Meters': 0.01, 'Millimeters': 1.0}</em><a class="headerlink" href="#honeybee.model.Model.UNITS_TOLERANCES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.angle_tolerance">
+<em class="property">property </em><code class="sig-name descname">angle_tolerance</code><a class="headerlink" href="#honeybee.model.Model.angle_tolerance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a number for the max meaningful angle difference in degrees.</p>
+<p>Face3D normal vectors differing by this amount are not considered parallel
+and Face3D segments that differ from 180 by this amount are not considered
+colinear. Zero indicates cases where no angle_tolerance checks should be
+performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.apertures">
+<em class="property">property </em><code class="sig-name descname">apertures</code><a class="headerlink" href="#honeybee.model.Model.apertures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Aperture objects in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.display_name">
+<em class="property">property </em><code class="sig-name descname">display_name</code><a class="headerlink" href="#honeybee.model.Model.display_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a string for the object name without any character restrictions.</p>
+<p>If not set, this will be equal to the identifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.doors">
+<em class="property">property </em><code class="sig-name descname">doors</code><a class="headerlink" href="#honeybee.model.Model.doors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Door objects in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.exposed_area">
+<em class="property">property </em><code class="sig-name descname">exposed_area</code><a class="headerlink" href="#honeybee.model.Model.exposed_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all room faces with outdoor boundary conditions.</p>
+<p>Useful for estimating infiltration, often expressed as a flow per
+unit exposed envelope area.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.exterior_aperture_area">
+<em class="property">property </em><code class="sig-name descname">exterior_aperture_area</code><a class="headerlink" href="#honeybee.model.Model.exterior_aperture_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all exterior apertures on the model’s rooms.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.exterior_roof_area">
+<em class="property">property </em><code class="sig-name descname">exterior_roof_area</code><a class="headerlink" href="#honeybee.model.Model.exterior_roof_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all exterior roofs on the model’s rooms.</p>
+<p>This is NOT the area of the roof’s punched_geometry and it includes BOTH
+the area of opaque and transparent parts of the roofs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.exterior_skylight_aperture_area">
+<em class="property">property </em><code class="sig-name descname">exterior_skylight_aperture_area</code><a class="headerlink" href="#honeybee.model.Model.exterior_skylight_aperture_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all apertures on exterior roofs of the model’s rooms.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.exterior_wall_aperture_area">
+<em class="property">property </em><code class="sig-name descname">exterior_wall_aperture_area</code><a class="headerlink" href="#honeybee.model.Model.exterior_wall_aperture_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all apertures on exterior walls of the model’s rooms.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.exterior_wall_area">
+<em class="property">property </em><code class="sig-name descname">exterior_wall_area</code><a class="headerlink" href="#honeybee.model.Model.exterior_wall_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all exterior walls on the model’s rooms.</p>
+<p>This is NOT the area of the wall’s punched_geometry and it includes BOTH
+the area of opaque and transparent parts of the walls.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.faces">
+<em class="property">property </em><code class="sig-name descname">faces</code><a class="headerlink" href="#honeybee.model.Model.faces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Face objects in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.floor_area">
+<em class="property">property </em><code class="sig-name descname">floor_area</code><a class="headerlink" href="#honeybee.model.Model.floor_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all room floor faces in the Model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.identifier">
+<em class="property">property </em><code class="sig-name descname">identifier</code><a class="headerlink" href="#honeybee.model.Model.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a text string for the unique object identifer.</p>
+<p>This identifier remains constant as the object is mutated, copied, and
+serialized to different formats (eg. dict, idf, rad). As such, this
+property is used to reference the object across a Model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.indoor_shades">
+<em class="property">property </em><code class="sig-name descname">indoor_shades</code><a class="headerlink" href="#honeybee.model.Model.indoor_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all indoor Shade objects in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.orphaned_apertures">
+<em class="property">property </em><code class="sig-name descname">orphaned_apertures</code><a class="headerlink" href="#honeybee.model.Model.orphaned_apertures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Aperture objects without parent Faces in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.orphaned_doors">
+<em class="property">property </em><code class="sig-name descname">orphaned_doors</code><a class="headerlink" href="#honeybee.model.Model.orphaned_doors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Door objects without parent Faces in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.orphaned_faces">
+<em class="property">property </em><code class="sig-name descname">orphaned_faces</code><a class="headerlink" href="#honeybee.model.Model.orphaned_faces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Face objects without parent Rooms in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.orphaned_shades">
+<em class="property">property </em><code class="sig-name descname">orphaned_shades</code><a class="headerlink" href="#honeybee.model.Model.orphaned_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Shade objects without parent Rooms in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.outdoor_shades">
+<em class="property">property </em><code class="sig-name descname">outdoor_shades</code><a class="headerlink" href="#honeybee.model.Model.outdoor_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all outdoor Shade objects in the model.</p>
+<p>This includes all of the orphaned_shades.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.properties">
+<em class="property">property </em><code class="sig-name descname">properties</code><a class="headerlink" href="#honeybee.model.Model.properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get object properties, including Radiance, Energy and other properties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.rooms">
+<em class="property">property </em><code class="sig-name descname">rooms</code><a class="headerlink" href="#honeybee.model.Model.rooms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Room objects in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.shades">
+<em class="property">property </em><code class="sig-name descname">shades</code><a class="headerlink" href="#honeybee.model.Model.shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all Shade objects in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.stories">
+<em class="property">property </em><code class="sig-name descname">stories</code><a class="headerlink" href="#honeybee.model.Model.stories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of text for each unique story identifier in the Model.</p>
+<p>Note that this will be an empty list if the model has to rooms.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.to">
+<em class="property">property </em><code class="sig-name descname">to</code><a class="headerlink" href="#honeybee.model.Model.to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model writer object.</p>
+<p>Use this method to access Writer class to write the model in other formats.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">idf</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">idf</span> <span class="n">string</span><span class="o">.</span>
+<span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">radiance</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Radiance</span> <span class="n">string</span><span class="o">.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.tolerance">
+<em class="property">property </em><code class="sig-name descname">tolerance</code><a class="headerlink" href="#honeybee.model.Model.tolerance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a number for the max meaningful difference between x, y, z values.</p>
+<p>This value should be in the Model’s units. Zero indicates cases
+where no tolerance checks should be performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.units">
+<em class="property">property </em><code class="sig-name descname">units</code><a class="headerlink" href="#honeybee.model.Model.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set Text for the units system in which the model geometry exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.user_data">
+<em class="property">property </em><code class="sig-name descname">user_data</code><a class="headerlink" href="#honeybee.model.Model.user_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set an optional dictionary for additional meta data for this object.</p>
+<p>This will be None until it has been set. All keys and values of this
+dictionary should be of a standard Python type to ensure correct
+serialization of the object to/from JSON (eg. str, float, int, list, dict)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.model.Model.volume">
+<em class="property">property </em><code class="sig-name descname">volume</code><a class="headerlink" href="#honeybee.model.Model.volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined volume of all rooms in the Model.</p>
+<p>Note that, if this model’s rooms are not closed solids, the value of this
+property will not be accurate.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

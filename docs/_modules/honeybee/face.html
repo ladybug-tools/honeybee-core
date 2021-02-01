@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.face &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee.html">honeybee package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee.face</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+<span class="sd">&quot;&quot;&quot;Honeybee Face.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">from</span> <span class="nn">._basewithshade</span> <span class="kn">import</span> <span class="n">_BaseWithShade</span>
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">clean_string</span>
+<span class="kn">from</span> <span class="nn">.properties</span> <span class="kn">import</span> <span class="n">FaceProperties</span>
+<span class="kn">from</span> <span class="nn">.facetype</span> <span class="kn">import</span> <span class="n">face_types</span><span class="p">,</span> <span class="n">get_type_from_normal</span><span class="p">,</span> <span class="n">AirBoundary</span>
+<span class="kn">from</span> <span class="nn">.boundarycondition</span> <span class="kn">import</span> <span class="n">boundary_conditions</span><span class="p">,</span> <span class="n">get_bc_from_position</span><span class="p">,</span> \
+    <span class="n">_BoundaryCondition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">,</span> <span class="n">Surface</span>
+<span class="kn">from</span> <span class="nn">.shade</span> <span class="kn">import</span> <span class="n">Shade</span>
+<span class="kn">from</span> <span class="nn">.aperture</span> <span class="kn">import</span> <span class="n">Aperture</span>
+<span class="kn">from</span> <span class="nn">.door</span> <span class="kn">import</span> <span class="n">Door</span>
+<span class="kn">import</span> <span class="nn">honeybee.boundarycondition</span> <span class="k">as</span> <span class="nn">hbc</span>
+<span class="kn">import</span> <span class="nn">honeybee.writer.face</span> <span class="k">as</span> <span class="nn">writer</span>
+
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry2d.pointvector</span> <span class="kn">import</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Vector2D</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.pointvector</span> <span class="kn">import</span> <span class="n">Point3D</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.plane</span> <span class="kn">import</span> <span class="n">Plane</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry3d.face</span> <span class="kn">import</span> <span class="n">Face3D</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+<div class="viewcode-block" id="Face"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face">[docs]</a><span class="k">class</span> <span class="nc">Face</span><span class="p">(</span><span class="n">_BaseWithShade</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A single planar face.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        identifier: Text string for a unique Face ID. Must be &lt; 100 characters and</span>
+<span class="sd">            not contain any spaces or special characters.</span>
+<span class="sd">        geometry: A ladybug-geometry Face3D.</span>
+<span class="sd">        type: Face type. Default varies depending on the direction that</span>
+<span class="sd">            the Face geometry is points.</span>
+<span class="sd">            RoofCeiling = pointing upward within 30 degrees</span>
+<span class="sd">            Wall = oriented vertically within +/- 60 degrees</span>
+<span class="sd">            Floor = pointing downward within 30 degrees</span>
+<span class="sd">        boundary_condition: Face boundary condition (Outdoors, Ground, etc.)</span>
+<span class="sd">            Default is Outdoors unless all vertices of the geometry lie</span>
+<span class="sd">            below the below the XY plane, in which case it will be set to Ground.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * identifier</span>
+<span class="sd">        * display_name</span>
+<span class="sd">        * type</span>
+<span class="sd">        * boundary_condition</span>
+<span class="sd">        * apertures</span>
+<span class="sd">        * doors</span>
+<span class="sd">        * indoor_shades</span>
+<span class="sd">        * outdoor_shades</span>
+<span class="sd">        * parent</span>
+<span class="sd">        * has_parent</span>
+<span class="sd">        * has_sub_faces</span>
+<span class="sd">        * geometry</span>
+<span class="sd">        * punched_geometry</span>
+<span class="sd">        * vertices</span>
+<span class="sd">        * punched_vertices</span>
+<span class="sd">        * upper_left_vertices</span>
+<span class="sd">        * normal</span>
+<span class="sd">        * center</span>
+<span class="sd">        * area</span>
+<span class="sd">        * perimeter</span>
+<span class="sd">        * aperture_area</span>
+<span class="sd">        * aperture_ratio</span>
+<span class="sd">        * user_data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TYPES</span> <span class="o">=</span> <span class="n">face_types</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_geometry&#39;</span><span class="p">,</span> <span class="s1">&#39;_parent&#39;</span><span class="p">,</span> <span class="s1">&#39;_punched_geometry&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_apertures&#39;</span><span class="p">,</span> <span class="s1">&#39;_doors&#39;</span><span class="p">,</span> <span class="s1">&#39;_type&#39;</span><span class="p">,</span> <span class="s1">&#39;_boundary_condition&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A single planar face.&quot;&quot;&quot;</span>
+        <span class="n">_BaseWithShade</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">)</span>  <span class="c1"># process the identifier</span>
+
+        <span class="c1"># process the geometry</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Face3D</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected ladybug_geometry Face3D. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">geometry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># _parent will be set when the Face is added to a Room</span>
+        <span class="c1"># initialize with no apertures/doors (they can be assigned later)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># initialize properties for extensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span> <span class="o">=</span> <span class="n">FaceProperties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># set face type based on normal if not provided</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPES</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid face type.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="nb">type</span> <span class="ow">or</span> <span class="n">get_type_from_normal</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span>
+
+        <span class="c1"># set boundary condition by the relation to a zero ground plane if not provided</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">boundary_condition</span> <span class="ow">or</span> \
+            <span class="n">get_bc_from_position</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">boundary</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Face.from_dict"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize an Face from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary representation of an Face object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check the type of dictionary</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Face&#39;</span><span class="p">,</span> <span class="s1">&#39;Expected Face dictionary. &#39;</span> \
+            <span class="s1">&#39;Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+
+        <span class="c1"># first serialize it with an outdoor boundary condition</span>
+        <span class="n">face_type</span> <span class="o">=</span> <span class="n">face_types</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;face_type&#39;</span><span class="p">])</span>
+        <span class="n">face</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">],</span> <span class="n">Face3D</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]),</span>
+                   <span class="n">face_type</span><span class="p">,</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">outdoors</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;display_name&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;user_data&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">user_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span>
+
+        <span class="c1"># add sub-faces and shades</span>
+        <span class="k">if</span> <span class="s1">&#39;apertures&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;apertures&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">add_apertures</span><span class="p">([</span><span class="n">Aperture</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;apertures&#39;</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="s1">&#39;doors&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;doors&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">add_doors</span><span class="p">([</span><span class="n">Door</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dr</span><span class="p">)</span> <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;doors&#39;</span><span class="p">]])</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">_recover_shades_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># get the boundary condition and assign it</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">bc_class</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hbc</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">bc_class</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># boundary condition from extension; default to Outdoors</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># assign extension properties</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;FaceProperties&#39;</span><span class="p">:</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">_load_extension_attr_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">face</span></div>
+
+<div class="viewcode-block" id="Face.from_vertices"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.from_vertices">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_vertices</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a Face from vertices with each vertex as an iterable of 3 floats.</span>
+
+<span class="sd">        Note that this method is not recommended for a face with one or more holes</span>
+<span class="sd">        since the distinction between hole vertices and boundary vertices cannot</span>
+<span class="sd">        be derived from a single list of vertices.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            identifier: Text string for a unique Face ID. Must be &lt; 100 characters and</span>
+<span class="sd">                not contain any spaces or special characters.</span>
+<span class="sd">            vertices: A flattened list of 3 or more vertices as (x, y, z).</span>
+<span class="sd">            type: Face type object (eg. Wall, Floor).</span>
+<span class="sd">            boundary_condition: Boundary condition object (eg. Outdoors, Ground)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">Point3D</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vertices</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set an object for Type of Face (ie. Wall, Floor, Roof).</span>
+
+<span class="sd">        Note that setting this property will reset extension attributes on this</span>
+<span class="sd">        Face to their default values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+
+    <span class="nd">@type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPES</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid face type.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">AirBoundary</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span> <span class="o">==</span> <span class="p">[],</span> \
+                <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> cannot be assigned to a Face with Apertures or Doors.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">reset_to_default</span><span class="p">()</span>  <span class="c1"># reset constructions/modifiers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">boundary_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set the boundary condition of the Face. (ie. Outdoors, Ground, etc.).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span>
+
+    <span class="nd">@boundary_condition</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">boundary_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">_BoundaryCondition</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected BoundaryCondition. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span> <span class="o">!=</span> <span class="p">[]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">Outdoors</span><span class="p">,</span> <span class="n">Surface</span><span class="p">)),</span> \
+                <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> cannot be assigned to a Face with apertures or doors.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">apertures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of apertures in this Face.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">doors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of doors in this Face.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the parent Room if assigned. None if not assigned.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether this Face has a parent Room.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_sub_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether this Face has Apertures or Doors.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span> <span class="o">==</span> <span class="p">[])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Face3D object representing the Face.</span>
+
+<span class="sd">        Note that this Face3D only represents the parent face and does not have any</span>
+<span class="sd">        holes cut in it for apertures or doors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">punched_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Face3D object with holes cut in it for apertures and doors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_sub_faces</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sub_f</span><span class="o">.</span><span class="n">geometry</span> <span class="k">for</span> <span class="n">sub_f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_sub_faces</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="n">Face3D</span><span class="o">.</span><span class="n">from_punched_geometry</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="p">,</span> <span class="n">_sub_faces</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of vertices for the face (in counter-clockwise order).</span>
+
+<span class="sd">        Note that these vertices only represent the outer boundary of the face</span>
+<span class="sd">        and do not account for holes cut in the face by apertures or doors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">vertices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">punched_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of vertices with holes cut in it for apertures and doors.</span>
+
+<span class="sd">        Note that some vertices will be repeated since the vertices effectively</span>
+<span class="sd">        trace out a single boundary around the whole shape, winding inward to cut</span>
+<span class="sd">        out the holes. This property should be used  when exporting to Radiance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">punched_geometry</span><span class="o">.</span><span class="n">vertices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">upper_left_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of vertices starting from the upper-left corner.</span>
+
+<span class="sd">        This property obeys the same rules as the vertices property but always starts</span>
+<span class="sd">        from the upper-left-most vertex.  This property should be used when exporting to</span>
+<span class="sd">        EnergyPlus / OpenStudio.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">upper_left_counter_clockwise_vertices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">normal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Vector3D for the direction in which the face is pointing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">normal</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a ladybug_geometry Point3D for the center of the face.</span>
+
+<span class="sd">        Note that this is the center of the bounding rectangle around this geometry</span>
+<span class="sd">        and not the area centroid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">center</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the area of the face.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">area</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">perimeter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the perimeter of the face. This includes the length of holes in the face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">perimeter</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">aperture_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the combined area of the face&#39;s apertures.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">ap</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">aperture_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a number between 0 and 1 for the area ratio of the apertures to the face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">aperture_area</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span>
+
+<div class="viewcode-block" id="Face.horizontal_orientation"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.horizontal_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">north_vector</span><span class="o">=</span><span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;Get a number between 0 and 360 for the orientation of the face in degrees.</span>
+
+<span class="sd">        0 = North, 90 = East, 180 = South, 270 = West</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            north_vector: A ladybug_geometry Vector2D for the north direction.</span>
+<span class="sd">                Default is the Y-axis (0, 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span>
+            <span class="n">north_vector</span><span class="o">.</span><span class="n">angle_clockwise</span><span class="p">(</span><span class="n">Vector2D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="Face.cardinal_direction"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.cardinal_direction">[docs]</a>    <span class="k">def</span> <span class="nf">cardinal_direction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">north_vector</span><span class="o">=</span><span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;Get text description for the cardinal direction that the face is pointing.</span>
+
+<span class="sd">        Will be one of the following: (&#39;North&#39;, &#39;NorthEast&#39;, &#39;East&#39;, &#39;SouthEast&#39;,</span>
+<span class="sd">        &#39;South&#39;, &#39;SouthWest&#39;, &#39;West&#39;, &#39;NorthWest&#39;).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            north_vector: A ladybug_geometry Vector2D for the north direction.</span>
+<span class="sd">                Default is the Y-axis (0, 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">orient</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_orientation</span><span class="p">(</span><span class="n">north_vector</span><span class="p">)</span>
+        <span class="n">orient_text</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;North&#39;</span><span class="p">,</span> <span class="s1">&#39;NorthEast&#39;</span><span class="p">,</span> <span class="s1">&#39;East&#39;</span><span class="p">,</span> <span class="s1">&#39;SouthEast&#39;</span><span class="p">,</span> <span class="s1">&#39;South&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;SouthWest&#39;</span><span class="p">,</span> <span class="s1">&#39;West&#39;</span><span class="p">,</span> <span class="s1">&#39;NorthWest&#39;</span><span class="p">)</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="p">(</span><span class="mf">22.5</span><span class="p">,</span> <span class="mf">67.5</span><span class="p">,</span> <span class="mf">112.5</span><span class="p">,</span> <span class="mf">157.5</span><span class="p">,</span> <span class="mf">202.5</span><span class="p">,</span> <span class="mf">247.5</span><span class="p">,</span> <span class="mf">292.5</span><span class="p">,</span> <span class="mf">337.5</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ang</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">angles</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">orient</span> <span class="o">&lt;</span> <span class="n">ang</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">orient_text</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">orient_text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Face.add_prefix"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.add_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the identifier of this object and all child objects by inserting a prefix.</span>
+
+<span class="sd">        This is particularly useful in workflows where you duplicate and edit</span>
+<span class="sd">        a starting object and then want to combine it with the original object</span>
+<span class="sd">        into one Model (like making a model of repeated rooms) since all objects</span>
+<span class="sd">        within a Model must have unique identifiers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix: Text that will be inserted at the start of this object&#39;s</span>
+<span class="sd">                (and child objects&#39;) identifier and display_name. It is recommended</span>
+<span class="sd">                that this prefix be short to avoid maxing out the 100 allowable</span>
+<span class="sd">                characters for honeybee identifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="n">clean_string</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+            <span class="n">dr</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_prefix_shades</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span><span class="p">,</span> <span class="n">Surface</span><span class="p">):</span>
+            <span class="n">new_bc_objs</span> <span class="o">=</span> <span class="p">(</span><span class="n">clean_string</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">adj_name</span><span class="p">))</span> <span class="k">for</span> <span class="n">adj_name</span>
+                           <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span><span class="o">.</span><span class="n">_boundary_condition_objects</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span> <span class="o">=</span> <span class="n">Surface</span><span class="p">(</span><span class="n">new_bc_objs</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Face.remove_sub_faces"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.remove_sub_faces">[docs]</a>    <span class="k">def</span> <span class="nf">remove_sub_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all apertures and doors from the face.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_apertures</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_doors</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Face.remove_apertures"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.remove_apertures">[docs]</a>    <span class="k">def</span> <span class="nf">remove_apertures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all apertures from the face.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">aperture</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">aperture</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.remove_doors"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.remove_doors">[docs]</a>    <span class="k">def</span> <span class="nf">remove_doors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all doors from the face.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">door</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">door</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.add_aperture"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.add_aperture">[docs]</a>    <span class="k">def</span> <span class="nf">add_aperture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aperture</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add an Aperture to this face.</span>
+
+<span class="sd">        This method does not check the co-planarity between this Face and the</span>
+<span class="sd">        Aperture or whether the Aperture has all vertices within the boundary of</span>
+<span class="sd">        this Face. To check this, the Face3D.is_sub_face() method can be used</span>
+<span class="sd">        with the Aperture and Face geometry before using this method or the</span>
+<span class="sd">        are_sub_faces_valid() method can be used afterwards.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            aperture: An Aperture to add to this face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aperture</span><span class="p">,</span> <span class="n">Aperture</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected Aperture. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">aperture</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_acceptable_sub_face_check</span><span class="p">(</span><span class="n">Aperture</span><span class="p">)</span>
+        <span class="n">aperture</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">aperture</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># reversed normal</span>
+            <span class="n">aperture</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">aperture</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperture</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.add_door"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.add_door">[docs]</a>    <span class="k">def</span> <span class="nf">add_door</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">door</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a Door to this face.</span>
+
+<span class="sd">        This method does not check the co-planarity between this Face and the</span>
+<span class="sd">        Door or whether the Door has all vertices within the boundary of</span>
+<span class="sd">        this Face. To check this, the Face3D.is_sub_face() method can be used</span>
+<span class="sd">        with the Door and Face geometry before using this method or the</span>
+<span class="sd">        are_sub_faces_valid() method can be used afterwards.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            door: A Door to add to this face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">door</span><span class="p">,</span> <span class="n">Door</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected Door. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">door</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_acceptable_sub_face_check</span><span class="p">(</span><span class="n">Door</span><span class="p">)</span>
+        <span class="n">door</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">door</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># reversed normal</span>
+            <span class="n">door</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">door</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">door</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.add_apertures"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.add_apertures">[docs]</a>    <span class="k">def</span> <span class="nf">add_apertures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">apertures</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a list of Apertures to this face.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">aperture</span> <span class="ow">in</span> <span class="n">apertures</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_aperture</span><span class="p">(</span><span class="n">aperture</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Face.add_doors"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.add_doors">[docs]</a>    <span class="k">def</span> <span class="nf">add_doors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a list of Doors to this face.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">door</span> <span class="ow">in</span> <span class="n">doors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_door</span><span class="p">(</span><span class="n">door</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Face.set_adjacency"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.set_adjacency">[docs]</a>    <span class="k">def</span> <span class="nf">set_adjacency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_face</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set this face adjacent to another and set the other face adjacent to this one.</span>
+
+<span class="sd">        Note that this method does not verify whether the other_face geometry is</span>
+<span class="sd">        co-planar or compatible with this one so it is recommended that either the</span>
+<span class="sd">        Face3D.is_centered_adjacent() or the Face3D.is_geometrically_equivalent()</span>
+<span class="sd">        method be used with this face geometry and the other_face geometry</span>
+<span class="sd">        before using this method in order to verify these criteria.</span>
+
+<span class="sd">        However, this method will use the proximity of apertures and doors within</span>
+<span class="sd">        the input tolerance to determine which of the sub faces in the other_face</span>
+<span class="sd">        are adjacent to the ones in this face. An exception will be thrown if not</span>
+<span class="sd">        all sub-faces can be matched.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other_face: Another Face object to be set adjacent to this one.</span>
+<span class="sd">            tolerance: The minimum distance between the center of two aperture</span>
+<span class="sd">                geometries at which they are considered adjacent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary of adjacency information with the following keys</span>
+
+<span class="sd">            -   adjacent_apertures - A list of tuples with each tuple containing 2</span>
+<span class="sd">                objects for Apertures paired in the process of solving adjacency.</span>
+
+<span class="sd">            -   adjacent_doors - A list of tuples with each tuple containing 2</span>
+<span class="sd">                objects for Doors paired in the process of solving adjacency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check the inputs and the ability of the faces to be adjacent</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_face</span><span class="p">,</span> <span class="n">Face</span><span class="p">),</span> \
+            <span class="s1">&#39;Expected honeybee Face. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other_face</span><span class="p">))</span>
+
+        <span class="c1"># set the boundary conditions of the faces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_condition</span> <span class="o">=</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">surface</span><span class="p">(</span><span class="n">other_face</span><span class="p">)</span>
+        <span class="n">other_face</span><span class="o">.</span><span class="n">_boundary_condition</span> <span class="o">=</span> <span class="n">boundary_conditions</span><span class="o">.</span><span class="n">surface</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">adj_info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;adjacent_apertures&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;adjacent_doors&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="c1"># set the apertures to be adjacent to one another</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">),</span> \
+            <span class="s1">&#39;Number of apertures does not match between </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">other_face</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">found_adjacencies</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">aper_1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">aper_2</span> <span class="ow">in</span> <span class="n">other_face</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">aper_1</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">aper_2</span><span class="o">.</span><span class="n">center</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tolerance</span><span class="p">:</span>
+                        <span class="n">aper_1</span><span class="o">.</span><span class="n">set_adjacency</span><span class="p">(</span><span class="n">aper_2</span><span class="p">)</span>
+                        <span class="n">adj_info</span><span class="p">[</span><span class="s1">&#39;adjacent_apertures&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">aper_1</span><span class="p">,</span> <span class="n">aper_2</span><span class="p">))</span>
+                        <span class="n">found_adjacencies</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">break</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">)</span> <span class="o">==</span> <span class="n">found_adjacencies</span><span class="p">,</span> \
+                <span class="s1">&#39;Not all apertures of </span><span class="si">{}</span><span class="s1"> were found to be adjacent to apertures in </span><span class="si">{}</span><span class="s1">.&#39;</span> \
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Try increasing the tolerance.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">other_face</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>
+
+        <span class="c1"># set the doors to be adjacent to one another</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_face</span><span class="o">.</span><span class="n">_doors</span><span class="p">),</span> \
+            <span class="s1">&#39;Number of doors does not match between </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">other_face</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">found_adjacencies</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">door_1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">door_2</span> <span class="ow">in</span> <span class="n">other_face</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">door_1</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">door_2</span><span class="o">.</span><span class="n">center</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tolerance</span><span class="p">:</span>
+                        <span class="n">door_1</span><span class="o">.</span><span class="n">set_adjacency</span><span class="p">(</span><span class="n">door_2</span><span class="p">)</span>
+                        <span class="n">adj_info</span><span class="p">[</span><span class="s1">&#39;adjacent_doors&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">door_1</span><span class="p">,</span> <span class="n">door_2</span><span class="p">))</span>
+                        <span class="n">found_adjacencies</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">break</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">)</span> <span class="o">==</span> <span class="n">found_adjacencies</span><span class="p">,</span> \
+                <span class="s1">&#39;Not all doors of </span><span class="si">{}</span><span class="s1"> were found to be adjacent to doors in </span><span class="si">{}</span><span class="s1">.&#39;</span> \
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Try increasing the tolerance.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">other_face</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">adj_info</span></div>
+
+<div class="viewcode-block" id="Face.apertures_by_ratio"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.apertures_by_ratio">[docs]</a>    <span class="k">def</span> <span class="nf">apertures_by_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add apertures to this Face given a ratio of aperture area to facea area.</span>
+
+<span class="sd">        Note that this method removes any existing apertures and doors on the Face.</span>
+<span class="sd">        This method attempts to generate as few apertures as necessary to meet the ratio.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ratio: A number between 0 and 1 (but not perfectly equal to 1)</span>
+<span class="sd">                for the desired ratio between aperture area and face area.</span>
+<span class="sd">            tolerance: The maximum difference between point values for them to be</span>
+<span class="sd">                considered the same. This is used in the event that this face is</span>
+<span class="sd">                concave and an attempt to subdivide the face into a rectangle is</span>
+<span class="sd">                made. It does not affect the ability to produce apertures for</span>
+<span class="sd">                convex Faces. Default: 0.01, suitable for objects in meters.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room = Room.from_box(3.0, 6.0, 3.2, 180)</span>
+<span class="sd">            room.faces[1].apertures_by_ratio(0.4)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ratio</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Ratio must be between 0 and 1. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_acceptable_sub_face_check</span><span class="p">(</span><span class="n">Aperture</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_sub_faces</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ratio</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ap_faces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">sub_faces_by_ratio_rectangle</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ap_face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ap_faces</span><span class="p">):</span>
+            <span class="n">aperture</span> <span class="o">=</span> <span class="n">Aperture</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_Glz</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">ap_face</span><span class="p">)</span>
+            <span class="n">aperture</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperture</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Face.apertures_by_ratio_rectangle"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.apertures_by_ratio_rectangle">[docs]</a>    <span class="k">def</span> <span class="nf">apertures_by_ratio_rectangle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">aperture_height</span><span class="p">,</span> <span class="n">sill_height</span><span class="p">,</span>
+                                     <span class="n">horizontal_separation</span><span class="p">,</span> <span class="n">vertical_separation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                     <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add apertures to this face given a ratio of aperture area to face area.</span>
+
+<span class="sd">        Note that this method removes any existing apertures on the Face.</span>
+
+<span class="sd">        This function is virtually equivalent to the apertures_by_ratio method but</span>
+<span class="sd">        any rectangular portions of this face will produce customizable rectangular</span>
+<span class="sd">        apertures using the other inputs (aperture_height, sill_height,</span>
+<span class="sd">        horizontal_separation, vertical_separation).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ratio: A number between 0 and 0.95 for the ratio between the area of</span>
+<span class="sd">                the apertures and the area of this face.</span>
+<span class="sd">            aperture_height: A number for the target height of the output apertures.</span>
+<span class="sd">                Note that, if the ratio is too large for the height, the ratio will</span>
+<span class="sd">                take precedence and the actual aperture_height will be larger</span>
+<span class="sd">                than this value.</span>
+<span class="sd">            sill_height: A number for the target height above the bottom edge of</span>
+<span class="sd">                the rectangle to start the apertures. Note that, if the</span>
+<span class="sd">                ratio is too large for the height, the ratio will take precedence</span>
+<span class="sd">                and the sill_height will be smaller than this value.</span>
+<span class="sd">            horizontal_separation: A number for the target separation between</span>
+<span class="sd">                individual aperture centerlines.  If this number is larger than</span>
+<span class="sd">                the parent rectangle base, only one aperture will be produced.</span>
+<span class="sd">            vertical_separation: An optional number to create a single vertical</span>
+<span class="sd">                separation between top and bottom apertures. The default is</span>
+<span class="sd">                0 for no separation.</span>
+<span class="sd">            tolerance: The maximum difference between point values for them to be</span>
+<span class="sd">                considered a part of a rectangle. Default: 0.01, suitable for</span>
+<span class="sd">                objects in meters.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room = Room.from_box(3.0, 6.0, 3.2, 180)</span>
+<span class="sd">            room.faces[1].apertures_by_ratio_rectangle(0.4, 2, 0.9, 3)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ratio</span> <span class="o">&lt;=</span> <span class="mf">0.95</span><span class="p">,</span> \
+            <span class="s1">&#39;Ratio must be between 0 and 0.95. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_acceptable_sub_face_check</span><span class="p">(</span><span class="n">Aperture</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_sub_faces</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ratio</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ap_faces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">sub_faces_by_ratio_sub_rectangle</span><span class="p">(</span>
+                <span class="n">ratio</span><span class="p">,</span> <span class="n">aperture_height</span><span class="p">,</span> <span class="n">sill_height</span><span class="p">,</span> <span class="n">horizontal_separation</span><span class="p">,</span>
+                <span class="n">vertical_separation</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ap_face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ap_faces</span><span class="p">):</span>
+            <span class="n">aperture</span> <span class="o">=</span> <span class="n">Aperture</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_Glz</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">ap_face</span><span class="p">)</span>
+            <span class="n">aperture</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperture</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Face.apertures_by_ratio_gridded"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.apertures_by_ratio_gridded">[docs]</a>    <span class="k">def</span> <span class="nf">apertures_by_ratio_gridded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add apertures to this face given a ratio of aperture area to face area.</span>
+
+<span class="sd">        Note that this method removes any existing apertures on the Face.</span>
+
+<span class="sd">        Apertures will be arranged in a grid derived from this face&#39;s plane.</span>
+<span class="sd">        Because the x_dim and y_dim refer to dimensions within the X and Y</span>
+<span class="sd">        coordinate system of this faces&#39;s plane, rotating this plane will</span>
+<span class="sd">        result in rotated grid cells. This is particularly useful for generating</span>
+<span class="sd">        skylights based on a glazing ratio.</span>
+
+<span class="sd">        If the x_dim and/or y_dim are too large for this face, this method will</span>
+<span class="sd">        return essentially the same result as the apertures_by_ratio method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ratio: A number between 0 and 1 for the ratio between the area of</span>
+<span class="sd">                the apertures and the area of this face.</span>
+<span class="sd">            x_dim: The x dimension of the grid cells as a number.</span>
+<span class="sd">            y_dim: The y dimension of the grid cells as a number. Default is None,</span>
+<span class="sd">                which will assume the same cell dimension for y as is set for x.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room = Room.from_box(3.0, 6.0, 3.2, 180)</span>
+<span class="sd">            room.faces[-1].apertures_by_ratio_gridded(0.05, 3)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ratio</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Ratio must be between 0 and 1. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_acceptable_sub_face_check</span><span class="p">(</span><span class="n">Aperture</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_sub_faces</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ratio</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ap_faces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">sub_faces_by_ratio_gridded</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ap_face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ap_faces</span><span class="p">):</span>
+            <span class="n">aperture</span> <span class="o">=</span> <span class="n">Aperture</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_Glz</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">ap_face</span><span class="p">)</span>
+            <span class="n">aperture</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperture</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Face.apertures_by_width_height_rectangle"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.apertures_by_width_height_rectangle">[docs]</a>    <span class="k">def</span> <span class="nf">apertures_by_width_height_rectangle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aperture_height</span><span class="p">,</span> <span class="n">aperture_width</span><span class="p">,</span>
+                                            <span class="n">sill_height</span><span class="p">,</span> <span class="n">horizontal_separation</span><span class="p">,</span>
+                                            <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add repeating apertures to this face given the aperture width and height.</span>
+
+<span class="sd">        Note that this method removes any existing apertures on the Face.</span>
+
+<span class="sd">        Note that this method will effectively fill any rectangular portions of</span>
+<span class="sd">        this Face with apertures at the specified width, height and separation.</span>
+<span class="sd">        If no rectangluar portion of this Face can be identified, no apertures</span>
+<span class="sd">        will be added.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            aperture_height: A number for the target height of the apertures.</span>
+<span class="sd">            aperture_width: A number for the target width of the apertures.</span>
+<span class="sd">            sill_height: A number for the target height above the bottom edge of</span>
+<span class="sd">                the rectangle to start the apertures. If the aperture_height</span>
+<span class="sd">                is too large for the sill_height to fit within the rectangle,</span>
+<span class="sd">                the aperture_height will take precedence.</span>
+<span class="sd">            horizontal_separation: A number for the target separation between</span>
+<span class="sd">                individual apertures centerlines.  If this number is larger than</span>
+<span class="sd">                the parent rectangle base, only one aperture will be produced.</span>
+<span class="sd">            tolerance: The maximum difference between point values for them to be</span>
+<span class="sd">                considered a part of a rectangle. Default: 0.01, suitable for</span>
+<span class="sd">                objects in meters.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room = Room.from_box(5.0, 10.0, 3.2, 180)</span>
+<span class="sd">            room.faces[1].apertures_by_width_height_rectangle(1.5, 2, 0.8, 2.5)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">aperture_height</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> \
+            <span class="s1">&#39;aperture_height must be above 0. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aperture_height</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">aperture_width</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> \
+            <span class="s1">&#39;aperture_width must be above 0. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aperture_width</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">horizontal_separation</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> \
+            <span class="s1">&#39;horizontal_separation must be above 0. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">horizontal_separation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_acceptable_sub_face_check</span><span class="p">(</span><span class="n">Aperture</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_sub_faces</span><span class="p">()</span>
+        <span class="n">ap_faces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">sub_faces_by_dimension_rectangle</span><span class="p">(</span>
+            <span class="n">aperture_height</span><span class="p">,</span> <span class="n">aperture_width</span><span class="p">,</span> <span class="n">sill_height</span><span class="p">,</span> <span class="n">horizontal_separation</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ap_face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ap_faces</span><span class="p">):</span>
+            <span class="n">aperture</span> <span class="o">=</span> <span class="n">Aperture</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_Glz</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">ap_face</span><span class="p">)</span>
+            <span class="n">aperture</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperture</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Face.aperture_by_width_height"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.aperture_by_width_height">[docs]</a>    <span class="k">def</span> <span class="nf">aperture_by_width_height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">sill_height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">aperture_identifier</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a single rectangular aperture to the center of this Face.</span>
+
+<span class="sd">        A rectangular window with the input width and height will always be added</span>
+<span class="sd">        by this method regardless of whether this parent Face contains a recognizable</span>
+<span class="sd">        rectangular portion or not. Furthermore, this method preserves any existing</span>
+<span class="sd">        apertures on the Face.</span>
+
+<span class="sd">        While the resulting aperture will always be in the plane of this Face,</span>
+<span class="sd">        this method will not check to ensure that the aperture has all of its</span>
+<span class="sd">        vertices completely within the boundary of this Face or that it does not</span>
+<span class="sd">        intersect with other apertures in the Face. The are_sub_faces_valid()</span>
+<span class="sd">        method can be used afterwards to check this.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            width: A number for the Aperture width.</span>
+<span class="sd">            height: A number for the Aperture height.</span>
+<span class="sd">            sill_height: A number for the sill height. Default: 1.</span>
+<span class="sd">            aperture_identifier: Optional string for the aperture identifier. If None, the default</span>
+<span class="sd">                will follow the convention &quot;[face_identifier]_Glz[count]&quot; where [count]</span>
+<span class="sd">                is one more than the current number of apertures in the face.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The new Aperture object that has been generated.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            room = Room.from_box(3.0, 6.0, 3.2, 180)</span>
+<span class="sd">            room[1].aperture_by_width_height(2, 2, .7)  # aperture in front</span>
+<span class="sd">            room[2].aperture_by_width_height(4, 1.5, .5)  # aperture on right</span>
+<span class="sd">            room[2].aperture_by_width_height(4, 0.5, 2.2)  # aperture on right</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Perform checks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_acceptable_sub_face_check</span><span class="p">(</span><span class="n">Aperture</span><span class="p">)</span>
+        <span class="c1"># Generate the aperture geometry</span>
+        <span class="n">face_plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">face_plane</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">z</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">face_plane</span> <span class="o">=</span> <span class="n">face_plane</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">face_plane</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">face_plane</span><span class="o">.</span><span class="n">o</span><span class="p">)</span>
+        <span class="n">center2d</span> <span class="o">=</span> <span class="n">face_plane</span><span class="o">.</span><span class="n">xyz_to_xy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">center</span><span class="p">)</span>
+        <span class="n">x_dist</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">lower_left</span> <span class="o">=</span> <span class="n">Point2D</span><span class="p">(</span><span class="n">center2d</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_dist</span><span class="p">,</span> <span class="n">sill_height</span><span class="p">)</span>
+        <span class="n">lower_right</span> <span class="o">=</span> <span class="n">Point2D</span><span class="p">(</span><span class="n">center2d</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">x_dist</span><span class="p">,</span> <span class="n">sill_height</span><span class="p">)</span>
+        <span class="n">upper_right</span> <span class="o">=</span> <span class="n">Point2D</span><span class="p">(</span><span class="n">center2d</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">x_dist</span><span class="p">,</span> <span class="n">sill_height</span> <span class="o">+</span> <span class="n">height</span><span class="p">)</span>
+        <span class="n">upper_left</span> <span class="o">=</span> <span class="n">Point2D</span><span class="p">(</span><span class="n">center2d</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_dist</span><span class="p">,</span> <span class="n">sill_height</span> <span class="o">+</span> <span class="n">height</span><span class="p">)</span>
+        <span class="n">ap_verts2d</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_left</span><span class="p">,</span> <span class="n">lower_right</span><span class="p">,</span> <span class="n">upper_right</span><span class="p">,</span> <span class="n">upper_left</span><span class="p">)</span>
+        <span class="n">ap_verts3d</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">face_plane</span><span class="o">.</span><span class="n">xy_to_xyz</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span> <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">ap_verts2d</span><span class="p">)</span>
+        <span class="n">ap_face</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="n">ap_verts3d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">plane</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">ap_face</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># reversed normal</span>
+            <span class="n">ap_face</span> <span class="o">=</span> <span class="n">ap_face</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+
+        <span class="c1"># Create the aperture and add it to this Face</span>
+        <span class="n">identifier</span> <span class="o">=</span> <span class="n">aperture_identifier</span> <span class="ow">or</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_Glz</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">apertures</span><span class="p">))</span>
+        <span class="n">aperture</span> <span class="o">=</span> <span class="n">Aperture</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">ap_face</span><span class="p">)</span>
+        <span class="n">aperture</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperture</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">aperture</span></div>
+
+<div class="viewcode-block" id="Face.overhang"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.overhang">[docs]</a>    <span class="k">def</span> <span class="nf">overhang</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">indoor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add an overhang to this Face.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            depth: A number for the overhang depth.</span>
+<span class="sd">            angle: A number for the for an angle to rotate the overhang in degrees.</span>
+<span class="sd">                Positive numbers indicate a downward rotation while negative numbers</span>
+<span class="sd">                indicate an upward rotation. Default is 0 for no rotation.</span>
+<span class="sd">            indoor: Boolean for whether the overhang should be generated facing the</span>
+<span class="sd">                opposite direction of the aperture normal (typically meaning</span>
+<span class="sd">                indoor geometry). Default: False.</span>
+<span class="sd">            tolerance: An optional value to not add the overhang if it has a length less</span>
+<span class="sd">                than the tolerance. Default: 0.01, suitable for objects in meters.</span>
+<span class="sd">            base_name: Optional base identifier for the shade objects. If None, the default</span>
+<span class="sd">                is InOverhang or OutOverhang depending on whether indoor is True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the new Shade objects that have been generated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">base_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base_name</span> <span class="o">=</span> <span class="s1">&#39;InOverhang&#39;</span> <span class="k">if</span> <span class="n">indoor</span> <span class="k">else</span> <span class="s1">&#39;OutOverhang&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">louvers_by_count</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span> <span class="n">indoor</span><span class="o">=</span><span class="n">indoor</span><span class="p">,</span>
+                                     <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">base_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Face.louvers_by_count"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.louvers_by_count">[docs]</a>    <span class="k">def</span> <span class="nf">louvers_by_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">louver_count</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                         <span class="n">contour_vector</span><span class="o">=</span><span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">flip_start_side</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">indoor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a series of louvered Shade objects over this Face.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            louver_count: A positive integer for the number of louvers to generate.</span>
+<span class="sd">            depth: A number for the depth to extrude the louvers.</span>
+<span class="sd">            offset: A number for the distance to louvers from this Face.</span>
+<span class="sd">                Default is 0 for no offset.</span>
+<span class="sd">            angle: A number for the for an angle to rotate the louvers in degrees.</span>
+<span class="sd">                Positive numbers indicate a downward rotation while negative numbers</span>
+<span class="sd">                indicate an upward rotation. Default is 0 for no rotation.</span>
+<span class="sd">            contour_vector: A Vector2D for the direction along which contours</span>
+<span class="sd">                are generated. This 2D vector will be interpreted into a 3D vector</span>
+<span class="sd">                within the plane of this Face. (0, 1) will usually generate</span>
+<span class="sd">                horizontal contours in 3D space, (1, 0) will generate vertical</span>
+<span class="sd">                contours, and (1, 1) will generate diagonal contours. Default: (0, 1).</span>
+<span class="sd">            flip_start_side: Boolean to note whether the side the louvers start from</span>
+<span class="sd">                should be flipped. Default is False to have louvers on top or right.</span>
+<span class="sd">                Setting to True will start contours on the bottom or left.</span>
+<span class="sd">            indoor: Boolean for whether louvers should be generated facing the</span>
+<span class="sd">                opposite direction of the Face normal (typically meaning</span>
+<span class="sd">                indoor geometry). Default: False.</span>
+<span class="sd">            tolerance: An optional value to remove any louvers with a length less</span>
+<span class="sd">                than the tolerance. Default: 0.01, suitable for objects in meters.</span>
+<span class="sd">            base_name: Optional base identifier for the shade objects. If None, the default</span>
+<span class="sd">                is InShd or OutShd depending on whether indoor is True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the new Shade objects that have been generated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">louver_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;louver_count must be greater than 0.&#39;</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">louvers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">face_geo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="k">if</span> <span class="n">indoor</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">base_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shd_name_base</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_InShd</span><span class="si">{}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">indoor</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_OutShd</span><span class="si">{}</span><span class="s1">&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shd_name_base</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">base_name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span>
+        <span class="n">shade_faces</span> <span class="o">=</span> <span class="n">face_geo</span><span class="o">.</span><span class="n">countour_fins_by_number</span><span class="p">(</span>
+            <span class="n">louver_count</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span>
+            <span class="n">contour_vector</span><span class="p">,</span> <span class="n">flip_start_side</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">shade_geo</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shade_faces</span><span class="p">):</span>
+            <span class="n">louvers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Shade</span><span class="p">(</span><span class="n">shd_name_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">shade_geo</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">indoor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_indoor_shades</span><span class="p">(</span><span class="n">louvers</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_outdoor_shades</span><span class="p">(</span><span class="n">louvers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">louvers</span></div>
+
+<div class="viewcode-block" id="Face.louvers_by_distance_between"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.louvers_by_distance_between">[docs]</a>    <span class="k">def</span> <span class="nf">louvers_by_distance_between</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">contour_vector</span><span class="o">=</span><span class="n">Vector2D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">flip_start_side</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indoor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">base_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a series of louvered Shade objects over this Face.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            distance: A number for the approximate distance between each louver.</span>
+<span class="sd">            depth: A number for the depth to extrude the louvers.</span>
+<span class="sd">            offset: A number for the distance to louvers from this Face.</span>
+<span class="sd">                Default is 0 for no offset.</span>
+<span class="sd">            angle: A number for the for an angle to rotate the louvers in degrees.</span>
+<span class="sd">                Positive numbers indicate a downward rotation while negative numbers</span>
+<span class="sd">                indicate an upward rotation. Default is 0 for no rotation.</span>
+<span class="sd">            contour_vector: A Vector2D for the direction along which contours</span>
+<span class="sd">                are generated. This 2D vector will be interpreted into a 3D vector</span>
+<span class="sd">                within the plane of this Face. (0, 1) will usually generate</span>
+<span class="sd">                horizontal contours in 3D space, (1, 0) will generate vertical</span>
+<span class="sd">                contours, and (1, 1) will generate diagonal contours. Default: (0, 1).</span>
+<span class="sd">            flip_start_side: Boolean to note whether the side the louvers start from</span>
+<span class="sd">                should be flipped. Default is False to have contours on top or right.</span>
+<span class="sd">                Setting to True will start contours on the bottom or left.</span>
+<span class="sd">            indoor: Boolean for whether louvers should be generated facing the</span>
+<span class="sd">                opposite direction of the Face normal (typically meaning</span>
+<span class="sd">                indoor geometry). Default: False.</span>
+<span class="sd">            tolerance: An optional value to remove any louvers with a length less</span>
+<span class="sd">                than the tolerance. Default: 0.01, suitable for objects in meters.</span>
+<span class="sd">            max_count: Optional integer to set the maximum number of louvers that</span>
+<span class="sd">                will be generated. If None, louvers will cover the entire face.</span>
+<span class="sd">            base_name: Optional base identifier for the shade objects. If None, the</span>
+<span class="sd">                default is InShd or OutShd depending on whether indoor is True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the new Shade objects that have been generated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set defaults</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">face_geo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="k">if</span> <span class="n">indoor</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">base_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shd_name_base</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_InShd</span><span class="si">{}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">indoor</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_OutShd</span><span class="si">{}</span><span class="s1">&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shd_name_base</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">base_name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span>
+
+        <span class="c1"># generate shade geometries</span>
+        <span class="n">shade_faces</span> <span class="o">=</span> <span class="n">face_geo</span><span class="o">.</span><span class="n">countour_fins_by_distance_between</span><span class="p">(</span>
+            <span class="n">distance</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">contour_vector</span><span class="p">,</span> <span class="n">flip_start_side</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_count</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">shade_faces</span> <span class="o">=</span> <span class="n">shade_faces</span><span class="p">[:</span><span class="n">max_count</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>  <span class="c1"># fewer shades were generated than the max count</span>
+                <span class="k">pass</span>
+        
+        <span class="c1"># create the shade objects</span>
+        <span class="n">louvers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">shade_geo</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shade_faces</span><span class="p">):</span>
+            <span class="n">louvers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Shade</span><span class="p">(</span><span class="n">shd_name_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">shade_geo</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">indoor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_indoor_shades</span><span class="p">(</span><span class="n">louvers</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_outdoor_shades</span><span class="p">(</span><span class="n">louvers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">louvers</span></div>
+
+<div class="viewcode-block" id="Face.move"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">moving_vec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Move this Face along a vector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            moving_vec: A ladybug_geometry Vector3D with the direction and distance</span>
+<span class="sd">                to move the face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+            <span class="n">dr</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_shades</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">moving_vec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.rotate"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rotate this Face by a certain angle around an axis and origin.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            axis: A ladybug_geometry Vector3D axis representing the axis of rotation.</span>
+<span class="sd">            angle: An angle for rotation in degrees.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin around which the</span>
+<span class="sd">                object will be rotated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+            <span class="n">dr</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_shades</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.rotate_xy"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.rotate_xy">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rotate this Face counterclockwise in the world XY plane by a certain angle.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            angle: An angle in degrees.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D for the origin around which the</span>
+<span class="sd">                object will be rotated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+            <span class="n">dr</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_xy_shades</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.reflect"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.reflect">[docs]</a>    <span class="k">def</span> <span class="nf">reflect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reflect this Face across a plane.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            plane: A ladybug_geometry Plane across which the object will</span>
+<span class="sd">                be reflected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">plane</span><span class="o">.</span><span class="n">o</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+            <span class="n">dr</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reflect_shades</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.scale"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scale this Face by a factor from an origin point.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            factor: A number representing how much the object should be scaled.</span>
+<span class="sd">            origin: A ladybug_geometry Point3D representing the origin from which</span>
+<span class="sd">                to scale. If None, it will be scaled from the World origin (0, 0, 0).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+            <span class="n">dr</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_shades</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.remove_colinear_vertices"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.remove_colinear_vertices">[docs]</a>    <span class="k">def</span> <span class="nf">remove_colinear_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all colinear and duplicate vertices from this object&#39;s geometry.</span>
+
+<span class="sd">        Note that this does not affect any assigned Apertures, Doors or Shades.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum distance between a vertex and the boundary segments</span>
+<span class="sd">                at which point the vertex is considered colinear. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">remove_colinear_vertices</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># reset so that it can be re-computed</span></div>
+
+<div class="viewcode-block" id="Face.check_sub_faces_valid"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.check_sub_faces_valid">[docs]</a>    <span class="k">def</span> <span class="nf">check_sub_faces_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that sub-faces are co-planar with this Face within the Face boundary.</span>
+
+<span class="sd">        Note this does not check the planarity of the sub-faces themselves, whether</span>
+<span class="sd">        they self-intersect, or whether they have a non-zero area.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum difference between the coordinate values of two</span>
+<span class="sd">                vertices at which they can be considered equivalent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">            angle_tolerance: The max angle in degrees that the plane normals can</span>
+<span class="sd">                differ from one another in order for them to be considered coplanar.</span>
+<span class="sd">                Default: 1 degree.</span>
+<span class="sd">            raise_exception: Boolean to note whether a ValueError should be raised</span>
+<span class="sd">                if an sub-face is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_apertures_valid</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">)</span>
+        <span class="n">dr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_doors_valid</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">ap</span> <span class="ow">and</span> <span class="n">dr</span> <span class="k">else</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Face.check_apertures_valid"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.check_apertures_valid">[docs]</a>    <span class="k">def</span> <span class="nf">check_apertures_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that apertures are co-planar with this Face within the Face boundary.</span>
+
+<span class="sd">        Note this does not check the planarity of the apertures themselves, whether</span>
+<span class="sd">        they self-intersect, or whether they have a non-zero area.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum difference between the coordinate values of two</span>
+<span class="sd">                vertices at which they can be considered equivalent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">            angle_tolerance: The max angle in degrees that the plane normals can</span>
+<span class="sd">                differ from one another in order for them to be considered coplanar.</span>
+<span class="sd">                Default: 1 degree.</span>
+<span class="sd">            raise_exception: Boolean to note whether a ValueError should be raised</span>
+<span class="sd">                if an aperture is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">angle_tolerance</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle_tolerance</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_sub_face</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Aperture &quot;</span><span class="si">{}</span><span class="s1">&quot; is not coplanar or fully bounded by its parent &#39;</span>
+                        <span class="s1">&#39;Face &quot;</span><span class="si">{}</span><span class="s1">&quot;.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">))</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Face.check_doors_valid"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.check_doors_valid">[docs]</a>    <span class="k">def</span> <span class="nf">check_doors_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that doors are co-planar with this Face within the Face boundary.</span>
+
+<span class="sd">        Note this does not check the planarity of the doors themselves, whether</span>
+<span class="sd">        they self-intersect, or whether they have a non-zero area.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum difference between the coordinate values of two</span>
+<span class="sd">                vertices at which they can be considered equivalent. Default: 0.01,</span>
+<span class="sd">                suitable for objects in meters.</span>
+<span class="sd">            angle_tolerance: The max angle in degrees that the plane normals can</span>
+<span class="sd">                differ from one another in order for them to be considered coplanar.</span>
+<span class="sd">                Default: 1 degree.</span>
+<span class="sd">            raise_exception: Boolean to note whether a ValueError should be raised</span>
+<span class="sd">                if an door is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">angle_tolerance</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle_tolerance</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_sub_face</span><span class="p">(</span><span class="n">dr</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Door &quot;</span><span class="si">{}</span><span class="s1">&quot; is not coplanar or fully bounded by its parent &#39;</span>
+                        <span class="s1">&#39;Face &quot;</span><span class="si">{}</span><span class="s1">&quot;.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dr</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">))</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Face.check_planar"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.check_planar">[docs]</a>    <span class="k">def</span> <span class="nf">check_planar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether all of the Face&#39;s vertices lie within the same plane.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum distance between a given vertex and a the</span>
+<span class="sd">                object&#39;s plane at which the vertex is said to lie in the plane.</span>
+<span class="sd">                Default: 0.01, suitable for objects in meters.</span>
+<span class="sd">            raise_exception: Boolean to note whether an ValueError should be</span>
+<span class="sd">                raised if a vertex does not lie within the object&#39;s plane.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">check_planar</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Face &quot;</span><span class="si">{}</span><span class="s1">&quot; is not planar.</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Face.check_self_intersecting"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.check_self_intersecting">[docs]</a>    <span class="k">def</span> <span class="nf">check_self_intersecting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the edges of the Face intersect one another (like a bowtie).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            raise_exception: If True, a ValueError will be raised if the object</span>
+<span class="sd">                intersects with itself. Default: True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_self_intersecting</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Face &quot;</span><span class="si">{}</span><span class="s1">&quot; has self-intersecting edges.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Face.check_non_zero"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.check_non_zero">[docs]</a>    <span class="k">def</span> <span class="nf">check_non_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the area of the Face is above a certain &quot;zero&quot; tolerance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tolerance: The minimum acceptable area of the object. Default is 0.0001,</span>
+<span class="sd">                which is equal to 1 cm2 when model units are meters. This is just</span>
+<span class="sd">                above the smallest size that OpenStudio will accept.</span>
+<span class="sd">            raise_exception: If True, a ValueError will be raised if the object</span>
+<span class="sd">                area is below the tolerance. Default: True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">&lt;</span> <span class="n">tolerance</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Face &quot;</span><span class="si">{}</span><span class="s1">&quot; geometry is too small. Area must be at least </span><span class="si">{}</span><span class="s1">. &#39;</span>
+                    <span class="s1">&#39;Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Face writer object.</span>
+
+<span class="sd">        Use this method to access Writer class to write the face in other formats.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            face.to.idf(face) -&gt; idf string.</span>
+<span class="sd">            face.to.radiance(face) -&gt; Radiance string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">writer</span>
+
+<div class="viewcode-block" id="Face.to_dict"><a class="viewcode-back" href="../../honeybee.face.html#honeybee.face.Face.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abridged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">included_prop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return Face as a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abridged: Boolean to note whether the extension properties of the</span>
+<span class="sd">                object (ie. materials, constructions) should be included in detail</span>
+<span class="sd">                (False) or just referenced by identifier (True). Default: False.</span>
+<span class="sd">            included_prop: List of properties to filter keys that must be included in</span>
+<span class="sd">                output dictionary. For example [&#39;energy&#39;] will include &#39;energy&#39; key if</span>
+<span class="sd">                available in properties to_dict. By default all the keys will be</span>
+<span class="sd">                included. To exclude all the keys from extensions use an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Face&#39;</span><span class="p">}</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span>
+        <span class="n">enforce_upper_left</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;energy&#39;</span> <span class="ow">in</span> <span class="n">base</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">enforce_upper_left</span><span class="p">)</span>
+
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;face_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;energy&#39;</span> <span class="ow">in</span> <span class="n">base</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;boundary_condition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;apertures&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ap</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span>
+                                 <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;doors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">dr</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span> <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_shades_to_dict</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abridged</span><span class="p">,</span> <span class="n">included_prop</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+    <span class="k">def</span> <span class="nf">_acceptable_sub_face_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_face_type</span><span class="o">=</span><span class="n">Aperture</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the Face can accept sub-faces and raise an exception if not.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Outdoors</span><span class="p">),</span> \
+            <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> can only be added to Faces with a Outdoor boundary condition.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">sub_face_type</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">AirBoundary</span><span class="p">),</span> \
+            <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> cannot be added to AirBoundary.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sub_face_type</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">new_f</span> <span class="o">=</span> <span class="n">Face</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">)</span>
+        <span class="n">new_f</span><span class="o">.</span><span class="n">_display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span>
+        <span class="n">new_f</span><span class="o">.</span><span class="n">_user_data</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new_f</span><span class="o">.</span><span class="n">_apertures</span> <span class="o">=</span> <span class="p">[</span><span class="n">ap</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apertures</span><span class="p">]</span>
+        <span class="n">new_f</span><span class="o">.</span><span class="n">_doors</span> <span class="o">=</span> <span class="p">[</span><span class="n">dr</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span> <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doors</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">new_f</span><span class="o">.</span><span class="n">_apertures</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">new_f</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">new_f</span><span class="o">.</span><span class="n">_doors</span><span class="p">:</span>
+            <span class="n">dr</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">new_f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duplicate_child_shades</span><span class="p">(</span><span class="n">new_f</span><span class="p">)</span>
+        <span class="n">new_f</span><span class="o">.</span><span class="n">_punched_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_punched_geometry</span>
+        <span class="n">new_f</span><span class="o">.</span><span class="n">_properties</span><span class="o">.</span><span class="n">_duplicate_extension_attr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_f</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Face: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

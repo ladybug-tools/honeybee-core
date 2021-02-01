@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.room module &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="honeybee.search module" href="honeybee.search.html" />
+    <link rel="prev" title="honeybee.properties module" href="honeybee.properties.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="honeybee.properties.html" title="Previous Chapter: honeybee.properties module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; honeybee.prop...</span>
+    </a>
+  </li>
+  <li>
+    <a href="honeybee.search.html" title="Next Chapter: honeybee.search module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">honeybee.sear... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/honeybee.room.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.properties.html">honeybee.properties module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <div class="section" id="module-honeybee.room">
+<span id="honeybee-room-module"></span><h1>honeybee.room module<a class="headerlink" href="#module-honeybee.room" title="Permalink to this headline">¶</a></h1>
+<p>Honeybee Room.</p>
+<dl class="py class">
+<dt id="honeybee.room.Room">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.room.</code><code class="sig-name descname">Room</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span></em>, <em class="sig-param"><span class="n">faces</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee._basewithshade._BaseWithShade</span></code></p>
+<p>A volume enclosed by faces, representing a single room or space.</p>
+<p>Note that, if zero is input for tolerance and angle_tolerance, no checks
+will be performed to determine whether the room is a closed volume
+and no attempt will be made to flip faces in the event that they are not
+facing outward from the room volume.  As such, an input tolerance of 0
+is intended for workflows where the solidity of the room volume has been
+evaluated elsewhere.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> – Text string for a unique Room ID. Must be &lt; 100 characters and
+not contain any spaces or special characters.</p></li>
+<li><p><strong>faces</strong> – A list or tuple of honeybee Face objects that together form the
+closed volume of a room.</p></li>
+<li><p><strong>tolerance</strong> – The maximum difference between x, y, and z values
+at which vertices of adjacent faces are considered equivalent. This is
+used in determining whether the faces form a closed volume. Default
+is 0, which makes no attempt to evaluate whether the Room volume
+is closed.</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle difference in degrees that vertices are
+allowed to differ from one another in order to consider them colinear.
+Default is 0, which makes no attempt to evaluate whether the Room
+volume is closed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Properties:</dt><dd><ul class="simple">
+<li><p>identifier</p></li>
+<li><p>display_name</p></li>
+<li><p>faces</p></li>
+<li><p>multiplier</p></li>
+<li><p>story</p></li>
+<li><p>indoor_furniture</p></li>
+<li><p>indoor_shades</p></li>
+<li><p>outdoor_shades</p></li>
+<li><p>geometry</p></li>
+<li><p>center</p></li>
+<li><p>volume</p></li>
+<li><p>floor_area</p></li>
+<li><p>exposed_area</p></li>
+<li><p>exterior_wall_area</p></li>
+<li><p>exterior_aperture_area</p></li>
+<li><p>exterior_wall_aperture_area</p></li>
+<li><p>exterior_skylight_aperture_area</p></li>
+<li><p>average_floor_height</p></li>
+<li><p>user_data</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="honeybee.room.Room.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.ToString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.add_indoor_furniture">
+<code class="sig-name descname">add_indoor_furniture</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shade</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.add_indoor_furniture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.add_indoor_furniture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a Shade object representing furniture to the Room.</p>
+<p>Note that this method is identical to the add_indoor_shade method but
+it is provided here under an alternate name to make it clear that indoor
+furniture objects should be added here to the Room.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shade</strong> – A Shade object to add to the indoors of this Room, representing
+furniture, desks, partitions, etc.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.add_indoor_shade">
+<code class="sig-name descname">add_indoor_shade</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shade</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.add_indoor_shade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a Shade object to be added to the indoors of this object.</p>
+<p>Indoor Shade objects can be used to represent furniture, the interior
+portion of light shelves, the interior part of mullions, etc.
+For representing finely detailed objects like blinds or roller shades,
+it may be more appropriate to model them as materials assigned to
+Aperture properties (like Radiance materials or Energy constructions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shade</strong> – A Shade object to add to the indoors of this object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.add_indoor_shades">
+<code class="sig-name descname">add_indoor_shades</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shades</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.add_indoor_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a list of Shade objects to the indoors of this object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shades</strong> – A list of Shade objects to add to the indoors of this object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.add_outdoor_shade">
+<code class="sig-name descname">add_outdoor_shade</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shade</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.add_outdoor_shade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a Shade object to the outdoors of this object.</p>
+<p>Outdoor Shade objects can be used to represent balconies, outdoor furniture,
+overhangs, light shelves, fins, the exterior part of mullions, etc.
+For representing larger shade objects like trees or other buildings,
+it may be more appropriate to add them to the Model as orphaned_shades
+without a specific parent object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shade</strong> – A Shade object to add to the outdoors of this object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.add_outdoor_shades">
+<code class="sig-name descname">add_outdoor_shades</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shades</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.add_outdoor_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a list of Shade objects to the outdoors of this object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shades</strong> – A list of Shade objects to add to the outdoors of this object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.add_prefix">
+<code class="sig-name descname">add_prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.add_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.add_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the identifier of this object and all child objects by inserting a prefix.</p>
+<p>This is particularly useful in workflows where you duplicate and edit
+a starting object and then want to combine it with the original object
+into one Model (like making a model of repeated rooms) since all objects
+within a Model must have unique identifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prefix</strong> – Text that will be inserted at the start of this object’s
+(and child objects’) identifier and display_name. It is recommended
+that this prefix be short to avoid maxing out the 100 allowable
+characters for honeybee identifiers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.average_orientation">
+<code class="sig-name descname">average_orientation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">north_vector</span><span class="o">=</span><span class="default_value">Vector2D(0.0, 1.0)</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.average_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.average_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a number between 0 and 360 for the average orientation of exposed walls.</p>
+<p>0 = North, 90 = East, 180 = South, 270 = West.  Will be None if the zone has
+no exterior walls. Resulting value is weighted by the area of each of the
+wall faces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>north_vector</strong> – A ladybug_geometry Vector2D for the north direction.
+Default is the Y-axis (0, 1).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.check_non_zero">
+<code class="sig-name descname">check_non_zero</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.check_non_zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.check_non_zero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that the Room’s geometry components are above a “zero” area tolerance.</p>
+<p>This includes all of the Room’s Faces, Apertures, Doors and Shades.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tolerance</strong> – The minimum acceptable area of the object. Default is 0.0001,
+which is equal to 1 cm2 when model units are meters. This is just
+above the smallest size that OpenStudio will accept.</p></li>
+<li><p><strong>raise_exception</strong> – If True, a ValueError will be raised if the object
+area is below the tolerance. Default: True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.check_planar">
+<code class="sig-name descname">check_planar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.check_planar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.check_planar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all of the Room’s geometry components are planar.</p>
+<p>This includes all of the Room’s Faces, Apertures, Doors and Shades.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tolerance</strong> – The minimum distance between a given vertex and a the
+object’s plane at which the vertex is said to lie in the plane.
+Default: 0.01, suitable for objects in meters.</p></li>
+<li><p><strong>raise_exception</strong> – Boolean to note whether an ValueError should be
+raised if a vertex does not lie within the object’s plane.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.check_self_intersecting">
+<code class="sig-name descname">check_self_intersecting</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.check_self_intersecting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.check_self_intersecting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that no edges of the Room’s geometry components self-intersect.</p>
+<p>This includes all of the Room’s Faces, Apertures, Doors and Shades.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>raise_exception</strong> – If True, a ValueError will be raised if an object
+intersects with itself (like a bowtie). Default: True.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.check_solid">
+<code class="sig-name descname">check_solid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.check_solid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.check_solid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the Room is a closed solid to within the input tolerances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tolerance</strong> – tolerance: The maximum difference between x, y, and z values
+at which face vertices are considered equivalent. Default: 0.01,
+suitable for objects in meters.</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle difference in degrees that vertices are
+allowed to differ from one another in order to consider them colinear.
+Default: 1 degree.</p></li>
+<li><p><strong>raise_exception</strong> – Boolean to note whether a ValueError should be raised
+if the room geometry does not form a closed solid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.check_sub_faces_valid">
+<code class="sig-name descname">check_sub_faces_valid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">raise_exception</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.check_sub_faces_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.check_sub_faces_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that room’s sub-faces are co-planar with faces and in the face boundary.</p>
+<p>Note this does not check the planarity of the sub-faces themselves, whether
+they self-intersect, or whether they have a non-zero area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tolerance</strong> – The minimum difference between the coordinate values of two
+vertices at which they can be considered equivalent. Default: 0.01,
+suitable for objects in meters.</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle in degrees that the plane normals can
+differ from one another in order for them to be considered coplanar.
+Default: 1 degree.</p></li>
+<li><p><strong>raise_exception</strong> – Boolean to note whether a ValueError should be raised
+if an sub-face is not valid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.duplicate">
+<code class="sig-name descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.duplicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a copy of this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.find_adjacency">
+<em class="property">static </em><code class="sig-name descname">find_adjacency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rooms</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.find_adjacency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.find_adjacency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list with all adjacent pairs of Faces between input rooms.</p>
+<p>Note that this method does not change any boundary conditions of the input
+rooms or mutate them in any way. It’s purely a geometric analysis of the
+faces between rooms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rooms</strong> – A list of rooms for which adjacencies will be solved.</p></li>
+<li><p><strong>tolerance</strong> – The minimum difference between the coordinate values of two
+faces at which they can be considered centered adjacent. Default: 0.01,
+suitable for objects in meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of tuples with each tuple containing 2 objects for Faces that
+are adjacent to one another.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.from_box">
+<em class="property">classmethod </em><code class="sig-name descname">from_box</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">6.0</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">3.2</span></em>, <em class="sig-param"><span class="n">orientation_angle</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">Point3D(0.0, 0.0, 0.0)</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.from_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.from_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a Room from parameters describing a box.</p>
+<p>The resulting faces of the room will always be ordered as follows:
+(Bottom, Front, Right, Back, Left, Top) where the front is facing the
+cardinal direction of the orientation_angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> – Text string for a unique Room ID. Must be &lt; 100 characters and
+not contain any spaces or special characters.</p></li>
+<li><p><strong>width</strong> – Number for the width of the box (in the X direction). Default: 3.0.</p></li>
+<li><p><strong>depth</strong> – Number for the depth of the box (in the Y direction). Default: 6.0.</p></li>
+<li><p><strong>height</strong> – Number for the height of the box (in the Z direction). Default: 3.2.</p></li>
+<li><p><strong>orientation_angle</strong> – A number between 0 and 360 for the clockwise
+orientation of the box in degrees.
+(0 = North, 90 = East, 180 = South, 270 = West)</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin of the room.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize an Room from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – A dictionary representation of a Room object.</p></li>
+<li><p><strong>tolerance</strong> – The maximum difference between x, y, and z values
+at which vertices of adjacent faces are considered equivalent. This is
+used in determining whether the faces form a closed volume. Default
+is 0, which makes no attempt to evaluate whether the Room volume
+is closed.</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle difference in degrees that vertices are
+allowed to differ from one another in order to consider them colinear.
+Default is 0, which makes no attempt to evaluate whether the Room
+volume is closed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.from_polyface3d">
+<em class="property">classmethod </em><code class="sig-name descname">from_polyface3d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span></em>, <em class="sig-param"><span class="n">polyface</span></em>, <em class="sig-param"><span class="n">roof_angle</span><span class="o">=</span><span class="default_value">30</span></em>, <em class="sig-param"><span class="n">floor_angle</span><span class="o">=</span><span class="default_value">150</span></em>, <em class="sig-param"><span class="n">ground_depth</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.from_polyface3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.from_polyface3d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a Room from a ladybug_geometry Polyface3D object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> – Text string for a unique Room ID. Must be &lt; 100 characters and
+not contain any spaces or special characters.</p></li>
+<li><p><strong>polyface</strong> – A ladybug_geometry Polyface3D object representing the closed
+volume of a room. The Polyface3D.is_solid property can be used to
+determine whether the polyface is a closed solid before input here.</p></li>
+<li><p><strong>roof_angle</strong> – Cutting angle for roof from Z axis in degrees. Default: 30.</p></li>
+<li><p><strong>floor_angle</strong> – Cutting angle for floor from Z axis in degrees. Default: 150.</p></li>
+<li><p><strong>ground_depth</strong> – The Z value above which faces are considered Outdoors
+instead of Ground. Faces will have a Ground boundary condition if
+all of their vertices lie at or below this value. Default: 0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.generate_grid">
+<code class="sig-name descname">generate_grid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_dim</span></em>, <em class="sig-param"><span class="n">y_dim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.generate_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.generate_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of gridded Mesh3D objects offset from the floors of this room.</p>
+<p>Note that the x_dim and y_dim refer to dimensions within the XY coordinate
+system of the floor faces’s planes. So rotating the planes of the floor faces
+will result in rotated grid cells.</p>
+<p>Will be None if the Room has no floor faces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_dim</strong> – The x dimension of the grid cells as a number.</p></li>
+<li><p><strong>y_dim</strong> – The y dimension of the grid cells as a number. Default is None,
+which will assume the same cell dimension for y as is set for x.</p></li>
+<li><p><strong>offset</strong> – A number for how far to offset the grid from the base face.
+Default is 1.0, which will not offset the grid to be 1 unit above
+the floor.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">room</span> <span class="o">=</span> <span class="n">Room</span><span class="o">.</span><span class="n">from_box</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="n">floor_mesh</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class="n">generate_grid</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">test_points</span> <span class="o">=</span> <span class="n">floor_mesh</span><span class="o">.</span><span class="n">face_centroids</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.ground_by_custom_surface">
+<code class="sig-name descname">ground_by_custom_surface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ground_geometry</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">angle_tolerance</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.ground_by_custom_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.ground_by_custom_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set ground boundary conditions using an array of Face3D for the ground.</p>
+<p>Room faces that are coplanar with the ground surface or lie completely below it
+will get a Ground boundary condition while those above will get an Outdoors
+boundary condition. Existing Faces with an indoor boundary condition will
+be unaffected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ground_geometry</strong> – An array of ladybug_geometry Face3D that together
+represent the ground surface.</p></li>
+<li><p><strong>tolerance</strong> – The minimum difference between the coordinate values of two
+vertices at which they can be considered equivalent. Default: 0.01,
+suitable for objects in meters.</p></li>
+<li><p><strong>angle_tolerance</strong> – The max angle in degrees that the plane normals can
+differ from one another in order for them to be considered
+coplanar. (Default: 1)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.group_by_floor_height">
+<em class="property">static </em><code class="sig-name descname">group_by_floor_height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rooms</span></em>, <em class="sig-param"><span class="n">min_difference</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.group_by_floor_height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.group_by_floor_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group Rooms according to their average floor height.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rooms</strong> – A list of honeybee rooms to be grouped by floor height.</p></li>
+<li><p><strong>min_difference</strong> – An float value to denote the minimum difference
+in floor heights that is considered meaningful. This can be used
+to ensure rooms like those representing stair landings are grouped
+with those below them. Default: 0.01, which means that virtually
+any minor difference in floor heights will result in a new group.
+This assumption is suitable for models in meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple with two items.</p>
+<ul class="simple">
+<li><p>grouped_rooms - A list of lists of honeybee rooms with each sub-list
+representing a different floor height.</p></li>
+<li><p>floor_heights - A list of floor heights with one floor height for each
+sub-list of the output grouped_rooms.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.group_by_orientation">
+<em class="property">static </em><code class="sig-name descname">group_by_orientation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rooms</span></em>, <em class="sig-param"><span class="n">group_count</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">north_vector</span><span class="o">=</span><span class="default_value">Vector2D(0.0, 1.0)</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.group_by_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.group_by_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group Rooms with the same average outdoor wall orientation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rooms</strong> – A list of honeybee rooms to be grouped by orientation.</p></li>
+<li><p><strong>group_count</strong> – An optional positive integer to set the number of orientation
+groups to use. For example, setting this to 4 will result in rooms
+being grouped by four orientations (North, East, South, West). If None,
+the maximum number of unique groups will be used.</p></li>
+<li><p><strong>north_vector</strong> – A ladybug_geometry Vector2D for the north direction.
+Default is the Y-axis (0, 1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple with three items.</p>
+<ul class="simple">
+<li><p>grouped_rooms - A list of lists of honeybee rooms with each sub-list
+representing a different orientation.</p></li>
+<li><p>core_rooms - A list of honeybee rooms with no identifiable orientation.</p></li>
+<li><p>orientations - A list of numbers between 0 and 360 with one orientation
+for each branch of the output grouped_rooms. This will be a list of
+angle ranges if a value is input for group_count.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move this Room along a vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the room.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.move_shades">
+<code class="sig-name descname">move_shades</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.move_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move all indoor and outdoor shades assigned to this object along a vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the shades.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.reflect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reflect this Room across a plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.reflect_shades">
+<code class="sig-name descname">reflect_shades</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.reflect_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reflect all indoor and outdoor shades assigned to this object across a plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.remove_colinear_vertices_envelope">
+<code class="sig-name descname">remove_colinear_vertices_envelope</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.remove_colinear_vertices_envelope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.remove_colinear_vertices_envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove colinear and duplicate vertices from this object’s Faces and Sub-faces.</p>
+<p>Note that this does not affect any assigned Shades.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tolerance</strong> – The minimum distance between a vertex and the boundary segments
+at which point the vertex is considered colinear. Default: 0.01,
+suitable for objects in meters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.remove_indoor_furniture">
+<code class="sig-name descname">remove_indoor_furniture</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.remove_indoor_furniture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.remove_indoor_furniture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all indoor furniture assigned to this Room.</p>
+<p>Note that this method is identical to the remove_indoor_shade method but
+it is provided here under an alternate name to make it clear that indoor
+furniture objects should be added here to the Room.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.remove_indoor_shades">
+<code class="sig-name descname">remove_indoor_shades</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.remove_indoor_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all indoor shades assigned to this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.remove_outdoor_shades">
+<code class="sig-name descname">remove_outdoor_shades</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.remove_outdoor_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all outdoor shades assigned to this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.remove_shades">
+<code class="sig-name descname">remove_shades</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.remove_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all indoor and outdoor shades assigned to this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate this Room by a certain angle around an axis and origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.rotate_shades">
+<code class="sig-name descname">rotate_shades</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.rotate_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate all indoor and outdoor shades assigned to this object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.rotate_xy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate this Room counterclockwise in the world XY plane by a certain angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.rotate_xy_shades">
+<code class="sig-name descname">rotate_xy_shades</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.rotate_xy_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate all indoor and outdoor shades counterclockwise in the world XY plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale this Room by a factor from an origin point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.scale_shades">
+<code class="sig-name descname">scale_shades</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.room.Room.scale_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale all indoor and outdoor shades assigned to this object by a factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.skylight_apertures_by_ratio">
+<code class="sig-name descname">skylight_apertures_by_ratio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ratio</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.skylight_apertures_by_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.skylight_apertures_by_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add apertures to all exterior roofs given a ratio of aperture to face area.</p>
+<p>Note this method removes any existing apertures and overhead doors on the
+Room’s roofs. This method attempts to generate as few apertures as
+necessary to meet the ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> – A number between 0 and 1 (but not perfectly equal to 1)
+for the desired ratio between aperture area and face area.</p></li>
+<li><p><strong>tolerance</strong> – The maximum difference between point values for them to be
+considered a part of a rectangle. This is used in the event that
+this face is concave and an attempt to subdivide the face into a
+rectangle is made. It does not affect the ability to produce apertures
+for convex Faces. Default: 0.01, suitable for objects in meters.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">room</span> <span class="o">=</span> <span class="n">Room</span><span class="o">.</span><span class="n">from_box</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="n">room</span><span class="o">.</span><span class="n">skylight_apertures_by_ratio</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.solve_adjacency">
+<em class="property">static </em><code class="sig-name descname">solve_adjacency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rooms</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.solve_adjacency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.solve_adjacency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve for adjacencies between a list of rooms.</p>
+<p>Note that this method will mutate the input roooms by setting Surface
+boundary conditions for any adjacent objects. However, it does NOT overwrite
+existing Surface boundary conditions and only adds new ones if faces are
+found to be adjacent with equivalent areas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rooms</strong> – A list of rooms for which adjacencies will be solved.</p></li>
+<li><p><strong>tolerance</strong> – The minimum difference between the coordinate values of two
+faces at which they can be considered centered adjacent. Default: 0.01,
+suitable for objects in meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A dictionary of information about the objects that had their adjacency set.
+The dictionary has the following keys.</p>
+<ul class="simple">
+<li><p>adjacent_faces - A list of tuples with each tuple containing 2 objects
+for Faces paired in the process of solving adjacency. This data can
+be used to assign custom properties to the new adjacent Faces (like
+making all adjacencies an AirBoundary face type or assigning custom
+materials/constructions).</p></li>
+<li><p>adjacent_apertures - A list of tuples with each tuple containing 2
+objects for Apertures paired in the process of solving adjacency.</p></li>
+<li><p>adjacent_doors - A list of tuples with each tuple containing 2 objects
+for Doors paired in the process of solving adjacency.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.stories_by_floor_height">
+<em class="property">static </em><code class="sig-name descname">stories_by_floor_height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rooms</span></em>, <em class="sig-param"><span class="n">min_difference</span><span class="o">=</span><span class="default_value">2.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.stories_by_floor_height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.stories_by_floor_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign story properties to a set of Rooms using their floor heights.</p>
+<p>Stories will be named with a standard convention (‘Floor1’, ‘Floor2’, etc.).
+Note that this method will only assign stories to Rooms that do not have
+a story identifier already assigned to them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rooms</strong> – A list of rooms for which story properties will be automatically
+assigned.</p></li>
+<li><p><strong>min_difference</strong> – An float value to denote the minimum difference
+in floor heights that is considered meaningful. This can be used
+to ensure rooms like those representing stair landings are grouped
+with those below them. Default: 2.0, which means that any difference
+in floor heights less than 2.0 will be considered a part of the
+same story. This assumption is suitable for models in meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of the unique story names that were assigned to the input rooms.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abridged</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">included_prop</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Room as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>abridged</strong> – Boolean to note whether the extension properties of the
+object (ie. construction sets) should be included in detail
+(False) or just referenced by identifier (True). Default: False.</p></li>
+<li><p><strong>included_prop</strong> – List of properties to filter keys that must be included in
+output dictionary. For example [‘energy’] will include ‘energy’ key if
+available in properties to_dict. By default all the keys will be
+included. To exclude all the keys from extensions use an empty list.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.wall_apertures_by_ratio">
+<code class="sig-name descname">wall_apertures_by_ratio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ratio</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/room.html#Room.wall_apertures_by_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.room.Room.wall_apertures_by_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add apertures to all exterior walls given a ratio of aperture to face area.</p>
+<p>Note this method removes any existing apertures and doors on the Room’s walls.
+This method attempts to generate as few apertures as necessary to meet the ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> – A number between 0 and 1 (but not perfectly equal to 1)
+for the desired ratio between aperture area and face area.</p></li>
+<li><p><strong>tolerance</strong> – The maximum difference between point values for them to be
+considered a part of a rectangle. This is used in the event that
+this face is concave and an attempt to subdivide the face into a
+rectangle is made. It does not affect the ability to produce apertures
+for convex Faces. Default: 0.01, suitable for objects in meters.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">room</span> <span class="o">=</span> <span class="n">Room</span><span class="o">.</span><span class="n">from_box</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="n">room</span><span class="o">.</span><span class="n">wall_apertures_by_ratio</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.average_floor_height">
+<em class="property">property </em><code class="sig-name descname">average_floor_height</code><a class="headerlink" href="#honeybee.room.Room.average_floor_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the height of the room floor averaged over all floor faces in the room.</p>
+<p>The resulting value is weighted by the area of each of the floor faces.
+Will be the minimum Z value of the Room volume if the room posseses no floors.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.center">
+<em class="property">property </em><code class="sig-name descname">center</code><a class="headerlink" href="#honeybee.room.Room.center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a ladybug_geometry Point3D for the center of the room.</p>
+<p>Note that this is the center of the bounding box around the room geometry
+and not the volume centroid.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.display_name">
+<em class="property">property </em><code class="sig-name descname">display_name</code><a class="headerlink" href="#honeybee.room.Room.display_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a string for the object name without any character restrictions.</p>
+<p>If not set, this will be equal to the identifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.exposed_area">
+<em class="property">property </em><code class="sig-name descname">exposed_area</code><a class="headerlink" href="#honeybee.room.Room.exposed_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all room faces with outdoor boundary conditions.</p>
+<p>Useful for estimating infiltration, often expressed as a flow per
+unit exposed envelope area.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.exterior_aperture_area">
+<em class="property">property </em><code class="sig-name descname">exterior_aperture_area</code><a class="headerlink" href="#honeybee.room.Room.exterior_aperture_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all exterior apertures on the room.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.exterior_roof_area">
+<em class="property">property </em><code class="sig-name descname">exterior_roof_area</code><a class="headerlink" href="#honeybee.room.Room.exterior_roof_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all exterior roofs on the room.</p>
+<p>This is NOT the area of the roof’s punched_geometry and it includes BOTH
+the area of opaque and transparent parts of the roofs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.exterior_skylight_aperture_area">
+<em class="property">property </em><code class="sig-name descname">exterior_skylight_aperture_area</code><a class="headerlink" href="#honeybee.room.Room.exterior_skylight_aperture_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all apertures on exterior roofs of the room.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.exterior_wall_aperture_area">
+<em class="property">property </em><code class="sig-name descname">exterior_wall_aperture_area</code><a class="headerlink" href="#honeybee.room.Room.exterior_wall_aperture_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all apertures on exterior walls of the room.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.exterior_wall_area">
+<em class="property">property </em><code class="sig-name descname">exterior_wall_area</code><a class="headerlink" href="#honeybee.room.Room.exterior_wall_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all exterior walls on the room.</p>
+<p>This is NOT the area of the wall’s punched_geometry and it includes BOTH
+the area of opaque and transparent parts of the walls.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.faces">
+<em class="property">property </em><code class="sig-name descname">faces</code><a class="headerlink" href="#honeybee.room.Room.faces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a tuple of all honeybee Faces making up this room volume.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.floor_area">
+<em class="property">property </em><code class="sig-name descname">floor_area</code><a class="headerlink" href="#honeybee.room.Room.floor_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the combined area of all room floor faces.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.geometry">
+<em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#honeybee.room.Room.geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a ladybug_geometry Polyface3D object representing the room.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.has_parent">
+<em class="property">property </em><code class="sig-name descname">has_parent</code><a class="headerlink" href="#honeybee.room.Room.has_parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Always False as Rooms cannot have parents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.identifier">
+<em class="property">property </em><code class="sig-name descname">identifier</code><a class="headerlink" href="#honeybee.room.Room.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a text string for the unique object identifer.</p>
+<p>This identifier remains constant as the object is mutated, copied, and
+serialized to different formats (eg. dict, idf, rad). As such, this
+property is used to reference the object across a Model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.indoor_furniture">
+<em class="property">property </em><code class="sig-name descname">indoor_furniture</code><a class="headerlink" href="#honeybee.room.Room.indoor_furniture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array of all indoor furniture Shade objects assigned to this Room.</p>
+<p>Note that this property is identical to the indoor_shades property but
+it is provided here under an alternate name to make it clear that indoor
+furniture objects should be added here to the Room.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.indoor_shades">
+<em class="property">property </em><code class="sig-name descname">indoor_shades</code><a class="headerlink" href="#honeybee.room.Room.indoor_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an array of all indoor shades assigned to this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.multiplier">
+<em class="property">property </em><code class="sig-name descname">multiplier</code><a class="headerlink" href="#honeybee.room.Room.multiplier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set an integer noting how many times this Room is repeated.</p>
+<p>Multipliers are used to speed up the calculation when similar Rooms are
+repeated more than once. Essentially, a given simulation with the
+Room is run once and then the result is mutliplied by the multiplier.
+This means that the “repetition” isn’t in a particular direction (it’s
+essentially in the exact same location) and this comes with some
+inaccuracy. However, this error might not be too large if the Rooms
+are similar enough and it can often be worth it since it can greatly
+speed up the calculation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.outdoor_shades">
+<em class="property">property </em><code class="sig-name descname">outdoor_shades</code><a class="headerlink" href="#honeybee.room.Room.outdoor_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an array of all outdoor shades assigned to this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.properties">
+<em class="property">property </em><code class="sig-name descname">properties</code><a class="headerlink" href="#honeybee.room.Room.properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get object properties, including Radiance, Energy and other properties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.shades">
+<em class="property">property </em><code class="sig-name descname">shades</code><a class="headerlink" href="#honeybee.room.Room.shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an array of all shades (indoor + outdoor) assigned to this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.story">
+<em class="property">property </em><code class="sig-name descname">story</code><a class="headerlink" href="#honeybee.room.Room.story" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set text for the story identifier to which this Room belongs.</p>
+<p>Rooms sharing the same story identifier are considered part of the same
+story in a Model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.to">
+<em class="property">property </em><code class="sig-name descname">to</code><a class="headerlink" href="#honeybee.room.Room.to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Room writer object.</p>
+<p>Use this method to access Writer class to write the room in other formats.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">room</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">idf</span><span class="p">(</span><span class="n">room</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">idf</span> <span class="n">string</span><span class="o">.</span>
+<span class="n">room</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">radiance</span><span class="p">(</span><span class="n">room</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Radiance</span> <span class="n">string</span><span class="o">.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.user_data">
+<em class="property">property </em><code class="sig-name descname">user_data</code><a class="headerlink" href="#honeybee.room.Room.user_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set an optional dictionary for additional meta data for this object.</p>
+<p>This will be None until it has been set. All keys and values of this
+dictionary should be of a standard Python type to ensure correct
+serialization of the object to/from JSON (eg. str, float, int, list, dict)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.room.Room.volume">
+<em class="property">property </em><code class="sig-name descname">volume</code><a class="headerlink" href="#honeybee.room.Room.volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the volume of the room.</p>
+<p>Note that, if this room faces do not form a closed solid the value of this
+property will not be accurate.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee.properties module &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="honeybee.room module" href="honeybee.room.html" />
+    <link rel="prev" title="honeybee.orientation module" href="honeybee.orientation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.cli.html">honeybee.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.create.html">honeybee.cli.create module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.edit.html">honeybee.cli.edit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.cli.validate.html">honeybee.cli.validate module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.cli.html#module-honeybee.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.writer.html">honeybee.writer package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.writer.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.aperture.html">honeybee.writer.aperture module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.door.html">honeybee.writer.door module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.face.html">honeybee.writer.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.model.html">honeybee.writer.model module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.room.html">honeybee.writer.room module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee.writer.shade.html">honeybee.writer.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee.writer.html#module-honeybee.writer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="honeybee.orientation.html" title="Previous Chapter: honeybee.orientation module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; honeybee.orie...</span>
+    </a>
+  </li>
+  <li>
+    <a href="honeybee.room.html" title="Next Chapter: honeybee.room module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">honeybee.room module &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/honeybee.properties.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="honeybee.html">honeybee package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="honeybee.altnumber.html">honeybee.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.aperture.html">honeybee.aperture module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.boundarycondition.html">honeybee.boundarycondition module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.checkdup.html">honeybee.checkdup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.colorobj.html">honeybee.colorobj module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.config.html">honeybee.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.dictutil.html">honeybee.dictutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.door.html">honeybee.door module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.extensionutil.html">honeybee.extensionutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.face.html">honeybee.face module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.facetype.html">honeybee.facetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.logutil.html">honeybee.logutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.model.html">honeybee.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.orientation.html">honeybee.orientation module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">honeybee.properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.room.html">honeybee.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.search.html">honeybee.search module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.shade.html">honeybee.shade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee.typing.html">honeybee.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="honeybee.html#module-honeybee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <div class="section" id="module-honeybee.properties">
+<span id="honeybee-properties-module"></span><h1>honeybee.properties module<a class="headerlink" href="#module-honeybee.properties" title="Permalink to this headline">¶</a></h1>
+<p>Extension properties for Model, Room, Face, Shade, Aperture, Door.</p>
+<p>These objects hold all attributes assigned by extensions like honeybee-radiance
+and honeybee-energy.  Note that these Property objects are not intended to exist
+on their own but should have a host object.</p>
+<dl class="py class">
+<dt id="honeybee.properties.ApertureProperties">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.properties.</code><code class="sig-name descname">ApertureProperties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ApertureProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ApertureProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.properties._Properties</span></code></p>
+<p>Honeybee Aperture Properties.</p>
+<p>Aperture properties. This class will be extended by extensions.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">aperture</span> <span class="o">=</span> <span class="n">Aperture</span><span class="p">(</span><span class="s1">&#39;Window to My Soul&#39;</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+<span class="n">aperture</span><span class="o">.</span><span class="n">properties</span> <span class="o">-&gt;</span> <span class="n">ApertureProperties</span>
+<span class="n">aperture</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">radiance</span> <span class="o">-&gt;</span> <span class="n">ApertureRadianceProperties</span>
+<span class="n">aperture</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">energy</span> <span class="o">-&gt;</span> <span class="n">ApertureEnergyProperties</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ApertureProperties.ToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite .NET ToString method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.add_prefix">
+<code class="sig-name descname">add_prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ApertureProperties.add_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ApertureProperties.add_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the identifier extension attributes unique to this object by adding a prefix.</p>
+<p>Notably, this method only adds the prefix to extension attributes that must
+be unique to the Aperture and does not add the prefix to attributes that are
+shared across several Apertures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prefix</strong> – Text that will be inserted at the start of extension attribute identifiers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ApertureProperties.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a move transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be moved alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+moved if the host aperture is moved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the face.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ApertureProperties.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a reflection transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be reflected alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+reflected if the host aperture is reflected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.reset_to_default">
+<code class="sig-name descname">reset_to_default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ApertureProperties.reset_to_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ApertureProperties.reset_to_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the extension properties assigned to this Aperture to default.</p>
+<p>This typically means erasing any Constructions or Modifiers assigned to this
+Aperture (having them instead assigned by ConstructionSets and ModifierSets).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ApertureProperties.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ApertureProperties.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation in the XY plane to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ApertureProperties.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a scale transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be scaled alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+scaled if the host aperture is scaled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abridged</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ApertureProperties.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ApertureProperties.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert properties to dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>abridged</strong> – Boolean to note whether the full dictionary describing the
+object should be returned (False) or just an abridged version (True).
+Default: False.</p></li>
+<li><p><strong>include</strong> – A list of keys to be included in dictionary.
+If None all the available keys will be included.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ApertureProperties.host">
+<em class="property">property </em><code class="sig-name descname">host</code><a class="headerlink" href="#honeybee.properties.ApertureProperties.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the object hosting these properties.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="honeybee.properties.DoorProperties">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.properties.</code><code class="sig-name descname">DoorProperties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#DoorProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.DoorProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.properties._Properties</span></code></p>
+<p>Honeybee Door Properties.</p>
+<p>Door properties. This class will be extended by extensions.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">door</span> <span class="o">=</span> <span class="n">Door</span><span class="p">(</span><span class="s1">&#39;Front Door&#39;</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+<span class="n">door</span><span class="o">.</span><span class="n">properties</span> <span class="o">-&gt;</span> <span class="n">DoorProperties</span>
+<span class="n">door</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">radiance</span> <span class="o">-&gt;</span> <span class="n">DoorRadianceProperties</span>
+<span class="n">door</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">energy</span> <span class="o">-&gt;</span> <span class="n">DoorEnergyProperties</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.DoorProperties.ToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite .NET ToString method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.add_prefix">
+<code class="sig-name descname">add_prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#DoorProperties.add_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.DoorProperties.add_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the identifier extension attributes unique to this object by adding a prefix.</p>
+<p>Notably, this method only adds the prefix to extension attributes that must
+be unique to the Door and does not add the prefix to attributes that are
+shared across several Doors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prefix</strong> – Text that will be inserted at the start of extension attribute identifiers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.DoorProperties.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a move transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be moved alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+moved if the host aperture is moved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the face.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.DoorProperties.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a reflection transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be reflected alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+reflected if the host aperture is reflected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.reset_to_default">
+<code class="sig-name descname">reset_to_default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#DoorProperties.reset_to_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.DoorProperties.reset_to_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the extension properties assigned to this Door to default.</p>
+<p>This typically means erasing any Constructions or Modifiers assigned to this
+Door (having them instead assigned by ConstructionSets and ModifierSets).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.DoorProperties.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.DoorProperties.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation in the XY plane to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.DoorProperties.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a scale transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be scaled alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+scaled if the host aperture is scaled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abridged</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#DoorProperties.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.DoorProperties.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert properties to dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>abridged</strong> – Boolean to note whether the full dictionary describing the
+object should be returned (False) or just an abridged version (True).
+Default: False.</p></li>
+<li><p><strong>include</strong> – A list of keys to be included in dictionary.
+If None all the available keys will be included.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.DoorProperties.host">
+<em class="property">property </em><code class="sig-name descname">host</code><a class="headerlink" href="#honeybee.properties.DoorProperties.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the object hosting these properties.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="honeybee.properties.FaceProperties">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.properties.</code><code class="sig-name descname">FaceProperties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#FaceProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.FaceProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.properties._Properties</span></code></p>
+<p>Honeybee Face Properties.</p>
+<p>Face properties. This class will be extended by extensions.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">face</span> <span class="o">=</span> <span class="n">Face</span><span class="p">(</span><span class="s1">&#39;South Bedroom Wall&#39;</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+<span class="n">face</span><span class="o">.</span><span class="n">properties</span> <span class="o">-&gt;</span> <span class="n">FaceProperties</span>
+<span class="n">face</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">radiance</span> <span class="o">-&gt;</span> <span class="n">FaceRadianceProperties</span>
+<span class="n">face</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">energy</span> <span class="o">-&gt;</span> <span class="n">FaceEnergyProperties</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.FaceProperties.ToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite .NET ToString method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.add_prefix">
+<code class="sig-name descname">add_prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#FaceProperties.add_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.FaceProperties.add_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the identifier extension attributes unique to this object by adding a prefix.</p>
+<p>Notably, this method only adds the prefix to extension attributes that must
+be unique to the Face and does not add the prefix to attributes that are
+shared across several Faces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prefix</strong> – Text that will be inserted at the start of extension attribute identifiers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.FaceProperties.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a move transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be moved alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+moved if the host aperture is moved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the face.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.FaceProperties.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a reflection transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be reflected alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+reflected if the host aperture is reflected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.reset_to_default">
+<code class="sig-name descname">reset_to_default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#FaceProperties.reset_to_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.FaceProperties.reset_to_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the extension properties assigned at the level of this Face to default.</p>
+<p>This typically means erasing any Constructions or Modifiers assigned to this
+Face (having them instead assigned by ConstructionSets and ModifierSets).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.FaceProperties.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.FaceProperties.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation in the XY plane to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.FaceProperties.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a scale transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be scaled alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+scaled if the host aperture is scaled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abridged</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#FaceProperties.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.FaceProperties.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert properties to dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>abridged</strong> – Boolean to note whether the full dictionary describing the
+object should be returned (False) or just an abridged version (True).
+Default: False.</p></li>
+<li><p><strong>include</strong> – A list of keys to be included in dictionary besides Face type
+and boundary_condition. If None all the available keys will be included.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.FaceProperties.host">
+<em class="property">property </em><code class="sig-name descname">host</code><a class="headerlink" href="#honeybee.properties.FaceProperties.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the object hosting these properties.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="honeybee.properties.ModelProperties">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.properties.</code><code class="sig-name descname">ModelProperties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ModelProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ModelProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.properties._Properties</span></code></p>
+<p>Honeybee Model Properties.</p>
+<p>Model properties. This class will be extended by extensions.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;New Elementary School&#39;</span><span class="p">,</span> <span class="n">list_of_rooms</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">properties</span> <span class="o">-&gt;</span> <span class="n">ModelProperties</span>
+<span class="n">model</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">radiance</span> <span class="o">-&gt;</span> <span class="n">ModelRadianceProperties</span>
+<span class="n">model</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">energy</span> <span class="o">-&gt;</span> <span class="n">ModelEnergyProperties</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ModelProperties.ToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite .NET ToString method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.apply_properties_from_dict">
+<code class="sig-name descname">apply_properties_from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ModelProperties.apply_properties_from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ModelProperties.apply_properties_from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply extension properties from a Model dictionary to the host Model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – A dictionary representation of an entire honeybee-core Model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ModelProperties.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a move transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be moved alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+moved if the host aperture is moved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the face.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ModelProperties.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a reflection transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be reflected alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+reflected if the host aperture is reflected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ModelProperties.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ModelProperties.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation in the XY plane to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ModelProperties.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a scale transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be scaled alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+scaled if the host aperture is scaled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ModelProperties.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ModelProperties.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert properties to dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>include</strong> – A list of keys to be included in dictionary.
+If None all the available keys will be included.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ModelProperties.host">
+<em class="property">property </em><code class="sig-name descname">host</code><a class="headerlink" href="#honeybee.properties.ModelProperties.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the object hosting these properties.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="honeybee.properties.RoomProperties">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.properties.</code><code class="sig-name descname">RoomProperties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#RoomProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.RoomProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.properties._Properties</span></code></p>
+<p>Honeybee Room Properties.</p>
+<p>Room properties. This class will be extended by extensions.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">room</span> <span class="o">=</span> <span class="n">Room</span><span class="p">(</span><span class="s1">&#39;Bedroom&#39;</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+<span class="n">room</span><span class="o">.</span><span class="n">properties</span> <span class="o">-&gt;</span> <span class="n">RoomProperties</span>
+<span class="n">room</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">radiance</span> <span class="o">-&gt;</span> <span class="n">RoomRadianceProperties</span>
+<span class="n">room</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">energy</span> <span class="o">-&gt;</span> <span class="n">RoomEnergyProperties</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.RoomProperties.ToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite .NET ToString method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.add_prefix">
+<code class="sig-name descname">add_prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#RoomProperties.add_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.RoomProperties.add_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the identifier extension attributes unique to this object by adding a prefix.</p>
+<p>Notably, this method only adds the prefix to extension attributes that must
+be unique to the Room (eg. single-room HVAC systems) and does not add the
+prefix to attributes that are shared across several Rooms (eg. ConstructionSets).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prefix</strong> – Text that will be inserted at the start of extension attribute identifiers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.RoomProperties.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a move transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be moved alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+moved if the host aperture is moved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the face.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.RoomProperties.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a reflection transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be reflected alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+reflected if the host aperture is reflected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.reset_to_default">
+<code class="sig-name descname">reset_to_default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#RoomProperties.reset_to_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.RoomProperties.reset_to_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the extension properties assigned at the level of this Room to default.</p>
+<p>This typically means erasing any ConstructionSets or ModifierSets assigned
+to this Room among other properties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.RoomProperties.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.RoomProperties.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation in the XY plane to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.RoomProperties.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a scale transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be scaled alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+scaled if the host aperture is scaled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abridged</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#RoomProperties.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.RoomProperties.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert properties to dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>abridged</strong> – Boolean to note whether the full dictionary describing the
+object should be returned (False) or just an abridged version (True).
+Default: False.</p></li>
+<li><p><strong>include</strong> – A list of keys to be included in dictionary.
+If None all the available keys will be included.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.RoomProperties.host">
+<em class="property">property </em><code class="sig-name descname">host</code><a class="headerlink" href="#honeybee.properties.RoomProperties.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the object hosting these properties.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="honeybee.properties.ShadeProperties">
+<em class="property">class </em><code class="sig-prename descclassname">honeybee.properties.</code><code class="sig-name descname">ShadeProperties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ShadeProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ShadeProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee.properties._Properties</span></code></p>
+<p>Honeybee Shade Properties.</p>
+<p>Shade properties. This class will be extended by extensions.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shade</span> <span class="o">=</span> <span class="n">Shade</span><span class="p">(</span><span class="s1">&#39;Deep Overhang&#39;</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+<span class="n">shade</span><span class="o">.</span><span class="n">properties</span> <span class="o">-&gt;</span> <span class="n">ShadeProperties</span>
+<span class="n">shade</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">radiance</span> <span class="o">-&gt;</span> <span class="n">ShadeRadianceProperties</span>
+<span class="n">shade</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">energy</span> <span class="o">-&gt;</span> <span class="n">ShadeEnergyProperties</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ShadeProperties.ToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite .NET ToString method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.add_prefix">
+<code class="sig-name descname">add_prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ShadeProperties.add_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ShadeProperties.add_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the identifier extension attributes unique to this object by adding a prefix.</p>
+<p>Notably, this method only adds the prefix to extension attributes that must
+be unique to the Shade and does not add the prefix to attributes that are
+shared across several Shades.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prefix</strong> – Text that will be inserted at the start of extension attribute identifiers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ShadeProperties.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a move transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be moved alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+moved if the host aperture is moved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector3D with the direction and distance
+to move the face.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ShadeProperties.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a reflection transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be reflected alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+reflected if the host aperture is reflected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.reset_to_default">
+<code class="sig-name descname">reset_to_default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ShadeProperties.reset_to_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ShadeProperties.reset_to_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the extension properties assigned at the level of this Shade to default.</p>
+<p>This typically means erasing any Constructions or Modifiers assigned to this
+Shade (having them instead assigned by ConstructionSets and ModifierSets).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ShadeProperties.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ShadeProperties.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a rotatation in the XY plane to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be rotated alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+rotated if the host aperture is rotated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee.properties.ShadeProperties.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a scale transform to extension attributes.</p>
+<p>This is useful in cases where extension attributes possess geometric data
+that should be scaled alongside the host object. For example, dynamic
+geometry within the honeybee-radiance state of an aperture should be
+scaled if the host aperture is scaled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D representing the origin from which
+to scale. If None, it will be scaled from the World origin (0, 0, 0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abridged</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee/properties.html#ShadeProperties.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#honeybee.properties.ShadeProperties.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert properties to dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>abridged</strong> – Boolean to note whether the full dictionary describing the
+object should be returned (False) or just an abridged version (True).
+Default: False.</p></li>
+<li><p><strong>include</strong> – A list of keys to be included in dictionary.
+If None all the available keys will be included.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee.properties.ShadeProperties.host">
+<em class="property">property </em><code class="sig-name descname">host</code><a class="headerlink" href="#honeybee.properties.ShadeProperties.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the object hosting these properties.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
