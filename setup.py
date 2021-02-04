@@ -6,25 +6,19 @@ with open("README.md", "r") as fh:
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-with open('cli-requirements.txt') as f:
-    cli_requirements = f.read().splitlines()
-
 setuptools.setup(
     name="honeybee-core",
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     author="Ladybug Tools",
     author_email="info@ladybug.tools",
-    description="Honeybee is a Python library to create, run and visualize the results of environmental simulation. See extensions (e.g. honeybee_radiance) for specific simulation type.",
+    description="A library to create 3D building geometry for various types of environmental simulation.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ladybug-tools/honeybee-core",
     packages=setuptools.find_packages(exclude=["tests"]),
     include_package_data=True,
     install_requires=requirements,
-    extras_require={
-        'cli': cli_requirements
-    },
     entry_points={
         "console_scripts": ["honeybee = honeybee.cli:main"]
     },

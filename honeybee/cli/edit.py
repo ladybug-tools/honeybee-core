@@ -1,11 +1,8 @@
 """honeybee model editing commands."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install . [cli]` command.'
-    )
+import click
+import sys
+import logging
+import json
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
@@ -19,12 +16,6 @@ try:
     ad_bc = bcs.adiabatic
 except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
     ad_bc = None
-
-
-import sys
-import os
-import logging
-import json
 
 _logger = logging.getLogger(__name__)
 
@@ -91,7 +82,7 @@ def convert_units(model_json, units, scale, output_file):
               type=click.File('w'), default='-')
 def solve_adjacency(model_json, wall, surface, no_overwrite, output_file):
     """Solve adjacency between Rooms of a Model JSON file.
-    
+
     \b
     Args:
         model_json: Full path to a Model JSON file.
@@ -149,7 +140,7 @@ def windows_by_ratio(model_json, ratio, output_file):
 
     Note that this method removes any existing apertures and doors from the Walls.
     This method attempts to generate as few apertures as necessary to meet the ratio.
-    
+
     \b
     Args:
         model_json: Full path to a Model JSON file.
@@ -310,7 +301,8 @@ def extruded_border(model_json, depth, outdoor, output_file):
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with overhangs. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor, output_file):
+def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor,
+             output_file):
     """Add overhangs to all outdoor walls or windows in walls.
 
     \b
@@ -441,8 +433,8 @@ def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
 @click.option('--horizontal/--vertical', ' /-v', help='Flag to note wh.',
               default=True, show_default=True)
 @click.option('--max-count', '-m', help='Optional integer to set the maximum number of '
-              'louvers that will be generated. If 0, louvers will cover the entire face.',
-              type=int, default=0, show_default=True)
+              'louvers that will be generated. If 0, louvers will cover the entire '
+              'face.', type=int, default=0, show_default=True)
 @click.option('--per-window/--per-wall', ' /-pw', help='Flag to note whether the '
               'louvers should be generated per aperture or per wall.',
               default=True, show_default=True)

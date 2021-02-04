@@ -1,18 +1,10 @@
 """honeybee validation commands."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install . [cli]` command.'
-    )
-
-from honeybee.model import Model
-
+import click
 import sys
-import os
 import logging
 import json
+
+from honeybee.model import Model
 
 _logger = logging.getLogger(__name__)
 
@@ -20,7 +12,8 @@ try:
     import honeybee_schema.model as schema_model
 except ImportError:
     _logger.exception(
-        'honeybee_schema is not installed. Try `pip install . [cli]` command.'
+        'honeybee_schema is not installed and validation commands are unavailable.\n'
+        'You must use Python 3.7 or above to run validation commands.'
     )
 
 

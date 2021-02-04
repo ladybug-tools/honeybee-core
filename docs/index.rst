@@ -16,9 +16,7 @@ Installation
 
 To install the core library try ``pip install -U honeybee-core``.
 
-If you want to also include the command line interface try ``pip install -U honeybee-core[cli]``.
-
-To check if the Honeybee command line is installed correctly try ``honeybee viz`` and you
+To check if the Honeybee command line interface is installed correctly try ``honeybee viz`` and you
 should get a ``viiiiiiiiiiiiizzzzzzzzz!`` back in response!
 
 

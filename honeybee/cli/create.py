@@ -1,11 +1,10 @@
 """honeybee model creation commands."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install . [cli]` command.'
-    )
+import click
+import sys
+import logging
+import json
+import math
+import uuid
 
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
 from ladybug_geometry.geometry2d.polygon import Polygon2D
@@ -21,12 +20,6 @@ try:
     ad_bc = bcs.adiabatic
 except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
     ad_bc = None
-
-import sys
-import logging
-import json
-import math
-import uuid
 
 _logger = logging.getLogger(__name__)
 
