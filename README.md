@@ -25,11 +25,7 @@ To install the core library use:
 
 `pip install -U honeybee-core`
 
-If you want to also include the command line interface use:
-
-`pip install -U honeybee-core[cli]`
-
-To check if Honeybee command line is installed correctly use `honeybee viz` and you
+To check if Honeybee command line interface is installed correctly use `honeybee viz` and you
 should get a `viiiiiiiiiiiiizzzzzzzzz!` back in response! :bee:
 
 # [API Documentation](https://www.ladybug.tools/honeybee-core/docs/)
@@ -52,7 +48,7 @@ pip install -r requirements.txt
 
 3. Run Tests:
 ```console
-python -m pytests tests/
+python -m pytest ./tests
 ```
 
 4. Generate Documentation:

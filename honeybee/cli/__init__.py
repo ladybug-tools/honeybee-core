@@ -22,7 +22,8 @@ steps:
 
 The good practice is to group all your extention commands in a command group named after
 the extension. This will make the commands organized under extension namespace. For
-instance commands for `honeybee-radiance` will be called like ``honeybee radiance [radiance-command]``.
+instance commands for `honeybee-radiance` will be called like
+``honeybee radiance [radiance-command]``.
 
 
 .. code-block:: python
@@ -49,18 +50,11 @@ instance commands for `honeybee-radiance` will be called like ``honeybee radianc
 
 Note:
 
-    For extension with several commands you can use a folder structure instead of a single
-    file. Refer to ``honeybee-radiance`` for an example.
+    For extension with several commands you can use a folder structure instead
+    of a single file. Refer to ``honeybee-radiance`` for an example.
 
 """
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click module is not installed. Try `pip install honeybee-core[cli]` command.'
-    )
-
+import click
 import sys
 import logging
 import json
@@ -70,18 +64,13 @@ from honeybee.cli.validate import validate
 from honeybee.cli.create import create
 from honeybee.cli.edit import edit
 
-# TODO: Comment out and use for logging once we are adding commands to this file.
-# import logging
-# logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 @click.group()
 @click.version_option()
 def main():
     pass
-
-
-_logger = logging.getLogger(__name__)
 
 
 @main.command('config')
