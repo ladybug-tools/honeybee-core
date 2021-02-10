@@ -318,6 +318,26 @@ def test_doors_by_identifier():
         model.shades_by_identifier(['FrontDoor'])
 
 
+def test_model_add_prefix():
+    """Test the model add_prefix method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.5, 0.01)
+    table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
+    room.add_indoor_shade(Shade('Table', table_geo))
+    prefix = 'New'
+    model = Model('ShoeBox', [room])
+    model.add_prefix(prefix)
+
+    assert room.identifier.startswith(prefix)
+    for face in room.faces:
+        assert face.identifier.startswith(prefix)
+        for ap in face.apertures:
+            assert ap.identifier.startswith(prefix)
+    for shd in room.shades:
+        assert shd.identifier.startswith(prefix)
+
+
 def test_move():
     """Test the Model move method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)

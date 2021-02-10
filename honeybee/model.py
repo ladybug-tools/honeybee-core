@@ -91,7 +91,7 @@ class Model(_Base):
 
     UNITS = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')
     UNITS_TOLERANCES = {'Meters': 0.01, 'Millimeters': 1.0, 'Feet': 0.01,
-                        'Inches':0.1, 'Centimeters':1.0}
+                        'Inches': 0.1, 'Centimeters': 1.0}
 
     def __init__(self, identifier, rooms=None, orphaned_faces=None, orphaned_shades=None,
                  orphaned_apertures=None, orphaned_doors=None,
@@ -665,6 +665,30 @@ class Model(_Base):
             else:
                 raise ValueError('Shade "{}" was not found in the model.'.format(obj_id))
         return shades
+
+    def add_prefix(self, prefix):
+        """Change the identifier of this object and child objects by inserting a prefix.
+
+        This is particularly useful in workflows where you duplicate and edit
+        a starting object and then want to combine it with the original object
+        since all objects within a Model must have unique identifiers.
+
+        Args:
+            prefix: Text that will be inserted at the start of this object's
+                (and child objects') identifier and display_name. It is recommended
+                that this prefix be short to avoid maxing out the 100 allowable
+                characters for honeybee identifiers.
+        """
+        for room in self._rooms:
+            room.add_prefix(prefix)
+        for face in self._orphaned_faces:
+            face.add_prefix(prefix)
+        for shade in self._orphaned_shades:
+            shade.add_prefix(prefix)
+        for aperture in self._orphaned_apertures:
+            aperture.add_prefix(prefix)
+        for door in self._orphaned_doors:
+            door.add_prefix(prefix)
 
     def move(self, moving_vec):
         """Move this Model along a vector.

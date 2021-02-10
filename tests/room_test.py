@@ -289,10 +289,10 @@ def test_ground_by_custom_surface():
     """Test the ground_by_custom_surface method."""
     room = Room.from_box('ShoeBoxZone', 5, 10, 3, origin=Point3D(0, 0, 3))
     grd_face1 = Face3D([Point3D(-10, -10, 3), Point3D(-10, 10, 3),
-                         Point3D(10, 10, 3), Point3D(10, -10, 3)])
+                        Point3D(10, 10, 3), Point3D(10, -10, 3)])
     grd_face2 = Face3D([Point3D(-10, 10, 3), Point3D(10, 10, 3),
-                         Point3D(10, 10, 6), Point3D(-10, 10, 6)])
-    
+                        Point3D(10, 10, 6), Point3D(-10, 10, 6)])
+
     assert isinstance(room[0].boundary_condition, Outdoors)
     assert isinstance(room[1].boundary_condition, Outdoors)
     room.ground_by_custom_surface([grd_face1, grd_face2])
