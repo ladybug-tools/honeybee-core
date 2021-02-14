@@ -14,6 +14,7 @@ Usage:
 import ladybug.config as lb_config
 
 import os
+import platform
 import sys
 import subprocess
 import json
@@ -50,12 +51,12 @@ class Folders(object):
         # load paths from the config JSON file
         self.config_file = config_file
 
-        # search for the version of honeybee-schema
-        self._honeybee_schema_version = self._find_honeybee_schema_version()
-
         # set python version to only be retrived if requested
         self._python_version = None
         self._python_version_str = None
+
+        # search for the version of honeybee-schema
+        self._honeybee_schema_version = self._find_honeybee_schema_version()
 
     @property
     def default_simulation_folder(self):
@@ -96,7 +97,18 @@ class Folders(object):
     @property
     def python_package_path(self):
         """Get the path to where this Python package is installed."""
-        return os.path.split(os.path.dirname(__file__))[0]
+        # check the ladybug_tools folder for a Python installation
+        py_pack = None
+        lb_install = lb_config.folders.ladybug_tools_folder
+        if os.path.isdir(lb_install):
+            if os.name == 'nt':
+                py_pack = os.path.join(lb_install, 'python', 'Lib', 'site-packages')
+            elif platform.system() == 'Darwin':  # on mac, python version is in path
+                py_pack = os.path.join(
+                    lb_install, 'python', 'lib', 'python3.7', 'site-packages')
+        if py_pack is not None and os.path.isdir(py_pack):
+            return py_pack
+        return os.path.split(os.path.dirname(__file__))[0]  # we're on some other cPython
 
     @property
     def python_scripts_path(self):
