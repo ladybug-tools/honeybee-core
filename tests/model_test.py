@@ -967,6 +967,13 @@ def test_from_dict_method_extensions():
     assert isinstance(parsed_model, Model)
 
 
+def test_from_hbjson():
+    """Test from_hbjson."""
+    model_json = './tests/json/model_with_adiabatic.hbjson'
+    parsed_model = Model.from_hbjson(model_json)
+    assert isinstance(parsed_model, Model)
+
+
 def test_to_hbjson():
     """Test the Model to_hbjson method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)

@@ -175,6 +175,20 @@ class Model(_Base):
         return model
 
     @classmethod
+    def from_hbjson(cls, hbjson_file):
+        """Initialize a Model from a HBJSON model file.
+
+        Args:
+            hbjson_file: Path to HBJSON file.
+        """
+        assert os.path.isfile(hbjson_file), 'Failed to find %s' % hbjson_file
+
+        with open(hbjson_file) as inf:
+            data = json.load(inf)
+
+        return cls.from_dict(data)
+
+    @classmethod
     def from_objects(cls, identifier, objects, units='Meters', tolerance=0,
                      angle_tolerance=0):
         """Initialize a Model from a list of any type of honeybee-core geometry objects.
