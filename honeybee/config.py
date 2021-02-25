@@ -240,9 +240,10 @@ class Folders(object):
         if not os.path.isdir(sim_folder):
             try:
                 os.makedirs(sim_folder)
-            except Exception as e:
-                raise OSError('Failed to create default simulation '
-                              'folder: %s\n%s' % (sim_folder, e))
+            except OSError as e:
+                if e.errno != 17:  # avoid race conditions between multiple tasks
+                    raise OSError('Failed to create default simulation '
+                                  'folder: %s\n%s' % (sim_folder, e))
         return sim_folder
 
     def _find_honeybee_schema_version(self):

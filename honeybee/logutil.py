@@ -29,7 +29,11 @@ def _get_log_folder():
     home_folder = os.getenv('HOME') or os.path.expanduser('~')
     log_folder = os.path.join(home_folder, '.honeybee')
     if not os.path.isdir(log_folder):
-        os.mkdir(log_folder)
+        try:
+            os.mkdir(log_folder)
+        except OSError as e:
+            if e.errno != 17:  # avoid race conditions between multiple tasks
+                raise OSError('Failed to create log folder: %s\n%s' % (log_folder, e))
     return log_folder
 
 
