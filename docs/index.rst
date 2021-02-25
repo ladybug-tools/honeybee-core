@@ -23,7 +23,7 @@ should get a ``viiiiiiiiiiiiizzzzzzzzz!`` back in response!
 Documentation
 =============
 
-This document includes `Honeybee API documentation <#honeybee>`_ and 
+This document includes `Honeybee API documentation <#honeybee>`_ and
 `Honeybee Command Line Interface <#id1>`_ documentation for ``honeybee core`` and does
 not include the documentation for honeybee extensions. For each extension refer to
 extension's documentation page.
@@ -34,16 +34,28 @@ Here are a number of Honeybee popular extensions:
 - `honeybee-radiance <https://ladybug.tools/honeybee-radiance/docs>`_
 
 
+CLI Docs
+=============
+
+For command line interface documentation and API documentation see the pages below.
+
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-.. include:: modules.rst
-.. include:: cli.rst
+   cli/index
 
+
+honeybee
+=============
+
+.. toctree::
+   :maxdepth: 4
+
+   modules
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
