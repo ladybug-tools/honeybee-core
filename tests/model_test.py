@@ -995,9 +995,8 @@ def test_to_hbjson():
 
     path = './tests/json'
     model_hbjson = model.to_hbjson("test", path)
-    file_path = os.path.join(path, 'test.hbjson')
-    assert os.path.isfile(file_path)
-    with open(file_path) as f:
+    assert os.path.isfile(model_hbjson)
+    with open(model_hbjson) as f:
         model_dict = json.load(f)
     assert model_dict['type'] == 'Model'
     assert model_dict['identifier'] == 'TinyHouse'
@@ -1014,7 +1013,37 @@ def test_to_hbjson():
     assert len(model_dict['rooms'][0]['faces'][3]['apertures'][0]['outdoor_shades']) == 1
     assert 'properties' in model_dict
     assert model_dict['properties']['type'] == 'ModelProperties'
-    os.remove(file_path)
+
+    new_model = Model.from_hbjson(model_hbjson)
+    assert isinstance(new_model, Model)
+    os.remove(model_hbjson)
+
+
+def test_to_hbpkl():
+    """Test the Model to_hbpkl method."""
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.apertures[0].move_shades(Vector3D(0, 0, -0.5))
+    north_face = room[1]
+    door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
+                  Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+    aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
+                      Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+    door = Door('FrontDoor', Face3D(door_verts))
+    north_face.add_door(door)
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
+    north_face.add_aperture(aperture)
+    model = Model('TinyHouse', [room])
+
+    path = './tests/json'
+    model_hbpkl = model.to_hbpkl('test', path)
+    assert os.path.isfile(model_hbpkl)
+    new_model = Model.from_hbpkl(model_hbpkl)
+    assert isinstance(new_model, Model)
+    os.remove(model_hbpkl)
 
 
 def test_writer():

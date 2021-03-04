@@ -3,6 +3,10 @@
 from __future__ import division
 import os
 import json
+try:  # check if we are in IronPython
+    import cPickle as pickle
+except ImportError:  # wea re in cPython
+    import pickle
 
 from ._base import _Base
 from .checkdup import check_duplicate_identifiers
@@ -175,17 +179,40 @@ class Model(_Base):
         return model
 
     @classmethod
+    def from_file(cls, hb_file):
+        """Initialize a Model from a file, using the file extension to sense
+
+        Args:
+            hb_file: Path to either a HBJSON or HBpkl file.
+        """
+        hb_lower = hb_file.lower()
+        if hb_lower.endswith('.hbpkl') or hb_lower.endswith('.pkl'):
+            return cls.from_hbpkl(hb_file)
+        else:  # assume that it's a HBJSON
+            return cls.from_hbjson(hb_file)
+
+    @classmethod
     def from_hbjson(cls, hbjson_file):
-        """Initialize a Model from a HBJSON model file.
+        """Initialize a Model from a HBJSON file.
 
         Args:
             hbjson_file: Path to HBJSON file.
         """
         assert os.path.isfile(hbjson_file), 'Failed to find %s' % hbjson_file
-
         with open(hbjson_file) as inf:
             data = json.load(inf)
+        return cls.from_dict(data)
 
+    @classmethod
+    def from_hbpkl(cls, hbpkl_file):
+        """Initialize a Model from a HBpkl file.
+
+        Args:
+            hbpkl_file: Path to HBpkl file.
+        """
+        assert os.path.isfile(hbpkl_file), 'Failed to find %s' % hbpkl_file
+        with open(hbpkl_file, 'rb') as inf:
+            data = pickle.load(inf)
         return cls.from_dict(data)
 
     @classmethod
@@ -1397,20 +1424,17 @@ class Model(_Base):
 
         return base
 
-    def to_hbjson(self, name="unnamed", folder_path=None, indent=0,
+    def to_hbjson(self, name="unnamed", folder=None, indent=0,
                   included_prop=None, triangulate_sub_faces=False):
-        """Writes a Honeybee model to HBJSON.
+        """Write a Honeybee model to HBJSON.
 
         Args:
-            name: A text string that will be the name of the HBJSON.
-                Defaults to "unnamed" for the file name for HBJSON.
-            folder_path: A text string of path to folder where HBJSON will be written.
-                Defaults to None. If folder_path is not specified, the default simulation
-                folder will be used to write the HBJSON. This default simulation folder
-                is at "C:\\Users\\USERNAME\\simulation."
-            indent: A positive integer to set the indentation used in the
-                resulting HBJSON file. If 0, the JSON will be a single line.
-                Defaults to 0.
+            name: A text string for the name of the HBJSON file. (Default: "unnamed").
+            folder: A text string for the direcotry where the HBJSON will be written.
+                If unspecified, the default simulation folder will be used. This
+                is usually at "C:\\Users\\USERNAME\\simulation."
+            indent: A positive integer to set the indentation used in the resulting
+                HBJSON file. If 0, the JSON will be a single line. (Default: 0).
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
@@ -1424,22 +1448,44 @@ class Model(_Base):
                 that also have parent Rooms since orphaned Apertures and Faces are
                 not relevant for energy simulation. Default: False.
         """
-        # Create dictionary from the Honeybee Model
+        # create dictionary from the Honeybee Model
         hb_dict = self.to_dict(included_prop=included_prop,
                                triangulate_sub_faces=triangulate_sub_faces)
 
-        # Setting up a name for the HBJSON
+        # set up a name and folder for the HBJSON
         file_name = name if name.lower().endswith('.hbjson') or \
             name.lower().endswith('.json') else '{}.hbjson'.format(name)
-
-        # Folder path
-        folder = folder_path if folder_path is not None \
-            else folders.default_simulation_folder
+        folder = folder if folder is not None else folders.default_simulation_folder
         hb_file = os.path.join(folder, file_name)
-
         # write HBJSON
         with open(hb_file, 'w') as fp:
             json.dump(hb_dict, fp, indent=indent)
+        return hb_file
+
+    def to_hbpkl(self, name="unnamed", folder=None, included_prop=None):
+        """Writes a Honeybee model to compressed pickle file (HBpkl).
+
+        Args:
+            name: A text string for the name of the HBJSON file. (Default: "unnamed").
+            folder: A text string for the direcotry where the HBJSON will be written.
+                If unspecified, the default simulation folder will be used. This
+                is usually at "C:\\Users\\USERNAME\\simulation."
+            included_prop: List of properties to filter keys that must be included in
+                output dictionary. For example ['energy'] will include 'energy' key if
+                available in properties to_dict. By default all the keys will be
+                included. To exclude all the keys from extensions use an empty list.
+        """
+        # create dictionary from the Honeybee Model
+        hb_dict = self.to_dict(included_prop=included_prop)
+        # set up a name and folder for the HBpkl
+        file_name = name if name.lower().endswith('.hbpkl') or \
+            name.lower().endswith('.pkl') else '{}.hbpkl'.format(name)
+        folder = folder if folder is not None else folders.default_simulation_folder
+        hb_file = os.path.join(folder, file_name)
+        # write the Model dictionary into a file
+        with open(hb_file, 'wb') as fp:
+            pickle.dump(hb_dict, fp)
+        return hb_file
 
     @staticmethod
     def conversion_factor_to_meters(units):
