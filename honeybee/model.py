@@ -185,11 +185,15 @@ class Model(_Base):
         Args:
             hb_file: Path to either a HBJSON or HBpkl file.
         """
-        hb_lower = hb_file.lower()
-        if hb_lower.endswith('.hbpkl') or hb_lower.endswith('.pkl'):
-            return cls.from_hbpkl(hb_file)
-        else:  # assume that it's a HBJSON
+        # sense the file type from the first character to avoid maxing memory with JSON
+        # this is needed since queenbee overwrites all file extensions
+        with open(hb_file) as inf:
+            first_char = inf.read(1)
+        is_json = True if first_char == '{' else False
+        # load the file using either HBJSON pathway or HBpkl
+        if is_json:
             return cls.from_hbjson(hb_file)
+        return cls.from_hbpkl(hb_file)
 
     @classmethod
     def from_hbjson(cls, hbjson_file):
