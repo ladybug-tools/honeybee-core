@@ -24,7 +24,7 @@ Documentation
 =============
 
 This document includes `Honeybee API documentation <#honeybee>`_ and
-`Honeybee Command Line Interface <#id1>`_ documentation for ``honeybee core`` and does
+`Honeybee Command Line Interface <#cli-docs>`_ documentation for ``honeybee core`` and does
 not include the documentation for honeybee extensions. For each extension refer to
 extension's documentation page.
 
