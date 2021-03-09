@@ -14,12 +14,14 @@
 #
 import os
 import sys
+import datetime
+now = datetime.datetime.now()
 sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
 project = 'honeybee'
-copyright = '2021, Ladybug Tools'
+copyright = '{}, Ladybug Tools'.format(str(now.year))
 author = 'Ladybug Tools'
 
 # The full version, including alpha/beta/rc tags
