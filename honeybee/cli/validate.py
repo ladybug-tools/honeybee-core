@@ -40,9 +40,7 @@ def validate_model(model_json):
         schema_model.Model.parse_file(model_json)
         click.echo('Pydantic validation passed.')
         # re-serialize the Model to make sure no errors are found in re-serialization
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
+        parsed_model = Model.from_hbjson(model_json)
         click.echo('Python re-serialization passed.')
         # perform several other checks for key honeybee model schema rules
         parsed_model.check_duplicate_room_identifiers(raise_exception=True)
@@ -95,9 +93,7 @@ def validate_model_basic(model_json):
         schema_model.Model.parse_file(model_json)
         click.echo('Pydantic validation passed.')
         # re-serialize the Model to make sure no errors are found in re-serialization
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
+        parsed_model = Model.from_hbjson(model_json)
         click.echo('Python re-serialization passed.')
         # perform several other checks for key honeybee model schema rules
         parsed_model.check_duplicate_room_identifiers(raise_exception=True)
@@ -131,9 +127,7 @@ def validate_model_geometry(model_json):
     try:
         # re-serialize the Model to make sure no errors are found in re-serialization
         click.echo('Validating Model JSON ...')
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
+        parsed_model = Model.from_hbjson(model_json)
         # check that a tolerance has been specified in the model
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance in order to perform geometry checks.'

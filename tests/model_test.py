@@ -7,6 +7,7 @@ from honeybee.aperture import Aperture
 from honeybee.door import Door
 from honeybee.boundarycondition import Surface
 from honeybee.facetype import face_types
+from honeybee.units import conversion_factor_to_meters
 
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.plane import Plane
@@ -450,7 +451,7 @@ def test_apertures_by_ratio():
 def test_convert_to_units():
     """Test the Model convert_to_units method."""
     room = Room.from_box('TinyHouseZone', 120, 240, 96)
-    inches_conversion = Model.conversion_factor_to_meters('Inches')
+    inches_conversion = conversion_factor_to_meters('Inches')
 
     model = Model('TinyHouse', [room], units='Inches')
     model.convert_to_units('Meters')

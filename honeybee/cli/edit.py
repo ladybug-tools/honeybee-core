@@ -9,6 +9,7 @@ from ladybug_geometry.geometry3d.pointvector import Vector3D
 
 from honeybee.model import Model
 from honeybee.room import Room
+from honeybee.units import parse_distance_string
 from honeybee.facetype import face_types, Wall
 from honeybee.boundarycondition import Outdoors
 from honeybee.boundarycondition import boundary_conditions as bcs
@@ -40,22 +41,16 @@ def convert_units(model_json, units, scale, output_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_json: Full path to a Honeybee Model JSON file.
         units: Text for the units system to which the model will be converted.
             Choose from (Meters, Millimeters, Feet, Inches, Centimeters).
     """
     try:
-        # serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
-
-        # convert the units of the model
+        parsed_model = Model.from_file(model_json)
         if scale:
             parsed_model.convert_to_units(units)
         else:
             parsed_model.units = units
-
         # write the new model out to the file or stdout
         output_file.write(json.dumps(parsed_model.to_dict()))
     except Exception as e:
@@ -85,14 +80,11 @@ def solve_adjacency(model_json, wall, surface, no_overwrite, output_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_json: Full path to a Honeybee Model JSON file.
     """
     try:
-        # serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
-        # check the Model tolerance
+        # serialize the Model to Python and check the tolerance
+        parsed_model = Model.from_file(model_json)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use solve-adjacency.'
         tol = parsed_model.tolerance
@@ -143,16 +135,13 @@ def windows_by_ratio(model_json, ratio, output_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_json: Full path to a Honeybee Model JSON file.
         ratio: A number between 0 and 1 (but not perfectly equal to 1)
             for the desired ratio between wall area and face area.
     """
     try:
-        # serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
-        # check the Model tolerance
+        # serialize the Model and check the Model tolerance
+        parsed_model = Model.from_file(model_json)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use windows-by-ratio.'
         tol = parsed_model.tolerance
@@ -177,12 +166,31 @@ def windows_by_ratio(model_json, ratio, output_file):
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.argument('ratio', type=float)
-@click.argument('aperture-height', type=float)
-@click.argument('sill-height', type=float)
-@click.argument('horizontal-separation', type=float)
+@click.option('--aperture-height', '-ah', help='A number for the target height of the '
+              'output apertures. This can include the units of the distance (eg. 3ft) '
+              'or, if no units are provided the value will be interpreted in the '
+              'honeybee model units. Note that, if the ratio is too large for the '
+              'height, the ratio will take precedence and the actual aperture_height '
+              'will be larger than this value.',
+              type=str, default='2m', show_default=True)
+@click.option('--sill-height', '-sh', help='A number for the target height above the '
+              'bottom edge of the rectangle to start the apertures. Note that, if the '
+              'ratio is too large for the height, the ratio will take precedence '
+              'and the sill_height will be smaller than this value. This can include '
+              'the units of the distance (eg. 3ft) or, if no units are provided, '
+              'the value will be interpreted in the honeybee model units.',
+              type=str, default='0.8m', show_default=True)
+@click.option('--horizontal-separation', '-hs', help='A number for the target '
+              'separation between individual aperture centerlines. If this number is '
+              'larger than the parent rectangle base, only one aperture will be '
+              'produced. This can include the units of the distance (eg. 3ft) or, if '
+              'no units are provided, the value will be interpreted in the honeybee '
+              'model units.', type=str, default='3m', show_default=True)
 @click.option('--vertical-separation', '-vs', help='An optional number to create a '
-              'single vertical separation between top and bottom apertures.',
-              type=float, default=0, show_default=True)
+              'single vertical separation between top and bottom apertures. This can '
+              'include the units of the distance (eg. 3ft) or, if no units are provided '
+              'the value will be interpreted in the honeybee model units.',
+              type=str, default='0', show_default=True)
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with windows. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
@@ -196,30 +204,22 @@ def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_json: Full path to a Honeybee Model JSON file.
         ratio: A number between 0 and 1 (but not perfectly equal to 1)
             for the desired ratio between wall area and face area.
-        aperture_height: A number for the target height of the output apertures.
-            Note that, if the ratio is too large for the height, the ratio will
-            take precedence and the actual aperture_height will be larger
-            than this value.
-        sill_height: A number for the target height above the bottom edge of
-            the rectangle to start the apertures. Note that, if the
-            ratio is too large for the height, the ratio will take precedence
-            and the sill_height will be smaller than this value.
-        horizontal_separation: A number for the target separation between
-            individual aperture centerlines.  If this number is larger than
-            the parent rectangle base, only one aperture will be produced.
     """
     try:
-        # serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
-        # check the Model tolerance
+        # serialize the Model and check the Model tolerance
+        parsed_model = Model.from_file(model_json)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use windows-by-ratio-rect.'
-        tol = parsed_model.tolerance
+        tol, units = parsed_model.tolerance, parsed_model.units
+
+        # convert distance strings to floats
+        aperture_height = parse_distance_string(aperture_height, units)
+        sill_height = parse_distance_string(sill_height, units)
+        horizontal_separation = parse_distance_string(horizontal_separation, units)
+        vertical_separation = parse_distance_string(vertical_separation, units)
 
         # generate the windows for all walls of rooms
         for room in parsed_model.rooms:
@@ -242,7 +242,10 @@ def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
 @edit.command('extruded-border')
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.argument('depth', type=float)
+@click.option('--depth', '-d', help='A number for the extrusion depth. This can include '
+              'the units of the distance (eg. 3ft) or, if no units are provided, '
+              'the value will be interpreted in the honeybee model units.',
+              type=str, default='0.2m', show_default=True)
 @click.option('--outdoor/--indoor', ' /-i', help='Flag to note whether the borders '
               'should be on the indoors.', default=True, show_default=True)
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
@@ -253,17 +256,15 @@ def extruded_border(model_json, depth, outdoor, output_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
-        depth: A number for the extrusion depth.
+        model_json: Full path to a Honeybee Model JSON file.
     """
     try:
         # serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
+        parsed_model = Model.from_file(model_json)
         indoor = not outdoor
 
         # generate the overhangs for all walls of rooms
+        depth = parse_distance_string(depth, parsed_model.units)
         for room in parsed_model.rooms:
             for face in room.faces:
                 if isinstance(face.boundary_condition, Outdoors) and \
@@ -283,15 +284,20 @@ def extruded_border(model_json, depth, outdoor, output_file):
 @edit.command('overhang')
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.argument('depth', type=float)
+@click.option('--depth', '-d', help='A number for the overhang depth. This can include '
+              'the units of the distance (eg. 3ft) or, if no units are provided, '
+              'the value will be interpreted in the honeybee model units.',
+              type=str, default='1m', show_default=True)
 @click.option('--angle', '-a', help='A number for the for an angle to rotate the '
               'overhang in degrees. Positive numbers indicate a downward rotation while '
               'negative numbers indicate an upward rotation.',
               type=float, default=0, show_default=True)
 @click.option('--vertical-offset', '-vo', help='An optional number for the vertical '
               'offset of the overhang from the top of the window or face. Positive '
-              'numbers move up while negative mode down.',
-              type=float, default=0, show_default=True)
+              'numbers move up while negative mode down. This can include '
+              'the units of the distance (eg. 3ft) or, if no units are provided, '
+              'the value will be interpreted in the honeybee model units.',
+              type=str, default='0', show_default=True)
 @click.option('--per-window/--per-wall', ' /-pw', help='Flag to note whether the '
               'overhangs should be generated per aperture or per wall.',
               default=True, show_default=True)
@@ -307,21 +313,18 @@ def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor,
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
-        depth: A number for the overhang depth.
+        model_json: Full path to a Honeybee Model JSON file.
     """
     try:
-        # serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
-        # check the Model tolerance
+        # serialize the Model to Python and check the Model tolerance
+        parsed_model = Model.from_file(model_json)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use overhang.'
-        tol = parsed_model.tolerance
+        tol, units = parsed_model.tolerance, parsed_model.units
         indoor = not outdoor
 
         # generate the overhangs for all walls of rooms
+        depth = parse_distance_string(depth, units)
         overhangs = []
         for room in parsed_model.rooms:
             for face in room.faces:
@@ -334,6 +337,7 @@ def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor,
                         overhangs.extend(face.overhang(depth, angle, indoor, tol))
 
         # move the overhangs if an offset has been specified
+        vertical_offset = parse_distance_string(vertical_offset, units)
         if vertical_offset != 0:
             m_vec = Vector3D(0, 0, vertical_offset)
             for shd in overhangs:
@@ -352,15 +356,20 @@ def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor,
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.argument('louver-count', type=int)
-@click.argument('depth', type=float)
+@click.option('--depth', '-d', help='A number for the depth of the louvers. This can '
+              'include the units of the distance (eg. 1ft) or, if no units are '
+              'provided, the value will be interpreted in the honeybee model units.',
+              type=str, default='0.25m', show_default=True)
 @click.option('--angle', '-a', help='A number for the for an angle to rotate the '
               'louvers in degrees. Positive numbers indicate a downward rotation while '
               'negative numbers indicate an upward rotation.',
               type=float, default=0, show_default=True)
 @click.option('--offset', '-o', help='An optional number for the offset of the louvers '
-              'from base Face or Aperture.', type=float, default=0, show_default=True)
-@click.option('--horizontal/--vertical', ' /-v', help='Flag to note wh.',
-              default=True, show_default=True)
+              'from base Face or Aperture. This can include the units of the distance '
+              '(eg. 1ft) or, if no units are provided, the value will be interpreted in '
+              'the honeybee model units.', type=str, default='0', show_default=True)
+@click.option('--horizontal/--vertical', ' /-v', help='Flag to note whether louvers '
+              'are horizontal or vertical.', default=True, show_default=True)
 @click.option('--per-window/--per-wall', ' /-pw', help='Flag to note whether the '
               'louvers should be generated per aperture or per wall.',
               default=True, show_default=True)
@@ -380,24 +389,22 @@ def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_json: Full path to a Honeybee Model JSON file.
         louver_count: A positive integer for the number of louvers to generate.
-        depth: A number for the depth to extrude the louvers.
     """
     try:
-        # serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
-        # check the Model tolerance
+        # serialize the Model and check the Model tolerance
+        parsed_model = Model.from_file(model_json)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use overhang.'
-        tol = parsed_model.tolerance
+        tol, units = parsed_model.tolerance, parsed_model.units
         indoor = not outdoor
         flip_start = not no_flip
         cont_vec = Vector2D(0, 1) if horizontal else Vector2D(1, 0)
 
         # generate the overhangs for all walls of rooms
+        depth = parse_distance_string(depth, units)
+        offset = parse_distance_string(offset, units)
         for room in parsed_model.rooms:
             for face in room.faces:
                 if isinstance(face.boundary_condition, Outdoors) and \
@@ -419,17 +426,25 @@ def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
         sys.exit(0)
 
 
-@edit.command('louvers-by-distance')
+@edit.command('louvers-by-spacing')
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.argument('distance', type=float)
-@click.argument('depth', type=float)
+@click.option('--spacing', '-s', help='A number for the distance between each louver. '
+              'This can include the units of the distance (eg. 2ft) or, if no units are '
+              'provided, the value will be interpreted in the honeybee model units.',
+              type=str, default='0.5m', show_default=True)
+@click.option('--depth', '-d', help='A number for the depth of the louvers. This can '
+              'include the units of the distance (eg. 1ft) or, if no units are '
+              'provided, the value will be interpreted in the honeybee model units.',
+              type=str, default='0.25m', show_default=True)
 @click.option('--angle', '-a', help='A number for the for an angle to rotate the '
               'louvers in degrees. Positive numbers indicate a downward rotation while '
               'negative numbers indicate an upward rotation.',
               type=float, default=0, show_default=True)
 @click.option('--offset', '-o', help='An optional number for the offset of the louvers '
-              'from base Face or Aperture.', type=float, default=0, show_default=True)
+              'from base Face or Aperture. This can include the units of the distance '
+              '(eg. 1ft) or, if no units are provided, the value will be interpreted in '
+              'the honeybee model units.', type=str, default='0', show_default=True)
 @click.option('--horizontal/--vertical', ' /-v', help='Flag to note wh.',
               default=True, show_default=True)
 @click.option('--max-count', '-m', help='Optional integer to set the maximum number of '
@@ -448,30 +463,28 @@ def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with louvers. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def louvers_by_distance(model_json, distance, depth, angle, offset, horizontal,
-                        max_count, per_window, outdoor, no_flip, output_file):
+def louvers_by_spacing(model_json, spacing, depth, angle, offset, horizontal,
+                       max_count, per_window, outdoor, no_flip, output_file):
     """Add louvers to all outdoor walls or windows in walls.
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
-        distance: A number for the approximate distance between each louver.
-        depth: A number for the depth to extrude the louvers.
+        model_json: Full path to a Honeybee Model JSON file.
     """
     try:
-        # serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        parsed_model = Model.from_dict(data)
-        # check the Model tolerance
+        # serialize the Model to Python and check the Model tolerance
+        parsed_model = Model.from_file(model_json)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use overhang.'
-        tol = parsed_model.tolerance
+        tol, units = parsed_model.tolerance, parsed_model.units
         indoor = not outdoor
         flip_start = not no_flip
         cont_vec = Vector2D(0, 1) if horizontal else Vector2D(1, 0)
 
         # generate the overhangs for all walls of rooms
+        spacing = parse_distance_string(spacing, units)
+        depth = parse_distance_string(depth, units)
+        offset = parse_distance_string(offset, units)
         for room in parsed_model.rooms:
             for face in room.faces:
                 if isinstance(face.boundary_condition, Outdoors) and \
@@ -479,11 +492,11 @@ def louvers_by_distance(model_json, distance, depth, angle, offset, horizontal,
                     if per_window:
                         for ap in face.apertures:
                             ap.louvers_by_distance_between(
-                                distance, depth, offset, angle, cont_vec,
+                                spacing, depth, offset, angle, cont_vec,
                                 flip_start, indoor, tol, max_count)
                     else:
                         face.louvers_by_distance_between(
-                            distance, depth, offset, angle, cont_vec, flip_start,
+                            spacing, depth, offset, angle, cont_vec, flip_start,
                             indoor, tol, max_count)
 
         # write the new model out to the file or stdout
