@@ -9,6 +9,7 @@ except ImportError:  # wea re in cPython
     import pickle
 
 from ._base import _Base
+from .units import conversion_factor_to_meters, UNITS, UNITS_TOLERANCES
 from .checkdup import check_duplicate_identifiers
 from .properties import ModelProperties
 from .room import Room
@@ -93,9 +94,8 @@ class Model(_Base):
     __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
                  '_orphaned_doors', '_units', '_tolerance', '_angle_tolerance')
 
-    UNITS = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')
-    UNITS_TOLERANCES = {'Meters': 0.01, 'Millimeters': 1.0, 'Feet': 0.01,
-                        'Inches': 0.1, 'Centimeters': 1.0}
+    UNITS = UNITS
+    UNITS_TOLERANCES = UNITS_TOLERANCES
 
     def __init__(self, identifier, rooms=None, orphaned_faces=None, orphaned_shades=None,
                  orphaned_apertures=None, orphaned_doors=None,
@@ -180,7 +180,7 @@ class Model(_Base):
 
     @classmethod
     def from_file(cls, hb_file):
-        """Initialize a Model from a file, using the file extension to sense
+        """Initialize a Model from a HBJSON or HBpkl file, auto-sensing the type.
 
         Args:
             hb_file: Path to either a HBJSON or HBpkl file.
@@ -275,7 +275,8 @@ class Model(_Base):
 
     @units.setter
     def units(self, value):
-        assert value in self.UNITS, '{} is not supported as a units system. ' \
+        value = value.title()
+        assert value in UNITS, '{} is not supported as a units system. ' \
             'Choose from the following: {}'.format(value, self.units)
         self._units = value
 
@@ -291,7 +292,7 @@ class Model(_Base):
     @tolerance.setter
     def tolerance(self, value):
         self._tolerance = float_positive(value, 'model tolerance') if value is not None \
-            else self.UNITS_TOLERANCES[self.units]
+            else UNITS_TOLERANCES[self.units]
 
     @property
     def angle_tolerance(self):
@@ -918,8 +919,8 @@ class Model(_Base):
                 * Centimeters
         """
         if self.units != units:
-            scale_fac1 = self.conversion_factor_to_meters(self.units)
-            scale_fac2 = self.conversion_factor_to_meters(units)
+            scale_fac1 = conversion_factor_to_meters(self.units)
+            scale_fac2 = conversion_factor_to_meters(units)
             scale_fac = scale_fac1 / scale_fac2
             self.scale(scale_fac)
             self.tolerance = self.tolerance * scale_fac
@@ -1430,7 +1431,7 @@ class Model(_Base):
 
     def to_hbjson(self, name="unnamed", folder=None, indent=0,
                   included_prop=None, triangulate_sub_faces=False):
-        """Write a Honeybee model to HBJSON.
+        """Write Honeybee model to HBJSON.
 
         Args:
             name: A text string for the name of the HBJSON file. (Default: "unnamed").
@@ -1467,11 +1468,11 @@ class Model(_Base):
         return hb_file
 
     def to_hbpkl(self, name="unnamed", folder=None, included_prop=None):
-        """Writes a Honeybee model to compressed pickle file (HBpkl).
+        """Write Honeybee model to compressed pickle file (HBpkl).
 
         Args:
-            name: A text string for the name of the HBJSON file. (Default: "unnamed").
-            folder: A text string for the direcotry where the HBJSON will be written.
+            name: A text string for the name of the pickle file. (Default: "unnamed").
+            folder: A text string for the direcotry where the pickle will be written.
                 If unspecified, the default simulation folder will be used. This
                 is usually at "C:\\Users\\USERNAME\\simulation."
             included_prop: List of properties to filter keys that must be included in
@@ -1509,20 +1510,7 @@ class Model(_Base):
             all distance units taken from Rhino geometry in order to convert
             them to meters.
         """
-        if units == 'Meters':
-            return 1.0
-        elif units == 'Millimeters':
-            return 0.001
-        elif units == 'Feet':
-            return 0.305
-        elif units == 'Inches':
-            return 0.0254
-        elif units == 'Centimeters':
-            return 0.01
-        else:
-            raise ValueError(
-                "You're kidding me! What units are you using?" + units + "?\n"
-                "Please use Meters, Millimeters, Centimeters, Feet or Inches.")
+        return conversion_factor_to_meters(units)
 
     @staticmethod
     def _self_adj_check(hb_obj, bc_ids):
