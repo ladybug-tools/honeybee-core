@@ -15,6 +15,7 @@ from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
 from honeybee.model import Model
 from honeybee.room import Room
+from honeybee.units import UNITS_TOLERANCES
 from honeybee.boundarycondition import boundary_conditions as bcs
 try:
     ad_bc = bcs.adiabatic
@@ -48,7 +49,7 @@ def create():
               'Centimeters).', type=str, default='Meters', show_default=True)
 @click.option('--tolerance', '-t', help='The maximum difference between x, y, and z '
               'values at which vertices are considered equivalent.',
-              type=float, default=0.01, show_default=True)
+              type=float, default=None)
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON '
               'string. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
@@ -66,6 +67,7 @@ def shoe_box(width, depth, height, orientation_angle, window_ratio, adiabatic,
         unique_id = str(uuid.uuid4())[:8]  # unique identifier for the shoe box
 
         # create the box room and assign all of the attributes
+        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
         room_id = 'Shoe_Box_Room_{}'.format(unique_id)
         room = Room.from_box(room_id, width, depth, height, orientation_angle)
         room.display_name = 'Shoe_Box_Room'
@@ -114,7 +116,7 @@ def shoe_box(width, depth, height, orientation_angle, window_ratio, adiabatic,
               'Centimeters).', type=str, default='Meters', show_default=True)
 @click.option('--tolerance', '-t', help='The maximum difference between x, y, and z '
               'values at which vertices are considered equivalent.',
-              type=float, default=0.01, show_default=True)
+              type=float, default=None)
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON '
               'string. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
@@ -135,6 +137,7 @@ def rectangle_plan(width, length, floor_to_floor_height, perimeter_offset, story
     """
     try:
         # create the geometry of the rooms for the first floor
+        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
         footprint = [Face3D.from_rectangle(width, length)]
         if perimeter_offset != 0:  # use the straight skeleton methods
             assert perimeter_offset > 0, 'perimeter_offset cannot be less than than 0.'
@@ -198,7 +201,7 @@ def rectangle_plan(width, length, floor_to_floor_height, perimeter_offset, story
               'Centimeters).', type=str, default='Meters', show_default=True)
 @click.option('--tolerance', '-t', help='The maximum difference between x, y, and z '
               'values at which vertices are considered equivalent.',
-              type=float, default=0.01, show_default=True)
+              type=float, default=None)
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON '
               'string. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
@@ -223,6 +226,7 @@ def l_shaped_plan(width_1, length_1, width_2, length_2, floor_to_floor_height,
     """
     try:
         # create the geometry of the rooms for the first floor
+        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
         max_x, max_y = width_2 + length_1, width_1 + length_2
         pts = [(0, 0), (max_x, 0), (max_x, width_1), (width_2, width_1),
                (width_2, max_y), (0, max_y)]

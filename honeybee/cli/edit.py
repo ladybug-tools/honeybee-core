@@ -137,7 +137,7 @@ def windows_by_ratio(model_json, ratio, output_file):
     Args:
         model_json: Full path to a Honeybee Model JSON file.
         ratio: A number between 0 and 1 (but not perfectly equal to 1)
-            for the desired ratio between wall area and face area.
+            for the desired ratio between window area and wall area.
     """
     try:
         # serialize the Model and check the Model tolerance
@@ -206,7 +206,7 @@ def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
     Args:
         model_json: Full path to a Honeybee Model JSON file.
         ratio: A number between 0 and 1 (but not perfectly equal to 1)
-            for the desired ratio between wall area and face area.
+            for the desired ratio between window area and wall area.
     """
     try:
         # serialize the Model and check the Model tolerance

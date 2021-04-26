@@ -1,5 +1,4 @@
 """Test basic CLI commands that create Honeybee Models."""
-import sys
 import json
 from click.testing import CliRunner
 
