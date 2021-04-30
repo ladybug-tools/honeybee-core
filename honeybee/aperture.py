@@ -521,6 +521,7 @@ class Aperture(_BaseWithShade):
         self._geometry = self.geometry.move(moving_vec)
         self.move_shades(moving_vec)
         self.properties.move(moving_vec)
+        self._reset_parent_geometry()
 
     def rotate(self, axis, angle, origin):
         """Rotate this Aperture by a certain angle around an axis and origin.
@@ -534,6 +535,7 @@ class Aperture(_BaseWithShade):
         self._geometry = self.geometry.rotate(axis, math.radians(angle), origin)
         self.rotate_shades(axis, angle, origin)
         self.properties.rotate(axis, angle, origin)
+        self._reset_parent_geometry()
 
     def rotate_xy(self, angle, origin):
         """Rotate this Aperture counterclockwise in the world XY plane by a certain angle.
@@ -546,6 +548,7 @@ class Aperture(_BaseWithShade):
         self._geometry = self.geometry.rotate_xy(math.radians(angle), origin)
         self.rotate_xy_shades(angle, origin)
         self.properties.rotate_xy(angle, origin)
+        self._reset_parent_geometry()
 
     def reflect(self, plane):
         """Reflect this Aperture across a plane.
@@ -557,6 +560,7 @@ class Aperture(_BaseWithShade):
         self._geometry = self.geometry.reflect(plane.n, plane.o)
         self.reflect_shades(plane)
         self.properties.reflect(plane)
+        self._reset_parent_geometry()
 
     def scale(self, factor, origin=None):
         """Scale this Aperture by a factor from an origin point.
@@ -569,6 +573,7 @@ class Aperture(_BaseWithShade):
         self._geometry = self.geometry.scale(factor, origin)
         self.scale_shades(factor, origin)
         self.properties.scale(factor, origin)
+        self._reset_parent_geometry()
 
     def remove_colinear_vertices(self, tolerance=0.01):
         """Remove all colinear and duplicate vertices from this object's geometry.
@@ -672,6 +677,11 @@ class Aperture(_BaseWithShade):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def _reset_parent_geometry(self):
+        """Reset parent punched_geometry in the case that the object is transformed."""
+        if self.has_parent:
+            self._parent._punched_geometry = None
 
     def __copy__(self):
         new_ap = Aperture(self.identifier, self.geometry, self.boundary_condition,
