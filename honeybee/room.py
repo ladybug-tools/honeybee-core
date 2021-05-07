@@ -547,33 +547,64 @@ class Room(_BaseWithShade):
             ground_geometry: An array of ladybug_geometry Face3D that together
                 represent the ground surface.
             tolerance: The minimum difference between the coordinate values of two
-                vertices at which they can be considered equivalent. Default: 0.01,
-                suitable for objects in meters.
+                vertices at which they can be considered equivalent. (Default: 0.01,
+                suitable for objects in meters).
             angle_tolerance: The max angle in degrees that the plane normals can
                 differ from one another in order for them to be considered
-                coplanar. (Default: 1)
+                coplanar. (Default: 1).
         """
-        # default values used throughout the check
-        ang_tol = math.degrees(angle_tolerance)
-        up_vec = Vector3D(0, 0, 1)
+        select_faces = self.faces_by_guide_surface(
+            ground_geometry, Vector3D(0, 0, -1), tolerance, angle_tolerance)
+        for face in select_faces:
+            if face.can_be_ground and \
+                    isinstance(face.boundary_condition, (Outdoors, Ground)):
+                face.boundary_condition = boundary_conditions.ground
 
-        # loop through the faces and check their relation to the ground geometry
-        for face in self.faces:
-            if isinstance(face.boundary_condition, (Outdoors, Ground)):
-                ray = Ray3D(face.center, up_vec)
-                for grnd_geo in ground_geometry:
-                    # first check if the surface is below the ground surface
-                    if grnd_geo.intersect_line_ray(ray):
-                        face.boundary_condition = boundary_conditions.ground
-                        break
-                    # then check if the Face is coplanar with the ground face
-                    pl1, pl2 = face.geometry.plane, grnd_geo.plane
+    def faces_by_guide_surface(self, surface_geometry, directional_vector=None,
+                               tolerance=0.01, angle_tolerance=1.0):
+        """Get the Faces of the Room that are touching and coplanar with a given surface.
+
+        This is useful in workflows were one would like to set the properties
+        of a group of Faces using a guide surface, like setting a series of faces
+        along a given stretch of a parti wall to be adiabatic.
+
+        Args:
+            surface_geometry: An array of ladybug_geometry Face3D that together
+                represent the guide surface.
+            directional_vector: An optional Vector3D to select the room Faces that
+                lie on a certain side of the surface_geometry. For example, using
+                (0, 0, -1) will include all Faces that lie below the surface_geometry
+                in the resulting selection.
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. (Default: 0.01,
+                suitable for objects in meters).
+            angle_tolerance: The max angle in degrees that the plane normals can
+                differ from one another in order for them to be considered
+                coplanar. (Default: 1).
+        """
+        selected_faces, ang_tol = [], math.radians(angle_tolerance)
+        if directional_vector is None:  # only check for co-planarity
+            for face in self.faces:
+                for srf_geo in surface_geometry:
+                    pl1, pl2 = face.geometry.plane, srf_geo.plane
                     if pl1.is_coplanar_tolerance(pl2, tolerance, ang_tol):
-                        if grnd_geo.is_point_on_face(face.center, tolerance):
-                            face.boundary_condition = boundary_conditions.ground
+                        if srf_geo.is_point_on_face(face.center, tolerance):
+                            selected_faces.append(face)
                             break
-                else:
-                    face.boundary_condition = boundary_conditions.outdoors
+        else:  # first check to see if the Face is on the correct side of the surface
+            rev_vector = directional_vector.reverse()
+            for face in self.faces:
+                ray = Ray3D(face.center, rev_vector)
+                for srf_geo in surface_geometry:
+                    if srf_geo.intersect_line_ray(ray):
+                        selected_faces.append(face)
+                        break
+                    pl1, pl2 = face.geometry.plane, srf_geo.plane
+                    if pl1.is_coplanar_tolerance(pl2, tolerance, ang_tol):
+                        if srf_geo.is_point_on_face(face.center, tolerance):
+                            selected_faces.append(face)
+                            break
+        return selected_faces
 
     def move(self, moving_vec):
         """Move this Room along a vector.
