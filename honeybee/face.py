@@ -50,6 +50,7 @@ class Face(_BaseWithShade):
         * parent
         * has_parent
         * has_sub_faces
+        * can_be_ground
         * geometry
         * punched_geometry
         * vertices
@@ -207,6 +208,13 @@ class Face(_BaseWithShade):
     def has_sub_faces(self):
         """Get a boolean noting whether this Face has Apertures or Doors."""
         return not (self._apertures == [] and self._doors == [])
+
+    @property
+    def can_be_ground(self):
+        """Get a boolean for whether this Face can support a Ground boundary condition.
+        """
+        return self._apertures == [] and self._doors == [] \
+            and not isinstance(self._type, AirBoundary)
 
     @property
     def geometry(self):
