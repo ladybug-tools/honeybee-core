@@ -2188,14 +2188,14 @@
 {
 "type": "WindowConstructionAbridged", 
 "identifier": "Generic Single Pane", 
-"layers": [
+"materials": [
 "Generic Clear Glass"
 ]
 }, 
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Interior Wall", 
-"layers": [
+"materials": [
 "Generic Gypsum Board", 
 "Generic Wall Air Gap", 
 "Generic Gypsum Board"
@@ -2204,7 +2204,7 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Exposed Floor", 
-"layers": [
+"materials": [
 "Generic Painted Metal", 
 "Generic Ceiling Air Gap", 
 "Generic 50mm Insulation", 
@@ -2214,7 +2214,7 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Roof", 
-"layers": [
+"materials": [
 "Generic Roof Membrane", 
 "Generic 50mm Insulation", 
 "Generic LW Concrete", 
@@ -2231,14 +2231,14 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Interior Door", 
-"layers": [
+"materials": [
 "Generic 25mm Wood"
 ]
 }, 
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Interior Floor", 
-"layers": [
+"materials": [
 "Generic Acoustic Tile", 
 "Generic Ceiling Air Gap", 
 "Generic LW Concrete"
@@ -2254,7 +2254,7 @@
 {
 "type": "WindowConstructionAbridged", 
 "identifier": "Generic Double Pane", 
-"layers": [
+"materials": [
 "Generic Low-e Glass", 
 "Generic Window Air Gap", 
 "Generic Clear Glass"
@@ -2263,7 +2263,7 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Underground Roof", 
-"layers": [
+"materials": [
 "Generic 50mm Insulation", 
 "Generic HW Concrete", 
 "Generic Ceiling Air Gap", 
@@ -2273,7 +2273,7 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Exterior Wall", 
-"layers": [
+"materials": [
 "Generic Brick", 
 "Generic LW Concrete", 
 "Generic 50mm Insulation", 
@@ -2284,7 +2284,7 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Underground Wall", 
-"layers": [
+"materials": [
 "Generic 50mm Insulation", 
 "Generic HW Concrete", 
 "Generic Wall Air Gap", 
@@ -2294,7 +2294,7 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Interior Ceiling", 
-"layers": [
+"materials": [
 "Generic LW Concrete", 
 "Generic Ceiling Air Gap", 
 "Generic Acoustic Tile"
@@ -2303,7 +2303,7 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Ground Slab", 
-"layers": [
+"materials": [
 "Generic 50mm Insulation", 
 "Generic HW Concrete"
 ]
@@ -2311,7 +2311,7 @@
 {
 "type": "OpaqueConstructionAbridged", 
 "identifier": "Generic Exterior Door", 
-"layers": [
+"materials": [
 "Generic Painted Metal", 
 "Generic 25mm Insulation", 
 "Generic Painted Metal"
