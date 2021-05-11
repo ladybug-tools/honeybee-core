@@ -34,12 +34,9 @@ def validate_model(model_json):
     Args:
         model_json: Full path to a Model JSON file.
     """
-    try:
-        # first check the JSON against the OpenAPI specification
-        click.echo('Validating Model JSON ...')
-        schema_model.Model.parse_file(model_json)
-        click.echo('Pydantic validation passed.')
+    try:        
         # re-serialize the Model to make sure no errors are found in re-serialization
+        click.echo('Validating Model JSON ...')
         parsed_model = Model.from_hbjson(model_json)
         click.echo('Python re-serialization passed.')
         # perform several other checks for key honeybee model schema rules
@@ -66,6 +63,9 @@ def validate_model(model_json):
         for room in parsed_model.rooms:
             room.remove_colinear_vertices_envelope(tol)
         click.echo('Model geometry checks passed.')
+        # lastly, check the JSON against the OpenAPI specification to get any last errors
+        schema_model.Model.parse_file(model_json)
+        click.echo('Pydantic validation passed.')
         # if we made it to this point, report that the model is valid
         click.echo('Congratulations! Your Model JSON is valid!')
     except Exception as e:
@@ -88,11 +88,8 @@ def validate_model_basic(model_json):
         model_json: Full path to a Model JSON file.
     """
     try:
-        # first check the JSON against the OpenAPI specification
-        click.echo('Validating Model JSON ...')
-        schema_model.Model.parse_file(model_json)
-        click.echo('Pydantic validation passed.')
         # re-serialize the Model to make sure no errors are found in re-serialization
+        click.echo('Validating Model JSON ...')
         parsed_model = Model.from_hbjson(model_json)
         click.echo('Python re-serialization passed.')
         # perform several other checks for key honeybee model schema rules
@@ -103,6 +100,9 @@ def validate_model_basic(model_json):
         parsed_model.check_missing_adjacencies()
         parsed_model.check_all_air_boundaries_adjacent(raise_exception=True)
         click.echo('Unique identifier and adjacency checks passed.')
+        # lastly, check the JSON against the OpenAPI specification to get any last errors
+        schema_model.Model.parse_file(model_json)
+        click.echo('Pydantic validation passed.')
         # if we made it to this point, report that the model is valid
         click.echo('Congratulations! The basic properties of your Model JSON are valid!')
     except Exception as e:
