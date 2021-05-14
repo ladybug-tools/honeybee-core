@@ -588,7 +588,8 @@ class Room(_BaseWithShade):
                 for srf_geo in surface_geometry:
                     pl1, pl2 = face.geometry.plane, srf_geo.plane
                     if pl1.is_coplanar_tolerance(pl2, tolerance, ang_tol):
-                        if srf_geo.is_point_on_face(face.center, tolerance):
+                        pt_on_face = face.geometry._point_on_face(tolerance * 2)
+                        if srf_geo.is_point_on_face(pt_on_face, tolerance):
                             selected_faces.append(face)
                             break
         else:  # first check to see if the Face is on the correct side of the surface
@@ -601,7 +602,8 @@ class Room(_BaseWithShade):
                         break
                     pl1, pl2 = face.geometry.plane, srf_geo.plane
                     if pl1.is_coplanar_tolerance(pl2, tolerance, ang_tol):
-                        if srf_geo.is_point_on_face(face.center, tolerance):
+                        pt_on_face = face.geometry._point_on_face(tolerance * 2)
+                        if srf_geo.is_point_on_face(pt_on_face, tolerance):
                             selected_faces.append(face)
                             break
         return selected_faces
