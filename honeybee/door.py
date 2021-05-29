@@ -308,7 +308,7 @@ class Door(_BaseWithShade):
         # create the shade geometry
         angle = math.radians(angle)
         dr_geo = self.geometry if indoor is False else self.geometry.flip()
-        shade_faces = dr_geo.countour_fins_by_number(
+        shade_faces = dr_geo.contour_fins_by_number(
             1, depth, 0, angle, Vector2D(0, 1), False, tolerance)
 
         # create the Shade objects
