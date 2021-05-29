@@ -432,7 +432,7 @@ class Aperture(_BaseWithShade):
         angle = math.radians(angle)
         louvers = []
         ap_geo = self.geometry if indoor is False else self.geometry.flip()
-        shade_faces = ap_geo.countour_fins_by_number(
+        shade_faces = ap_geo.contour_fins_by_number(
             louver_count, depth, offset, angle,
             contour_vector, flip_start_side, tolerance)
         if base_name is None:
@@ -492,7 +492,7 @@ class Aperture(_BaseWithShade):
             shd_name_base = '{}_' + str(base_name) + '{}'
 
         # generate shade geometries
-        shade_faces = ap_geo.countour_fins_by_distance_between(
+        shade_faces = ap_geo.contour_fins_by_distance_between(
             distance, depth, offset, angle,
             contour_vector, flip_start_side, tolerance)
         if max_count:

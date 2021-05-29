@@ -812,7 +812,7 @@ class Face(_BaseWithShade):
             shd_name_base = '{}_InShd{}' if indoor else '{}_OutShd{}'
         else:
             shd_name_base = '{}_' + str(base_name) + '{}'
-        shade_faces = face_geo.countour_fins_by_number(
+        shade_faces = face_geo.contour_fins_by_number(
             louver_count, depth, offset, angle,
             contour_vector, flip_start_side, tolerance)
         for i, shade_geo in enumerate(shade_faces):
@@ -867,7 +867,7 @@ class Face(_BaseWithShade):
             shd_name_base = '{}_' + str(base_name) + '{}'
 
         # generate shade geometries
-        shade_faces = face_geo.countour_fins_by_distance_between(
+        shade_faces = face_geo.contour_fins_by_distance_between(
             distance, depth, offset, angle, contour_vector, flip_start_side, tolerance)
         if max_count:
             try:
