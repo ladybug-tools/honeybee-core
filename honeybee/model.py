@@ -453,59 +453,75 @@ class Model(_Base):
     def volume(self):
         """Get the combined volume of all rooms in the Model.
 
-        Note that, if this model's rooms are not closed solids, the value of this
-        property will not be accurate.
+        Note that this property accounts for the room multipliers. Also note that,
+        if this model's rooms are not closed solids, the value of this property
+        will not be accurate.
         """
-        return sum([room.volume for room in self._rooms])
+        return sum([room.volume * room.multiplier for room in self._rooms])
 
     @property
     def floor_area(self):
-        """Get the combined area of all room floor faces in the Model."""
-        return sum([room.floor_area for room in self._rooms])
+        """Get the combined area of all room floor faces in the Model.
+
+        Note that this property accounts for the room multipliers.
+        """
+        return sum([room.floor_area * room.multiplier for room in self._rooms])
 
     @property
     def exposed_area(self):
         """Get the combined area of all room faces with outdoor boundary conditions.
 
-        Useful for estimating infiltration, often expressed as a flow per
-        unit exposed envelope area.
+        Useful for estimating infiltration, often expressed as a flow per unit exposed
+        envelope area. Note that this property accounts for the room multipliers.
         """
-        return sum([room.exposed_area for room in self._rooms])
+        return sum([room.exposed_area * room.multiplier for room in self._rooms])
 
     @property
     def exterior_wall_area(self):
         """Get the combined area of all exterior walls on the model's rooms.
 
         This is NOT the area of the wall's punched_geometry and it includes BOTH
-        the area of opaque and transparent parts of the walls.
+        the area of opaque and transparent parts of the walls. Note that this
+        property accounts for the room multipliers.
         """
-        return sum([room.exterior_wall_area for room in self._rooms])
+        return sum([room.exterior_wall_area * room.multiplier for room in self._rooms])
 
     @property
     def exterior_roof_area(self):
         """Get the combined area of all exterior roofs on the model's rooms.
 
         This is NOT the area of the roof's punched_geometry and it includes BOTH
-        the area of opaque and transparent parts of the roofs.
+        the area of opaque and transparent parts of the roofs. Note that this
+        property accounts for the room multipliers.
         """
-        return sum([room.exterior_roof_area for room in self._rooms])
+        return sum([room.exterior_roof_area * room.multiplier for room in self._rooms])
 
     @property
     def exterior_aperture_area(self):
-        """Get the combined area of all exterior apertures on the model's rooms."""
-        return sum([room.exterior_aperture_area for room in self._rooms])
+        """Get the combined area of all exterior apertures on the model's rooms.
+
+        Note that this property accounts for the room multipliers.
+        """
+        return sum([room.exterior_aperture_area * room.multiplier
+                    for room in self._rooms])
 
     @property
     def exterior_wall_aperture_area(self):
         """Get the combined area of all apertures on exterior walls of the model's rooms.
+
+        Note that this property accounts for the room multipliers.
         """
-        return sum([room.exterior_wall_aperture_area for room in self._rooms])
+        return sum([room.exterior_wall_aperture_area * room.multiplier
+                    for room in self._rooms])
 
     @property
     def exterior_skylight_aperture_area(self):
         """Get the combined area of all apertures on exterior roofs of the model's rooms.
+
+        Note that this property accounts for the room multipliers.
         """
-        return sum([room.exterior_skylight_aperture_area for room in self._rooms])
+        return sum([room.exterior_skylight_aperture_area * room.multiplier
+                    for room in self._rooms])
 
     def add_model(self, other_model):
         """Add another Model object to this model."""
