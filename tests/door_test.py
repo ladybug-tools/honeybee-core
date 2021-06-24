@@ -263,12 +263,12 @@ def test_check_planar():
     door_2 = Door('Door2', Face3D(pts_2, plane_1))
     door_3 = Door('Door3', Face3D(pts_3, plane_1))
 
-    assert door_1.check_planar(0.001) is True
-    assert door_2.check_planar(0.001, False) is False
+    assert door_1.check_planar(0.001) == ''
+    assert door_2.check_planar(0.001, False) != ''
     with pytest.raises(Exception):
         door_2.check_planar(0.0001)
-    assert door_3.check_planar(0.001) is True
-    assert door_3.check_planar(0.000001, False) is False
+    assert door_3.check_planar(0.001) == ''
+    assert door_3.check_planar(0.000001, False) != ''
     with pytest.raises(Exception):
         door_3.check_planar(0.000001)
 
@@ -284,12 +284,12 @@ def test_check_self_intersecting():
     door_3 = Door('Door3', Face3D(pts_1, plane_2))
     door_4 = Door('Door4', Face3D(pts_2, plane_2))
 
-    assert door_1.check_self_intersecting(False) is True
-    assert door_2.check_self_intersecting(False) is False
+    assert door_1.check_self_intersecting(False) == ''
+    assert door_2.check_self_intersecting(False) != ''
     with pytest.raises(Exception):
         assert door_2.check_self_intersecting(True)
-    assert door_3.check_self_intersecting(False) is True
-    assert door_4.check_self_intersecting(False) is False
+    assert door_3.check_self_intersecting(False) == ''
+    assert door_4.check_self_intersecting(False) != ''
     with pytest.raises(Exception):
         assert door_4.check_self_intersecting(True)
 
@@ -302,10 +302,10 @@ def test_check_non_zero():
     door_1 = Door('Door1', Face3D(pts_1, plane_1))
     door_2 = Door('Door2', Face3D(pts_2, plane_1))
 
-    assert door_1.check_non_zero(0.0001, False) is True
-    assert door_2.check_non_zero(0.0001, False) is False
+    assert door_1.check_non_zero(0.0001, False) == ''
+    assert door_2.check_non_zero(0.0001, False) != ''
     with pytest.raises(Exception):
-        assert door_2.check_self_intersecting(0.0001, True)
+        assert door_2.check_non_zero(0.0001, True)
 
 
 def test_to_dict():

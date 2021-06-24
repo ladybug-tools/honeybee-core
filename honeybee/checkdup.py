@@ -16,14 +16,15 @@ def check_duplicate_identifiers(objects_to_check, raise_exception=True, obj_name
             message. Fro example, 'Room', 'Face', 'Aperture'.
 
     Returns:
-        True if no duplicates were found. False if duplicates were found.
+        A message string indicating the duplicated identifiers that were found.
+        This string will be empty if no duplicates were found.
     """
     obj_id_iter = (obj.identifier for obj in objects_to_check)
     dup = [t for t, c in collections.Counter(obj_id_iter).items() if c > 1]
     if len(dup) != 0:
+        msg = 'The following duplicated {} identifiers were found:\n{}'.format(
+            obj_name, '\n'.join(dup))
         if raise_exception:
-            msg = 'The following duplicated {} identifiers were found:\n{}'.format(
-                obj_name, '\n'.join(dup))
             raise ValueError(msg)
-        return False
-    return True
+        return msg
+    return ''

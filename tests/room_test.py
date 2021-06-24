@@ -47,7 +47,7 @@ def test_init():
     assert room.exterior_aperture_area == 0
     assert room.average_floor_height == 0
     assert not room.has_parent
-    assert room.check_solid(0.01, 1)
+    assert room.check_solid(0.01, 1) == ''
 
     assert room[0].normal == Vector3D(0, 0, -1)
     assert room[1].normal == Vector3D(-1, 0, 0)
@@ -77,7 +77,7 @@ def test_init_open():
                 [face_1, face_2, face_3, face_4, face_5, face_6, face_7],
                 0.01, 1)
 
-    assert not room.check_solid(0.01, 1, False)
+    assert room.check_solid(0.01, 1, False) != ''
     with pytest.raises(ValueError):
         room.check_solid(0.01, 1, True)
 
@@ -118,7 +118,7 @@ def test_init_coplanar():
     assert room.exterior_aperture_area == 0
     assert room.average_floor_height == 0
     assert not room.has_parent
-    assert room.check_solid(0.01, 1)
+    assert room.check_solid(0.01, 1) == ''
 
 
 def test_polyface3d_init_from_polyface():
@@ -142,7 +142,7 @@ def test_polyface3d_init_from_polyface():
     assert room.exterior_aperture_area == 0
     assert room.average_floor_height == 0
     assert not room.has_parent
-    assert room.check_solid(0.01, 1)
+    assert room.check_solid(0.01, 1) == ''
 
 
 def test_init_from_box():
@@ -164,7 +164,7 @@ def test_init_from_box():
     assert room.exterior_aperture_area == 0
     assert room.average_floor_height == 3
     assert not room.has_parent
-    assert room.check_solid(0.01, 1)
+    assert room.check_solid(0.01, 1) == ''
 
 
 def test_average_orientation():
@@ -462,8 +462,8 @@ def test_check_planar():
     room_2 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_7], 0.01, 1)
 
-    assert room_1.check_planar(0.01, False)
-    assert not room_2.check_planar(0.01, False)
+    assert room_1.check_planar(0.01, False) == ''
+    assert room_2.check_planar(0.01, False) != ''
 
 
 def test_check_self_intersecting():
@@ -489,8 +489,8 @@ def test_check_self_intersecting():
     room_2 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_7, face_8], 0.01, 1)
 
-    assert room_1.check_self_intersecting(False)
-    assert not room_2.check_self_intersecting(False)
+    assert room_1.check_self_intersecting(False) == ''
+    assert room_2.check_self_intersecting(False) != ''
 
 
 def test_check_non_zero():
@@ -514,8 +514,8 @@ def test_check_non_zero():
     room_2 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_6, face_7])
 
-    assert room_1.check_non_zero(0.01, False)
-    assert not room_2.check_non_zero(0.01, False)
+    assert room_1.check_non_zero(0.01, False) == ''
+    assert room_2.check_non_zero(0.01, False) != ''
 
 
 def test_solve_adjacency():

@@ -942,6 +942,57 @@ class Model(_Base):
             self.tolerance = self.tolerance * scale_fac
             self.units = units
 
+    def check_all(self, raise_exception=True):
+        """Check all of the aspects of the Model for possible errors.
+
+        This includes basic properties like adjacency checks and all geometry checks.
+        Furthermore, all extension attributes will be checked assuming the extension
+        Model properties have a check_all function. Note that an exception will
+        always be raised if the model has a tolerance of zero as this means that
+        no geometry checks can be performed.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if any Model errors are found. If False, this method will simply
+                return a text string with all errors that were found.
+
+        Returns:
+            A text string with all errors that were found. This string will be empty
+            of no errors were found.
+        """
+        msgs = []
+        # perform checks for key honeybee model schema rules
+        msgs.append(self.check_duplicate_room_identifiers(False))
+        msgs.append(self.check_duplicate_face_identifiers(False))
+        msgs.append(self.check_duplicate_sub_face_identifiers(False))
+        msgs.append(self.check_duplicate_shade_identifiers(False))
+        msgs.append(self.check_missing_adjacencies(False))
+        msgs.append(self.check_all_air_boundaries_adjacent(False))
+        # check that a tolerance has been specified in the model
+        assert self.tolerance != 0, \
+            'Model must have a non-zero tolerance in order to perform geometry checks.'
+        assert self.angle_tolerance != 0, \
+            'Model must have a non-zero angle_tolerance to perform geometry checks.'
+        tol = self.tolerance
+        ang_tol = self.angle_tolerance
+        # perform several checks for key geometry rules
+        msgs.append(self.check_self_intersecting(False))
+        msgs.append(self.check_planar(tol, False))
+        msgs.append(self.check_sub_faces_valid(tol, ang_tol, False))
+        msgs.append(self.check_rooms_solid(tol, ang_tol, False))
+        # remove colinear vertices to ensure that this doesn't create faces with 2 edges
+        # this is a requirement for energy simulation
+        for room in self.rooms:
+            room.remove_colinear_vertices_envelope(tol)
+        # check the extension attributes
+        msgs.extend(self._properties._check_extension_attr())
+        # output a final report of errors or raise an exception
+        full_msgs = [msg for msg in msgs if msg != '']
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
     def check_duplicate_room_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Room identifiers in the model."""
         return check_duplicate_identifiers(self._rooms, raise_exception, 'Room')
@@ -963,7 +1014,7 @@ class Model(_Base):
         sub_faces = self.apertures + self.doors
         return check_duplicate_identifiers(sub_faces, raise_exception, 'sub-face')
 
-    def check_missing_adjacencies(self):
+    def check_missing_adjacencies(self, raise_exception=True):
         """Check that all Faces Apertures, and Doors have adjacent objects in the model.
         """
         face_bc_ids = []
@@ -983,24 +1034,30 @@ class Model(_Base):
                             'Door "{}" must have Surface boundary condition ' \
                             'if the parent Face has a Surface BC.'.format(dr.identifier)
                         self._self_adj_check(dr, door_bc_ids)
-        self._missing_adj_check(self.faces_by_identifier, face_bc_ids, 'Face')
-        self._missing_adj_check(self.apertures_by_identifier, ap_bc_ids, 'Aperture')
-        self._missing_adj_check(self.doors_by_identifier, door_bc_ids, 'Door')
-        return True
+        mf = self._missing_adj_check(self.faces_by_identifier, face_bc_ids, 'Face')
+        ma = self._missing_adj_check(self.apertures_by_identifier, ap_bc_ids, 'Aperture')
+        md = self._missing_adj_check(self.doors_by_identifier, door_bc_ids, 'Door')
+        msg = '\n'.join([m for m in (mf, ma, md) if m != ''])
+        if msg != '' and raise_exception:
+            raise ValueError(msg)
+        return msg
 
     def check_all_air_boundaries_adjacent(self, raise_exception=True):
         """Check that all Faces with the AirBoundary type are adjacent to other Faces.
 
         This is a requirement for energy simulation.
         """
+        msgs = []
         for face in self.faces:
             if isinstance(face.type, AirBoundary) and not \
                     isinstance(face.boundary_condition, Surface):
-                if raise_exception:
-                    raise ValueError('Face "{}" is an AirBoundary but is not adjacent '
-                                     'to another Face.'.format(face.display_name))
-                return False
-        return True
+                msg = 'Face "{}" is an AirBoundary but is not adjacent ' \
+                      'to another Face.'.format(face.identifier)
+                msgs.append(msg)
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_rooms_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check whether the Model's rooms are closed solid to within tolerances.
@@ -1015,10 +1072,15 @@ class Model(_Base):
             raise_exception: Boolean to note whether a ValueError should be raised
                 if the room geometry does not form a closed solid.
         """
+        msgs = []
         for room in self._rooms:
-            if not room.check_solid(tolerance, angle_tolerance, raise_exception):
-                return False
-        return True
+            msg = room.check_solid(tolerance, angle_tolerance, raise_exception=False)
+            if msg != '':
+                msgs.append(msg)
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
                               raise_exception=True):
@@ -1037,13 +1099,19 @@ class Model(_Base):
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an sub-face is not valid.
         """
+        msgs = []
         for rm in self._rooms:
-            if not rm.check_sub_faces_valid(tolerance, angle_tolerance, raise_exception):
-                return False
+            msg = rm.check_sub_faces_valid(tolerance, angle_tolerance, False)
+            if msg != '':
+                msgs.append(msg)
         for f in self._orphaned_faces:
-            if not f.check_sub_faces_valid(tolerance, angle_tolerance, raise_exception):
-                return False
-        return True
+            msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False)
+            if msg != '':
+                msgs.append(msg)
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_planar(self, tolerance, raise_exception=True):
         """Check that all of the Model's geometry components are planar.
@@ -1056,19 +1124,20 @@ class Model(_Base):
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
         """
+        msgs = []
         for face in self.faces:
-            if not face.check_planar(tolerance, raise_exception):
-                return False
+            msgs.append(face.check_planar(tolerance, raise_exception=False))
         for shd in self.shades:
-            if not shd.check_planar(tolerance, raise_exception):
-                return False
+            msgs.append(shd.check_planar(tolerance, raise_exception=False))
         for ap in self.apertures:
-            if not ap.check_planar(tolerance, raise_exception):
-                return False
+            msgs.append(ap.check_planar(tolerance, raise_exception=False))
         for dr in self.doors:
-            if not dr.check_planar(tolerance, raise_exception):
-                return False
-        return True
+            msgs.append(dr.check_planar(tolerance, raise_exception=False))
+        full_msgs = [msg for msg in msgs if msg != '']
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_self_intersecting(self, raise_exception=True):
         """Check that no edges of the Model's geometry components self-intersect.
@@ -1079,19 +1148,20 @@ class Model(_Base):
             raise_exception: If True, a ValueError will be raised if an object
                 intersects with itself (like a bowtie). Default: True.
         """
+        msgs = []
         for face in self.faces:
-            if not face.check_self_intersecting(raise_exception):
-                return False
+            msgs.append(face.check_self_intersecting(raise_exception))
         for shd in self.shades:
-            if not shd.check_self_intersecting(raise_exception):
-                return False
+            msgs.append(shd.check_self_intersecting(raise_exception))
         for ap in self.apertures:
-            if not ap.check_self_intersecting(raise_exception):
-                return False
+            msgs.append(ap.check_self_intersecting(raise_exception))
         for dr in self.doors:
-            if not dr.check_self_intersecting(raise_exception):
-                return False
-        return True
+            msgs.append(dr.check_self_intersecting(raise_exception))
+        full_msgs = [msg for msg in msgs if msg != '']
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_non_zero(self, tolerance=0.0001, raise_exception=True):
         """Check that the Model's geometry components are above a "zero" area tolerance.
@@ -1105,19 +1175,20 @@ class Model(_Base):
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
         """
+        msgs = []
         for face in self.faces:
-            if not face.check_non_zero(tolerance, raise_exception):
-                return False
+            msgs.append(face.check_non_zero(tolerance, raise_exception))
         for shd in self.shades:
-            if not shd.check_non_zero(tolerance, raise_exception):
-                return False
+            msgs.append(shd.check_non_zero(tolerance, raise_exception))
         for ap in self.apertures:
-            if not ap.check_non_zero(tolerance, raise_exception):
-                return False
+            msgs.append(ap.check_non_zero(tolerance, raise_exception))
         for dr in self.doors:
-            if not dr.check_non_zero(tolerance, raise_exception):
-                return False
-        return True
+            msgs.append(dr.check_non_zero(tolerance, raise_exception))
+        full_msgs = [msg for msg in msgs if msg != '']
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def triangulated_apertures(self):
         """Get triangulated versions of the model Apertures that have more than 4 sides.
@@ -1541,9 +1612,10 @@ class Model(_Base):
         """Check whether adjacencies are missing from a model."""
         try:
             id_checking_function(bc_ids)
+            return ''
         except ValueError as e:
-            raise ValueError('A {} has an adjacent object that is missing '
-                             'from the model:\n{}'.format(obj_name, e))
+            return 'A {} has an adjacent object that is missing from the model:' \
+                '\n  {}'.format(obj_name, e)
 
     def __add__(self, other):
         new_model = self.duplicate()

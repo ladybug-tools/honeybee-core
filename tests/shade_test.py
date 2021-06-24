@@ -223,12 +223,12 @@ def test_check_planar():
     shade_2 = Shade('Shade2', Face3D(pts_2, plane_1))
     shade_3 = Shade('Shade3', Face3D(pts_3, plane_1))
 
-    assert shade_1.check_planar(0.001) is True
-    assert shade_2.check_planar(0.001, False) is False
+    assert shade_1.check_planar(0.001) == ''
+    assert shade_2.check_planar(0.001, False) != ''
     with pytest.raises(Exception):
         shade_2.check_planar(0.0001)
-    assert shade_3.check_planar(0.001) is True
-    assert shade_3.check_planar(0.000001, False) is False
+    assert shade_3.check_planar(0.001) == ''
+    assert shade_3.check_planar(0.000001, False) != ''
     with pytest.raises(Exception):
         shade_3.check_planar(0.000001)
 
@@ -244,12 +244,12 @@ def test_check_self_intersecting():
     shade_3 = Shade('shade3', Face3D(pts_1, plane_2))
     shade_4 = Shade('shade4', Face3D(pts_2, plane_2))
 
-    assert shade_1.check_self_intersecting(False) is True
-    assert shade_2.check_self_intersecting(False) is False
+    assert shade_1.check_self_intersecting(False) == ''
+    assert shade_2.check_self_intersecting(False) != ''
     with pytest.raises(Exception):
         assert shade_2.check_self_intersecting(True)
-    assert shade_3.check_self_intersecting(False) is True
-    assert shade_4.check_self_intersecting(False) is False
+    assert shade_3.check_self_intersecting(False) == ''
+    assert shade_4.check_self_intersecting(False) != ''
     with pytest.raises(Exception):
         assert shade_4.check_self_intersecting(True)
 
@@ -262,10 +262,10 @@ def test_check_non_zero():
     shade_1 = Shade('shade1', Face3D(pts_1, plane_1))
     shade_2 = Shade('shade2', Face3D(pts_2, plane_1))
 
-    assert shade_1.check_non_zero(0.0001, False) is True
-    assert shade_2.check_non_zero(0.0001, False) is False
+    assert shade_1.check_non_zero(0.0001, False) == ''
+    assert shade_2.check_non_zero(0.0001, False) != ''
     with pytest.raises(Exception):
-        assert shade_2.check_self_intersecting(0.0001, True)
+        assert shade_2.check_non_zero(0.0001, True)
 
 
 def test_to_dict():

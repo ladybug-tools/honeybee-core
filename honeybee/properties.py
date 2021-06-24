@@ -348,6 +348,26 @@ class ModelProperties(_Properties):
                 raise Exception(
                     'Failed to apply {} properties to the Model: {}'.format(atr, e))
 
+    def _check_extension_attr(self):
+        """Check the attributes of extensions.
+
+        This method should be called within the check_all method of the Model object
+        to ensure that the check_all functions of any extension model properties
+        are also called.
+        """
+        msgs = []
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if not hasattr(var, 'check_all'):
+                continue
+            try:
+                msgs.extend(var.check_all(raise_exception=False))
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to check_all for {}: {}'.format(var, e))
+        return msgs
+
     def __repr__(self):
         """Properties representation."""
         return 'ModelProperties: {}'.format(self.host.display_name)

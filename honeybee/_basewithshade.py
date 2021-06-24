@@ -193,35 +193,32 @@ class _BaseWithShade(_Base):
         for shade in self._indoor_shades:
             shade.add_prefix(prefix)
 
-    def _check_planar_shades(self, tolerance, raise_exception=True):
+    def _check_planar_shades(self, tolerance):
         """Check that all of the child shades are planar."""
+        msgs = []
         for oshd in self._outdoor_shades:
-            if not oshd.check_planar(tolerance, raise_exception):
-                return False
+            msgs.append(oshd.check_planar(tolerance, False))
         for ishd in self._indoor_shades:
-            if not ishd.check_planar(tolerance, raise_exception):
-                return False
-        return True
+            msgs.append(ishd.check_planar(tolerance, False))
+        return '\n'.join([m for m in msgs if m != ''])
 
-    def _check_self_intersecting_shades(self, raise_exception=True):
+    def _check_self_intersecting_shades(self,):
         """Check that no edges of the indoor or outdoor shades self-intersect."""
+        msgs = []
         for oshd in self._outdoor_shades:
-            if not oshd.check_self_intersecting(raise_exception):
-                return False
+            msgs.append(oshd.check_self_intersecting(False))
         for ishd in self._indoor_shades:
-            if not ishd.check_self_intersecting(raise_exception):
-                return False
-        return True
+            msgs.append(ishd.check_self_intersecting(False))
+        return '\n'.join([m for m in msgs if m != ''])
 
-    def _check_non_zero_shades(self, tolerance=0.0001, raise_exception=True):
+    def _check_non_zero_shades(self, tolerance=0.0001):
         """Check that the indoor or outdoor shades are above a "zero" area tolerance."""
+        msgs = []
         for oshd in self._outdoor_shades:
-            if not oshd.check_non_zero(tolerance, raise_exception):
-                return False
+           msgs.append(oshd.check_non_zero(tolerance, False))
         for ishd in self._indoor_shades:
-            if not ishd.check_non_zero(tolerance, raise_exception):
-                return False
-        return True
+            msgs.append(ishd.check_non_zero(tolerance, False))
+        return '\n'.join([m for m in msgs if m != ''])
 
     def _add_shades_to_dict(self, base, abridged=False, included_prop=None):
         """Method used to add child shades to the parent base dictionary.

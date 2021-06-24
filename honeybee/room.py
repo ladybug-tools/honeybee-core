@@ -716,20 +716,20 @@ class Room(_BaseWithShade):
                 if the room geometry does not form a closed solid.
         """
         if self._geometry is not None and self.geometry.is_solid:
-            return True
+            return ''
         face_geometries = tuple(face.geometry for face in self._faces)
         self._geometry = Polyface3D.from_faces(face_geometries, tolerance)
         if self.geometry.is_solid:
-            return True
+            return ''
         ang_tol = math.radians(angle_tolerance)
         self._geometry = self.geometry.merge_overlapping_edges(tolerance, ang_tol)
         if self.geometry.is_solid:
-            return True
+            return ''
+        msg = 'Room "{}" is not closed to within {} tolerance and {} angle ' \
+            'tolerance.'.format(self.identifier, tolerance, angle_tolerance)
         if raise_exception:
-            raise ValueError(
-                'Room "{}" is not closed to within {} tolerance and {} angle '
-                'tolerance.'.format(self.display_name, tolerance, angle_tolerance))
-        return False
+            raise ValueError(msg)
+        return msg
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
                               raise_exception=True):
@@ -748,10 +748,15 @@ class Room(_BaseWithShade):
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an sub-face is not valid.
         """
+        msgs = []
         for f in self._faces:
-            if not f.check_sub_faces_valid(tolerance, angle_tolerance, raise_exception):
-                return False
-        return True
+            msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False)
+            if msg != '':
+                msgs.append(msg)
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check that all of the Room's geometry components are planar.
@@ -765,20 +770,21 @@ class Room(_BaseWithShade):
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
         """
+        msgs = [self._check_planar_shades(tolerance)]
         for face in self._faces:
-            if not face.check_planar(tolerance, raise_exception):
-                return False
+            msgs.append(face.check_planar(tolerance, False))
+            msgs.append(face._check_planar_shades(tolerance))
             for ap in face._apertures:
-                if not ap.check_planar(tolerance, raise_exception):
-                    return False
-                if not ap._check_planar_shades(tolerance, raise_exception):
-                    return False
+                msgs.append(ap.check_planar(tolerance, False))
+                msgs.append(ap._check_planar_shades(tolerance))
             for dr in face._doors:
-                if not dr.check_planar(tolerance, raise_exception):
-                    return False
-            if not face._check_planar_shades(tolerance, raise_exception):
-                return False
-        return self._check_planar_shades(tolerance, raise_exception)
+                msgs.append(dr.check_planar(tolerance, False))
+                msgs.append(dr._check_planar_shades(tolerance))
+        full_msgs = [msg for msg in msgs if msg != '']
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_self_intersecting(self, raise_exception=True):
         """Check that no edges of the Room's geometry components self-intersect.
@@ -789,20 +795,21 @@ class Room(_BaseWithShade):
             raise_exception: If True, a ValueError will be raised if an object
                 intersects with itself (like a bowtie). Default: True.
         """
+        msgs = [self._check_self_intersecting_shades()]
         for face in self._faces:
-            if not face.check_self_intersecting(raise_exception):
-                return False
+            msgs.append(face.check_self_intersecting(False))
+            msgs.append(face._check_self_intersecting_shades())
             for ap in face._apertures:
-                if not ap.check_self_intersecting(raise_exception):
-                    return False
-                if not ap._check_self_intersecting_shades(raise_exception):
-                    return False
+                msgs.append(ap.check_self_intersecting(False))
+                msgs.append(ap._check_self_intersecting_shades())
             for dr in face._doors:
-                if not dr.check_self_intersecting(raise_exception):
-                    return False
-            if not face._check_self_intersecting_shades(raise_exception):
-                return False
-        return self._check_self_intersecting_shades(raise_exception)
+                msgs.append(dr.check_self_intersecting(False))
+                msgs.append(dr._check_self_intersecting_shades())
+        full_msgs = [msg for msg in msgs if msg != '']
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_non_zero(self, tolerance=0.0001, raise_exception=True):
         """Check that the Room's geometry components are above a "zero" area tolerance.
@@ -816,20 +823,21 @@ class Room(_BaseWithShade):
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
         """
+        msgs = [self._check_non_zero_shades(tolerance)]
         for face in self._faces:
-            if not face.check_non_zero(tolerance, raise_exception):
-                return False
+            msgs.append(face.check_non_zero(tolerance, False))
+            msgs.append(face._check_non_zero_shades(tolerance))
             for ap in face._apertures:
-                if not ap.check_non_zero(tolerance, raise_exception):
-                    return False
-                if not ap._check_non_zero_shades(tolerance, raise_exception):
-                    return False
+                msgs.append(ap.check_non_zero(tolerance, False))
+                msgs.append(ap._check_non_zero_shades(tolerance))
             for dr in face._doors:
-                if not dr.check_non_zero(tolerance, raise_exception):
-                    return False
-            if not face._check_non_zero_shades(tolerance, raise_exception):
-                return False
-        return self._check_non_zero_shades(tolerance, raise_exception)
+                msgs.append(dr.check_non_zero(tolerance, False))
+                msgs.append(dr._check_non_zero_shades(tolerance))
+        full_msgs = [msg for msg in msgs if msg != '']
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     @staticmethod
     def solve_adjacency(rooms, tolerance=0.01):
