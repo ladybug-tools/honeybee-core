@@ -362,12 +362,12 @@ def test_check_planar():
     aperture_2 = Aperture('Window2', Face3D(pts_2, plane_1))
     aperture_3 = Aperture('Window3', Face3D(pts_3, plane_1))
 
-    assert aperture_1.check_planar(0.001) is True
-    assert aperture_2.check_planar(0.001, False) is False
+    assert aperture_1.check_planar(0.001) == ''
+    assert aperture_2.check_planar(0.001, False) != ''
     with pytest.raises(Exception):
         aperture_2.check_planar(0.0001)
-    assert aperture_3.check_planar(0.001) is True
-    assert aperture_3.check_planar(0.000001, False) is False
+    assert aperture_3.check_planar(0.001) == ''
+    assert aperture_3.check_planar(0.000001, False) != ''
     with pytest.raises(Exception):
         aperture_3.check_planar(0.000001)
 
@@ -383,12 +383,12 @@ def test_check_self_intersecting():
     aperture_3 = Aperture('Window3', Face3D(pts_1, plane_2))
     aperture_4 = Aperture('Window4', Face3D(pts_2, plane_2))
 
-    assert aperture_1.check_self_intersecting(False) is True
-    assert aperture_2.check_self_intersecting(False) is False
+    assert aperture_1.check_self_intersecting(False) == ''
+    assert aperture_2.check_self_intersecting(False) != ''
     with pytest.raises(Exception):
         assert aperture_2.check_self_intersecting(True)
-    assert aperture_3.check_self_intersecting(False) is True
-    assert aperture_4.check_self_intersecting(False) is False
+    assert aperture_3.check_self_intersecting(False) == ''
+    assert aperture_4.check_self_intersecting(False) != ''
     with pytest.raises(Exception):
         assert aperture_4.check_self_intersecting(True)
 
@@ -401,10 +401,10 @@ def test_check_non_zero():
     aperture_1 = Aperture('Window1', Face3D(pts_1, plane_1))
     aperture_2 = Aperture('Window2', Face3D(pts_2, plane_1))
 
-    assert aperture_1.check_non_zero(0.0001, False) is True
-    assert aperture_2.check_non_zero(0.0001, False) is False
+    assert aperture_1.check_non_zero(0.0001, False) == ''
+    assert aperture_2.check_non_zero(0.0001, False) != ''
     with pytest.raises(Exception):
-        assert aperture_2.check_self_intersecting(0.0001, True)
+        assert aperture_2.check_non_zero(0.0001, True)
 
 
 def test_to_dict():

@@ -998,9 +998,12 @@ class Face(_BaseWithShade):
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an sub-face is not valid.
         """
-        ap = self.check_apertures_valid(tolerance, angle_tolerance, raise_exception)
-        dr = self.check_doors_valid(tolerance, angle_tolerance, raise_exception)
-        return True if ap and dr else False
+        ap = self.check_apertures_valid(tolerance, angle_tolerance, False)
+        dr = self.check_doors_valid(tolerance, angle_tolerance, False)
+        full_msgs = [m for m in (ap, dr) if m != '']
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError('\n'.join(full_msgs))
+        return '\n'.join(full_msgs)
 
     def check_apertures_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check that apertures are co-planar with this Face within the Face boundary.
@@ -1019,14 +1022,16 @@ class Face(_BaseWithShade):
                 if an aperture is not valid.
         """
         angle_tolerance = math.radians(angle_tolerance)
+        msgs = []
         for ap in self._apertures:
             if not self.geometry.is_sub_face(ap.geometry, tolerance, angle_tolerance):
-                if raise_exception:
-                    raise ValueError(
-                        'Aperture "{}" is not coplanar or fully bounded by its parent '
-                        'Face "{}".'.format(ap.display_name, self.display_name))
-                return False
-        return True
+                msg = 'Aperture "{}" is not coplanar or fully bounded by its parent ' \
+                    'Face "{}".'.format(ap.identifier, self.identifier)
+                msgs.append(msg)
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_doors_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check that doors are co-planar with this Face within the Face boundary.
@@ -1045,14 +1050,16 @@ class Face(_BaseWithShade):
                 if an door is not valid.
         """
         angle_tolerance = math.radians(angle_tolerance)
+        msgs = []
         for dr in self._doors:
             if not self.geometry.is_sub_face(dr.geometry, tolerance, angle_tolerance):
-                if raise_exception:
-                    raise ValueError(
-                        'Door "{}" is not coplanar or fully bounded by its parent '
-                        'Face "{}".'.format(dr.display_name, self.display_name))
-                return False
-        return True
+                msg = 'Door "{}" is not coplanar or fully bounded by its parent ' \
+                    'Face "{}".'.format(dr.identifier, self.identifier)
+                msgs.append(msg)
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Face's vertices lie within the same plane.
@@ -1065,10 +1072,13 @@ class Face(_BaseWithShade):
                 raised if a vertex does not lie within the object's plane.
         """
         try:
-            return self.geometry.check_planar(tolerance, raise_exception)
+            self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
-            raise ValueError('Face "{}" is not planar.\n{}'.format(
-                self.display_name, e))
+            msg = 'Face "{}" is not planar.\n{}'.format(self.identifier, e)
+            if raise_exception:
+                raise ValueError(msg)
+            return msg
+        return ''
 
     def check_self_intersecting(self, raise_exception=True):
         """Check whether the edges of the Face intersect one another (like a bowtie).
@@ -1078,11 +1088,11 @@ class Face(_BaseWithShade):
                 intersects with itself. Default: True.
         """
         if self.geometry.is_self_intersecting:
+            msg = 'Face "{}" has self-intersecting edges.'.format(self.identifier)
             if raise_exception:
-                raise ValueError('Face "{}" has self-intersecting edges.'.format(
-                    self.display_name))
-            return False
-        return True
+                raise ValueError(msg)
+            return msg
+        return ''
 
     def check_non_zero(self, tolerance=0.0001, raise_exception=True):
         """Check whether the area of the Face is above a certain "zero" tolerance.
@@ -1095,12 +1105,12 @@ class Face(_BaseWithShade):
                 area is below the tolerance. Default: True.
         """
         if self.area < tolerance:
+            msg = 'Face "{}" geometry is too small. Area must be at least {}. ' \
+                'Got {}.'.format(self.identifier, tolerance, self.area)
             if raise_exception:
-                raise ValueError(
-                    'Face "{}" geometry is too small. Area must be at least {}. '
-                    'Got {}.'.format(self.display_name, tolerance, self.area))
-            return False
-        return True
+                raise ValueError(msg)
+            return msg
+        return ''
 
     @property
     def to(self):

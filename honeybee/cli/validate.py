@@ -25,10 +25,14 @@ def validate():
 @validate.command('model')
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-def validate_model(model_json):
+@click.option(
+    '--output-file', '-f', help='Optional file to output the full report '
+    'of any errors detected. By default it will be printed out to stdout',
+    type=click.File('w'), default='-')
+def validate_model(model_json, output_file):
     """Validate all properties of a Model JSON file against the Honeybee schema.
 
-    This includes basic properties like adjacency checks AND all geometry checks.
+    This includes basic properties like adjacency checks and all geometry checks.
 
     \b
     Args:
@@ -39,112 +43,18 @@ def validate_model(model_json):
         click.echo('Validating Model JSON ...')
         parsed_model = Model.from_hbjson(model_json)
         click.echo('Python re-serialization passed.')
-        # perform several other checks for key honeybee model schema rules
-        parsed_model.check_duplicate_room_identifiers(raise_exception=True)
-        parsed_model.check_duplicate_face_identifiers(raise_exception=True)
-        parsed_model.check_duplicate_sub_face_identifiers(raise_exception=True)
-        parsed_model.check_duplicate_shade_identifiers(raise_exception=True)
-        parsed_model.check_missing_adjacencies()
-        parsed_model.check_all_air_boundaries_adjacent(raise_exception=True)
-        click.echo('Unique identifier and adjacency checks passed.')
-        # check that a tolerance has been specified in the model
-        assert parsed_model.tolerance != 0, \
-            'Model must have a non-zero tolerance in order to perform geometry checks.'
-        assert parsed_model.angle_tolerance != 0, \
-            'Model must have a non-zero angle_tolerance to perform geometry checks.'
-        tol = parsed_model.tolerance
-        ang_tol = parsed_model.angle_tolerance
-        # perform several checks for key geometry rules
-        parsed_model.check_self_intersecting(raise_exception=True)
-        parsed_model.check_planar(tol, raise_exception=True)
-        parsed_model.check_sub_faces_valid(tol, ang_tol, raise_exception=True)
-        parsed_model.check_rooms_solid(tol, ang_tol, raise_exception=True)
-        # remove colinear vertices to ensure that this doesn't create faces with 2 edges
-        for room in parsed_model.rooms:
-            room.remove_colinear_vertices_envelope(tol)
-        click.echo('Model geometry checks passed.')
+        # perform several other checks for geometry rules and others
+        report = parsed_model.check_all(raise_exception=False)
+        click.echo('Model geometry and identifier checks completed.')
         # lastly, check the JSON against the OpenAPI specification to get any last errors
         schema_model.Model.parse_file(model_json)
         click.echo('Pydantic validation passed.')
-        # if we made it to this point, report that the model is valid
-        click.echo('Congratulations! Your Model JSON is valid!')
-    except Exception as e:
-        _logger.exception('Model validation failed.\n{}'.format(e))
-        sys.exit(1)
-    else:
-        sys.exit(0)
-
-
-@validate.command('model-basic')
-@click.argument('model-json', type=click.Path(
-    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-def validate_model_basic(model_json):
-    """Validate basic properties of a Model JSON against the Honeybee schema.
-
-    This includes basic re-serialization, unique identifier checks, and adjacency checks.
-
-    \b
-    Args:
-        model_json: Full path to a Model JSON file.
-    """
-    try:
-        # re-serialize the Model to make sure no errors are found in re-serialization
-        click.echo('Validating Model JSON ...')
-        parsed_model = Model.from_hbjson(model_json)
-        click.echo('Python re-serialization passed.')
-        # perform several other checks for key honeybee model schema rules
-        parsed_model.check_duplicate_room_identifiers(raise_exception=True)
-        parsed_model.check_duplicate_face_identifiers(raise_exception=True)
-        parsed_model.check_duplicate_sub_face_identifiers(raise_exception=True)
-        parsed_model.check_duplicate_shade_identifiers(raise_exception=True)
-        parsed_model.check_missing_adjacencies()
-        parsed_model.check_all_air_boundaries_adjacent(raise_exception=True)
-        click.echo('Unique identifier and adjacency checks passed.')
-        # lastly, check the JSON against the OpenAPI specification to get any last errors
-        schema_model.Model.parse_file(model_json)
-        click.echo('Pydantic validation passed.')
-        # if we made it to this point, report that the model is valid
-        click.echo('Congratulations! The basic properties of your Model JSON are valid!')
-    except Exception as e:
-        _logger.exception('Model validation failed.\n{}'.format(e))
-        sys.exit(1)
-    else:
-        sys.exit(0)
-
-
-@validate.command('model-geometry')
-@click.argument('model-json', type=click.Path(
-    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-def validate_model_geometry(model_json):
-    """Validate geometry of a Model JSON against the Honeybee schema.
-
-    This includes checks that the 5 honeybee geometry rules are upheld.
-
-    \b
-    Args:
-        model_json: Full path to a Model JSON file.
-    """
-    try:
-        # re-serialize the Model to make sure no errors are found in re-serialization
-        click.echo('Validating Model JSON ...')
-        parsed_model = Model.from_hbjson(model_json)
-        # check that a tolerance has been specified in the model
-        assert parsed_model.tolerance != 0, \
-            'Model must have a non-zero tolerance in order to perform geometry checks.'
-        assert parsed_model.angle_tolerance != 0, \
-            'Model must have a non-zero angle_tolerance to perform geometry checks.'
-        tol = parsed_model.tolerance
-        ang_tol = parsed_model.angle_tolerance
-        # perform several checks for key geometry rules
-        parsed_model.check_self_intersecting(raise_exception=True)
-        parsed_model.check_planar(tol, raise_exception=True)
-        parsed_model.check_sub_faces_valid(tol, ang_tol, raise_exception=True)
-        parsed_model.check_rooms_solid(tol, ang_tol, raise_exception=True)
-        # remove colinear vertices to ensure that this doesn't create faces with 2 edges
-        for room in parsed_model.rooms:
-            room.remove_colinear_vertices_envelope(tol)
-        # if we made it to this point, report that the model is valid
-        click.echo('Congratulations! The geometry of your Model JSON is valid!')
+        # check the report and write the summary of errors
+        if report == '':
+            output_file.write('Congratulations! Your Model JSON is valid!')
+        else:
+            error_msg = '\nYour Model is invalid for the following reasons:'
+            output_file.write('\n'.join([error_msg, report]))
     except Exception as e:
         _logger.exception('Model validation failed.\n{}'.format(e))
         sys.exit(1)

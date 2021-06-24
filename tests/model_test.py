@@ -630,9 +630,9 @@ def test_check_duplicate_room_identifiers():
     model_1 = Model('SouthHouse', [room_south])
     model_2 = Model('NorthHouse', [room_north])
 
-    assert model_1.check_duplicate_room_identifiers(False)
+    assert model_1.check_duplicate_room_identifiers(False) == ''
     model_1.add_model(model_2)
-    assert not model_1.check_duplicate_room_identifiers(False)
+    assert model_1.check_duplicate_room_identifiers(False) != ''
     with pytest.raises(ValueError):
         model_1.check_duplicate_room_identifiers(True)
 
@@ -658,8 +658,8 @@ def test_check_duplicate_face_identifiers():
     model_1 = Model('TestHouse', [room_1])
     model_2 = Model('TestHouse', [room_2])
 
-    assert model_1.check_duplicate_face_identifiers(False)
-    assert not model_2.check_duplicate_face_identifiers(False)
+    assert model_1.check_duplicate_face_identifiers(False) == ''
+    assert model_2.check_duplicate_face_identifiers(False) != ''
     with pytest.raises(ValueError):
         model_2.check_duplicate_face_identifiers(True)
 
@@ -673,10 +673,10 @@ def test_check_duplicate_shade_identifiers():
     room.add_indoor_shade(Shade('Table', table_geo))
 
     model = Model('TestHouse', [room])
-    assert model.check_duplicate_shade_identifiers(False)
+    assert model.check_duplicate_shade_identifiers(False) == ''
     tree_canopy_geo = Face3D.from_regular_polygon(6, 2, Plane(o=Point3D(5, -3, 4)))
     model.add_shade(Shade('Table', tree_canopy_geo))
-    assert not model.check_duplicate_shade_identifiers(False)
+    assert model.check_duplicate_shade_identifiers(False) != ''
     with pytest.raises(ValueError):
         model.check_duplicate_shade_identifiers(True)
 
@@ -694,9 +694,9 @@ def test_check_duplicate_sub_face_identifiers():
     aperture = Aperture('FrontDoor', Face3D(aperture_verts))
 
     model = Model('TestHouse', [room])
-    assert model.check_duplicate_sub_face_identifiers(False)
+    assert model.check_duplicate_sub_face_identifiers(False) == ''
     north_face.add_aperture(aperture)
-    assert not model.check_duplicate_sub_face_identifiers(False)
+    assert model.check_duplicate_sub_face_identifiers(False) != ''
     with pytest.raises(ValueError):
         model.check_duplicate_sub_face_identifiers(True)
 
@@ -723,7 +723,7 @@ def test_check_missing_adjacencies():
     assert len(model_1.rooms) == 2
     assert len(model_1.faces) == 12
     assert len(model_1.apertures) == 3
-    assert model_1.check_missing_adjacencies()
+    assert model_1.check_missing_adjacencies() == ''
 
 
 def test_check_all_air_boundaries_adjacent():
@@ -735,12 +735,12 @@ def test_check_all_air_boundaries_adjacent():
     room_north[3].type = face_types.air_boundary
 
     model = Model('TestHouse', [room_south, room_north])
-    assert not model.check_all_air_boundaries_adjacent(False)
+    assert model.check_all_air_boundaries_adjacent(False) != ''
     with pytest.raises(ValueError):
         model.check_all_air_boundaries_adjacent(True)
 
     Room.solve_adjacency([room_south, room_north], 0.01)
-    assert model.check_all_air_boundaries_adjacent(False)
+    assert model.check_all_air_boundaries_adjacent(False) == ''
 
 
 def test_check_planar():
@@ -766,8 +766,8 @@ def test_check_planar():
 
     model_1 = Model('SouthHouse', [room_1])
     model_2 = Model('NorthHouse', [room_2])
-    assert model_1.check_planar(0.01, False)
-    assert not model_2.check_planar(0.01, False)
+    assert model_1.check_planar(0.01, False) == ''
+    assert model_2.check_planar(0.01, False) != ''
     with pytest.raises(ValueError):
         model_2.check_planar(0.01, True)
 
@@ -797,8 +797,8 @@ def test_check_self_intersecting():
 
     model_1 = Model('SouthHouse', [room_1])
     model_2 = Model('NorthHouse', [room_2])
-    assert model_1.check_self_intersecting(False)
-    assert not model_2.check_self_intersecting(False)
+    assert model_1.check_self_intersecting(False) == ''
+    assert model_2.check_self_intersecting(False) != ''
     with pytest.raises(ValueError):
         model_2.check_self_intersecting(True)
 
@@ -826,8 +826,8 @@ def test_check_non_zero():
 
     model_1 = Model('SouthHouse', [room_1])
     model_2 = Model('NorthHouse', [room_2])
-    assert model_1.check_non_zero(0.01, False)
-    assert not model_2.check_non_zero(0.01, False)
+    assert model_1.check_non_zero(0.01, False) == ''
+    assert model_2.check_non_zero(0.01, False) != ''
     with pytest.raises(ValueError):
         model_2.check_non_zero(0.01, True)
 

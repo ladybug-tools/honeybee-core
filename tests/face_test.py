@@ -188,7 +188,7 @@ def test_add_remove_door():
     assert face.doors[0].parent is face
     assert len(face.punched_vertices) == 10
     assert face.punched_geometry.area == 96
-    assert face.check_doors_valid(0.01, 1)
+    assert face.check_doors_valid(0.01, 1) == ''
 
     face.remove_doors()
     assert len(face.doors) == 0
@@ -211,7 +211,7 @@ def test_add_remove_doors():
     assert face.doors[1].parent is face
     assert len(face.punched_vertices) == 16
     assert face.punched_geometry.area == 92
-    assert face.check_doors_valid(0.01, 1)
+    assert face.check_doors_valid(0.01, 1) == ''
 
     face.remove_doors()
     assert len(face.doors) == 0
@@ -233,7 +233,7 @@ def test_add_remove_aperture():
     assert face.apertures[0].parent is face
     assert len(face.punched_vertices) == 10
     assert face.punched_geometry.area == 96
-    assert face.check_apertures_valid(0.01, 1)
+    assert face.check_apertures_valid(0.01, 1) == ''
 
     face.remove_apertures()
     assert len(face.apertures) == 0
@@ -256,7 +256,7 @@ def test_add_remove_apertures():
     assert face.apertures[1].parent is face
     assert len(face.punched_vertices) == 16
     assert face.punched_geometry.area == 92
-    assert face.check_apertures_valid(0.01, 1)
+    assert face.check_apertures_valid(0.01, 1) == ''
 
     face.remove_apertures()
     assert len(face.apertures) == 0
@@ -281,7 +281,7 @@ def test_add_remove_sub_faces():
     assert face.doors[0].parent is face
     assert len(face.punched_vertices) == 16
     assert face.punched_geometry.area == 92
-    assert face.check_sub_faces_valid(0.01, 1)
+    assert face.check_sub_faces_valid(0.01, 1) == ''
 
     face.remove_sub_faces()
     assert len(face.apertures) == 0
@@ -631,12 +631,12 @@ def test_check_planar():
     face_2 = Face('Wall2', Face3D(pts_2, plane_1))
     face_3 = Face('Wall3', Face3D(pts_3, plane_1))
 
-    assert face_1.check_planar(0.001) is True
-    assert face_2.check_planar(0.001, False) is False
+    assert face_1.check_planar(0.001) == ''
+    assert face_2.check_planar(0.001, False) != ''
     with pytest.raises(Exception):
         face_2.check_planar(0.0001)
-    assert face_3.check_planar(0.001) is True
-    assert face_3.check_planar(0.000001, False) is False
+    assert face_3.check_planar(0.001) == ''
+    assert face_3.check_planar(0.000001, False) != ''
     with pytest.raises(Exception):
         face_3.check_planar(0.000001)
 
@@ -652,12 +652,12 @@ def test_check_self_intersecting():
     face_3 = Face('Wall3', Face3D(pts_1, plane_2))
     face_4 = Face('Wall4', Face3D(pts_2, plane_2))
 
-    assert face_1.check_self_intersecting(False) is True
-    assert face_2.check_self_intersecting(False) is False
+    assert face_1.check_self_intersecting(False) == ''
+    assert face_2.check_self_intersecting(False) != ''
     with pytest.raises(Exception):
         assert face_2.check_self_intersecting(True)
-    assert face_3.check_self_intersecting(False) is True
-    assert face_4.check_self_intersecting(False) is False
+    assert face_3.check_self_intersecting(False) == ''
+    assert face_4.check_self_intersecting(False) != ''
     with pytest.raises(Exception):
         assert face_4.check_self_intersecting(True)
 
@@ -670,10 +670,10 @@ def test_check_non_zero():
     face_1 = Face('Wall1', Face3D(pts_1, plane_1))
     face_2 = Face('Wall2', Face3D(pts_2, plane_1))
 
-    assert face_1.check_non_zero(0.0001, False) is True
-    assert face_2.check_non_zero(0.0001, False) is False
+    assert face_1.check_non_zero(0.0001, False) == ''
+    assert face_2.check_non_zero(0.0001, False) != ''
     with pytest.raises(Exception):
-        assert face_2.check_self_intersecting(0.0001, True)
+        assert face_2.check_non_zero(0.0001, True)
 
 
 def test_to_dict():

@@ -598,10 +598,13 @@ class Aperture(_BaseWithShade):
                 raised if a vertex does not lie within the object's plane.
         """
         try:
-            return self.geometry.check_planar(tolerance, raise_exception)
+            self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
-            raise ValueError('Aperture "{}" is not planar.\n{}'.format(
-                self.display_name, e))
+            msg = 'Aperture "{}" is not planar.\n{}'.format(self.identifier, e)
+            if raise_exception:
+                raise ValueError(msg)
+            return msg
+        return ''
 
     def check_self_intersecting(self, raise_exception=True):
         """Check whether the edges of the Aperture intersect one another (like a bowtie)
@@ -611,11 +614,11 @@ class Aperture(_BaseWithShade):
                 intersects with itself. Default: True.
         """
         if self.geometry.is_self_intersecting:
+            msg = 'Aperture "{}" has self-intersecting edges.'.format(self.identifier)
             if raise_exception:
-                raise ValueError('Aperture "{}" has self-intersecting edges.'.format(
-                    self.display_name))
-            return False
-        return True
+                raise ValueError(msg)
+            return msg
+        return ''
 
     def check_non_zero(self, tolerance=0.0001, raise_exception=True):
         """Check whether the area of the Aperture is above a certain "zero" tolerance.
@@ -628,12 +631,12 @@ class Aperture(_BaseWithShade):
                 area is below the tolerance. Default: True.
         """
         if self.area < tolerance:
+            msg = 'Aperture "{}" geometry is too small. Area must be at least {}. ' \
+                'Got {}.'.format(self.identifier, tolerance, self.area)
             if raise_exception:
-                raise ValueError(
-                    'Aperture "{}" geometry is too small. Area must be at least {}. '
-                    'Got {}.'.format(self.display_name, tolerance, self.area))
-            return False
-        return True
+                raise ValueError(msg)
+            return msg
+        return ''
 
     @property
     def to(self):
