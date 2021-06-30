@@ -361,7 +361,7 @@ class ModelProperties(_Properties):
             if not hasattr(var, 'check_all'):
                 continue
             try:
-                msgs.extend(var.check_all(raise_exception=False))
+                msgs.append(var.check_all(raise_exception=False))
             except Exception as e:
                 import traceback
                 traceback.print_exc()
