@@ -1,0 +1,86 @@
+name: CI-On-Dispatch
+
+on: repository_dispatch
+
+jobs:
+
+  bump_ladybug_core:
+    name: "Check Event"
+    runs-on: ubuntu-latest
+    if: github.event.action == 'ladybug_core_release'
+    steps:
+    - name: "Checkout Master Branch"
+      uses: actions/checkout@v2
+      with:
+        ref: refs/heads/master
+        token: ${{ secrets.DEPS_UPDATING }}
+    - name: "Run Update Script"
+      env:
+        VERSION: ${{ github.event.client_payload.version }}
+      run: |
+        export CLEAN_VERSION=$(echo $VERSION | sed 's/v//g')
+        sed -i --regexp-extended 's/(ladybug-core==).*/ladybug-core=='"$CLEAN_VERSION"'/' requirements.txt
+    - name: "Commit and Push Changes"
+      id: push
+      env:
+        VERSION: ${{ github.event.client_payload.version }}
+      run: |
+        git config --global user.name 'ladybugbot'
+        git config --global user.email 'ladybugbot@users.noreply.github.com'
+        git add .
+        git commit -m "fix(deps): Bump ladybug-core to $VERSION"
+        git push
+
+  bump_ladybug_geometry_polyskel:
+    name: "Check Event"
+    runs-on: ubuntu-latest
+    if: github.event.action == 'ladybug_geometry_polyskel_release'
+    steps:
+    - name: "Checkout Master Branch"
+      uses: actions/checkout@v2
+      with:
+        ref: refs/heads/master
+        token: ${{ secrets.DEPS_UPDATING }}
+    - name: "Run Update Script"
+      env:
+        VERSION: ${{ github.event.client_payload.version }}
+      run: |
+        export CLEAN_VERSION=$(echo $VERSION | sed 's/v//g')
+        sed -i --regexp-extended 's/(ladybug-geometry-polyskel==).*/ladybug-geometry-polyskel=='"$CLEAN_VERSION"'/' requirements.txt
+    - name: "Commit and Push Changes"
+      id: push
+      env:
+        VERSION: ${{ github.event.client_payload.version }}
+      run: |
+        git config --global user.name 'ladybugbot'
+        git config --global user.email 'ladybugbot@users.noreply.github.com'
+        git add .
+        git commit -m "fix(deps): Bump ladybug-geometry-polyskel to $VERSION"
+        git push
+
+  bump_honeybee_schema:
+    name: "Check Event"
+    runs-on: ubuntu-latest
+    if: github.event.action == 'honeybee_schema_release'
+    steps:
+    - name: "Checkout Master Branch"
+      uses: actions/checkout@v2
+      with:
+        ref: refs/heads/master
+        token: ${{ secrets.DEPS_UPDATING }}
+    - name: "Run Update Script"
+      env:
+        VERSION: ${{ github.event.client_payload.version }}
+      run: |
+        export CLEAN_VERSION=$(echo $VERSION | sed 's/v//g')
+        sed -i --regexp-extended 's/(honeybee-schema==).*;/honeybee-schema=='"$CLEAN_VERSION"';/' requirements.txt
+    - name: "Commit and Push Changes"
+      id: push
+      env:
+        VERSION: ${{ github.event.client_payload.version }}
+      run: |
+        git config --global user.name 'ladybugbot'
+        git config --global user.email 'ladybugbot@users.noreply.github.com'
+        git add .
+        git commit -m "fix(deps): Bump honeybee-schema to $VERSION"
+        git push
