@@ -707,9 +707,10 @@ class Face(_BaseWithShade):
             width: A number for the Aperture width.
             height: A number for the Aperture height.
             sill_height: A number for the sill height. Default: 1.
-            aperture_identifier: Optional string for the aperture identifier. If None, the default
-                will follow the convention "[face_identifier]_Glz[count]" where [count]
-                is one more than the current number of apertures in the face.
+            aperture_identifier: Optional string for the aperture identifier.
+                If None, the default will follow the convention
+                "[face_identifier]_Glz[count]" where [count] is one more than
+                the current number of apertures in the face.
 
         Returns:
             The new Aperture object that has been generated.
@@ -742,7 +743,8 @@ class Face(_BaseWithShade):
             ap_face = ap_face.flip()
 
         # Create the aperture and add it to this Face
-        identifier = aperture_identifier or '{}_Glz{}'.format(self.identifier, len(self.apertures))
+        identifier = aperture_identifier or \
+            '{}_Glz{}'.format(self.identifier, len(self.apertures))
         aperture = Aperture(identifier, ap_face)
         aperture._parent = self
         self._apertures.append(aperture)
@@ -761,8 +763,9 @@ class Face(_BaseWithShade):
                 indoor geometry). Default: False.
             tolerance: An optional value to not add the overhang if it has a length less
                 than the tolerance. Default: 0.01, suitable for objects in meters.
-            base_name: Optional base identifier for the shade objects. If None, the default
-                is InOverhang or OutOverhang depending on whether indoor is True.
+            base_name: Optional base identifier for the shade objects. If None,
+                the default is InOverhang or OutOverhang depending on whether
+                indoor is True.
 
         Returns:
             A list of the new Shade objects that have been generated.
@@ -798,8 +801,8 @@ class Face(_BaseWithShade):
                 indoor geometry). Default: False.
             tolerance: An optional value to remove any louvers with a length less
                 than the tolerance. Default: 0.01, suitable for objects in meters.
-            base_name: Optional base identifier for the shade objects. If None, the default
-                is InShd or OutShd depending on whether indoor is True.
+            base_name: Optional base identifier for the shade objects. If None,
+                the default is InShd or OutShd depending on whether indoor is True.
 
         Returns:
             A list of the new Shade objects that have been generated.
@@ -874,7 +877,7 @@ class Face(_BaseWithShade):
                 shade_faces = shade_faces[:max_count]
             except IndexError:  # fewer shades were generated than the max count
                 pass
-        
+
         # create the shade objects
         louvers = []
         for i, shade_geo in enumerate(shade_faces):
@@ -979,10 +982,16 @@ class Face(_BaseWithShade):
                 at which point the vertex is considered colinear. Default: 0.01,
                 suitable for objects in meters.
         """
-        self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        try:
+            self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        except AssertionError as e:  # usually a sliver face of some kind
+            raise ValueError(
+                'Face "{}" is invalid with dimensions less than the '
+                'tolerance.\n{}'.format(self.full_id, e))
         self._punched_geometry = None  # reset so that it can be re-computed
 
-    def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
+    def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
+                              raise_exception=True):
         """Check that sub-faces are co-planar with this Face within the Face boundary.
 
         Note this does not check the planarity of the sub-faces themselves, whether
@@ -1005,7 +1014,8 @@ class Face(_BaseWithShade):
             raise ValueError('\n'.join(full_msgs))
         return '\n'.join(full_msgs)
 
-    def check_apertures_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
+    def check_apertures_valid(self, tolerance=0.01, angle_tolerance=1,
+                              raise_exception=True):
         """Check that apertures are co-planar with this Face within the Face boundary.
 
         Note this does not check the planarity of the apertures themselves, whether
@@ -1026,7 +1036,7 @@ class Face(_BaseWithShade):
         for ap in self._apertures:
             if not self.geometry.is_sub_face(ap.geometry, tolerance, angle_tolerance):
                 msg = 'Aperture "{}" is not coplanar or fully bounded by its parent ' \
-                    'Face "{}".'.format(ap.identifier, self.identifier)
+                    'Face "{}".'.format(ap.full_id, self.full_id)
                 msgs.append(msg)
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
@@ -1054,7 +1064,7 @@ class Face(_BaseWithShade):
         for dr in self._doors:
             if not self.geometry.is_sub_face(dr.geometry, tolerance, angle_tolerance):
                 msg = 'Door "{}" is not coplanar or fully bounded by its parent ' \
-                    'Face "{}".'.format(dr.identifier, self.identifier)
+                    'Face "{}".'.format(dr.full_id, self.full_id)
                 msgs.append(msg)
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
@@ -1074,7 +1084,7 @@ class Face(_BaseWithShade):
         try:
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
-            msg = 'Face "{}" is not planar.\n{}'.format(self.identifier, e)
+            msg = 'Face "{}" is not planar.\n{}'.format(self.full_id, e)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -1088,7 +1098,7 @@ class Face(_BaseWithShade):
                 intersects with itself. Default: True.
         """
         if self.geometry.is_self_intersecting:
-            msg = 'Face "{}" has self-intersecting edges.'.format(self.identifier)
+            msg = 'Face "{}" has self-intersecting edges.'.format(self.full_id)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -1106,7 +1116,7 @@ class Face(_BaseWithShade):
         """
         if self.area < tolerance:
             msg = 'Face "{}" geometry is too small. Area must be at least {}. ' \
-                'Got {}.'.format(self.identifier, tolerance, self.area)
+                'Got {}.'.format(self.full_id, tolerance, self.area)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -1147,7 +1157,8 @@ class Face(_BaseWithShade):
         base['geometry'] = self._geometry.to_dict(False, enforce_upper_left)
 
         base['face_type'] = self.type.name
-        if isinstance(self.boundary_condition, Outdoors) and 'energy' in base['properties']:
+        if isinstance(self.boundary_condition, Outdoors) and \
+                'energy' in base['properties']:
             base['boundary_condition'] = self.boundary_condition.to_dict(full=True)
         else:
             base['boundary_condition'] = self.boundary_condition.to_dict()

@@ -101,7 +101,8 @@ class Door(_BaseWithShade):
         return door
 
     @classmethod
-    def from_vertices(cls, identifier, vertices, boundary_condition=None, is_glass=False):
+    def from_vertices(cls, identifier, vertices, boundary_condition=None,
+                      is_glass=False):
         """Create a Door from vertices with each vertex as an iterable of 3 floats.
 
         Args:
@@ -395,7 +396,12 @@ class Door(_BaseWithShade):
                 at which point the vertex is considered colinear. Default: 0.01,
                 suitable for objects in meters.
         """
-        self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        try:
+            self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        except AssertionError as e:  # usually a sliver face of some kind
+            raise ValueError(
+                'Door "{}" is invalid with dimensions less than the '
+                'tolerance.\n{}'.format(self.full_id, e))
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Door's vertices lie within the same plane.
@@ -410,7 +416,7 @@ class Door(_BaseWithShade):
         try:
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
-            msg = 'Door "{}" is not planar.\n{}'.format(self.identifier, e)
+            msg = 'Door "{}" is not planar.\n{}'.format(self.full_id, e)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -424,7 +430,7 @@ class Door(_BaseWithShade):
                 intersects with itself. Default: True.
         """
         if self.geometry.is_self_intersecting:
-            msg = 'Door "{}" has self-intersecting edges.'.format(self.identifier)
+            msg = 'Door "{}" has self-intersecting edges.'.format(self.full_id)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -442,7 +448,7 @@ class Door(_BaseWithShade):
         """
         if self.area < tolerance:
             msg = 'Door "{}" geometry is too small. Area must be at least {}. ' \
-                'Got {}.'.format(self.identifier, tolerance, self.area)
+                'Got {}.'.format(self.full_id, tolerance, self.area)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -498,7 +504,8 @@ class Door(_BaseWithShade):
             self._parent._punched_geometry = None
 
     def __copy__(self):
-        new_door = Door(self.identifier, self.geometry, self.boundary_condition, self.is_glass)
+        new_door = Door(self.identifier, self.geometry, self.boundary_condition,
+                        self.is_glass)
         new_door._display_name = self.display_name
         new_door._user_data = None if self.user_data is None else self.user_data.copy()
         self._duplicate_child_shades(new_door)

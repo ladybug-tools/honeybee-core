@@ -101,12 +101,13 @@ class Aperture(_BaseWithShade):
         return aperture
 
     @classmethod
-    def from_vertices(cls, identifier, vertices, boundary_condition=None, is_operable=False):
+    def from_vertices(cls, identifier, vertices, boundary_condition=None,
+                      is_operable=False):
         """Create an Aperture from vertices with each vertex as an iterable of 3 floats.
 
         Args:
-            identifier: Text string for a unique Aperture ID. Must be < 100 characters and
-                not contain any spaces or special characters.
+            identifier: Text string for a unique Aperture ID. Must be < 100 characters
+                and not contain any spaces or special characters.
             vertices: A flattened list of 3 or more vertices as (x, y, z).
             boundary_condition: Boundary condition object (eg. Outdoors, Surface).
                 Default: Outdoors.
@@ -585,7 +586,12 @@ class Aperture(_BaseWithShade):
                 at which point the vertex is considered colinear. Default: 0.01,
                 suitable for objects in meters.
         """
-        self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        try:
+            self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        except AssertionError as e:  # usually a sliver face of some kind
+            raise ValueError(
+                'Aperture "{}" is invalid with dimensions less than the '
+                'tolerance.\n{}'.format(self.full_id, e))
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Aperture's vertices lie within the same plane.
@@ -600,7 +606,7 @@ class Aperture(_BaseWithShade):
         try:
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
-            msg = 'Aperture "{}" is not planar.\n{}'.format(self.identifier, e)
+            msg = 'Aperture "{}" is not planar.\n{}'.format(self.full_id, e)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -614,7 +620,7 @@ class Aperture(_BaseWithShade):
                 intersects with itself. Default: True.
         """
         if self.geometry.is_self_intersecting:
-            msg = 'Aperture "{}" has self-intersecting edges.'.format(self.identifier)
+            msg = 'Aperture "{}" has self-intersecting edges.'.format(self.full_id)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -632,7 +638,7 @@ class Aperture(_BaseWithShade):
         """
         if self.area < tolerance:
             msg = 'Aperture "{}" geometry is too small. Area must be at least {}. ' \
-                'Got {}.'.format(self.identifier, tolerance, self.area)
+                'Got {}.'.format(self.full_id, tolerance, self.area)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -672,7 +678,8 @@ class Aperture(_BaseWithShade):
         enforce_upper_left = True if 'energy' in base['properties'] else False
         base['geometry'] = self._geometry.to_dict(False, enforce_upper_left)
         base['is_operable'] = self.is_operable
-        if isinstance(self.boundary_condition, Outdoors) and 'energy' in base['properties']:
+        if isinstance(self.boundary_condition, Outdoors) and \
+                'energy' in base['properties']:
             base['boundary_condition'] = self.boundary_condition.to_dict(full=True)
         else:
             base['boundary_condition'] = self.boundary_condition.to_dict()
