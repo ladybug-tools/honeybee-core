@@ -262,7 +262,12 @@ class Shade(_Base):
                 at which point the vertex is considered colinear. Default: 0.01,
                 suitable for objects in meters.
         """
-        self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        try:
+            self._geometry = self.geometry.remove_colinear_vertices(tolerance)
+        except AssertionError as e:  # usually a sliver face of some kind
+            raise ValueError(
+                'Shade "{}" is invalid with dimensions less than the '
+                'tolerance.\n{}'.format(self.full_id, e))
 
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check whether all of the Shade's vertices lie within the same plane.
@@ -277,7 +282,7 @@ class Shade(_Base):
         try:
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
-            msg = 'Shade "{}" is not planar.\n{}'.format(self.identifier, e)
+            msg = 'Shade "{}" is not planar.\n{}'.format(self.full_id, e)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -291,7 +296,7 @@ class Shade(_Base):
                 intersects with itself. Default: True.
         """
         if self.geometry.is_self_intersecting:
-            msg = 'Shade "{}" has self-intersecting edges.'.format(self.identifier)
+            msg = 'Shade "{}" has self-intersecting edges.'.format(self.full_id)
             if raise_exception:
                 raise ValueError(msg)
             return msg
@@ -309,7 +314,7 @@ class Shade(_Base):
         """
         if self.area < tolerance:
             msg = 'Shade "{}" geometry is too small. Area must be at least {}. ' \
-                'Got {}.'.format(self.identifier, tolerance, self.area)
+                'Got {}.'.format(self.full_id, tolerance, self.area)
             if raise_exception:
                 raise ValueError(msg)
             return msg

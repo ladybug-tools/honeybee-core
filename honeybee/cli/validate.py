@@ -2,19 +2,10 @@
 import click
 import sys
 import logging
-import json
 
 from honeybee.model import Model
 
 _logger = logging.getLogger(__name__)
-
-try:
-    import honeybee_schema.model as schema_model
-except ImportError:
-    _logger.exception(
-        'honeybee_schema is not installed and validation commands are unavailable.\n'
-        'You must use Python 3.7 or above to run validation commands.'
-    )
 
 
 @click.group(help='Commands for validating Honeybee JSON files.')
@@ -38,7 +29,7 @@ def validate_model(model_json, output_file):
     Args:
         model_json: Full path to a Model JSON file.
     """
-    try:        
+    try:
         # re-serialize the Model to make sure no errors are found in re-serialization
         click.echo('Validating Model JSON ...')
         parsed_model = Model.from_hbjson(model_json)
@@ -46,9 +37,6 @@ def validate_model(model_json, output_file):
         # perform several other checks for geometry rules and others
         report = parsed_model.check_all(raise_exception=False)
         click.echo('Model geometry and identifier checks completed.')
-        # lastly, check the JSON against the OpenAPI specification to get any last errors
-        schema_model.Model.parse_file(model_json)
-        click.echo('Pydantic validation passed.')
         # check the report and write the summary of errors
         if report == '':
             output_file.write('Congratulations! Your Model JSON is valid!')

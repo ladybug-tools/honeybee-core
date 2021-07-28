@@ -983,7 +983,10 @@ class Model(_Base):
         # remove colinear vertices to ensure that this doesn't create faces with 2 edges
         # this is a requirement for energy simulation
         for room in self.rooms:
-            room.remove_colinear_vertices_envelope(tol)
+            try:
+                room.remove_colinear_vertices_envelope(tol)
+            except ValueError as e:
+                msgs.append(str(e))
         # check the extension attributes
         msgs.extend(self._properties._check_extension_attr())
         # output a final report of errors or raise an exception
@@ -1020,24 +1023,25 @@ class Model(_Base):
         face_bc_ids = []
         ap_bc_ids = []
         door_bc_ids = []
+        sr = []
         for room in self._rooms:
             for face in room._faces:
                 if isinstance(face.boundary_condition, Surface):
-                    self._self_adj_check(face, face_bc_ids)
+                    sr.append(self._self_adj_check(face, face_bc_ids, raise_exception))
                     for ap in face.apertures:
                         assert isinstance(ap.boundary_condition, Surface), \
                             'Aperture "{}" must have Surface boundary condition ' \
-                            'if the parent Face has a Surface BC.'.format(ap.identifier)
-                        self._self_adj_check(ap, ap_bc_ids)
+                            'if the parent Face has a Surface BC.'.format(ap.full_id)
+                        sr.append(self._self_adj_check(ap, ap_bc_ids, raise_exception))
                     for dr in face.doors:
                         assert isinstance(dr.boundary_condition, Surface), \
                             'Door "{}" must have Surface boundary condition ' \
-                            'if the parent Face has a Surface BC.'.format(dr.identifier)
-                        self._self_adj_check(dr, door_bc_ids)
+                            'if the parent Face has a Surface BC.'.format(dr.full_id)
+                        sr.append(self._self_adj_check(dr, door_bc_ids, raise_exception))
         mf = self._missing_adj_check(self.faces_by_identifier, face_bc_ids, 'Face')
         ma = self._missing_adj_check(self.apertures_by_identifier, ap_bc_ids, 'Aperture')
         md = self._missing_adj_check(self.doors_by_identifier, door_bc_ids, 'Door')
-        msg = '\n'.join([m for m in (mf, ma, md) if m != ''])
+        msg = '\n'.join([m for m in sr + [mf, ma, md] if m != ''])
         if msg != '' and raise_exception:
             raise ValueError(msg)
         return msg
@@ -1052,7 +1056,7 @@ class Model(_Base):
             if isinstance(face.type, AirBoundary) and not \
                     isinstance(face.boundary_condition, Surface):
                 msg = 'Face "{}" is an AirBoundary but is not adjacent ' \
-                      'to another Face.'.format(face.identifier)
+                      'to another Face.'.format(face.full_id)
                 msgs.append(msg)
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
@@ -1600,12 +1604,17 @@ class Model(_Base):
         return conversion_factor_to_meters(units)
 
     @staticmethod
-    def _self_adj_check(hb_obj, bc_ids):
+    def _self_adj_check(hb_obj, bc_ids, raise_exception):
         """Check that an adjacent object is referencing itself."""
         bc_obj = hb_obj.boundary_condition.boundary_condition_object
         bc_ids.append(bc_obj)
-        assert hb_obj.identifier != bc_obj, '"{}" cannot reference ' \
-            'itself in its Surface boundary condition.'.format(bc_obj)
+        if hb_obj.identifier == bc_obj:
+            msg = '"{}" cannot reference itself in its Surface boundary ' \
+                'condition.'.format(hb_obj.full_id)
+            if raise_exception:
+                raise ValueError(msg)
+            return msg
+        return ''
 
     @staticmethod
     def _missing_adj_check(id_checking_function, bc_ids, obj_name='Face'):

@@ -13,6 +13,7 @@ class _Base(object):
     Properties:
         * identifier
         * display_name
+        * full_id
         * user_data
     """
     __slots__ = ('_identifier', '_display_name', '_properties', '_user_data')
@@ -52,6 +53,21 @@ class _Base(object):
             self._display_name = str(value)
         except UnicodeEncodeError:  # Python 2 machine lacking the character set
             self._display_name = value  # keep it as unicode
+
+    @property
+    def full_id(self):
+        """Get a string with both the object display_name and identifier.
+
+        This is formatted as display_name[identifier].
+
+        This is useful in error messages to give users an easy means of finding
+        invalid objects within models. If there is no display_name assigned,
+        only the identifier will be returned.
+        """
+        if self._display_name is None:
+            return self._identifier
+        else:
+            return '{}[{}]'.format(self._display_name, self._identifier)
 
     @property
     def properties(self):

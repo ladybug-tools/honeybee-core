@@ -131,8 +131,9 @@ class Room(_BaseWithShade):
         assert data['type'] == 'Room', 'Expected Room dictionary. ' \
             'Got {}.'.format(data['type'])
 
-        room = cls(data['identifier'], [Face.from_dict(f_dict) for f_dict in data['faces']],
-                   tolerance, angle_tolerance)
+        # create the room object and assing properties
+        faces = [Face.from_dict(f_dict) for f_dict in data['faces']]
+        room = cls(data['identifier'], faces, tolerance, angle_tolerance)
         if 'display_name' in data and data['display_name'] is not None:
             room.display_name = data['display_name']
         if 'user_data' in data and data['user_data'] is not None:
@@ -337,7 +338,8 @@ class Room(_BaseWithShade):
         """Get the combined area of all exterior apertures on the room."""
         ap_areas = 0
         for face in self._faces:
-            if isinstance(face.boundary_condition, Outdoors) and len(face._apertures) > 0:
+            if isinstance(face.boundary_condition, Outdoors) and \
+                    len(face._apertures) > 0:
                 ap_areas += sum(ap.area for ap in face._apertures)
         return ap_areas
 
@@ -692,12 +694,16 @@ class Room(_BaseWithShade):
                 at which point the vertex is considered colinear. Default: 0.01,
                 suitable for objects in meters.
         """
-        for face in self._faces:
-            face.remove_colinear_vertices(tolerance)
-            for ap in face._apertures:
-                ap.remove_colinear_vertices(tolerance)
-            for dr in face._doors:
-                dr.remove_colinear_vertices(tolerance)
+        try:
+            for face in self._faces:
+                face.remove_colinear_vertices(tolerance)
+                for ap in face._apertures:
+                    ap.remove_colinear_vertices(tolerance)
+                for dr in face._doors:
+                    dr.remove_colinear_vertices(tolerance)
+        except ValueError as e:
+            raise ValueError(
+                'Room "{}" contains invalid geometry.\n{}'.format(self.full_id, e))
         if self._geometry is not None:
             self._geometry = Polyface3D.from_faces(
                 tuple(face.geometry for face in self._faces), tolerance)
@@ -726,7 +732,7 @@ class Room(_BaseWithShade):
         if self.geometry.is_solid:
             return ''
         msg = 'Room "{}" is not closed to within {} tolerance and {} angle ' \
-            'tolerance.'.format(self.identifier, tolerance, angle_tolerance)
+            'tolerance.'.format(self.full_id, tolerance, angle_tolerance)
         if raise_exception:
             raise ValueError(msg)
         return msg
