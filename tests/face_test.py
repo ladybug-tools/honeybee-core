@@ -652,14 +652,14 @@ def test_check_self_intersecting():
     face_3 = Face('Wall3', Face3D(pts_1, plane_2))
     face_4 = Face('Wall4', Face3D(pts_2, plane_2))
 
-    assert face_1.check_self_intersecting(False) == ''
-    assert face_2.check_self_intersecting(False) != ''
+    assert face_1.check_self_intersecting(0.01, False) == ''
+    assert face_2.check_self_intersecting(0.01, False) != ''
     with pytest.raises(Exception):
-        assert face_2.check_self_intersecting(True)
-    assert face_3.check_self_intersecting(False) == ''
-    assert face_4.check_self_intersecting(False) != ''
+        assert face_2.check_self_intersecting(0.01, True)
+    assert face_3.check_self_intersecting(0.01, False) == ''
+    assert face_4.check_self_intersecting(0.01, False) != ''
     with pytest.raises(Exception):
-        assert face_4.check_self_intersecting(True)
+        assert face_4.check_self_intersecting(0.01, True)
 
 
 def test_check_non_zero():

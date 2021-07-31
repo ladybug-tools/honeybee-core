@@ -976,7 +976,7 @@ class Model(_Base):
         tol = self.tolerance
         ang_tol = self.angle_tolerance
         # perform several checks for key geometry rules
-        msgs.append(self.check_self_intersecting(False))
+        msgs.append(self.check_self_intersecting(tol, False))
         msgs.append(self.check_planar(tol, False))
         msgs.append(self.check_sub_faces_valid(tol, ang_tol, False))
         msgs.append(self.check_rooms_solid(tol, ang_tol, False))
@@ -1143,24 +1143,27 @@ class Model(_Base):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_self_intersecting(self, raise_exception=True):
+    def check_self_intersecting(self, tolerance=0.01, raise_exception=True):
         """Check that no edges of the Model's geometry components self-intersect.
 
         This includes all of the Model's Faces, Apertures, Doors and Shades.
 
         Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
             raise_exception: If True, a ValueError will be raised if an object
                 intersects with itself (like a bowtie). Default: True.
         """
         msgs = []
         for face in self.faces:
-            msgs.append(face.check_self_intersecting(raise_exception))
+            msgs.append(face.check_self_intersecting(tolerance, raise_exception=False))
         for shd in self.shades:
-            msgs.append(shd.check_self_intersecting(raise_exception))
+            msgs.append(shd.check_self_intersecting(tolerance, raise_exception=False))
         for ap in self.apertures:
-            msgs.append(ap.check_self_intersecting(raise_exception))
+            msgs.append(ap.check_self_intersecting(tolerance, raise_exception=False))
         for dr in self.doors:
-            msgs.append(dr.check_self_intersecting(raise_exception))
+            msgs.append(dr.check_self_intersecting(tolerance, raise_exception=False))
         full_msgs = [msg for msg in msgs if msg != '']
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:

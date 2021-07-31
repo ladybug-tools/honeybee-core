@@ -792,26 +792,32 @@ class Room(_BaseWithShade):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_self_intersecting(self, raise_exception=True):
+    def check_self_intersecting(self, tolerance=0.01, raise_exception=True):
         """Check that no edges of the Room's geometry components self-intersect.
 
         This includes all of the Room's Faces, Apertures, Doors and Shades.
 
         Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
             raise_exception: If True, a ValueError will be raised if an object
                 intersects with itself (like a bowtie). Default: True.
         """
-        msgs = [self._check_self_intersecting_shades()]
+        msgs = [self._check_self_intersecting_shades(tolerance)]
         for face in self._faces:
-            msgs.append(face.check_self_intersecting(False))
-            msgs.append(face._check_self_intersecting_shades())
+            msgs.append(face.check_self_intersecting(tolerance, False))
+            msgs.append(face._check_self_intersecting_shades(tolerance))
             for ap in face._apertures:
-                msgs.append(ap.check_self_intersecting(False))
-                msgs.append(ap._check_self_intersecting_shades())
+                msgs.append(ap.check_self_intersecting(tolerance, False))
+                msgs.append(ap._check_self_intersecting_shades(tolerance))
             for dr in face._doors:
-                msgs.append(dr.check_self_intersecting(False))
-                msgs.append(dr._check_self_intersecting_shades())
+                msgs.append(dr.check_self_intersecting(tolerance, False))
+                msgs.append(dr._check_self_intersecting_shades(tolerance))
         full_msgs = [msg for msg in msgs if msg != '']
+        if len(full_msgs) != 0:
+            rm_mg = 'Room "{}" contains self-intersecting geometry.'.format(self.full_id)
+            full_msgs.insert(0, rm_mg)
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)

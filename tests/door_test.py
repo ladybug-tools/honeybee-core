@@ -284,14 +284,14 @@ def test_check_self_intersecting():
     door_3 = Door('Door3', Face3D(pts_1, plane_2))
     door_4 = Door('Door4', Face3D(pts_2, plane_2))
 
-    assert door_1.check_self_intersecting(False) == ''
-    assert door_2.check_self_intersecting(False) != ''
+    assert door_1.check_self_intersecting(0.01, False) == ''
+    assert door_2.check_self_intersecting(0.01, False) != ''
     with pytest.raises(Exception):
-        assert door_2.check_self_intersecting(True)
-    assert door_3.check_self_intersecting(False) == ''
-    assert door_4.check_self_intersecting(False) != ''
+        assert door_2.check_self_intersecting(0.01, True)
+    assert door_3.check_self_intersecting(0.01, False) == ''
+    assert door_4.check_self_intersecting(0.01, False) != ''
     with pytest.raises(Exception):
-        assert door_4.check_self_intersecting(True)
+        assert door_4.check_self_intersecting(0.01, True)
 
 
 def test_check_non_zero():

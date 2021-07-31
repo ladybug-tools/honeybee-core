@@ -202,20 +202,20 @@ class _BaseWithShade(_Base):
             msgs.append(ishd.check_planar(tolerance, False))
         return '\n'.join([m for m in msgs if m != ''])
 
-    def _check_self_intersecting_shades(self,):
+    def _check_self_intersecting_shades(self, tolerance):
         """Check that no edges of the indoor or outdoor shades self-intersect."""
         msgs = []
         for oshd in self._outdoor_shades:
-            msgs.append(oshd.check_self_intersecting(False))
+            msgs.append(oshd.check_self_intersecting(tolerance, False))
         for ishd in self._indoor_shades:
-            msgs.append(ishd.check_self_intersecting(False))
+            msgs.append(ishd.check_self_intersecting(tolerance, False))
         return '\n'.join([m for m in msgs if m != ''])
 
     def _check_non_zero_shades(self, tolerance=0.0001):
         """Check that the indoor or outdoor shades are above a "zero" area tolerance."""
         msgs = []
         for oshd in self._outdoor_shades:
-           msgs.append(oshd.check_non_zero(tolerance, False))
+            msgs.append(oshd.check_non_zero(tolerance, False))
         for ishd in self._indoor_shades:
             msgs.append(ishd.check_non_zero(tolerance, False))
         return '\n'.join([m for m in msgs if m != ''])

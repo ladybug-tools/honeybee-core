@@ -797,10 +797,10 @@ def test_check_self_intersecting():
 
     model_1 = Model('SouthHouse', [room_1])
     model_2 = Model('NorthHouse', [room_2])
-    assert model_1.check_self_intersecting(False) == ''
-    assert model_2.check_self_intersecting(False) != ''
+    assert model_1.check_self_intersecting(0.01, False) == ''
+    assert model_2.check_self_intersecting(0.01, False) != ''
     with pytest.raises(ValueError):
-        model_2.check_self_intersecting(True)
+        model_2.check_self_intersecting(0.01, True)
 
 
 def test_check_non_zero():
