@@ -1156,13 +1156,15 @@ class Model(_Base):
                 intersects with itself (like a bowtie). Default: True.
         """
         msgs = []
-        for face in self.faces:
+        for room in self.rooms:
+            msgs.append(room.check_self_intersecting(tolerance, raise_exception=False))
+        for face in self.orphaned_faces:
             msgs.append(face.check_self_intersecting(tolerance, raise_exception=False))
-        for shd in self.shades:
+        for shd in self.orphaned_shades:
             msgs.append(shd.check_self_intersecting(tolerance, raise_exception=False))
-        for ap in self.apertures:
+        for ap in self.orphaned_apertures:
             msgs.append(ap.check_self_intersecting(tolerance, raise_exception=False))
-        for dr in self.doors:
+        for dr in self.orphaned_doors:
             msgs.append(dr.check_self_intersecting(tolerance, raise_exception=False))
         full_msgs = [msg for msg in msgs if msg != '']
         full_msg = '\n'.join(full_msgs)
