@@ -422,15 +422,27 @@ class Door(_BaseWithShade):
             return msg
         return ''
 
-    def check_self_intersecting(self, raise_exception=True):
+    def check_self_intersecting(self, tolerance=0.01, raise_exception=True):
         """Check whether the edges of the Door intersect one another (like a bowtie).
 
+        Note that objects that have duplicate vertices will not be considered
+        self-intersecting and are valid in honeybee.
+
         Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
             raise_exception: If True, a ValueError will be raised if the object
                 intersects with itself. Default: True.
         """
         if self.geometry.is_self_intersecting:
             msg = 'Door "{}" has self-intersecting edges.'.format(self.full_id)
+            try:  # see if it is self-intersecting because of a duplicate vertex
+                new_geo = self.geometry.remove_colinear_vertices(tolerance)
+                if not new_geo.is_self_intersecting:
+                    return ''  # removing the duplicate vertex makes it self-intersecting
+            except AssertionError:
+                pass  # zero area face; treat it as self-intersecting
             if raise_exception:
                 raise ValueError(msg)
             return msg

@@ -244,14 +244,14 @@ def test_check_self_intersecting():
     shade_3 = Shade('shade3', Face3D(pts_1, plane_2))
     shade_4 = Shade('shade4', Face3D(pts_2, plane_2))
 
-    assert shade_1.check_self_intersecting(False) == ''
-    assert shade_2.check_self_intersecting(False) != ''
+    assert shade_1.check_self_intersecting(0.01, False) == ''
+    assert shade_2.check_self_intersecting(0.01, False) != ''
     with pytest.raises(Exception):
-        assert shade_2.check_self_intersecting(True)
-    assert shade_3.check_self_intersecting(False) == ''
-    assert shade_4.check_self_intersecting(False) != ''
+        assert shade_2.check_self_intersecting(0.01, True)
+    assert shade_3.check_self_intersecting(0.01, False) == ''
+    assert shade_4.check_self_intersecting(0.01, False) != ''
     with pytest.raises(Exception):
-        assert shade_4.check_self_intersecting(True)
+        assert shade_4.check_self_intersecting(0.01, True)
 
 
 def test_check_non_zero():

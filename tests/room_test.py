@@ -489,8 +489,8 @@ def test_check_self_intersecting():
     room_2 = Room('ZoneSHOE_BOX920980',
                   [face_1, face_2, face_3, face_4, face_5, face_7, face_8], 0.01, 1)
 
-    assert room_1.check_self_intersecting(False) == ''
-    assert room_2.check_self_intersecting(False) != ''
+    assert room_1.check_self_intersecting(0.01, False) == ''
+    assert room_2.check_self_intersecting(0.01, False) != ''
 
 
 def test_check_non_zero():

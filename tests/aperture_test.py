@@ -383,14 +383,14 @@ def test_check_self_intersecting():
     aperture_3 = Aperture('Window3', Face3D(pts_1, plane_2))
     aperture_4 = Aperture('Window4', Face3D(pts_2, plane_2))
 
-    assert aperture_1.check_self_intersecting(False) == ''
-    assert aperture_2.check_self_intersecting(False) != ''
+    assert aperture_1.check_self_intersecting(0.01, False) == ''
+    assert aperture_2.check_self_intersecting(0.01, False) != ''
     with pytest.raises(Exception):
-        assert aperture_2.check_self_intersecting(True)
-    assert aperture_3.check_self_intersecting(False) == ''
-    assert aperture_4.check_self_intersecting(False) != ''
+        assert aperture_2.check_self_intersecting(0.01, True)
+    assert aperture_3.check_self_intersecting(0.01, False) == ''
+    assert aperture_4.check_self_intersecting(0.01, False) != ''
     with pytest.raises(Exception):
-        assert aperture_4.check_self_intersecting(True)
+        assert aperture_4.check_self_intersecting(0.01, True)
 
 
 def test_check_non_zero():
