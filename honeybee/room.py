@@ -703,7 +703,8 @@ class Room(_BaseWithShade):
                     dr.remove_colinear_vertices(tolerance)
         except ValueError as e:
             raise ValueError(
-                'Room "{}" contains invalid geometry.\n{}'.format(self.full_id, e))
+                'Room "{}" contains invalid geometry.\n  {}'.format(
+                    self.full_id, str(e).replace('\n', '\n  ')))
         if self._geometry is not None:
             self._geometry = Polyface3D.from_faces(
                 tuple(face.geometry for face in self._faces), tolerance)
@@ -732,7 +733,9 @@ class Room(_BaseWithShade):
         if self.geometry.is_solid:
             return ''
         msg = 'Room "{}" is not closed to within {} tolerance and {} angle ' \
-            'tolerance.'.format(self.full_id, tolerance, angle_tolerance)
+            'tolerance.\n  {} naked edges found\n  {} non-manifold edges found'.format(
+                self.full_id, tolerance, angle_tolerance,
+                len(self._geometry.naked_edges), len(self._geometry.non_manifold_edges))
         if raise_exception:
             raise ValueError(msg)
         return msg
@@ -759,7 +762,10 @@ class Room(_BaseWithShade):
             msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False)
             if msg != '':
                 msgs.append(msg)
-        full_msg = '\n'.join(msgs)
+        if len(msgs) == 0:
+            return ''
+        full_msg = 'Room "{}" contains invalid sub-faces (Apertures and Doors).' \
+            '\n  {}'.format(self.full_id, '\n  '.join(msgs))
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
@@ -787,7 +793,10 @@ class Room(_BaseWithShade):
                 msgs.append(dr.check_planar(tolerance, False))
                 msgs.append(dr._check_planar_shades(tolerance))
         full_msgs = [msg for msg in msgs if msg != '']
-        full_msg = '\n'.join(full_msgs)
+        if len(full_msgs) == 0:
+            return ''
+        full_msg = 'Room "{}" contains non-planar geometry.' \
+            '\n  {}'.format(self.full_id, '\n  '.join(full_msgs))
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
@@ -815,10 +824,10 @@ class Room(_BaseWithShade):
                 msgs.append(dr.check_self_intersecting(tolerance, False))
                 msgs.append(dr._check_self_intersecting_shades(tolerance))
         full_msgs = [msg for msg in msgs if msg != '']
-        if len(full_msgs) != 0:
-            rm_mg = 'Room "{}" contains self-intersecting geometry.'.format(self.full_id)
-            full_msgs.insert(0, rm_mg)
-        full_msg = '\n'.join(full_msgs)
+        if len(full_msgs) == 0:
+            return ''
+        full_msg = 'Room "{}" contains self-intersecting geometry.' \
+            '\n  {}'.format(self.full_id, '\n  '.join(full_msgs))
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
@@ -846,7 +855,10 @@ class Room(_BaseWithShade):
                 msgs.append(dr.check_non_zero(tolerance, False))
                 msgs.append(dr._check_non_zero_shades(tolerance))
         full_msgs = [msg for msg in msgs if msg != '']
-        full_msg = '\n'.join(full_msgs)
+        if len(full_msgs) == 0:
+            return ''
+        full_msg = 'Room "{}" contains zero area geometry.' \
+            '\n  {}'.format(self.full_id, '\n  '.join(full_msgs))
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg

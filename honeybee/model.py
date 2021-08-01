@@ -975,18 +975,18 @@ class Model(_Base):
             'Model must have a non-zero angle_tolerance to perform geometry checks.'
         tol = self.tolerance
         ang_tol = self.angle_tolerance
-        # perform several checks for key geometry rules
+        # perform several checks for Face3D geometry rules
         msgs.append(self.check_self_intersecting(tol, False))
         msgs.append(self.check_planar(tol, False))
-        msgs.append(self.check_sub_faces_valid(tol, ang_tol, False))
-        msgs.append(self.check_rooms_solid(tol, ang_tol, False))
-        # remove colinear vertices to ensure that this doesn't create faces with 2 edges
-        # this is a requirement for energy simulation
+        # remove colinear vertices to ensure that this doesn't create faces with <3 edges
         for room in self.rooms:
             try:
                 room.remove_colinear_vertices_envelope(tol)
             except ValueError as e:
                 msgs.append(str(e))
+        # perform geometry checks related to parent-child relationships
+        msgs.append(self.check_sub_faces_valid(tol, ang_tol, False))
+        msgs.append(self.check_rooms_solid(tol, ang_tol, False))
         # check the extension attributes
         msgs.extend(self._properties._check_extension_attr())
         # output a final report of errors or raise an exception
