@@ -10,7 +10,7 @@ except ImportError:  # wea re in cPython
 
 from ._base import _Base
 from .units import conversion_factor_to_meters, UNITS, UNITS_TOLERANCES
-from .checkdup import check_duplicate_identifiers
+from .checkdup import check_duplicate_identifiers, check_duplicate_identifiers_parent
 from .properties import ModelProperties
 from .room import Room
 from .face import Face
@@ -1002,11 +1002,11 @@ class Model(_Base):
 
     def check_duplicate_face_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Face identifiers in the model."""
-        return check_duplicate_identifiers(self.faces, raise_exception, 'Face')
+        return check_duplicate_identifiers_parent(self.faces, raise_exception, 'Face')
 
     def check_duplicate_shade_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Shade identifiers in the model."""
-        return check_duplicate_identifiers(self.shades, raise_exception, 'Shade')
+        return check_duplicate_identifiers_parent(self.shades, raise_exception, 'Shade')
 
     def check_duplicate_sub_face_identifiers(self, raise_exception=True):
         """Check that there are no duplicate sub-face identifiers in the model.
@@ -1015,7 +1015,7 @@ class Model(_Base):
         are counted together by EnergyPlus.
         """
         sub_faces = self.apertures + self.doors
-        return check_duplicate_identifiers(sub_faces, raise_exception, 'sub-face')
+        return check_duplicate_identifiers_parent(sub_faces, raise_exception, 'sub-face')
 
     def check_missing_adjacencies(self, raise_exception=True):
         """Check that all Faces Apertures, and Doors have adjacent objects in the model.

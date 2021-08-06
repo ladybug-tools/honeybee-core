@@ -256,6 +256,7 @@ def test_apertures_and_shades():
     assert len(room.indoor_shades) == 0
     room.remove_outdoor_shades()
     assert len(room.outdoor_shades) == 0
+    assert isinstance(south_face.apertures[0].top_level_parent, Room)
 
     room.add_indoor_shade(Shade('Table', table_geo))
     room.add_outdoor_shade(Shade('TreeCanopy', tree_canopy_geo))
@@ -263,6 +264,7 @@ def test_apertures_and_shades():
     assert len(room.outdoor_shades) == 1
     assert room.indoor_shades[0].has_parent
     assert room.outdoor_shades[0].has_parent
+    assert isinstance(room.shades[0].top_level_parent, Room)
     room.remove_shades()
     assert len(room.indoor_shades) == 0
     assert len(room.outdoor_shades) == 0
