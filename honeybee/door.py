@@ -36,6 +36,7 @@ class Door(_BaseWithShade):
         * indoor_shades
         * outdoor_shades
         * parent
+        * top_level_parent
         * has_parent
         * geometry
         * vertices
@@ -150,6 +151,20 @@ class Door(_BaseWithShade):
     def parent(self):
         """Get the parent Face if assigned. None if not assigned."""
         return self._parent
+
+    @property
+    def top_level_parent(self):
+        """Get the top-level parent object if assigned.
+
+        This will be a Room if there is a parent Face that has a parent Room and
+        will be a Face if the parent Face is orphaned. Will be None if no parent
+        is assigned.
+        """
+        if self.has_parent:
+            if self._parent.has_parent:
+                return self._parent._parent
+            return self._parent
+        return None
 
     @property
     def has_parent(self):

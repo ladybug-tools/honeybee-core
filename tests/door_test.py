@@ -31,6 +31,7 @@ def test_door_init():
     assert door.perimeter == 8
     assert isinstance(door.boundary_condition, Outdoors)
     assert not door.has_parent
+    assert door.top_level_parent is None
 
 
 def test_door_from_vertices():

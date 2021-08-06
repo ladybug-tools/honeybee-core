@@ -29,6 +29,7 @@ class Shade(_Base):
         * display_name
         * is_detached
         * parent
+        * top_level_parent
         * has_parent
         * is_indoor
         * geometry
@@ -125,6 +126,21 @@ class Shade(_Base):
         The parent object can be either a Room, Face, Aperture or Door.
         """
         return self._parent
+
+    @property
+    def top_level_parent(self):
+        """Get the top-level parent object if assigned.
+
+        This will be the highest-level parent in the hierarchy of the parent-child
+        chain. Will be None if no parent is assigned.
+        """
+        if self.has_parent:
+            if self._parent.has_parent:
+                if self._parent._parent.has_parent:
+                    return self._parent._parent._parent
+                return self._parent._parent
+            return self._parent
+        return None
 
     @property
     def has_parent(self):

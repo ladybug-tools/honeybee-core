@@ -32,6 +32,7 @@ def test_aperture_init():
     assert isinstance(aperture.boundary_condition, Outdoors)
     assert not aperture.is_operable
     assert not aperture.has_parent
+    assert aperture.top_level_parent is None
 
 
 def test_aperture_from_vertices():

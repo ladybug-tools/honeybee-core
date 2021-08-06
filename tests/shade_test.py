@@ -26,6 +26,7 @@ def test_shade_init():
     assert not shade.has_parent
     assert not shade.is_indoor
     assert not shade.is_detached
+    assert shade.top_level_parent is None
 
 
 def test_shade_from_vertices():
