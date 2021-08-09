@@ -220,24 +220,29 @@ class _BaseWithShade(_Base):
             msgs.append(ishd.check_non_zero(tolerance, False))
         return '\n'.join([m for m in msgs if m != ''])
 
-    def _add_shades_to_dict(self, base, abridged=False, included_prop=None):
+    def _add_shades_to_dict(
+            self, base, abridged=False, included_prop=None, include_plane=True):
         """Method used to add child shades to the parent base dictionary.
 
         Args:
             base: The base object dictionary to which the child shades will be added.
             abridged: Boolean to note whether the extension properties of the
                 object should be included in detail (False) or just referenced by
-                identifier (True). Default: False.
+                identifier (True). (Default: False).
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
+            include_plane: Boolean to note wether the plane of the Face3D should be
+                included in the output. This can preserve the orientation of the
+                X/Y axes of the plane but is not required and can be removed to
+                keep the dictionary smaller. (Default: True).
         """
         if self._outdoor_shades != []:
-            base['outdoor_shades'] = [shd.to_dict(abridged, included_prop)
+            base['outdoor_shades'] = [shd.to_dict(abridged, included_prop, include_plane)
                                       for shd in self._outdoor_shades]
         if self._indoor_shades != []:
-            base['indoor_shades'] = [shd.to_dict(abridged, included_prop)
+            base['indoor_shades'] = [shd.to_dict(abridged, included_prop, include_plane)
                                      for shd in self._indoor_shades]
 
     def _recover_shades_from_dict(self, data):

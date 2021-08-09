@@ -496,31 +496,35 @@ class Door(_BaseWithShade):
         """
         return writer
 
-    def to_dict(self, abridged=False, included_prop=None):
+    def to_dict(self, abridged=False, included_prop=None, include_plane=True):
         """Return Door as a dictionary.
 
         Args:
             abridged: Boolean to note whether the extension properties of the
                 object (ie. materials, constructions) should be included in detail
-                (False) or just referenced by identifier (True). Default: False.
+                (False) or just referenced by identifier (True). (Default: False).
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
+            include_plane: Boolean to note wether the plane of the Face3D should be
+                included in the output. This can preserve the orientation of the
+                X/Y axes of the plane but is not required and can be removed to
+                keep the dictionary smaller. (Default: True).
         """
         base = {'type': 'Door'}
         base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
         enforce_upper_left = True if 'energy' in base['properties'] else False
-        base['geometry'] = self._geometry.to_dict(False, enforce_upper_left)
+        base['geometry'] = self._geometry.to_dict(include_plane, enforce_upper_left)
         base['is_glass'] = self.is_glass
         if isinstance(self.boundary_condition, Outdoors) and \
                 'energy' in base['properties']:
             base['boundary_condition'] = self.boundary_condition.to_dict(full=True)
         else:
             base['boundary_condition'] = self.boundary_condition.to_dict()
-        self._add_shades_to_dict(base, abridged, included_prop)
+        self._add_shades_to_dict(base, abridged, included_prop, include_plane)
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base

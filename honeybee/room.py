@@ -1110,7 +1110,7 @@ class Room(_BaseWithShade):
         """
         return writer
 
-    def to_dict(self, abridged=False, included_prop=None):
+    def to_dict(self, abridged=False, included_prop=None, include_plane=True):
         """Return Room as a dictionary.
 
         Args:
@@ -1121,13 +1121,18 @@ class Room(_BaseWithShade):
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
+            include_plane: Boolean to note wether the planes of the Face3Ds should be
+                included in the output. This can preserve the orientation of the
+                X/Y axes of the planes but is not required and can be removed to
+                keep the dictionary smaller. (Default: True).
         """
         base = {'type': 'Room'}
         base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
-        base['faces'] = [f.to_dict(abridged, included_prop) for f in self._faces]
-        self._add_shades_to_dict(base, abridged, included_prop)
+        base['faces'] = [f.to_dict(abridged, included_prop, include_plane)
+                         for f in self._faces]
+        self._add_shades_to_dict(base, abridged, included_prop, include_plane)
         if self.multiplier != 1:
             base['multiplier'] = self.multiplier
         if self.story is not None:
