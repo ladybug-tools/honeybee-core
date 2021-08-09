@@ -360,7 +360,7 @@ class Shade(_Base):
         """
         return writer
 
-    def to_dict(self, abridged=False, included_prop=None):
+    def to_dict(self, abridged=False, included_prop=None, include_plane=True):
         """Return Shade as a dictionary.
 
         Args:
@@ -371,13 +371,17 @@ class Shade(_Base):
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
+            include_plane: Boolean to note wether the plane of the Face3D should be
+                included in the output. This can preserve the orientation of the
+                X/Y axes of the plane but is not required and can be removed to
+                keep the dictionary smaller. (Default: True).
         """
         base = {'type': 'Shade'}
         base['identifier'] = self.identifier
         base['display_name'] = self.display_name
         base['properties'] = self.properties.to_dict(abridged, included_prop)
         enforce_upper_left = True if 'energy' in base['properties'] else False
-        base['geometry'] = self._geometry.to_dict(False, enforce_upper_left)
+        base['geometry'] = self._geometry.to_dict(include_plane, enforce_upper_left)
         if self.is_detached:
             base['is_detached'] = self.is_detached
         if self.user_data is not None:

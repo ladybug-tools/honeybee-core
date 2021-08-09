@@ -1441,7 +1441,8 @@ class Model(_Base):
         """
         return writer
 
-    def to_dict(self, included_prop=None, triangulate_sub_faces=False):
+    def to_dict(self, included_prop=None, triangulate_sub_faces=False,
+                include_plane=True):
         """Return Model as a dictionary.
 
         Args:
@@ -1456,7 +1457,11 @@ class Model(_Base):
                 since it cannot accept sub-faces with more than 4 vertices. Note that
                 setting this to True will only triangulate sub-faces with parent Faces
                 that also have parent Rooms since orphaned Apertures and Faces are
-                not relevant for energy simulation. Default: False.
+                not relevant for energy simulation. (Default: False).
+            include_plane: Boolean to note wether the planes of the Face3Ds should be
+                included in the output. This can preserve the orientation of the
+                X/Y axes of the planes but is not required and can be removed to
+                keep the dictionary smaller. (Default: True).
         """
         # write all of the geometry objects and their properties
         base = {'type': 'Model'}
@@ -1465,20 +1470,20 @@ class Model(_Base):
         base['units'] = self.units
         base['properties'] = self.properties.to_dict(included_prop)
         if self._rooms != []:
-            base['rooms'] = \
-                [r.to_dict(True, included_prop) for r in self._rooms]
+            base['rooms'] = [r.to_dict(True, included_prop, include_plane)
+                             for r in self._rooms]
         if self._orphaned_faces != []:
-            base['orphaned_faces'] = \
-                [f.to_dict(True, included_prop) for f in self._orphaned_faces]
+            base['orphaned_faces'] = [f.to_dict(True, included_prop, include_plane)
+                                      for f in self._orphaned_faces]
         if self._orphaned_shades != []:
-            base['orphaned_shades'] = \
-                [shd.to_dict(True, included_prop) for shd in self._orphaned_shades]
+            base['orphaned_shades'] = [shd.to_dict(True, included_prop, include_plane)
+                                       for shd in self._orphaned_shades]
         if self._orphaned_apertures != []:
-            base['orphaned_apertures'] = \
-                [ap.to_dict(True, included_prop) for ap in self._orphaned_apertures]
+            base['orphaned_apertures'] = [ap.to_dict(True, included_prop, include_plane)
+                                          for ap in self._orphaned_apertures]
         if self._orphaned_doors != []:
-            base['orphaned_doors'] = \
-                [dr.to_dict(True, included_prop) for dr in self._orphaned_doors]
+            base['orphaned_doors'] = [dr.to_dict(True, included_prop, include_plane)
+                                      for dr in self._orphaned_doors]
         if self.tolerance != 0:
             base['tolerance'] = self.tolerance
         if self.angle_tolerance != 0:
