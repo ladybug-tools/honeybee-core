@@ -1530,12 +1530,13 @@ class Model(_Base):
 
         return base
 
-    def to_hbjson(self, name="unnamed", folder=None, indent=None,
+    def to_hbjson(self, name=None, folder=None, indent=None,
                   included_prop=None, triangulate_sub_faces=False):
         """Write Honeybee model to HBJSON.
 
         Args:
-            name: A text string for the name of the HBJSON file. (Default: "unnamed").
+            name: A text string for the name of the HBJSON file. If None, the model
+                identifier wil be used. (Default: None).
             folder: A text string for the direcotry where the HBJSON will be written.
                 If unspecified, the default simulation folder will be used. This
                 is usually at "C:\\Users\\USERNAME\\simulation."
@@ -1552,13 +1553,15 @@ class Model(_Base):
                 since it cannot accept sub-faces with more than 4 vertices. Note that
                 setting this to True will only triangulate sub-faces with parent Faces
                 that also have parent Rooms since orphaned Apertures and Faces are
-                not relevant for energy simulation. Default: False.
+                not relevant for energy simulation. (Default: False).
         """
         # create dictionary from the Honeybee Model
         hb_dict = self.to_dict(included_prop=included_prop,
                                triangulate_sub_faces=triangulate_sub_faces)
 
         # set up a name and folder for the HBJSON
+        if name is None:
+            name = self.identifier
         file_name = name if name.lower().endswith('.hbjson') or \
             name.lower().endswith('.json') else '{}.hbjson'.format(name)
         folder = folder if folder is not None else folders.default_simulation_folder
@@ -1568,11 +1571,13 @@ class Model(_Base):
             json.dump(hb_dict, fp, indent=indent)
         return hb_file
 
-    def to_hbpkl(self, name="unnamed", folder=None, included_prop=None):
+    def to_hbpkl(self, name=None, folder=None, included_prop=None,
+                 triangulate_sub_faces=False):
         """Write Honeybee model to compressed pickle file (HBpkl).
 
         Args:
-            name: A text string for the name of the pickle file. (Default: "unnamed").
+            name: A text string for the name of the pickle file. If None, the model
+                identifier wil be used. (Default: None).
             folder: A text string for the direcotry where the pickle will be written.
                 If unspecified, the default simulation folder will be used. This
                 is usually at "C:\\Users\\USERNAME\\simulation."
@@ -1580,10 +1585,22 @@ class Model(_Base):
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
                 included. To exclude all the keys from extensions use an empty list.
+            triangulate_sub_faces: Boolean to note whether sub-faces (including
+                Apertures and Doors) should be triangulated if they have more than
+                4 sides (True) or whether they should be left as they are (False).
+                This triangulation is necessary when exporting directly to EnergyPlus
+                since it cannot accept sub-faces with more than 4 vertices. Note that
+                setting this to True will only triangulate sub-faces with parent Faces
+                that also have parent Rooms since orphaned Apertures and Faces are
+                not relevant for energy simulation. (Default: False).
         """
         # create dictionary from the Honeybee Model
-        hb_dict = self.to_dict(included_prop=included_prop)
+        hb_dict = self.to_dict(included_prop=included_prop,
+                               triangulate_sub_faces=triangulate_sub_faces)
+
         # set up a name and folder for the HBpkl
+        if name is None:
+            name = self.identifier
         file_name = name if name.lower().endswith('.hbpkl') or \
             name.lower().endswith('.pkl') else '{}.hbpkl'.format(name)
         folder = folder if folder is not None else folders.default_simulation_folder
