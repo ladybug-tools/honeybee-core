@@ -6,7 +6,7 @@ from ._basewithshade import _BaseWithShade
 from .typing import float_in_range, int_in_range, valid_string, clean_string
 from .properties import RoomProperties
 from .face import Face
-from .facetype import get_type_from_normal, Wall, Floor, RoofCeiling
+from .facetype import AirBoundary, get_type_from_normal, Wall, Floor, RoofCeiling
 from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, \
     boundary_conditions
 from honeybee.orientation import angles_from_num_orient, orient_index
@@ -957,6 +957,55 @@ class Room(_BaseWithShade):
         return adj_faces
 
     @staticmethod
+    def group_by_air_boundary_adjacency(rooms):
+        """Group Rooms together that share air boundaries.
+
+        This is useful for understanding the radiant enclosures that will exist
+        when a model is exported to EnergyPlus.
+
+        Args:
+            rooms: A list of rooms to be grouped by their air boundary adjacency.
+
+        Returns:
+            A list of list with each sub-list containing rooms that share adjacent
+            air boundaries. If a Room has no air boundaries it will the the only
+            item within its sub-list.
+        """
+        # create a room lookup table and duplicate the list of rooms
+        room_lookup = {rm.identifier: rm for rm in rooms}
+        all_rooms = list(rooms)
+        adj_network = []
+
+        # loop through the rooms and find air boundary adjacencies
+        for room in all_rooms:
+            adj_ids = Room._find_adjacent_air_boundary_rooms(room)
+            if len(adj_ids) == 0:  # a room that is its own solar enclosure
+                adj_network.append([room])
+            else:  # there are other adjacent rooms to find
+                local_network = [room]
+                local_ids, first_id = set(adj_ids), room.identifier
+                while len(adj_ids) != 0:
+                    # add the current rooms to the local network
+                    adj_objs = [room_lookup[rm_id] for rm_id in adj_ids]
+                    local_network.extend(adj_objs)
+                    adj_ids = []  # reset the list of new adjacencies
+                    # find any rooms that are adjacent to the adjacent rooms
+                    for obj in adj_objs:
+                        all_new_ids = Room._find_adjacent_air_boundary_rooms(obj)
+                        new_ids = [rid for rid in all_new_ids
+                                   if rid not in local_ids and rid != first_id]
+                        for rm_id in new_ids:
+                            local_ids.add(rm_id)
+                        adj_ids.extend(new_ids)
+                # after the local network is understood, clean up duplicated rooms
+                adj_network.append(local_network)
+                i_to_remove = [i for i, room_obj in enumerate(all_rooms)
+                               if room_obj.identifier in local_ids]
+                for i in reversed(i_to_remove):
+                    all_rooms.pop(i)
+        return adj_network
+
+    @staticmethod
     def group_by_orientation(rooms, group_count=None, north_vector=Vector2D(0, 1)):
         """Group Rooms with the same average outdoor wall orientation.
 
@@ -1140,6 +1189,16 @@ class Room(_BaseWithShade):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    @staticmethod
+    def _find_adjacent_air_boundary_rooms(room):
+        """Find the identifiers of all rooms with air boundary adjacency to a room."""
+        adj_rooms = []
+        for face in room._faces:
+            if isinstance(face.type, AirBoundary) and \
+                    isinstance(face.boundary_condition, Surface):
+                adj_rooms.append(face.boundary_condition.boundary_condition_objects[-1])
+        return adj_rooms
 
     def __copy__(self):
         new_r = Room(self.identifier, tuple(face.duplicate() for face in self._faces))

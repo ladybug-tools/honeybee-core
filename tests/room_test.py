@@ -4,6 +4,7 @@ from honeybee.aperture import Aperture
 from honeybee.shade import Shade
 from honeybee.room import Room
 from honeybee.boundarycondition import boundary_conditions, Surface, Outdoors, Ground
+from honeybee.facetype import face_types
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
@@ -580,6 +581,50 @@ def test_find_adjacency():
     adj_faces = Room.find_adjacency([room_south, room_north], 0.01)
     assert len(adj_faces) == 1
     assert len(adj_faces[0]) == 2
+
+
+def test_group_by_air_boundary_adjacency():
+    """Test the group_by_air_boundary_adjacency method."""
+    pts_1 = (Point3D(0, 0), Point3D(15, 0), Point3D(10, 5), Point3D(5, 5))
+    pts_2 = (Point3D(15, 0), Point3D(15, 15), Point3D(10, 10), Point3D(10, 5))
+    pts_3 = (Point3D(0, 15), Point3D(5, 10), Point3D(10, 10), Point3D(15, 15))
+    pts_4 = (Point3D(0, 0), Point3D(5, 5), Point3D(5, 10), Point3D(0, 15))
+    pts_5 = (Point3D(5, 5), Point3D(10, 5), Point3D(10, 10), Point3D(5, 10))
+    pf_1 = Polyface3D.from_offset_face(Face3D(pts_1), 3)
+    pf_2 = Polyface3D.from_offset_face(Face3D(pts_2), 3)
+    pf_3 = Polyface3D.from_offset_face(Face3D(pts_3), 3)
+    pf_4 = Polyface3D.from_offset_face(Face3D(pts_4), 3)
+    pf_5 = Polyface3D.from_offset_face(Face3D(pts_5), 3)
+    room_1 = Room.from_polyface3d('Zone1', pf_1)
+    room_2 = Room.from_polyface3d('Zone2', pf_2)
+    room_3 = Room.from_polyface3d('Zone3', pf_3)
+    room_4 = Room.from_polyface3d('Zone4', pf_4)
+    room_5 = Room.from_polyface3d('Zone5', pf_5)
+
+    rooms = [room_1, room_2, room_3, room_4, room_5]
+    rooms_basement = [rm.duplicate() for rm in rooms]
+    for rm in rooms_basement:
+        rm.move(Vector3D(0, 0, -3))
+        rm.add_prefix('Basement')
+    adj_info = Room.solve_adjacency(rooms, 0.01)
+    for faces in adj_info['adjacent_faces']:
+        faces[0].type = face_types.air_boundary
+        faces[1].type = face_types.air_boundary
+    rooms_flr_2 = [rm.duplicate() for rm in rooms]
+    for rm in rooms_flr_2:
+        rm.move(Vector3D(0, 0, 3))
+        rm.add_prefix('Floor2')
+    all_rooms = rooms + rooms_flr_2 + rooms_basement
+    Room.solve_adjacency(all_rooms, 0.01)
+
+    grouped_rooms = Room.group_by_air_boundary_adjacency(all_rooms)
+
+    print(grouped_rooms)
+    assert len(grouped_rooms) == 7
+    assert len(grouped_rooms[0]) == 5
+    assert len(grouped_rooms[1]) == 5
+    for encl in grouped_rooms[2:]:
+        assert len(encl) == 1
 
 
 def test_group_by_orientation():
