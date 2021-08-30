@@ -231,7 +231,7 @@ class Face(_BaseWithShade):
         """
         if self._punched_geometry is None:
             _sub_faces = tuple(sub_f.geometry for sub_f in self._apertures + self._doors)
-            if _sub_faces != []:
+            if len(_sub_faces) != 0:
                 self._punched_geometry = Face3D.from_punched_geometry(
                     self._geometry, _sub_faces)
             else:
