@@ -27,7 +27,7 @@ class _Base(object):
 
     @property
     def identifier(self):
-        """Get or set a text string for the unique object identifer.
+        """Get or set a text string for the unique object identifier.
 
         This identifier remains constant as the object is mutated, copied, and
         serialized to different formats (eg. dict, idf, rad). As such, this
@@ -94,6 +94,26 @@ class _Base(object):
     def duplicate(self):
         """Get a copy of this object."""
         return self.__copy__()
+
+    @staticmethod
+    def _from_dict_error_message(obj_dict, exception_obj):
+        """Give an error message when the object serialization from_dict fails.
+
+        This error message will include the identifier if it exists in the dict.
+
+        Args:
+            obj_dict: The objection dictionary that failed serialization.
+            exception_obj: The exception object to be included in the message.
+        """
+        obj_name = obj_dict['type'] if 'type' in obj_dict else 'Honeybee object'
+        full_id = ''
+        if 'identifier' in obj_dict and obj_dict['identifier'] is not None:
+            full_id = '{}[{}]'.format(obj_dict['display_name'], obj_dict['identifier']) \
+                if 'display_name' in obj_dict and obj_dict['display_name'] is not None \
+                else obj_dict['identifier']
+        msg = '{} "{}" is not valid and is not following honeybee-schema:\n{}'.format(
+            obj_name, full_id, exception_obj)
+        raise ValueError(msg)
 
     def __copy__(self):
         new_obj = self.__class__(self.identifier)
