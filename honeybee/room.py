@@ -127,26 +127,29 @@ class Room(_BaseWithShade):
                 Default is 0, which makes no attempt to evaluate whether the Room
                 volume is closed.
         """
-        # check the type of dictionary
-        assert data['type'] == 'Room', 'Expected Room dictionary. ' \
-            'Got {}.'.format(data['type'])
+        try:
+            # check the type of dictionary
+            assert data['type'] == 'Room', 'Expected Room dictionary. ' \
+                'Got {}.'.format(data['type'])
 
-        # create the room object and assing properties
-        faces = [Face.from_dict(f_dict) for f_dict in data['faces']]
-        room = cls(data['identifier'], faces, tolerance, angle_tolerance)
-        if 'display_name' in data and data['display_name'] is not None:
-            room.display_name = data['display_name']
-        if 'user_data' in data and data['user_data'] is not None:
-            room.user_data = data['user_data']
-        if 'multiplier' in data and data['multiplier'] is not None:
-            room._multiplier = data['multiplier']
-        if 'story' in data and data['story'] is not None:
-            room._story = data['story']
-        room._recover_shades_from_dict(data)
+            # create the room object and assing properties
+            faces = [Face.from_dict(f_dict) for f_dict in data['faces']]
+            room = cls(data['identifier'], faces, tolerance, angle_tolerance)
+            if 'display_name' in data and data['display_name'] is not None:
+                room.display_name = data['display_name']
+            if 'user_data' in data and data['user_data'] is not None:
+                room.user_data = data['user_data']
+            if 'multiplier' in data and data['multiplier'] is not None:
+                room._multiplier = data['multiplier']
+            if 'story' in data and data['story'] is not None:
+                room._story = data['story']
+            room._recover_shades_from_dict(data)
 
-        if data['properties']['type'] == 'RoomProperties':
-            room.properties._load_extension_attr_from_dict(data['properties'])
-        return room
+            if data['properties']['type'] == 'RoomProperties':
+                room.properties._load_extension_attr_from_dict(data['properties'])
+            return room
+        except Exception as e:
+            cls._from_dict_error_message(data, e)
 
     @classmethod
     def from_polyface3d(cls, identifier, polyface, roof_angle=30, floor_angle=150,

@@ -65,20 +65,24 @@ class Shade(_Base):
         Args:
             data: A dictionary representation of an Shade object.
         """
-        # check the type of dictionary
-        assert data['type'] == 'Shade', 'Expected Shade dictionary. ' \
-            'Got {}.'.format(data['type'])
+        try:
+            # check the type of dictionary
+            assert data['type'] == 'Shade', 'Expected Shade dictionary. ' \
+                'Got {}.'.format(data['type'])
 
-        is_detached = data['is_detached'] if 'is_detached' in data else False
-        shade = cls(data['identifier'], Face3D.from_dict(data['geometry']), is_detached)
-        if 'display_name' in data and data['display_name'] is not None:
-            shade.display_name = data['display_name']
-        if 'user_data' in data and data['user_data'] is not None:
-            shade.user_data = data['user_data']
+            is_detached = data['is_detached'] if 'is_detached' in data else False
+            shade = cls(
+                data['identifier'], Face3D.from_dict(data['geometry']), is_detached)
+            if 'display_name' in data and data['display_name'] is not None:
+                shade.display_name = data['display_name']
+            if 'user_data' in data and data['user_data'] is not None:
+                shade.user_data = data['user_data']
 
-        if data['properties']['type'] == 'ShadeProperties':
-            shade.properties._load_extension_attr_from_dict(data['properties'])
-        return shade
+            if data['properties']['type'] == 'ShadeProperties':
+                shade.properties._load_extension_attr_from_dict(data['properties'])
+            return shade
+        except Exception as e:
+            cls._from_dict_error_message(data, e)
 
     @classmethod
     def from_vertices(cls, identifier, vertices, is_detached=False):

@@ -101,37 +101,40 @@ class Face(_BaseWithShade):
         Args:
             data: A dictionary representation of an Face object.
         """
-        # check the type of dictionary
-        assert data['type'] == 'Face', 'Expected Face dictionary. ' \
-            'Got {}.'.format(data['type'])
-
-        # first serialize it with an outdoor boundary condition
-        face_type = face_types.by_name(data['face_type'])
-        face = cls(data['identifier'], Face3D.from_dict(data['geometry']),
-                   face_type, boundary_conditions.outdoors)
-        if 'display_name' in data and data['display_name'] is not None:
-            face.display_name = data['display_name']
-        if 'user_data' in data and data['user_data'] is not None:
-            face.user_data = data['user_data']
-
-        # add sub-faces and shades
-        if 'apertures' in data and data['apertures'] is not None:
-            face.add_apertures([Aperture.from_dict(ap) for ap in data['apertures']])
-        if 'doors' in data and data['doors'] is not None:
-            face.add_doors([Door.from_dict(dr) for dr in data['doors']])
-        face._recover_shades_from_dict(data)
-
-        # get the boundary condition and assign it
         try:
-            bc_class = getattr(hbc, data['boundary_condition']['type'])
-            face.boundary_condition = bc_class.from_dict(data['boundary_condition'])
-        except AttributeError:  # boundary condition from extension; default to Outdoors
-            pass
+            # check the type of dictionary
+            assert data['type'] == 'Face', 'Expected Face dictionary. ' \
+                'Got {}.'.format(data['type'])
 
-        # assign extension properties
-        if data['properties']['type'] == 'FaceProperties':
-            face.properties._load_extension_attr_from_dict(data['properties'])
-        return face
+            # first serialize it with an outdoor boundary condition
+            face_type = face_types.by_name(data['face_type'])
+            face = cls(data['identifier'], Face3D.from_dict(data['geometry']),
+                       face_type, boundary_conditions.outdoors)
+            if 'display_name' in data and data['display_name'] is not None:
+                face.display_name = data['display_name']
+            if 'user_data' in data and data['user_data'] is not None:
+                face.user_data = data['user_data']
+
+            # add sub-faces and shades
+            if 'apertures' in data and data['apertures'] is not None:
+                face.add_apertures([Aperture.from_dict(ap) for ap in data['apertures']])
+            if 'doors' in data and data['doors'] is not None:
+                face.add_doors([Door.from_dict(dr) for dr in data['doors']])
+            face._recover_shades_from_dict(data)
+
+            # get the boundary condition and assign it
+            try:
+                bc_class = getattr(hbc, data['boundary_condition']['type'])
+                face.boundary_condition = bc_class.from_dict(data['boundary_condition'])
+            except AttributeError:  # extension boundary condition; default to Outdoors
+                pass
+
+            # assign extension properties
+            if data['properties']['type'] == 'FaceProperties':
+                face.properties._load_extension_attr_from_dict(data['properties'])
+            return face
+        except Exception as e:
+            cls._from_dict_error_message(data, e)
 
     @classmethod
     def from_vertices(cls, identifier, vertices, type=None, boundary_condition=None):

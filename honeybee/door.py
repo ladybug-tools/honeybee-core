@@ -74,32 +74,35 @@ class Door(_BaseWithShade):
         Args:
             data: A dictionary representation of an Door object.
         """
-        # check the type of dictionary
-        assert data['type'] == 'Door', 'Expected Door dictionary. ' \
-            'Got {}.'.format(data['type'])
+        try:
+            # check the type of dictionary
+            assert data['type'] == 'Door', 'Expected Door dictionary. ' \
+                'Got {}.'.format(data['type'])
 
-        # serialize the door
-        is_glass = data['is_glass'] if 'is_glass' in data else False
-        if data['boundary_condition']['type'] == 'Outdoors':
-            boundary_condition = Outdoors.from_dict(data['boundary_condition'])
-        elif data['boundary_condition']['type'] == 'Surface':
-            boundary_condition = Surface.from_dict(data['boundary_condition'], True)
-        else:
-            raise ValueError(
-                'Boundary condition "{}" is not supported for Door.'.format(
-                    data['boundary_condition']['type']))
-        door = cls(data['identifier'], Face3D.from_dict(data['geometry']),
-                   boundary_condition, is_glass)
-        if 'display_name' in data and data['display_name'] is not None:
-            door.display_name = data['display_name']
-        if 'user_data' in data and data['user_data'] is not None:
-            door.user_data = data['user_data']
-        door._recover_shades_from_dict(data)
+            # serialize the door
+            is_glass = data['is_glass'] if 'is_glass' in data else False
+            if data['boundary_condition']['type'] == 'Outdoors':
+                boundary_condition = Outdoors.from_dict(data['boundary_condition'])
+            elif data['boundary_condition']['type'] == 'Surface':
+                boundary_condition = Surface.from_dict(data['boundary_condition'], True)
+            else:
+                raise ValueError(
+                    'Boundary condition "{}" is not supported for Door.'.format(
+                        data['boundary_condition']['type']))
+            door = cls(data['identifier'], Face3D.from_dict(data['geometry']),
+                       boundary_condition, is_glass)
+            if 'display_name' in data and data['display_name'] is not None:
+                door.display_name = data['display_name']
+            if 'user_data' in data and data['user_data'] is not None:
+                door.user_data = data['user_data']
+            door._recover_shades_from_dict(data)
 
-        # assign extension properties
-        if data['properties']['type'] == 'DoorProperties':
-            door.properties._load_extension_attr_from_dict(data['properties'])
-        return door
+            # assign extension properties
+            if data['properties']['type'] == 'DoorProperties':
+                door.properties._load_extension_attr_from_dict(data['properties'])
+            return door
+        except Exception as e:
+            cls._from_dict_error_message(data, e)
 
     @classmethod
     def from_vertices(cls, identifier, vertices, boundary_condition=None,
