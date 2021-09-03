@@ -981,7 +981,8 @@ class Model(_Base):
         # remove colinear vertices to ensure that this doesn't create faces with <3 edges
         for room in self.rooms:
             try:
-                room.remove_colinear_vertices_envelope(tol)
+                new_room = room.duplicate()  # duplicate to avoid editing the original
+                new_room.remove_colinear_vertices_envelope(tol)
             except ValueError as e:
                 msgs.append(str(e))
         # perform geometry checks related to parent-child relationships
