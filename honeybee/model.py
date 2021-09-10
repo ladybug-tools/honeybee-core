@@ -1021,6 +1021,7 @@ class Model(_Base):
     def check_missing_adjacencies(self, raise_exception=True):
         """Check that all Faces Apertures, and Doors have adjacent objects in the model.
         """
+        room_ids = []
         face_bc_ids = []
         ap_bc_ids = []
         door_bc_ids = []
@@ -1028,21 +1029,25 @@ class Model(_Base):
         for room in self._rooms:
             for face in room._faces:
                 if isinstance(face.boundary_condition, Surface):
-                    sr.append(self._self_adj_check(face, face_bc_ids, raise_exception))
+                    sr.append(self._self_adj_check(
+                        face, face_bc_ids, room_ids, raise_exception))
                     for ap in face.apertures:
                         assert isinstance(ap.boundary_condition, Surface), \
                             'Aperture "{}" must have Surface boundary condition ' \
                             'if the parent Face has a Surface BC.'.format(ap.full_id)
-                        sr.append(self._self_adj_check(ap, ap_bc_ids, raise_exception))
+                        sr.append(self._self_adj_check(
+                            ap, ap_bc_ids, room_ids, raise_exception))
                     for dr in face.doors:
                         assert isinstance(dr.boundary_condition, Surface), \
                             'Door "{}" must have Surface boundary condition ' \
                             'if the parent Face has a Surface BC.'.format(dr.full_id)
-                        sr.append(self._self_adj_check(dr, door_bc_ids, raise_exception))
+                        sr.append(self._self_adj_check(
+                            dr, door_bc_ids, room_ids, raise_exception))
+        mr = self._missing_adj_check(self.rooms_by_identifier, room_ids, 'Room')
         mf = self._missing_adj_check(self.faces_by_identifier, face_bc_ids, 'Face')
         ma = self._missing_adj_check(self.apertures_by_identifier, ap_bc_ids, 'Aperture')
         md = self._missing_adj_check(self.doors_by_identifier, door_bc_ids, 'Door')
-        msg = '\n'.join([m for m in sr + [mf, ma, md] if m != ''])
+        msg = '\n'.join([m for m in sr + [mr, mf, ma, md] if m != ''])
         if msg != '' and raise_exception:
             raise ValueError(msg)
         return msg
@@ -1632,10 +1637,12 @@ class Model(_Base):
         return conversion_factor_to_meters(units)
 
     @staticmethod
-    def _self_adj_check(hb_obj, bc_ids, raise_exception):
+    def _self_adj_check(hb_obj, bc_ids, room_ids, raise_exception):
         """Check that an adjacent object is referencing itself."""
-        bc_obj = hb_obj.boundary_condition.boundary_condition_object
+        bc_objs = hb_obj.boundary_condition.boundary_condition_objects
+        bc_obj, bc_room = bc_objs[0], bc_objs[-1]
         bc_ids.append(bc_obj)
+        room_ids.append(bc_room)
         if hb_obj.identifier == bc_obj:
             msg = '"{}" cannot reference itself in its Surface boundary ' \
                 'condition.'.format(hb_obj.full_id)
