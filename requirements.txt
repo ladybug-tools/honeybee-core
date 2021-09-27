@@ -1,3 +1,3 @@
 ladybug-core==0.39.20
 ladybug-geometry-polyskel==1.3.39
-honeybee-schema==1.45.0;python_version>='3.7'
+honeybee-schema==1.45.1;python_version>='3.7'
