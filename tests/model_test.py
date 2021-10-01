@@ -718,6 +718,7 @@ def test_check_missing_adjacencies():
     assert len(model_1.apertures) == 2
     with pytest.raises(ValueError):
         model_1.check_missing_adjacencies()
+    assert model_1.check_missing_adjacencies(False) != ''
 
     model_1.add_model(model_2)
     assert len(model_1.rooms) == 2

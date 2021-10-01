@@ -2,6 +2,7 @@
 """Honeybee Model."""
 from __future__ import division
 import os
+import re
 import json
 try:  # check if we are in IronPython
     import cPickle as pickle
@@ -1021,6 +1022,7 @@ class Model(_Base):
     def check_missing_adjacencies(self, raise_exception=True):
         """Check that all Faces Apertures, and Doors have adjacent objects in the model.
         """
+        # loop through all objects and get their adjacent object
         room_ids = []
         face_bc_ids = []
         ap_bc_ids = []
@@ -1043,11 +1045,37 @@ class Model(_Base):
                             'if the parent Face has a Surface BC.'.format(dr.full_id)
                         sr.append(self._self_adj_check(
                             dr, door_bc_ids, room_ids, raise_exception))
-        mr = self._missing_adj_check(self.rooms_by_identifier, room_ids, 'Room')
-        mf = self._missing_adj_check(self.faces_by_identifier, face_bc_ids, 'Face')
-        ma = self._missing_adj_check(self.apertures_by_identifier, ap_bc_ids, 'Aperture')
-        md = self._missing_adj_check(self.doors_by_identifier, door_bc_ids, 'Door')
-        msg = '\n'.join([m for m in sr + [mr, mf, ma, md] if m != ''])
+        # check to see if the adjacent objects are in the model
+        mr = self._missing_adj_check(self.rooms_by_identifier, room_ids)
+        mf = self._missing_adj_check(self.faces_by_identifier, face_bc_ids)
+        ma = self._missing_adj_check(self.apertures_by_identifier, ap_bc_ids)
+        md = self._missing_adj_check(self.doors_by_identifier, door_bc_ids)
+        # if not, go back and find the original object with the missing BC object
+        msgs = []
+        if len(mr) != 0 or len(mf) != 0 or len(ma) != 0 or len(md) != 0:
+            for room in self._rooms:
+                for face in room._faces:
+                    if isinstance(face.boundary_condition, Surface):
+                        bc_obj, bc_room = self._adj_objects(face)
+                        if bc_obj in mf:
+                            self._missing_adj_msg(msgs, face, bc_obj, 'Face', 'Face')
+                        if bc_room in mr:
+                            self._missing_adj_msg(msgs, face, bc_room, 'Face', 'Room')
+                        for ap in face.apertures:
+                            bc_obj, bc_room = self._adj_objects(ap)
+                            if bc_obj in ma:
+                                self._missing_adj_msg(
+                                    msgs, ap, bc_obj, 'Aperture', 'Aperture')
+                            if bc_room in mr:
+                                self._missing_adj_msg(
+                                    msgs, ap, bc_room, 'Aperture', 'Room')
+                        for dr in face.doors:
+                            bc_obj, bc_room = self._adj_objects(dr)
+                            if bc_obj in ma:
+                                self._missing_adj_msg(msgs, dr, bc_obj, 'Door', 'Door')
+                            if bc_room in mr:
+                                self._missing_adj_msg(msgs, dr, bc_room, 'Door', 'Room')
+        msg = '\n'.join([m for m in sr + msgs if m != ''])
         if msg != '' and raise_exception:
             raise ValueError(msg)
         return msg
@@ -1652,14 +1680,26 @@ class Model(_Base):
         return ''
 
     @staticmethod
-    def _missing_adj_check(id_checking_function, bc_ids, obj_name='Face'):
+    def _missing_adj_check(id_checking_function, bc_ids):
         """Check whether adjacencies are missing from a model."""
         try:
             id_checking_function(bc_ids)
-            return ''
+            return []
         except ValueError as e:
-            return 'A {} has an adjacent object that is missing from the model:' \
-                '\n  {}'.format(obj_name, e)
+            id_pattern = re.compile('\"(.*)\"')
+            return [obj_id for obj_id in id_pattern.findall(str(e))]
+
+    @staticmethod
+    def _adj_objects(hb_obj):
+        """Check that an adjacent object is referencing itself."""
+        bc_objs = hb_obj.boundary_condition.boundary_condition_objects
+        return bc_objs[0], bc_objs[-1]
+
+    @staticmethod
+    def _missing_adj_msg(messages, hb_obj, bc_obj, obj_type='Face', bc_obj_type='Face'):
+        message = '{} "{}" has an adjacent {} that is missing from the model: ' \
+            '{}'.format(obj_type, hb_obj.full_id, bc_obj_type, bc_obj)
+        messages.append(message)
 
     def __add__(self, other):
         new_model = self.duplicate()
