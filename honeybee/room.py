@@ -773,6 +773,26 @@ class Room(_BaseWithShade):
             raise ValueError(full_msg)
         return full_msg
 
+    def check_sub_faces_overlapping(self, raise_exception=True):
+        """Check that this Face's sub-faces do not overlap with one another.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if a sub-faces overlap with one another.
+        """
+        msgs = []
+        for f in self._faces:
+            msg = f.check_sub_faces_overlapping(False)
+            if msg != '':
+                msgs.append(msg)
+        if len(msgs) == 0:
+            return ''
+        full_msg = 'Room "{}" contains overlapping sub-faces.' \
+            '\n  {}'.format(self.full_id, '\n  '.join(msgs))
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
     def check_planar(self, tolerance=0.01, raise_exception=True):
         """Check that all of the Room's geometry components are planar.
 
