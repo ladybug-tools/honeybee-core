@@ -45,6 +45,7 @@ class Face(_BaseWithShade):
         * boundary_condition
         * apertures
         * doors
+        * sub_faces
         * indoor_shades
         * outdoor_shades
         * parent
@@ -189,13 +190,18 @@ class Face(_BaseWithShade):
 
     @property
     def apertures(self):
-        """Get a list of apertures in this Face."""
+        """Get a tuple of apertures in this Face."""
         return tuple(self._apertures)
 
     @property
     def doors(self):
-        """Get a list of doors in this Face."""
+        """Get a tuple of doors in this Face."""
         return tuple(self._doors)
+
+    @property
+    def sub_faces(self):
+        """Get a tuple of apertures and doors in this Face."""
+        return tuple(self._apertures + self._doors)
 
     @property
     def parent(self):
@@ -1072,6 +1078,22 @@ class Face(_BaseWithShade):
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
+        return full_msg
+
+    def check_sub_faces_overlapping(self, raise_exception=True):
+        """Check that this Face's sub-faces do not overlap with one another.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if a sub-faces overlap with one another.
+        """
+        full_msg = ''
+        sub_f_area = sum(sf.area for sf in self.sub_faces)
+        if sub_f_area > self.area:
+            full_msg = 'Face "{}" contains Apertures and/or ' \
+                'Doors that overlap with each other.'.format(self.full_id)
+            if raise_exception:
+                raise ValueError(full_msg)
         return full_msg
 
     def check_planar(self, tolerance=0.01, raise_exception=True):

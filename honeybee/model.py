@@ -988,6 +988,7 @@ class Model(_Base):
                 msgs.append(str(e))
         # perform geometry checks related to parent-child relationships
         msgs.append(self.check_sub_faces_valid(tol, ang_tol, False))
+        msgs.append(self.check_sub_faces_overlapping(False))
         msgs.append(self.check_rooms_solid(tol, ang_tol, False))
         # check the extension attributes
         msgs.extend(self._properties._check_extension_attr())
@@ -1144,6 +1145,27 @@ class Model(_Base):
                 msgs.append(msg)
         for f in self._orphaned_faces:
             msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False)
+            if msg != '':
+                msgs.append(msg)
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_sub_faces_overlapping(self, raise_exception=True):
+        """Check that model's sub-faces do not overlap with one another.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if a sub-faces overlap with one another.
+        """
+        msgs = []
+        for rm in self._rooms:
+            msg = rm.check_sub_faces_overlapping(False)
+            if msg != '':
+                msgs.append(msg)
+        for f in self._orphaned_faces:
+            msg = f.check_sub_faces_overlapping(False)
             if msg != '':
                 msgs.append(msg)
         full_msg = '\n'.join(msgs)
