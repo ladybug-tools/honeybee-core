@@ -687,7 +687,7 @@ class Room(_BaseWithShade):
         if self._geometry is not None:
             self._geometry = self.geometry.scale(factor, origin)
 
-    def remove_colinear_vertices_envelope(self, tolerance=0.01):
+    def remove_colinear_vertices_envelope(self, tolerance=0.01, delete_degenerate=False):
         """Remove colinear and duplicate vertices from this object's Faces and Sub-faces.
 
         Note that this does not affect any assigned Shades.
@@ -696,18 +696,32 @@ class Room(_BaseWithShade):
             tolerance: The minimum distance between a vertex and the boundary segments
                 at which point the vertex is considered colinear. Default: 0.01,
                 suitable for objects in meters.
+            delete_invalid: Boolean to note whether degenerate Faces, Apertures and
+                Doors (objects the evaluate to less than 3 vertices at the tolerance)
+                should be deleted from the Room instead of raising a ValueError.
+                (Default: False).
         """
-        try:
-            for face in self._faces:
-                face.remove_colinear_vertices(tolerance)
-                for ap in face._apertures:
-                    ap.remove_colinear_vertices(tolerance)
-                for dr in face._doors:
-                    dr.remove_colinear_vertices(tolerance)
-        except ValueError as e:
-            raise ValueError(
-                'Room "{}" contains invalid geometry.\n  {}'.format(
-                    self.full_id, str(e).replace('\n', '\n  ')))
+        if delete_degenerate:
+            new_faces = list(self._faces)
+            for i, face in enumerate(new_faces):
+                try:
+                    face.remove_colinear_vertices(tolerance)
+                    face.remove_degenerate_sub_faces(tolerance)
+                except ValueError:
+                    new_faces.pop(i)
+            self._faces = tuple(new_faces)
+        else:
+            try:
+                for face in self._faces:
+                    face.remove_colinear_vertices(tolerance)
+                    for ap in face._apertures:
+                        ap.remove_colinear_vertices(tolerance)
+                    for dr in face._doors:
+                        dr.remove_colinear_vertices(tolerance)
+            except ValueError as e:
+                raise ValueError(
+                    'Room "{}" contains invalid geometry.\n  {}'.format(
+                        self.full_id, str(e).replace('\n', '\n  ')))
         if self._geometry is not None:
             self._geometry = Polyface3D.from_faces(
                 tuple(face.geometry for face in self._faces), tolerance)
