@@ -999,6 +999,25 @@ class Face(_BaseWithShade):
                 'tolerance.\n{}'.format(self.full_id, e))
         self._punched_geometry = None  # reset so that it can be re-computed
 
+    def remove_degenerate_sub_faces(self, tolerance=0.01):
+        """Remove colinear vertices from sub-faces and eliminate degenerate ones.
+
+        Args:
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered colinear. Default: 0.01,
+                suitable for objects in meters.
+        """
+        for i, ap in enumerate(self._apertures):
+            try:
+                ap.remove_colinear_vertices(tolerance)
+            except ValueError:
+                self._apertures.pop(i)
+        for i, dr in enumerate(self._doors):
+            try:
+                dr.remove_colinear_vertices(tolerance)
+            except ValueError:
+                self._apertures.pop(i)
+
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
                               raise_exception=True):
         """Check that sub-faces are co-planar with this Face within the Face boundary.
