@@ -142,9 +142,13 @@ class Model(_Base):
         assert data['type'] == 'Model', 'Expected Model dictionary. ' \
             'Got {}.'.format(data['type'])
 
-        # import the tolerance values
-        tol = 0 if 'tolerance' not in data else data['tolerance']
-        angle_tol = 0 if 'angle_tolerance' not in data else data['angle_tolerance']
+        # import the units and tolerance values
+        units = 'Meters' if 'units' not in data or data['units'] is None \
+            else data['units']
+        tol = cls.UNITS_TOLERANCES[units] if 'tolerance' not in data or \
+            data['tolerance'] is None else data['tolerance']
+        angle_tol = 1.0 if 'angle_tolerance' not in data or \
+            data['angle_tolerance'] is None else data['angle_tolerance']
 
         # import all of the geometry
         rooms = None  # import rooms
@@ -163,9 +167,6 @@ class Model(_Base):
         orphaned_doors = None  # import orphaned doors
         if 'orphaned_doors' in data and data['orphaned_doors'] is not None:
             orphaned_doors = [Door.from_dict(d) for d in data['orphaned_doors']]
-
-        # import the units
-        units = 'Meters' if 'units' not in data else data['units']
 
         # build the model object
         model = Model(data['identifier'], rooms, orphaned_faces, orphaned_shades,
