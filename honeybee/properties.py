@@ -163,7 +163,7 @@ class _Properties(object):
             original_properties: The properties object of the original core
                 object from which the duplicate was derived.
         """
-        for atr in self._extension_attributes:
+        for atr in original_properties._extension_attributes:
             var = getattr(original_properties, atr)
             if not hasattr(var, 'duplicate'):
                 continue
