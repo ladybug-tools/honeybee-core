@@ -4,6 +4,7 @@ import sys
 import logging
 
 from honeybee.model import Model
+from honeybee.config import folders
 
 _logger = logging.getLogger(__name__)
 
@@ -31,15 +32,18 @@ def validate_model(model_json, output_file):
     """
     try:
         # re-serialize the Model to make sure no errors are found in re-serialization
-        click.echo('Validating Model JSON ...')
+        click.echo(
+            'Validating Model using honeybee-core=={} and honeybee-schema=={}'.format(
+                folders.honeybee_core_version_str, folders.honeybee_schema_version_str
+            ))
         parsed_model = Model.from_hbjson(model_json)
-        click.echo('Python re-serialization passed.')
+        click.echo('Re-serialization passed.')
         # perform several other checks for geometry rules and others
         report = parsed_model.check_all(raise_exception=False)
         click.echo('Model geometry and identifier checks completed.')
         # check the report and write the summary of errors
         if report == '':
-            output_file.write('Congratulations! Your Model JSON is valid!')
+            output_file.write('Congratulations! Your Model is valid!')
         else:
             error_msg = '\nYour Model is invalid for the following reasons:'
             output_file.write('\n'.join([error_msg, report]))

@@ -33,6 +33,8 @@ class Folders(object):
 
     Properties:
         * default_simulation_folder
+        * honeybee_core_version
+        * honeybee_core_version_str
         * honeybee_schema_version
         * honeybee_schema_version_str
         * python_package_path
@@ -55,7 +57,8 @@ class Folders(object):
         self._python_version = None
         self._python_version_str = None
 
-        # search for the version of honeybee-schema
+        # search for the version of honeybee-core and honeybee-schema
+        self._honeybee_core_version = self._find_honeybee_core_version()
         self._honeybee_schema_version = self._find_honeybee_schema_version()
 
     @property
@@ -73,6 +76,25 @@ class Folders(object):
         if not self.mute and self._default_simulation_folder:
             print('Path to the default simulation folder is set to: '
                   '{}'.format(self._default_simulation_folder))
+
+    @property
+    def honeybee_core_version(self):
+        """Get a tuple for the installed version of honeybee-core (eg. (1, 47, 26)).
+
+        This will be None if the version could not be sensed (it was not installed
+        via pip).
+        """
+        return self._honeybee_core_version
+
+    @property
+    def honeybee_core_version_str(self):
+        """Get a string for the installed version of honeybee-core (eg. "1.47.26").
+
+        This will be None if the version could not be sensed.
+        """
+        if self._honeybee_core_version is not None:
+            return '.'.join([str(item) for item in self._honeybee_core_version])
+        return None
 
     @property
     def honeybee_schema_version(self):
@@ -246,16 +268,25 @@ class Folders(object):
                                   'folder: %s\n%s' % (sim_folder, e))
         return sim_folder
 
+    def _find_honeybee_core_version(self):
+        """Get a tuple of 3 integers for the version of honeybee_core if installed."""
+        return self._find_package_version('honeybee_core')
+
     def _find_honeybee_schema_version(self):
         """Get a tuple of 3 integers for the version of honeybee_schema if installed."""
-        schema_info_folder = None
+        return self._find_package_version('honeybee_schema')
+
+    def _find_package_version(self, package_name):
+        """Get a tuple of 3 integers for the version of a package."""
+        hb_info_folder = None
         for item in os.listdir(self.python_package_path):
-            if item.startswith('honeybee_schema-') and item.endswith('.dist-info'):
+            if item.startswith(package_name + '-') and item.endswith('.dist-info'):
                 if os.path.isdir(os.path.join(self.python_package_path, item)):
-                    schema_info_folder = item
-        if schema_info_folder is not None:
-            schema_info_folder = schema_info_folder.replace('.dist-info', '')
-            ver = ''.join(s for s in schema_info_folder if (s.isdigit() or s == '.'))
+                    hb_info_folder = item
+                    break
+        if hb_info_folder is not None:
+            hb_info_folder = hb_info_folder.replace('.dist-info', '')
+            ver = ''.join(s for s in hb_info_folder if (s.isdigit() or s == '.'))
             if ver:  # version was found in the file path name
                 return tuple(int(d) for d in ver.split('.'))
         return None
