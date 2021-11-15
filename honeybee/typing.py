@@ -268,6 +268,25 @@ def clean_and_id_ep_string(value, input_name=''):
     return val + '_' + str(uuid.uuid4())[:8]
 
 
+def invalid_dict_error(invalid_dict, error):
+    """Raise a ValueError for an invalid dictionary that failed to serialize.
+
+    This error message will include the identifier (and display_name) if they are
+    present within the invalid_dict, making it easier for ens users to find the
+    invalid object within large objects like Models.
+
+    Args:
+        invalid_dict: A dictionary of an invalid honeybee object that failed
+            to serialize.
+        error:
+    """
+    obj_type = invalid_dict['type'] if 'type' in invalid_dict else 'Honeybee Object'
+    obj_id = invalid_dict['identifier'] if 'identifier' in invalid_dict else ''
+    full_id = '{}[{}]'.format(invalid_dict['display_name'], obj_id) \
+        if 'display_name' in invalid_dict else obj_id
+    raise ValueError('{} "{}" is invalid:\n{}'.format(obj_type, full_id, error))
+
+
 wrapper = '"' if os.name == 'nt' else '\''
 """String wrapper."""
 

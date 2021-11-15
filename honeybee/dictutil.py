@@ -12,6 +12,7 @@ from honeybee.aperture import Aperture
 from honeybee.door import Door
 from honeybee.shade import Shade
 import honeybee.boundarycondition as hbc
+from honeybee.typing import invalid_dict_error
 
 
 def dict_to_object(honeybee_dict, raise_exception=True):
@@ -35,20 +36,23 @@ def dict_to_object(honeybee_dict, raise_exception=True):
     except KeyError:
         raise ValueError('Honeybee dictionary lacks required "type" key.')
 
-    if obj_type == 'Model':
-        return Model.from_dict(honeybee_dict)
-    elif obj_type == 'Room':
-        return Room.from_dict(honeybee_dict)
-    elif obj_type == 'Face':
-        return Face.from_dict(honeybee_dict)
-    elif obj_type == 'Aperture':
-        return Aperture.from_dict(honeybee_dict)
-    elif obj_type == 'Door':
-        return Door.from_dict(honeybee_dict)
-    elif obj_type == 'Shade':
-        return Shade.from_dict(honeybee_dict)
-    elif hasattr(hbc, obj_type):
-        bc_class = getattr(hbc, obj_type)
-        return bc_class.from_dict(honeybee_dict)
-    elif raise_exception:
-        raise ValueError('{} is not a recognized honeybee object'.format(obj_type))
+    try:
+        if obj_type == 'Model':
+            return Model.from_dict(honeybee_dict)
+        elif obj_type == 'Room':
+            return Room.from_dict(honeybee_dict)
+        elif obj_type == 'Face':
+            return Face.from_dict(honeybee_dict)
+        elif obj_type == 'Aperture':
+            return Aperture.from_dict(honeybee_dict)
+        elif obj_type == 'Door':
+            return Door.from_dict(honeybee_dict)
+        elif obj_type == 'Shade':
+            return Shade.from_dict(honeybee_dict)
+        elif hasattr(hbc, obj_type):
+            bc_class = getattr(hbc, obj_type)
+            return bc_class.from_dict(honeybee_dict)
+        elif raise_exception:
+            raise ValueError('{} is not a recognized honeybee object'.format(obj_type))
+    except Exception as e:
+        invalid_dict_error(honeybee_dict, e)
