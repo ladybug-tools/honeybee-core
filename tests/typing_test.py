@@ -3,7 +3,8 @@ from honeybee.typing import clean_string, clean_rad_string, clean_ep_string, \
     float_in_range, int_in_range, float_positive, int_positive, \
     tuple_with_length, list_with_length, normpath, \
     clean_and_id_string, clean_and_id_rad_string, clean_and_id_ep_string, \
-    float_in_range_excl, float_in_range_excl_incl, float_in_range_incl_excl
+    float_in_range_excl, float_in_range_excl_incl, float_in_range_incl_excl, \
+    invalid_dict_error
 
 import pytest
 
@@ -70,7 +71,7 @@ def test_clean_and_id_rad_string():
     assert len(clean_and_id_rad_string(long_str)) > 70
 
 
-def test_clean_ep_string():
+def test_clean_and_id_ep_string():
     """Test the clean_and_id_ep_string method."""
     correct_str = '1/2 in. Gypsum Board'
     incorrect_str = '1/2 in., Gypsum Board!'
@@ -240,3 +241,16 @@ def test_list_with_length():
         list_with_length((1, 2, 3), 4, float, 'test list')
     except AssertionError as e:
         assert 'test list' in str(e)
+
+
+def test_invalid_dict_error():
+    """Test the invalid_dict_errormethod."""
+    inv_dict = {
+        'type': 'Construction',
+        'identifier': 'no_heat_capacity_construction',
+        'display_name': 'User-Created Construction'
+    }
+    error_msg = 'Construction does not contain sufficient heat capacity.'
+
+    with pytest.raises(ValueError):
+        invalid_dict_error(inv_dict, error_msg)
