@@ -3,7 +3,8 @@
 from __future__ import division
 
 from ._basewithshade import _BaseWithShade
-from .typing import float_in_range, int_in_range, valid_string, clean_string
+from .typing import float_in_range, int_in_range, valid_string, clean_string, \
+    invalid_dict_error
 from .properties import RoomProperties
 from .face import Face
 from .facetype import AirBoundary, get_type_from_normal, Wall, Floor, RoofCeiling
@@ -133,7 +134,12 @@ class Room(_BaseWithShade):
                 'Got {}.'.format(data['type'])
 
             # create the room object and assing properties
-            faces = [Face.from_dict(f_dict) for f_dict in data['faces']]
+            faces = []
+            for f_dict in data['faces']:
+                try:
+                    faces.append(Face.from_dict(f_dict))
+                except Exception as e:
+                    invalid_dict_error(f_dict, e)
             room = cls(data['identifier'], faces, tolerance, angle_tolerance)
             if 'display_name' in data and data['display_name'] is not None:
                 room.display_name = data['display_name']

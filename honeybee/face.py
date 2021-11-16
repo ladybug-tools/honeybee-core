@@ -3,7 +3,7 @@
 from __future__ import division
 
 from ._basewithshade import _BaseWithShade
-from .typing import clean_string
+from .typing import clean_string, invalid_dict_error
 from .properties import FaceProperties
 from .facetype import face_types, get_type_from_normal, AirBoundary
 from .boundarycondition import boundary_conditions, get_bc_from_position, \
@@ -118,9 +118,21 @@ class Face(_BaseWithShade):
 
             # add sub-faces and shades
             if 'apertures' in data and data['apertures'] is not None:
-                face.add_apertures([Aperture.from_dict(ap) for ap in data['apertures']])
+                aps = []
+                for ap in data['apertures']:
+                    try:
+                        aps.append(Aperture.from_dict(ap))
+                    except Exception as e:
+                        invalid_dict_error(ap, e)
+                face.add_apertures(aps)
             if 'doors' in data and data['doors'] is not None:
-                face.add_doors([Door.from_dict(dr) for dr in data['doors']])
+                drs = []
+                for dr in data['doors']:
+                    try:
+                        drs.append(Door.from_dict(dr))
+                    except Exception as e:
+                        invalid_dict_error(dr, e)
+                face.add_doors(drs)
             face._recover_shades_from_dict(data)
 
             # get the boundary condition and assign it

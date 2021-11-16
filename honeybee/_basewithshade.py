@@ -2,6 +2,7 @@
 """Base class for all geometry objects that can have shades as children."""
 from ._base import _Base
 from .shade import Shade
+from .typing import invalid_dict_error
 
 
 class _BaseWithShade(_Base):
@@ -253,14 +254,22 @@ class _BaseWithShade(_Base):
                 be added from the dictionary.
         """
         if 'outdoor_shades' in data and data['outdoor_shades'] is not None:
-            self._outdoor_shades = [Shade.from_dict(sh) for sh in data['outdoor_shades']]
-            for oshd in self._outdoor_shades:
-                oshd._parent = self
+            for sh in data['outdoor_shades']:
+                try:
+                    oshd = Shade.from_dict(sh)
+                    oshd._parent = self
+                    self._outdoor_shades.append(oshd)
+                except Exception as e:
+                    invalid_dict_error(sh, e)
         if 'indoor_shades' in data and data['indoor_shades'] is not None:
-            self._indoor_shades = [Shade.from_dict(sh) for sh in data['indoor_shades']]
-            for ishd in self._indoor_shades:
-                ishd._parent = self
-                ishd._is_indoor = True
+            for sh in data['indoor_shades']:
+                try:
+                    ishd = Shade.from_dict(sh)
+                    ishd._parent = self
+                    ishd._is_indoor = True
+                    self._indoor_shades.append(ishd)
+                except Exception as e:
+                    invalid_dict_error(sh, e)
 
     def _duplicate_child_shades(self, new_object):
         """Add duplicated child shades to a duplicated new_object."""
