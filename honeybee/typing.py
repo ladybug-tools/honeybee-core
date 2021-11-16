@@ -280,7 +280,8 @@ def invalid_dict_error(invalid_dict, error):
             to serialize.
         error:
     """
-    obj_type = invalid_dict['type'] if 'type' in invalid_dict else 'Honeybee Object'
+    obj_type = invalid_dict['type'].replace('Abridged', '') \
+        if 'type' in invalid_dict else 'Honeybee Object'
     obj_id = invalid_dict['identifier'] if 'identifier' in invalid_dict else ''
     full_id = '{}[{}]'.format(invalid_dict['display_name'], obj_id) \
         if 'display_name' in invalid_dict else obj_id

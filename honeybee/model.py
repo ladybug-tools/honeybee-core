@@ -18,7 +18,7 @@ from .face import Face
 from .shade import Shade
 from .aperture import Aperture
 from .door import Door
-from .typing import float_positive
+from .typing import float_positive, invalid_dict_error
 from .config import folders
 from .boundarycondition import Surface
 from .facetype import AirBoundary
@@ -153,20 +153,44 @@ class Model(_Base):
         # import all of the geometry
         rooms = None  # import rooms
         if 'rooms' in data and data['rooms'] is not None:
-            rooms = [Room.from_dict(r, tol, angle_tol) for r in data['rooms']]
+            rooms = []
+            for r in data['rooms']:
+                try:
+                    rooms.append(Room.from_dict(r, tol, angle_tol))
+                except Exception as e:
+                    invalid_dict_error(r, e)
         orphaned_faces = None  # import orphaned faces
         if 'orphaned_faces' in data and data['orphaned_faces'] is not None:
-            orphaned_faces = [Face.from_dict(f) for f in data['orphaned_faces']]
+            orphaned_faces = []
+            for f in data['orphaned_faces']:
+                try:
+                    orphaned_faces.append(Face.from_dict(f))
+                except Exception as e:
+                    invalid_dict_error(f, e)
         orphaned_shades = None  # import orphaned shades
         if 'orphaned_shades' in data and data['orphaned_shades'] is not None:
-            orphaned_shades = [Shade.from_dict(s) for s in data['orphaned_shades']]
+            orphaned_shades = []
+            for s in data['orphaned_shades']:
+                try:
+                    orphaned_shades.append(Shade.from_dict(s))
+                except Exception as e:
+                    invalid_dict_error(s, e)
         orphaned_apertures = None  # import orphaned apertures
         if 'orphaned_apertures' in data and data['orphaned_apertures'] is not None:
-            orphaned_apertures = [Aperture.from_dict(a) for
-                                  a in data['orphaned_apertures']]
+            orphaned_apertures = []
+            for a in data['orphaned_apertures']:
+                try:
+                    orphaned_apertures.append(Aperture.from_dict(a))
+                except Exception as e:
+                    invalid_dict_error(a, e)
         orphaned_doors = None  # import orphaned doors
         if 'orphaned_doors' in data and data['orphaned_doors'] is not None:
-            orphaned_doors = [Door.from_dict(d) for d in data['orphaned_doors']]
+            orphaned_doors = []
+            for d in data['orphaned_doors']:
+                try:
+                    orphaned_doors.append(Door.from_dict(d))
+                except Exception as e:
+                    invalid_dict_error(d, e)
 
         # build the model object
         model = Model(data['identifier'], rooms, orphaned_faces, orphaned_shades,
