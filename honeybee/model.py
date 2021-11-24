@@ -1321,6 +1321,7 @@ class Model(_Base):
                 ap_mesh3d = ap.triangulated_mesh3d
                 new_verts = [[ap_mesh3d[v] for v in face] for face in ap_mesh3d.faces]
                 new_ap_geo = [Face3D(verts, ap.geometry.plane) for verts in new_verts]
+                new_ap_geo = self._remove_sliver_geometries(new_ap_geo)
                 new_aps, parent_edit_info = self._replace_aperture(ap, new_ap_geo)
                 triangulated_apertures.append(new_aps)
                 if parent_edit_info is not None:
@@ -1381,6 +1382,7 @@ class Model(_Base):
                 dr_mesh3d = dr.triangulated_mesh3d
                 new_verts = [[dr_mesh3d[v] for v in face] for face in dr_mesh3d.faces]
                 new_dr_geo = [Face3D(verts, dr.geometry.plane) for verts in new_verts]
+                new_dr_geo = self._remove_sliver_geometries(new_dr_geo)
                 new_drs, parent_edit_info = self._replace_door(dr, new_dr_geo)
                 triangulated_doors.append(new_drs)
                 if parent_edit_info is not None:
@@ -1401,6 +1403,17 @@ class Model(_Base):
                         parents_to_edit.append(edit_in)
                     adj_check.append(adj_dr.identifier)
         return triangulated_doors, parents_to_edit
+
+    def _remove_sliver_geometries(self, face3ds):
+        """Remove sliver geometries from a list of Face3Ds."""
+        clean_face3ds = []
+        for face in face3ds:
+            try:
+                if face.area >= self.tolerance:
+                    clean_face3ds.append(face.remove_colinear_vertices(self.tolerance))
+            except ValueError:
+                pass  # degenerate triangle; remove it
+        return clean_face3ds
 
     def _replace_aperture(self, original_ap, new_ap_geo):
         """Get new Apertures generated from new_ap_geo and the properties of original_ap.
