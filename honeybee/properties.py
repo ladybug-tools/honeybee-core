@@ -361,7 +361,10 @@ class ModelProperties(_Properties):
             if not hasattr(var, 'check_all'):
                 continue
             try:
-                msgs.append(var.check_all(raise_exception=False))
+                check_msg = var.check_all(raise_exception=False)
+                if check_msg != '':
+                    msgs.append(
+                        'Attributes for {} are invalid.\n{}'.format(atr, check_msg))
             except Exception as e:
                 import traceback
                 traceback.print_exc()

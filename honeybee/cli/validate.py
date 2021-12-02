@@ -40,7 +40,7 @@ def validate_model(model_json, output_file):
         click.echo('Re-serialization passed.')
         # perform several other checks for geometry rules and others
         report = parsed_model.check_all(raise_exception=False)
-        click.echo('Model geometry and identifier checks completed.')
+        click.echo('Model checks completed.')
         # check the report and write the summary of errors
         if report == '':
             output_file.write('Congratulations! Your Model is valid!')
