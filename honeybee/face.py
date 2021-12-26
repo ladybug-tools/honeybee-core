@@ -532,7 +532,7 @@ class Face(_BaseWithShade):
         return adj_info
 
     def apertures_by_ratio(self, ratio, tolerance=0.01):
-        """Add apertures to this Face given a ratio of aperture area to facea area.
+        """Add apertures to this Face given a ratio of aperture area to face area.
 
         Note that this method removes any existing apertures and doors on the Face.
         This method attempts to generate as few apertures as necessary to meet the ratio.
