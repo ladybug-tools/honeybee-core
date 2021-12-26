@@ -1050,27 +1050,27 @@ class Model(_Base):
         """
         # loop through all objects and get their adjacent object
         room_ids = []
-        face_bc_ids = []
-        ap_bc_ids = []
-        door_bc_ids = []
+        face_bc_ids, face_set = [], set()
+        ap_bc_ids, ap_set = [], set()
+        door_bc_ids, dr_set = [], set()
         sr = []
         for room in self._rooms:
             for face in room._faces:
                 if isinstance(face.boundary_condition, Surface):
                     sr.append(self._self_adj_check(
-                        face, face_bc_ids, room_ids, raise_exception))
+                        'Face', face, face_bc_ids, room_ids, face_set, raise_exception))
                     for ap in face.apertures:
                         assert isinstance(ap.boundary_condition, Surface), \
                             'Aperture "{}" must have Surface boundary condition ' \
                             'if the parent Face has a Surface BC.'.format(ap.full_id)
                         sr.append(self._self_adj_check(
-                            ap, ap_bc_ids, room_ids, raise_exception))
+                            'Aperture', ap, ap_bc_ids, room_ids, ap_set, raise_exception))
                     for dr in face.doors:
                         assert isinstance(dr.boundary_condition, Surface), \
                             'Door "{}" must have Surface boundary condition ' \
                             'if the parent Face has a Surface BC.'.format(dr.full_id)
                         sr.append(self._self_adj_check(
-                            dr, door_bc_ids, room_ids, raise_exception))
+                            'Door', dr, door_bc_ids, room_ids, dr_set, raise_exception))
         # check to see if the adjacent objects are in the model
         mr = self._missing_adj_check(self.rooms_by_identifier, room_ids)
         mf = self._missing_adj_check(self.faces_by_identifier, face_bc_ids)
@@ -1725,19 +1725,42 @@ class Model(_Base):
         return conversion_factor_to_meters(units)
 
     @staticmethod
-    def _self_adj_check(hb_obj, bc_ids, room_ids, raise_exception):
-        """Check that an adjacent object is referencing itself."""
+    def _self_adj_check(obj_type, hb_obj, bc_ids, room_ids, bc_set, raise_exception):
+        """Check that an adjacent object is referencing itself or its own room.
+
+        A check will also be performed to ensure the adjacent object doesn't already
+        have an adjacent pair in the model.
+        """
         bc_objs = hb_obj.boundary_condition.boundary_condition_objects
         bc_obj, bc_room = bc_objs[0], bc_objs[-1]
         bc_ids.append(bc_obj)
         room_ids.append(bc_room)
+        msgs = []
+        # first ensure that the object is not referencing itself
         if hb_obj.identifier == bc_obj:
-            msg = '"{}" cannot reference itself in its Surface boundary ' \
-                'condition.'.format(hb_obj.full_id)
+            msg = '{} "{}" cannot reference itself in its Surface boundary ' \
+                'condition.'.format(obj_type, hb_obj.full_id)
             if raise_exception:
                 raise ValueError(msg)
-            return msg
-        return ''
+            msgs.append(msg)
+        # then ensure that the object is not referencing its own room
+        if hb_obj.has_parent and hb_obj.parent.has_parent:
+            if hb_obj.parent.parent.identifier == bc_room:
+                msg = '{} "{}" and its adjacent object "{}" cannot be a part of the ' \
+                    'same Room "{}".'.format(obj_type, hb_obj.full_id, bc_obj, bc_room)
+                if raise_exception:
+                    raise ValueError(msg)
+                msgs.append(msg)
+        # lastly make sure the adjacent object doesn't already have an adjacency
+        if bc_obj in bc_set:
+            msg = '{} "{}" is adjacent to object "{}", which has another adjacent ' \
+                'object in the Model.'.format(obj_type, hb_obj.full_id, bc_obj)
+            if raise_exception:
+                raise ValueError(msg)
+            msgs.append(msg)
+        else:
+            bc_set.add(bc_obj)
+        return ''.join(msgs)
 
     @staticmethod
     def _missing_adj_check(id_checking_function, bc_ids):
