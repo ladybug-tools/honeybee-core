@@ -280,3 +280,15 @@ class _BaseWithShade(_Base):
         for ishd in new_object._indoor_shades:
             ishd._parent = new_object
             ishd._is_indoor = True
+
+    def _min_with_shades(self, geometry):
+        """Calculate min Point3D around this object's geometry and its shades."""
+        all_geo = self._outdoor_shades + self._indoor_shades
+        all_geo.append(geometry)
+        return self._calculate_min(all_geo)
+
+    def _max_with_shades(self, geometry):
+        """Calculate max Point3D around this object's geometry and its shades."""
+        all_geo = self._outdoor_shades + self._indoor_shades
+        all_geo.append(geometry)
+        return self._calculate_max(all_geo)

@@ -1,5 +1,7 @@
 # coding: utf-8
 """Base class for all geometry objects."""
+from ladybug_geometry.geometry3d.pointvector import Point3D
+
 from .typing import valid_string
 
 
@@ -114,6 +116,34 @@ class _Base(object):
         msg = '{} "{}" is not valid and is not following honeybee-schema:\n{}'.format(
             obj_name, full_id, exception_obj)
         raise ValueError(msg)
+
+    @staticmethod
+    def _calculate_min(geometry_objects):
+        """Calculate min Point3D around an array of geometry with min attributes."""
+        first_obj = geometry_objects[0]
+        min_pt = [first_obj.min.x, first_obj.min.y, first_obj.min.z]
+        for obj in geometry_objects[1:]:
+            if obj.min.x < min_pt[0]:
+                min_pt[0] = obj.min.x
+            if obj.min.y < min_pt[1]:
+                min_pt[1] = obj.min.y
+            if obj.min.z < min_pt[2]:
+                min_pt[2] = obj.min.z
+        return Point3D(*min_pt)
+
+    @staticmethod
+    def _calculate_max(geometry_objects):
+        """Calculate max Point3D around an array of geometry with max attributes."""
+        first_obj = geometry_objects[0]
+        max_pt = [first_obj.max.x, first_obj.max.y, first_obj.max.z]
+        for obj in geometry_objects[1:]:
+            if obj.max.x > max_pt[0]:
+                max_pt[0] = obj.max.x
+            if obj.max.y > max_pt[1]:
+                max_pt[1] = obj.max.y
+            if obj.max.z > max_pt[2]:
+                max_pt[2] = obj.max.z
+        return Point3D(*max_pt)
 
     def __copy__(self):
         new_obj = self.__class__(self.identifier)

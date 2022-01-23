@@ -71,6 +71,8 @@ def test_model_init():
     assert model.exterior_aperture_area == pytest.approx(9, rel=1e-3)
     assert model.exterior_wall_aperture_area == pytest.approx(9, rel=1e-3)
     assert model.exterior_skylight_aperture_area == 0
+    assert isinstance(model.min, Point3D)
+    assert isinstance(model.max, Point3D)
 
 
 def test_model_properties_setability():

@@ -549,6 +549,16 @@ class Model(_Base):
         return sum([room.exterior_skylight_aperture_area * room.multiplier
                     for room in self._rooms])
 
+    @property
+    def min(self):
+        """Get a Point3D for the min bounding box vertex in the XY plane."""
+        return self._calculate_min(self._all_objects())
+
+    @property
+    def max(self):
+        """Get a Point3D for the max bounding box vertex in the XY plane."""
+        return self._calculate_max(self._all_objects())
+
     def add_model(self, other_model):
         """Add another Model object to this model."""
         assert isinstance(other_model, Model), \
@@ -1703,6 +1713,11 @@ class Model(_Base):
         with open(hb_file, 'wb') as fp:
             pickle.dump(hb_dict, fp)
         return hb_file
+
+    def _all_objects(self):
+        """Get a single list of all the Honeybee objects in a Model."""
+        return self._rooms + self._orphaned_faces + self._orphaned_shades + \
+            self._orphaned_apertures + self._orphaned_doors
 
     @staticmethod
     def conversion_factor_to_meters(units):

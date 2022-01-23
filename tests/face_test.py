@@ -31,6 +31,8 @@ def test_init():
     assert face.center == Point3D(0, 5, 1.5)
     assert face.area == 30
     assert face.perimeter == 26
+    assert isinstance(face.min, Point3D)
+    assert isinstance(face.max, Point3D)
     assert isinstance(face.boundary_condition, Outdoors)
     assert isinstance(face.type, Wall)
     assert not face.has_parent

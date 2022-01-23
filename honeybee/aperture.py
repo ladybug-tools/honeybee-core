@@ -46,6 +46,8 @@ class Aperture(_BaseWithShade):
         * center
         * area
         * perimeter
+        * min
+        * max
         * user_data
     """
     __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_operable')
@@ -227,6 +229,16 @@ class Aperture(_BaseWithShade):
     def perimeter(self):
         """Get the perimeter of the aperture."""
         return self._geometry.perimeter
+
+    @property
+    def min(self):
+        """Get a Point3D for the minimum of the bounding box around the object."""
+        return self._min_with_shades(self._geometry)
+
+    @property
+    def max(self):
+        """Get a Point3D for the maximum of the bounding box around the object."""
+        return self._max_with_shades(self._geometry)
 
     def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
         """Get a number between 0 and 360 for the orientation of the aperture in degrees.

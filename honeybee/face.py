@@ -61,6 +61,8 @@ class Face(_BaseWithShade):
         * center
         * area
         * perimeter
+        * min
+        * max
         * aperture_area
         * aperture_ratio
         * user_data
@@ -313,6 +315,24 @@ class Face(_BaseWithShade):
         """Get the perimeter of the face. This includes the length of holes in the face.
         """
         return self._geometry.perimeter
+
+    @property
+    def min(self):
+        """Get a Point3D for the minimum of the bounding box around the object."""
+        all_geo = self._outdoor_shades + self._indoor_shades
+        all_geo.extend(self._apertures)
+        all_geo.extend(self._doors)
+        all_geo.append(self.geometry)
+        return self._calculate_min(all_geo)
+
+    @property
+    def max(self):
+        """Get a Point3D for the maximum of the bounding box around the object."""
+        all_geo = self._outdoor_shades + self._indoor_shades
+        all_geo.extend(self._apertures)
+        all_geo.extend(self._doors)
+        all_geo.append(self.geometry)
+        return self._calculate_max(all_geo)
 
     @property
     def aperture_area(self):
