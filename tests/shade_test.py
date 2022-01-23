@@ -23,6 +23,8 @@ def test_shade_init():
     assert shade.center == Point3D(0.5, 0, 1.5)
     assert shade.area == 3
     assert shade.perimeter == 8
+    assert isinstance(shade.min, Point3D)
+    assert isinstance(shade.max, Point3D)
     assert not shade.has_parent
     assert not shade.is_indoor
     assert not shade.is_detached

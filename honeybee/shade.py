@@ -39,6 +39,8 @@ class Shade(_Base):
         * center
         * area
         * perimeter
+        * min
+        * max
         * user_data
     """
     __slots__ = ('_geometry', '_parent', '_is_indoor', '_is_detached')
@@ -202,6 +204,16 @@ class Shade(_Base):
     def perimeter(self):
         """Get the perimeter of the shade."""
         return self._geometry.perimeter
+
+    @property
+    def min(self):
+        """Get a Point3D for the minimum of the bounding box around the object."""
+        return self._geometry.min
+
+    @property
+    def max(self):
+        """Get a Point3D for the maximum of the bounding box around the object."""
+        return self._geometry.max
 
     def add_prefix(self, prefix):
         """Change the identifier of this object by inserting a prefix.

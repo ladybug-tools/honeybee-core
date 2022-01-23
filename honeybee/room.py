@@ -59,6 +59,8 @@ class Room(_BaseWithShade):
         * outdoor_shades
         * geometry
         * center
+        * min
+        * max
         * volume
         * floor_area
         * exposed_area
@@ -286,10 +288,31 @@ class Room(_BaseWithShade):
     def center(self):
         """Get a ladybug_geometry Point3D for the center of the room.
 
-        Note that this is the center of the bounding box around the room geometry
-        and not the volume centroid.
+        Note that this is the center of the bounding box around the room Polyface
+        geometry and not the volume centroid. Also note that shades assigned to
+        this room are not included in this center calculation.
         """
         return self.geometry.center
+
+    @property
+    def min(self):
+        """Get a Point3D for the minimum of the bounding box around the object.
+
+        This includes any shades assigned to this object or its children.
+        """
+        all_geo = self._outdoor_shades + self._indoor_shades
+        all_geo.extend(self._faces)
+        return self._calculate_min(all_geo)
+
+    @property
+    def max(self):
+        """Get a Point3D for the maximum of the bounding box around the object.
+
+        This includes any shades assigned to this object or its children.
+        """
+        all_geo = self._outdoor_shades + self._indoor_shades
+        all_geo.extend(self._faces)
+        return self._calculate_max(all_geo)
 
     @property
     def volume(self):

@@ -29,6 +29,8 @@ def test_aperture_init():
     assert aperture.center == Point3D(2.5, 0, 1.5)
     assert aperture.area == 15
     assert aperture.perimeter == 16
+    assert isinstance(aperture.min, Point3D)
+    assert isinstance(aperture.max, Point3D)
     assert isinstance(aperture.boundary_condition, Outdoors)
     assert not aperture.is_operable
     assert not aperture.has_parent

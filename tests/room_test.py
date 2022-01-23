@@ -41,6 +41,8 @@ def test_init():
     assert len(room.geometry.vertices) == 8
     assert len(room) == 6
     assert room.center == Point3D(5, 5, 1.5)
+    assert isinstance(room.min, Point3D)
+    assert isinstance(room.max, Point3D)
     assert room.volume == 300
     assert room.floor_area == 100
     assert room.exposed_area == 220
