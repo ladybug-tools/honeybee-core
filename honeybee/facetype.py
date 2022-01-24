@@ -118,7 +118,7 @@ class _FaceTypes(object):
 face_types = _FaceTypes()
 
 
-def get_type_from_normal(normal_vector, roof_angle=30, floor_angle=150):
+def get_type_from_normal(normal_vector, roof_angle=60, floor_angle=130):
     """Return face type based on the angle between Z axis and normal vector.
 
     Angles between 0 and roof_angle will be set to roof_ceiling.
@@ -127,8 +127,16 @@ def get_type_from_normal(normal_vector, roof_angle=30, floor_angle=150):
 
     args:
         normal_vector: Normal vector as a ladybug_geometry Vector3D.
-        roof_angle: Cutting angle for roof from Z axis in degrees (default: 30).
-        floor_angle: Cutting angle for floor from Z axis in degrees (default: 150).
+        roof_angle: A number between 0 and 90 to set the angle from the horizontal
+            plane below which faces will be considered roofs instead of
+            walls. 90 indicates that all vertical faces are roofs and 0
+            indicates that all horizontal faces are walls. (Default: 60,
+            recommended by the ASHRAE 90.1 standard).
+        floor_angle: A number between 90 and 180 to set the angle from the horizontal
+            plane above which faces will be considered floors instead of
+            walls. 180 indicates that all vertical faces are floors and 0
+            indicates that all horizontal faces are walls. (Default: 130,
+            recommended by the ASHRAE 90.1 standard).
 
     Returns:
         Face type instance.

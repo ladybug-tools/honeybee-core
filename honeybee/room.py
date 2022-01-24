@@ -160,7 +160,7 @@ class Room(_BaseWithShade):
             cls._from_dict_error_message(data, e)
 
     @classmethod
-    def from_polyface3d(cls, identifier, polyface, roof_angle=30, floor_angle=150,
+    def from_polyface3d(cls, identifier, polyface, roof_angle=60, floor_angle=130,
                         ground_depth=0):
         """Initialize a Room from a ladybug_geometry Polyface3D object.
 
@@ -170,8 +170,16 @@ class Room(_BaseWithShade):
             polyface: A ladybug_geometry Polyface3D object representing the closed
                 volume of a room. The Polyface3D.is_solid property can be used to
                 determine whether the polyface is a closed solid before input here.
-            roof_angle: Cutting angle for roof from Z axis in degrees. Default: 30.
-            floor_angle: Cutting angle for floor from Z axis in degrees. Default: 150.
+            roof_angle: A number between 0 and 90 to set the angle from the horizontal
+                plane below which faces will be considered roofs instead of
+                walls. 90 indicates that all vertical faces are roofs and 0
+                indicates that all horizontal faces are walls. (Default: 60,
+                recommended by the ASHRAE 90.1 standard).
+            floor_angle: A number between 90 and 180 to set the angle from the horizontal
+                plane above which faces will be considered floors instead of
+                walls. 180 indicates that all vertical faces are floors and 0
+                indicates that all horizontal faces are walls. (Default: 130,
+                recommended by the ASHRAE 90.1 standard).
             ground_depth: The Z value above which faces are considered Outdoors
                 instead of Ground. Faces will have a Ground boundary condition if
                 all of their vertices lie at or below this value. Default: 0.
