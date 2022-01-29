@@ -579,11 +579,14 @@ class Face(_BaseWithShade):
         if ratio == 0:
             return
         else:
-            ap_faces = self._geometry.sub_faces_by_ratio_rectangle(ratio, tolerance)
+            try:
+                geo = self._geometry.remove_colinear_vertices(tolerance)
+            except AssertionError:  # degenerate face that should not have apertures
+                return
+            ap_faces = geo.sub_faces_by_ratio_rectangle(ratio, tolerance)
         for i, ap_face in enumerate(ap_faces):
             aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
-            aperture._parent = self
-            self._apertures.append(aperture)
+            self.add_aperture(aperture)
 
     def apertures_by_ratio_rectangle(self, ratio, aperture_height, sill_height,
                                      horizontal_separation, vertical_separation=0,
@@ -632,13 +635,16 @@ class Face(_BaseWithShade):
         if ratio == 0:
             return
         else:
-            ap_faces = self._geometry.sub_faces_by_ratio_sub_rectangle(
+            try:
+                geo = self._geometry.remove_colinear_vertices(tolerance)
+            except AssertionError:  # degenerate face that should not have apertures
+                return
+            ap_faces = geo.sub_faces_by_ratio_sub_rectangle(
                 ratio, aperture_height, sill_height, horizontal_separation,
                 vertical_separation, tolerance)
         for i, ap_face in enumerate(ap_faces):
             aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
-            aperture._parent = self
-            self._apertures.append(aperture)
+            self.add_aperture(aperture)
 
     def apertures_by_ratio_gridded(self, ratio, x_dim, y_dim=None):
         """Add apertures to this face given a ratio of aperture area to face area.
@@ -677,8 +683,7 @@ class Face(_BaseWithShade):
             ap_faces = self._geometry.sub_faces_by_ratio_gridded(ratio, x_dim, y_dim)
         for i, ap_face in enumerate(ap_faces):
             aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
-            aperture._parent = self
-            self._apertures.append(aperture)
+            self.add_aperture(aperture)
 
     def apertures_by_width_height_rectangle(self, aperture_height, aperture_width,
                                             sill_height, horizontal_separation,
@@ -726,8 +731,7 @@ class Face(_BaseWithShade):
             tolerance)
         for i, ap_face in enumerate(ap_faces):
             aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
-            aperture._parent = self
-            self._apertures.append(aperture)
+            self.add_aperture(aperture)
 
     def aperture_by_width_height(self, width, height, sill_height=1,
                                  aperture_identifier=None):
@@ -787,8 +791,7 @@ class Face(_BaseWithShade):
         identifier = aperture_identifier or \
             '{}_Glz{}'.format(self.identifier, len(self.apertures))
         aperture = Aperture(identifier, ap_face)
-        aperture._parent = self
-        self._apertures.append(aperture)
+        self.add_aperture(aperture)
         return aperture
 
     def overhang(self, depth, angle=0, indoor=False, tolerance=0.01, base_name=None):
