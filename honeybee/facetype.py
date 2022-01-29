@@ -125,7 +125,7 @@ def get_type_from_normal(normal_vector, roof_angle=60, floor_angle=130):
     Angles between roof_angle and floor_angle will be set to wall.
     Angles larger than floor angle will be set to floor.
 
-    args:
+    Args:
         normal_vector: Normal vector as a ladybug_geometry Vector3D.
         roof_angle: A number between 0 and 90 to set the angle from the horizontal
             plane below which faces will be considered roofs instead of
