@@ -585,6 +585,45 @@ def test_find_adjacency():
     assert len(adj_faces[0]) == 2
 
 
+def test_group_by_adjacency():
+    """Test the group_by_adjacency method."""
+    pts_1 = (Point3D(0, 0), Point3D(15, 0), Point3D(10, 5), Point3D(5, 5))
+    pts_2 = (Point3D(15, 0), Point3D(15, 15), Point3D(10, 10), Point3D(10, 5))
+    pts_3 = (Point3D(0, 15), Point3D(5, 10), Point3D(10, 10), Point3D(15, 15))
+    pts_4 = (Point3D(0, 0), Point3D(5, 5), Point3D(5, 10), Point3D(0, 15))
+    pts_5 = (Point3D(5, 5), Point3D(10, 5), Point3D(10, 10), Point3D(5, 10))
+    pf_1 = Polyface3D.from_offset_face(Face3D(pts_1), 3)
+    pf_2 = Polyface3D.from_offset_face(Face3D(pts_2), 3)
+    pf_3 = Polyface3D.from_offset_face(Face3D(pts_3), 3)
+    pf_4 = Polyface3D.from_offset_face(Face3D(pts_4), 3)
+    pf_5 = Polyface3D.from_offset_face(Face3D(pts_5), 3)
+    room_1 = Room.from_polyface3d('Zone1', pf_1)
+    room_2 = Room.from_polyface3d('Zone2', pf_2)
+    room_3 = Room.from_polyface3d('Zone3', pf_3)
+    room_4 = Room.from_polyface3d('Zone4', pf_4)
+    room_5 = Room.from_polyface3d('Zone5', pf_5)
+
+    rooms = [room_1, room_2, room_3, room_4, room_5]
+    rooms_basement = [rm.duplicate() for rm in rooms]
+    for rm in rooms_basement:
+        rm.move(Vector3D(0, 0, -3))
+        rm.add_prefix('Basement')
+    Room.solve_adjacency(rooms, 0.01)
+    rooms_flr_2 = [rm.duplicate() for rm in rooms]
+    for rm in rooms_flr_2:
+        rm.move(Vector3D(0, 0, 3))
+        rm.add_prefix('Floor2')
+    all_rooms = rooms + rooms_flr_2 + rooms_basement
+
+    grouped_rooms = Room.group_by_adjacency(all_rooms)
+
+    assert len(grouped_rooms) == 7
+    assert len(grouped_rooms[0]) == 5
+    assert len(grouped_rooms[1]) == 5
+    for encl in grouped_rooms[2:]:
+        assert len(encl) == 1
+
+
 def test_group_by_air_boundary_adjacency():
     """Test the group_by_air_boundary_adjacency method."""
     pts_1 = (Point3D(0, 0), Point3D(15, 0), Point3D(10, 5), Point3D(5, 5))
@@ -621,7 +660,6 @@ def test_group_by_air_boundary_adjacency():
 
     grouped_rooms = Room.group_by_air_boundary_adjacency(all_rooms)
 
-    print(grouped_rooms)
     assert len(grouped_rooms) == 7
     assert len(grouped_rooms[0]) == 5
     assert len(grouped_rooms[1]) == 5
