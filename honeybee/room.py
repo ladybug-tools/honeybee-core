@@ -1031,6 +1031,22 @@ class Room(_BaseWithShade):
         return adj_faces
 
     @staticmethod
+    def group_by_adjacency(rooms):
+        """Group Rooms together that are connected by adjacencies.
+
+        This is useful for separating rooms in the case where a Model contains
+        multiple buildings or sections that are separated by adiabatic or
+        outdoor boundary conditions.
+
+        Args:
+            rooms: A list of rooms to be grouped by their adjacency.
+
+        Returns:
+            A list of list with each sub-list containing rooms that share adjacencies.
+        """
+        return Room._adjacency_grouping(rooms, Room._find_adjacent_rooms)
+
+    @staticmethod
     def group_by_air_boundary_adjacency(rooms):
         """Group Rooms together that share air boundaries.
 
@@ -1045,39 +1061,7 @@ class Room(_BaseWithShade):
             air boundaries. If a Room has no air boundaries it will the the only
             item within its sub-list.
         """
-        # create a room lookup table and duplicate the list of rooms
-        room_lookup = {rm.identifier: rm for rm in rooms}
-        all_rooms = list(rooms)
-        adj_network = []
-
-        # loop through the rooms and find air boundary adjacencies
-        for room in all_rooms:
-            adj_ids = Room._find_adjacent_air_boundary_rooms(room)
-            if len(adj_ids) == 0:  # a room that is its own solar enclosure
-                adj_network.append([room])
-            else:  # there are other adjacent rooms to find
-                local_network = [room]
-                local_ids, first_id = set(adj_ids), room.identifier
-                while len(adj_ids) != 0:
-                    # add the current rooms to the local network
-                    adj_objs = [room_lookup[rm_id] for rm_id in adj_ids]
-                    local_network.extend(adj_objs)
-                    adj_ids = []  # reset the list of new adjacencies
-                    # find any rooms that are adjacent to the adjacent rooms
-                    for obj in adj_objs:
-                        all_new_ids = Room._find_adjacent_air_boundary_rooms(obj)
-                        new_ids = [rid for rid in all_new_ids
-                                   if rid not in local_ids and rid != first_id]
-                        for rm_id in new_ids:
-                            local_ids.add(rm_id)
-                        adj_ids.extend(new_ids)
-                # after the local network is understood, clean up duplicated rooms
-                adj_network.append(local_network)
-                i_to_remove = [i for i, room_obj in enumerate(all_rooms)
-                               if room_obj.identifier in local_ids]
-                for i in reversed(i_to_remove):
-                    all_rooms.pop(i)
-        return adj_network
+        return Room._adjacency_grouping(rooms, Room._find_adjacent_air_boundary_rooms)
 
     @staticmethod
     def group_by_orientation(rooms, group_count=None, north_vector=Vector2D(0, 1)):
@@ -1263,6 +1247,61 @@ class Room(_BaseWithShade):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    @staticmethod
+    def _adjacency_grouping(rooms, adj_finding_function):
+        """Group Rooms together according to an adjacency finding function.
+
+        Args:
+            rooms: A list of rooms to be grouped by their adjacency.
+            adj_finding_function: A function that denotes which rooms are adjacent
+                to another.
+
+        Returns:
+            A list of list with each sub-list containing rooms that share adjacencies.
+        """
+        # create a room lookup table and duplicate the list of rooms
+        room_lookup = {rm.identifier: rm for rm in rooms}
+        all_rooms = list(rooms)
+        adj_network = []
+
+        # loop through the rooms and find air boundary adjacencies
+        for room in all_rooms:
+            adj_ids = adj_finding_function(room)
+            if len(adj_ids) == 0:  # a room that is its own solar enclosure
+                adj_network.append([room])
+            else:  # there are other adjacent rooms to find
+                local_network = [room]
+                local_ids, first_id = set(adj_ids), room.identifier
+                while len(adj_ids) != 0:
+                    # add the current rooms to the local network
+                    adj_objs = [room_lookup[rm_id] for rm_id in adj_ids]
+                    local_network.extend(adj_objs)
+                    adj_ids = []  # reset the list of new adjacencies
+                    # find any rooms that are adjacent to the adjacent rooms
+                    for obj in adj_objs:
+                        all_new_ids = adj_finding_function(obj)
+                        new_ids = [rid for rid in all_new_ids
+                                   if rid not in local_ids and rid != first_id]
+                        for rm_id in new_ids:
+                            local_ids.add(rm_id)
+                        adj_ids.extend(new_ids)
+                # after the local network is understood, clean up duplicated rooms
+                adj_network.append(local_network)
+                i_to_remove = [i for i, room_obj in enumerate(all_rooms)
+                               if room_obj.identifier in local_ids]
+                for i in reversed(i_to_remove):
+                    all_rooms.pop(i)
+        return adj_network
+
+    @staticmethod
+    def _find_adjacent_rooms(room):
+        """Find the identifiers of all rooms with adjacency to a room."""
+        adj_rooms = []
+        for face in room._faces:
+            if isinstance(face.boundary_condition, Surface):
+                adj_rooms.append(face.boundary_condition.boundary_condition_objects[-1])
+        return adj_rooms
 
     @staticmethod
     def _find_adjacent_air_boundary_rooms(room):
