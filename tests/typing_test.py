@@ -4,7 +4,7 @@ from honeybee.typing import clean_string, clean_rad_string, clean_ep_string, \
     tuple_with_length, list_with_length, normpath, \
     clean_and_id_string, clean_and_id_rad_string, clean_and_id_ep_string, \
     float_in_range_excl, float_in_range_excl_incl, float_in_range_incl_excl, \
-    invalid_dict_error
+    invalid_dict_error, truncate_and_id_string
 
 import pytest
 
@@ -241,6 +241,15 @@ def test_list_with_length():
         list_with_length((1, 2, 3), 4, float, 'test list')
     except AssertionError as e:
         assert 'test list' in str(e)
+
+
+def test_truncate_and_id_string():
+    """Test the truncate_and_id_string method."""
+    test_str = 'This is a test string to be truncated and IDd'
+    trunc_str = truncate_and_id_string(test_str, 32)
+    assert trunc_str == 'Thisisateststringtobetruncatedan'
+    trunc_str = truncate_and_id_string(test_str, 32, 8)
+    assert trunc_str[:24] == 'Thisisateststringtobetru'
 
 
 def test_invalid_dict_error():
