@@ -268,6 +268,28 @@ def clean_and_id_ep_string(value, input_name=''):
     return val + '_' + str(uuid.uuid4())[:8]
 
 
+def truncate_and_id_string(value, truncate_len=32, uuid_len=0, input_name=''):
+    """Truncate a string to a length with an option to add unique characters at the end.
+
+    Note that all outputs will always be the truncate_len or less and the uuid_len
+    just specifies the number of characters to replace at the end with unique ones.
+
+    The result will be valid for EnergyPlus, Radiance, and likely many more engines
+    with different types of character restrictions.
+    """
+    try:
+        val = re.sub(r'[^.A-Za-z0-9_-]', '', value)
+    except TypeError:
+        raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
+            input_name, type(value), value))
+    final_len = truncate_len - uuid_len
+    if len(val) > final_len:
+        val = val[:final_len]
+    if uuid_len > 0:
+        return val + str(uuid.uuid4())[:uuid_len]
+    return val
+
+
 def invalid_dict_error(invalid_dict, error):
     """Raise a ValueError for an invalid dictionary that failed to serialize.
 
