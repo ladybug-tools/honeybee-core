@@ -24,12 +24,14 @@ class _ColorObject(object):
         * attr_name_end
         * attributes
         * attributes_unique
+        * attributes_original
         * min_point
         * max_point
         * graphic_container
     """
     __slots__ = ('_attr_name', '_legend_parameters', '_attr_name_end',
-                 '_attributes', '_attributes_unique', '_min_point', '_max_point')
+                 '_attributes', '_attributes_unique', '_attributes_original',
+                 '_min_point', '_max_point')
 
     def __init__(self, legend_parameters=None):
         """Initialize ColorObject."""
@@ -40,6 +42,7 @@ class _ColorObject(object):
         self._attr_name_end = None
         self._attributes = None
         self._attributes_unique = None
+        self._attributes_original = None
         self._min_point = None
         self._max_point = None
 
@@ -85,6 +88,15 @@ class _ColorObject(object):
     def attributes_unique(self):
         """Get a tuple of text for the unique attributes assigned to the objects."""
         return self._attributes_unique
+
+    @property
+    def attributes_original(self):
+        """Get a tuple of objects for the attributes assigned to the objects.
+
+        These will follow the original object typing of the attribute and won't
+        be strings like the attributes.
+        """
+        return self._attributes_original
 
     @property
     def min_point(self):
@@ -135,6 +147,9 @@ class _ColorObject(object):
         str_attr.sort()
         self._attributes = tuple(str(val) for val in attributes)
         self._attributes_unique = tuple(str_attr) + tuple(str(val) for val in float_attr)
+        self._attributes_original = \
+            tuple(get_attr_nested(obj, self._attr_name, cast_to_str=False)
+                  for obj in hb_objs)
 
     def _calculate_min_max(self, hb_objs):
         """Calculate maximum and minimum Point3D for a set of rooms."""
@@ -179,6 +194,7 @@ class ColorRoom(_ColorObject):
         * attr_name_end
         * attributes
         * attributes_unique
+        * attributes_original
         * floor_faces
         * graphic_container
         * min_point
@@ -250,6 +266,7 @@ class ColorFace(_ColorObject):
         * attr_name_end
         * attributes
         * attributes_unique
+        * attributes_original
         * floor_faces
         * graphic_container
         * min_point

@@ -49,7 +49,7 @@ def any_keywords_in_string(name, keywords):
     return all(kw in name for kw in keywords)
 
 
-def get_attr_nested(obj_instance, attr_name, decimal_count=None):
+def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=True):
     """Get the attribute of an object while allowing the request of nested attributes.
 
     Args:
@@ -59,7 +59,10 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None):
             This can have '.' that separate the nested attributes from one another.
             For example, 'properties.energy.construction'.
         decimal_count: An optional integer to be used to round the property to a
-            number of decimal places if it is a float.
+            number of decimal places if it is a float. (Default: None).
+        cast_to_str: Boolean to note whether attributes with a type other than
+            float should be cast to strings. If False, the attribute will be
+            returned with the original object type. (Default: True).
 
     Returns:
         A string or number for tha attribute assigned ot the obj_instance. If the
@@ -76,7 +79,7 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None):
             if isinstance(current_obj, float) and decimal_count:
                 return round(current_obj, decimal_count)
             else:
-                return str(current_obj)
+                return str(current_obj) if cast_to_str else current_obj
         except AttributeError as e:
             if 'NoneType' in str(e):  # it's a valid attribute but it's not assigned
                 return 'None'
@@ -88,6 +91,6 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None):
             if isinstance(current_obj, float) and decimal_count:
                 return round(current_obj, decimal_count)
             else:
-                return str(current_obj)
+                return str(current_obj) if cast_to_str else current_obj
         except AttributeError:
             return 'N/A'
