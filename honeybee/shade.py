@@ -41,6 +41,8 @@ class Shade(_Base):
         * perimeter
         * min
         * max
+        * altitude
+        * azimuth
         * user_data
     """
     __slots__ = ('_geometry', '_parent', '_is_indoor', '_is_detached')
@@ -214,6 +216,20 @@ class Shade(_Base):
     def max(self):
         """Get a Point3D for the maximum of the bounding box around the object."""
         return self._geometry.max
+
+    @property
+    def altitude(self):
+        """Get the altitude of the geometry between +90 (up) and -90 (down)."""
+        return math.degrees(self._geometry.altitude)
+
+    @property
+    def azimuth(self):
+        """Get the azimuth of the geometry, between 0 and 360.
+
+        Given Y-axis as North, 0 = North, 90 = East, 180 = South, 270 = West
+        This will be zero if the Face3D is perfectly horizontal.
+        """
+        return math.degrees(self._geometry.azimuth)
 
     def add_prefix(self, prefix):
         """Change the identifier of this object by inserting a prefix.

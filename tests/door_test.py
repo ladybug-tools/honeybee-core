@@ -29,6 +29,8 @@ def test_door_init():
     assert door.center == Point3D(0.5, 0, 1.5)
     assert door.area == 3
     assert door.perimeter == 8
+    assert round(door.altitude, 3) == 0
+    assert round(door.azimuth, 3) == 0
     assert isinstance(door.min, Point3D)
     assert isinstance(door.max, Point3D)
     assert isinstance(door.boundary_condition, Outdoors)

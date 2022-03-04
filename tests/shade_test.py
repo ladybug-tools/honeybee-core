@@ -23,6 +23,8 @@ def test_shade_init():
     assert shade.center == Point3D(0.5, 0, 1.5)
     assert shade.area == 3
     assert shade.perimeter == 8
+    assert round(shade.altitude, 3) == 0
+    assert round(shade.azimuth, 3) == 0
     assert isinstance(shade.min, Point3D)
     assert isinstance(shade.max, Point3D)
     assert not shade.has_parent
