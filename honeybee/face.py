@@ -65,6 +65,8 @@ class Face(_BaseWithShade):
         * max
         * aperture_area
         * aperture_ratio
+        * altitude
+        * azimuth
         * user_data
     """
     TYPES = face_types
@@ -344,6 +346,20 @@ class Face(_BaseWithShade):
         """Get a number between 0 and 1 for the area ratio of the apertures to the face.
         """
         return self.aperture_area / self.area
+
+    @property
+    def altitude(self):
+        """Get the altitude of the geometry between +90 (up) and -90 (down)."""
+        return math.degrees(self._geometry.altitude)
+
+    @property
+    def azimuth(self):
+        """Get the azimuth of the geometry, between 0 and 360.
+
+        Given Y-axis as North, 0 = North, 90 = East, 180 = South, 270 = West
+        This will be zero if the Face3D is perfectly horizontal.
+        """
+        return math.degrees(self._geometry.azimuth)
 
     def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
         """Get a number between 0 and 360 for the orientation of the face in degrees.
