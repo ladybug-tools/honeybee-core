@@ -491,7 +491,8 @@ class Model(_Base):
 
         Note that this property accounts for the room multipliers.
         """
-        return sum([room.floor_area * room.multiplier for room in self._rooms])
+        return sum([room.floor_area * room.multiplier for room in self._rooms
+                    if not room.exclude_floor_area])
 
     @property
     def exposed_area(self):

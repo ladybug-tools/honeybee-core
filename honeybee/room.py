@@ -54,6 +54,7 @@ class Room(_BaseWithShade):
         * faces
         * multiplier
         * story
+        * exclude_floor_area
         * indoor_furniture
         * indoor_shades
         * outdoor_shades
@@ -71,7 +72,7 @@ class Room(_BaseWithShade):
         * average_floor_height
         * user_data
     """
-    __slots__ = ('_geometry', '_faces', '_multiplier', '_story')
+    __slots__ = ('_geometry', '_faces', '_multiplier', '_story', '_exclude_floor_area')
 
     def __init__(self, identifier, faces, tolerance=0, angle_tolerance=0):
         """Initialize Room."""
@@ -112,6 +113,7 @@ class Room(_BaseWithShade):
 
         self._multiplier = 1  # default value that can be overridden later
         self._story = None  # default value that can be overridden later
+        self._exclude_floor_area = False  # default value that can be overridden later
         self._properties = RoomProperties(self)  # properties for extensions
 
     @classmethod
@@ -151,6 +153,8 @@ class Room(_BaseWithShade):
                 room._multiplier = data['multiplier']
             if 'story' in data and data['story'] is not None:
                 room._story = data['story']
+            if 'exclude_floor_area' in data and data['exclude_floor_area'] is not None:
+                room._exclude_floor_area = data['exclude_floor_area']
             room._recover_shades_from_dict(data)
 
             if data['properties']['type'] == 'RoomProperties':
@@ -273,6 +277,20 @@ class Room(_BaseWithShade):
         if value is not None:
             value = valid_string(value, 'honeybee room story identifier')
         self._story = value
+
+    @property
+    def exclude_floor_area(self):
+        """Get or set a boolean for whether the floor area contributes to the Model.
+
+        Note that this will not affect the floor_area property of this Room but
+        it will ensure the Room's floor area is excluded from any calculations
+        when the Room is part of a Model.
+        """
+        return self._exclude_floor_area
+
+    @exclude_floor_area.setter
+    def exclude_floor_area(self, value):
+        self._exclude_floor_area = bool(value)
 
     @property
     def indoor_furniture(self):
@@ -1244,6 +1262,8 @@ class Room(_BaseWithShade):
             base['multiplier'] = self.multiplier
         if self.story is not None:
             base['story'] = self.story
+        if self.exclude_floor_area:
+            base['exclude_floor_area'] = self.exclude_floor_area
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
@@ -1319,6 +1339,7 @@ class Room(_BaseWithShade):
         new_r._user_data = None if self.user_data is None else self.user_data.copy()
         new_r._multiplier = self.multiplier
         new_r._story = self.story
+        new_r._exclude_floor_area = self.exclude_floor_area
         self._duplicate_child_shades(new_r)
         new_r._geometry = self._geometry
         new_r._properties._duplicate_extension_attr(self._properties)
