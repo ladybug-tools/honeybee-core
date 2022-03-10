@@ -1281,6 +1281,8 @@ class Face(_BaseWithShade):
             base['doors'] = [dr.to_dict(abridged, included_prop, include_plane)
                              for dr in self._doors]
         self._add_shades_to_dict(base, abridged, included_prop, include_plane)
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
         return base
 
     def _acceptable_sub_face_check(self, sub_face_type=Aperture):
