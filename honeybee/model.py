@@ -701,7 +701,7 @@ class Model(_Base):
 
     def rooms_by_identifier(self, identifiers):
         """Get a list of Room objects in the model given the Room identifiers."""
-        rooms = []
+        rooms, missing_ids = [], []
         model_rooms = self._rooms
         for obj_id in identifiers:
             for room in model_rooms:
@@ -709,12 +709,17 @@ class Model(_Base):
                     rooms.append(room)
                     break
             else:
-                raise ValueError('Room "{}" was not found in the model.'.format(obj_id))
+                missing_ids.append(obj_id)
+        if len(missing_ids) != 0:
+            all_objs = ' '.join(['"' + rid + '"' for rid in missing_ids])
+            raise ValueError(
+                'The following Rooms were not found in the model: {}'.format(all_objs)
+            )
         return rooms
 
     def faces_by_identifier(self, identifiers):
         """Get a list of Face objects in the model given the Face identifiers."""
-        faces = []
+        faces, missing_ids = [], []
         model_faces = self.faces
         for obj_id in identifiers:
             for face in model_faces:
@@ -722,12 +727,17 @@ class Model(_Base):
                     faces.append(face)
                     break
             else:
-                raise ValueError('Face "{}" was not found in the model.'.format(obj_id))
+                missing_ids.append(obj_id)
+        if len(missing_ids) != 0:
+            all_objs = ' '.join(['"' + rid + '"' for rid in missing_ids])
+            raise ValueError(
+                'The following Faces were not found in the model: {}'.format(all_objs)
+            )
         return faces
 
     def apertures_by_identifier(self, identifiers):
         """Get a list of Aperture objects in the model given the Aperture identifiers."""
-        apertures = []
+        apertures, missing_ids = [], []
         model_apertures = self.apertures
         for obj_id in identifiers:
             for aperture in model_apertures:
@@ -735,13 +745,17 @@ class Model(_Base):
                     apertures.append(aperture)
                     break
             else:
-                raise ValueError(
-                    'Aperture "{}" was not found in the model.'.format(obj_id))
+                missing_ids.append(obj_id)
+        if len(missing_ids) != 0:
+            all_objs = ' '.join(['"' + rid + '"' for rid in missing_ids])
+            raise ValueError(
+                'The following Apertures were not found in the model: {}'.format(all_objs)
+            )
         return apertures
 
     def doors_by_identifier(self, identifiers):
         """Get a list of Door objects in the model given the Door identifiers."""
-        doors = []
+        doors, missing_ids = [], []
         model_doors = self.doors
         for obj_id in identifiers:
             for door in model_doors:
@@ -749,12 +763,17 @@ class Model(_Base):
                     doors.append(door)
                     break
             else:
-                raise ValueError('Door "{}" was not found in the model.'.format(obj_id))
+                missing_ids.append(obj_id)
+        if len(missing_ids) != 0:
+            all_objs = ' '.join(['"' + rid + '"' for rid in missing_ids])
+            raise ValueError(
+                'The following Doors were not found in the model: {}'.format(all_objs)
+            )
         return doors
 
     def shades_by_identifier(self, identifiers):
         """Get a list of Shade objects in the model given the Shade identifiers."""
-        shades = []
+        shades, missing_ids = [], []
         model_shades = self.shades
         for obj_id in identifiers:
             for face in model_shades:
@@ -762,7 +781,12 @@ class Model(_Base):
                     shades.append(face)
                     break
             else:
-                raise ValueError('Shade "{}" was not found in the model.'.format(obj_id))
+                missing_ids.append(obj_id)
+        if len(missing_ids) != 0:
+            all_objs = ' '.join(['"' + rid + '"' for rid in missing_ids])
+            raise ValueError(
+                'The following Shades were not found in the model: {}'.format(all_objs)
+            )
         return shades
 
     def add_prefix(self, prefix):
@@ -1005,6 +1029,7 @@ class Model(_Base):
         msgs.append(self.check_duplicate_shade_identifiers(False))
         msgs.append(self.check_missing_adjacencies(False))
         msgs.append(self.check_all_air_boundaries_adjacent(False))
+        msgs.append(self.check_rooms_all_air_boundary(False))
         # check that a tolerance has been specified in the model
         assert self.tolerance != 0, \
             'Model must have a non-zero tolerance in order to perform geometry checks.'
@@ -1133,6 +1158,25 @@ class Model(_Base):
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
+
+    def check_rooms_all_air_boundary(self, raise_exception=True):
+        """Check that there are no Rooms composed entirely of AirBoundaries.
+
+        This is a requirement for energy simulation since EnergyPlus will throw
+        a "no surfaces" error if it encounters a Room composed entirely of
+        AirBoundaries.
+        """
+        msgs = []
+        for room in self._rooms:
+            if all(isinstance(f.type, AirBoundary) for f in room._faces):
+                msg = 'Room "{}" is composed entirely of AirBoundary Faces. It ' \
+                    'should be merged with adjacent rooms.'.format(room.full_id)
+                msgs.append(msg)
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
 
     def check_rooms_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
         """Check whether the Model's rooms are closed solid to within tolerances.
@@ -1785,7 +1829,7 @@ class Model(_Base):
             id_checking_function(bc_ids)
             return []
         except ValueError as e:
-            id_pattern = re.compile('\"(.*)\"')
+            id_pattern = re.compile('\"([^"]*)\"')
             return [obj_id for obj_id in id_pattern.findall(str(e))]
 
     @staticmethod
