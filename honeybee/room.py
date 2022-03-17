@@ -150,11 +150,11 @@ class Room(_BaseWithShade):
             if 'user_data' in data and data['user_data'] is not None:
                 room.user_data = data['user_data']
             if 'multiplier' in data and data['multiplier'] is not None:
-                room._multiplier = data['multiplier']
+                room.multiplier = data['multiplier']
             if 'story' in data and data['story'] is not None:
-                room._story = data['story']
+                room.story = data['story']
             if 'exclude_floor_area' in data and data['exclude_floor_area'] is not None:
-                room._exclude_floor_area = data['exclude_floor_area']
+                room.exclude_floor_area = data['exclude_floor_area']
             room._recover_shades_from_dict(data)
 
             if data['properties']['type'] == 'RoomProperties':
@@ -268,15 +268,20 @@ class Room(_BaseWithShade):
         """Get or set text for the story identifier to which this Room belongs.
 
         Rooms sharing the same story identifier are considered part of the same
-        story in a Model.
+        story in a Model. Note that the story identifier has no character
+        restrictions much like display_name.
         """
         return self._story
 
     @story.setter
     def story(self, value):
         if value is not None:
-            value = valid_string(value, 'honeybee room story identifier')
-        self._story = value
+            try:
+                self._story = str(value)
+            except UnicodeEncodeError:  # Python 2 machine lacking the character set
+                self._story = value  # keep it as unicode
+        else:
+            self._story = value
 
     @property
     def exclude_floor_area(self):
