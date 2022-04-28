@@ -4,10 +4,15 @@ from __future__ import division
 import os
 import re
 import json
+import uuid
 try:  # check if we are in IronPython
     import cPickle as pickle
 except ImportError:  # wea re in cPython
     import pickle
+
+from ladybug_geometry.geometry3d.plane import Plane
+from ladybug_geometry.geometry3d.face import Face3D
+from ladybug_geometry.interop.stl import STL
 
 from ._base import _Base
 from .units import conversion_factor_to_meters, UNITS, UNITS_TOLERANCES
@@ -18,13 +23,11 @@ from .face import Face
 from .shade import Shade
 from .aperture import Aperture
 from .door import Door
-from .typing import float_positive, invalid_dict_error
+from .typing import float_positive, invalid_dict_error, clean_string
 from .config import folders
 from .boundarycondition import Surface
 from .facetype import AirBoundary
 import honeybee.writer.model as writer
-
-from ladybug_geometry.geometry3d.face import Face3D
 
 
 class Model(_Base):
@@ -59,7 +62,7 @@ class Model(_Base):
             checks should be performed. None indicates that the tolerance will be
             set based on the units above, with the tolerance consistently being
             between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
-            SDK). (Default: None).
+            SDK and EnergyPlus). (Default: None).
         angle_tolerance: The max angle difference in degrees that vertices are allowed
             to differ from one another in order to consider them colinear. Zero indicates
             that no angle tolerance checks should be performed. (Default: 1.0).
@@ -246,8 +249,54 @@ class Model(_Base):
         return cls.from_dict(data)
 
     @classmethod
-    def from_objects(cls, identifier, objects, units='Meters', tolerance=0,
-                     angle_tolerance=0):
+    def from_stl(cls, file_path, geometry_to_faces=False, units='Meters',
+                 tolerance=None, angle_tolerance=1.0):
+        """Create a Honeybee Model from an STL file.
+
+        Args:
+            file_path: Path to an STL file as a text string. The STL file can be
+                in either ASCII or binary format.
+            geometry_to_faces: A boolean to note whether the geometry in the STL
+                file should be imported as Faces (with Walls/Floors/RoofCeiling
+                set according to the normal). If False, all geometry will be
+                imported as Shades instead of Faces. (Default: False).
+            units: Text for the units system in which the model geometry
+                exists. Default: 'Meters'. Choose from the following:
+
+                * Meters
+                * Millimeters
+                * Feet
+                * Inches
+                * Centimeters
+
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. Zero indicates that no tolerance
+                checks should be performed. None indicates that the tolerance will be
+                set based on the units above, with the tolerance consistently being
+                between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
+                SDK and EnergyPlus). (Default: None).
+            angle_tolerance: The max angle difference in degrees that vertices
+                are allowed to differ from one another in order to consider them
+                colinear. Zero indicates that no angle tolerance checks should be
+                performed. (Default: 1.0).
+        """
+        stl_obj = STL.from_file(file_path)
+        all_id = clean_string(stl_obj.name)
+        all_geo = []
+        for verts, normal in zip(stl_obj.face_vertices, stl_obj.face_normals):
+            all_geo.append(Face3D(verts, plane=Plane(normal, verts[0])))
+        if geometry_to_faces:
+            hb_objs = [Face(all_id + '_' + str(uuid.uuid4())[:8], go) for go in all_geo]
+            return Model(all_id, orphaned_faces=hb_objs, units=units,
+                         tolerance=tolerance, angle_tolerance=angle_tolerance)
+        else:
+            hb_objs = [Shade(all_id + '_' + str(uuid.uuid4())[:8], go) for go in all_geo]
+            return Model(all_id, orphaned_shades=hb_objs, units=units,
+                         tolerance=tolerance, angle_tolerance=angle_tolerance)
+
+    @classmethod
+    def from_objects(cls, identifier, objects, units='Meters',
+                     tolerance=None, angle_tolerance=1.0):
         """Initialize a Model from a list of any type of honeybee-core geometry objects.
 
         Args:
@@ -265,11 +314,14 @@ class Model(_Base):
 
             tolerance: The maximum difference between x, y, and z values at which
                 vertices are considered equivalent. Zero indicates that no tolerance
-                checks should be performed. Default: 0.
-            angle_tolerance: The max angle difference in degrees that vertices are
-                allowed to differ from one another in order to consider them colinear.
-                Zero indicates that no angle tolerance checks should be performed.
-                Default: 0.
+                checks should be performed. None indicates that the tolerance will be
+                set based on the units above, with the tolerance consistently being
+                between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
+                SDK and EnergyPlus). (Default: None).
+            angle_tolerance: The max angle difference in degrees that vertices
+                are allowed to differ from one another in order to consider them
+                colinear. Zero indicates that no angle tolerance checks should be
+                performed. (Default: 1.0).
         """
         rooms = []
         faces = []
@@ -1758,6 +1810,53 @@ class Model(_Base):
         with open(hb_file, 'wb') as fp:
             pickle.dump(hb_dict, fp)
         return hb_file
+
+    def to_stl(self, name=None, folder=None):
+        """Write Honeybee model to an ASCII STL file.
+
+        Note that all geometry is triangulated when it is converted to STL.
+
+        Args:
+            name: A text string for the name of the STL file. If None, the model
+                identifier wil be used. (Default: None).
+            folder: A text string for the direcotry where the STL will be written.
+                If unspecified, the default simulation folder will be used. This
+                is usually at "C:\\Users\\USERNAME\\simulation."
+        """
+        # set up a name and folder for the STL
+        if name is None:
+            name = self.identifier
+        file_name = name if name.lower().endswith('.stl') else '{}.stl'.format(name)
+        folder = folder if folder is not None else folders.default_simulation_folder
+        hb_file = os.path.join(folder, file_name)
+
+        # collect all of the Face3Ds across the model as triangles and normals
+        all_geo = []
+        for face in self.faces:
+            all_geo.append(face.punched_geometry)
+        for ap in self.apertures:
+            all_geo.append(ap.geometry)
+        for dr in self.doors:
+            all_geo.append(dr.geometry)
+        for shd in self.doors:
+            all_geo.append(shd.geometry)
+
+        # convert the Face3Ds into a format for export to STL
+        _face_vertices, _face_normals = [], []
+        for face_3d in all_geo:
+            # add the geometry of a Face3D to the lists for STL export
+            if len(face_3d) == 3:
+                _face_vertices.append(face_3d.vertices)
+                _face_normals.append(face_3d.normal)
+            else:
+                tri_mesh = face_3d.triangulated_mesh3d
+                for m_fac in tri_mesh.face_vertices:
+                    _face_vertices.append(m_fac)
+                    _face_normals.append(face_3d.normal)
+
+        # write the geometry into an STL file
+        stl_obj = STL(_face_vertices, _face_normals, self.identifier)
+        return stl_obj.to_file(folder, name)
 
     def _all_objects(self):
         """Get a single list of all the Honeybee objects in a Model."""
