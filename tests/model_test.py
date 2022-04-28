@@ -1050,6 +1050,46 @@ def test_to_hbpkl():
     os.remove(model_hbpkl)
 
 
+def test_to_stl():
+    """Test the Model to_stl method."""
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.apertures[0].move_shades(Vector3D(0, 0, -0.5))
+    north_face = room[1]
+    door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
+                  Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+    aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
+                      Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+    door = Door('FrontDoor', Face3D(door_verts))
+    north_face.add_door(door)
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
+    north_face.add_aperture(aperture)
+    model = Model('TinyHouse', [room])
+
+    path = './tests/stl'
+    model_stl = model.to_stl('test', path)
+    assert os.path.isfile(model_stl)
+    new_model = Model.from_stl(model_stl)
+    assert isinstance(new_model, Model)
+    os.remove(model_stl)
+
+
+def test_from_stl():
+    """Test the Model from_stl method."""
+    file_path = 'tests/stl/cube_binary.stl'
+    model = Model.from_stl(file_path, geometry_to_faces=True)
+    assert len(model.faces) == 12
+    assert all((len(f.geometry) == 3 for f in model.faces))
+
+    file_path = 'tests/stl/cube_ascii.stl'
+    model = Model.from_stl(file_path, geometry_to_faces=False)
+    assert len(model.shades) == 12
+    assert all((len(f.geometry) == 3 for f in model.shades))
+
+
 def test_writer():
     """Test the Model writer object."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
