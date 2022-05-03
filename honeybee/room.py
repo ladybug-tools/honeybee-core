@@ -767,7 +767,7 @@ class Room(_BaseWithShade):
                 try:
                     face.remove_colinear_vertices(tolerance)
                     face.remove_degenerate_sub_faces(tolerance)
-                except ValueError:
+                except ValueError:  # degenerate face found!
                     new_faces.pop(i)
             self._faces = tuple(new_faces)
         else:
@@ -786,7 +786,8 @@ class Room(_BaseWithShade):
             self._geometry = Polyface3D.from_faces(
                 tuple(face.geometry for face in self._faces), tolerance)
 
-    def check_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
+    def check_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True,
+                    detailed=False):
         """Check whether the Room is a closed solid to within the input tolerances.
 
         Args:
@@ -798,27 +799,30 @@ class Room(_BaseWithShade):
                 Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if the room geometry does not form a closed solid.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
         if self._geometry is not None and self.geometry.is_solid:
-            return ''
+            return [] if detailed else ''
         face_geometries = tuple(face.geometry for face in self._faces)
         self._geometry = Polyface3D.from_faces(face_geometries, tolerance)
         if self.geometry.is_solid:
-            return ''
+            return [] if detailed else ''
         ang_tol = math.radians(angle_tolerance)
         self._geometry = self.geometry.merge_overlapping_edges(tolerance, ang_tol)
         if self.geometry.is_solid:
-            return ''
+            return [] if detailed else ''
         msg = 'Room "{}" is not closed to within {} tolerance and {} angle ' \
             'tolerance.\n  {} naked edges found\n  {} non-manifold edges found'.format(
                 self.full_id, tolerance, angle_tolerance,
                 len(self._geometry.naked_edges), len(self._geometry.non_manifold_edges))
-        if raise_exception:
-            raise ValueError(msg)
-        return msg
+        return self._validation_message(msg, raise_exception, detailed, '0106')
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
-                              raise_exception=True):
+                              raise_exception=True, detailed=False):
         """Check that room's sub-faces are co-planar with faces and in the face boundary.
 
         Note this does not check the planarity of the sub-faces themselves, whether
@@ -832,42 +836,62 @@ class Room(_BaseWithShade):
                 differ from one another in order for them to be considered coplanar.
                 Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
-                if an sub-face is not valid.
+                if an sub-face is not valid. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for f in self._faces:
-            msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False)
-            if msg != '':
+            msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
                 msgs.append(msg)
         if len(msgs) == 0:
-            return ''
+            return [] if detailed else ''
+        elif detailed:
+            return msgs
         full_msg = 'Room "{}" contains invalid sub-faces (Apertures and Doors).' \
             '\n  {}'.format(self.full_id, '\n  '.join(msgs))
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_sub_faces_overlapping(self, raise_exception=True):
+    def check_sub_faces_overlapping(self, raise_exception=True, detailed=False):
         """Check that this Face's sub-faces do not overlap with one another.
 
         Args:
             raise_exception: Boolean to note whether a ValueError should be raised
-                if a sub-faces overlap with one another.
+                if a sub-faces overlap with one another. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for f in self._faces:
-            msg = f.check_sub_faces_overlapping(False)
-            if msg != '':
+            msg = f.check_sub_faces_overlapping(False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
                 msgs.append(msg)
         if len(msgs) == 0:
-            return ''
+            return [] if detailed else ''
+        elif detailed:
+            return msgs
         full_msg = 'Room "{}" contains overlapping sub-faces.' \
             '\n  {}'.format(self.full_id, '\n  '.join(msgs))
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_planar(self, tolerance=0.01, raise_exception=True):
+    def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check that all of the Room's geometry components are planar.
 
         This includes all of the Room's Faces, Apertures, Doors and Shades.
@@ -878,27 +902,36 @@ class Room(_BaseWithShade):
                 Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
-        msgs = [self._check_planar_shades(tolerance)]
+        detailed = False if raise_exception else detailed
+        msgs = [self._check_planar_shades(tolerance, detailed)]
         for face in self._faces:
-            msgs.append(face.check_planar(tolerance, False))
-            msgs.append(face._check_planar_shades(tolerance))
+            msgs.append(face.check_planar(tolerance, False, detailed))
+            msgs.append(face._check_planar_shades(tolerance, detailed))
             for ap in face._apertures:
-                msgs.append(ap.check_planar(tolerance, False))
-                msgs.append(ap._check_planar_shades(tolerance))
+                msgs.append(ap.check_planar(tolerance, False, detailed))
+                msgs.append(ap._check_planar_shades(tolerance, detailed))
             for dr in face._doors:
-                msgs.append(dr.check_planar(tolerance, False))
-                msgs.append(dr._check_planar_shades(tolerance))
-        full_msgs = [msg for msg in msgs if msg != '']
+                msgs.append(dr.check_planar(tolerance, False, detailed))
+                msgs.append(dr._check_planar_shades(tolerance, detailed))
+        full_msgs = [msg for msg in msgs if msg]
         if len(full_msgs) == 0:
-            return ''
+            return [] if detailed else ''
+        elif detailed:
+            return [m for megs in full_msgs for m in megs]
         full_msg = 'Room "{}" contains non-planar geometry.' \
             '\n  {}'.format(self.full_id, '\n  '.join(full_msgs))
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_self_intersecting(self, tolerance=0.01, raise_exception=True):
+    def check_self_intersecting(self, tolerance=0.01, raise_exception=True,
+                                detailed=False):
         """Check that no edges of the Room's geometry components self-intersect.
 
         This includes all of the Room's Faces, Apertures, Doors and Shades.
@@ -908,28 +941,36 @@ class Room(_BaseWithShade):
                 vertices at which they can be considered equivalent. Default: 0.01,
                 suitable for objects in meters.
             raise_exception: If True, a ValueError will be raised if an object
-                intersects with itself (like a bowtie). Default: True.
+                intersects with itself (like a bowtie). (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
-        msgs = [self._check_self_intersecting_shades(tolerance)]
+        detailed = False if raise_exception else detailed
+        msgs = [self._check_self_intersecting_shades(tolerance, detailed)]
         for face in self._faces:
-            msgs.append(face.check_self_intersecting(tolerance, False))
-            msgs.append(face._check_self_intersecting_shades(tolerance))
+            msgs.append(face.check_self_intersecting(tolerance, False, detailed))
+            msgs.append(face._check_self_intersecting_shades(tolerance, detailed))
             for ap in face._apertures:
-                msgs.append(ap.check_self_intersecting(tolerance, False))
-                msgs.append(ap._check_self_intersecting_shades(tolerance))
+                msgs.append(ap.check_self_intersecting(tolerance, False, detailed))
+                msgs.append(ap._check_self_intersecting_shades(tolerance, detailed))
             for dr in face._doors:
-                msgs.append(dr.check_self_intersecting(tolerance, False))
-                msgs.append(dr._check_self_intersecting_shades(tolerance))
-        full_msgs = [msg for msg in msgs if msg != '']
+                msgs.append(dr.check_self_intersecting(tolerance, False, detailed))
+                msgs.append(dr._check_self_intersecting_shades(tolerance, detailed))
+        full_msgs = [msg for msg in msgs if msg]
         if len(full_msgs) == 0:
-            return ''
+            return [] if detailed else ''
+        elif detailed:
+            return [m for megs in full_msgs for m in megs]
         full_msg = 'Room "{}" contains self-intersecting geometry.' \
             '\n  {}'.format(self.full_id, '\n  '.join(full_msgs))
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_non_zero(self, tolerance=0.0001, raise_exception=True):
+    def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
         """Check that the Room's geometry components are above a "zero" area tolerance.
 
         This includes all of the Room's Faces, Apertures, Doors and Shades.
@@ -939,21 +980,29 @@ class Room(_BaseWithShade):
                 which is equal to 1 cm2 when model units are meters. This is just
                 above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
-                area is below the tolerance. Default: True.
+                area is below the tolerance. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
-        msgs = [self._check_non_zero_shades(tolerance)]
+        detailed = False if raise_exception else detailed
+        msgs = [self._check_non_zero_shades(tolerance, detailed)]
         for face in self._faces:
-            msgs.append(face.check_non_zero(tolerance, False))
-            msgs.append(face._check_non_zero_shades(tolerance))
+            msgs.append(face.check_non_zero(tolerance, False, detailed))
+            msgs.append(face._check_non_zero_shades(tolerance, detailed))
             for ap in face._apertures:
-                msgs.append(ap.check_non_zero(tolerance, False))
-                msgs.append(ap._check_non_zero_shades(tolerance))
+                msgs.append(ap.check_non_zero(tolerance, False, detailed))
+                msgs.append(ap._check_non_zero_shades(tolerance, detailed))
             for dr in face._doors:
-                msgs.append(dr.check_non_zero(tolerance, False))
-                msgs.append(dr._check_non_zero_shades(tolerance))
-        full_msgs = [msg for msg in msgs if msg != '']
+                msgs.append(dr.check_non_zero(tolerance, False, detailed))
+                msgs.append(dr._check_non_zero_shades(tolerance, detailed))
+        full_msgs = [msg for msg in msgs if msg]
         if len(full_msgs) == 0:
-            return ''
+            return [] if detailed else ''
+        elif detailed:
+            return [m for megs in full_msgs for m in megs]
         full_msg = 'Room "{}" contains zero area geometry.' \
             '\n  {}'.format(self.full_id, '\n  '.join(full_msgs))
         if raise_exception and len(full_msgs) != 0:

@@ -1055,7 +1055,7 @@ class Model(_Base):
             self.tolerance = self.tolerance * scale_fac
             self.units = units
 
-    def check_all(self, raise_exception=True):
+    def check_all(self, raise_exception=True, detailed=False):
         """Check all of the aspects of the Model for possible errors.
 
         This includes basic properties like adjacency checks and all geometry checks.
@@ -1067,21 +1067,24 @@ class Model(_Base):
         Args:
             raise_exception: Boolean to note whether a ValueError should be raised
                 if any Model errors are found. If False, this method will simply
-                return a text string with all errors that were found.
+                return a text string with all errors that were found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
 
         Returns:
             A text string with all errors that were found. This string will be empty
             of no errors were found.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         # perform checks for key honeybee model schema rules
-        msgs.append(self.check_duplicate_room_identifiers(False))
-        msgs.append(self.check_duplicate_face_identifiers(False))
-        msgs.append(self.check_duplicate_sub_face_identifiers(False))
-        msgs.append(self.check_duplicate_shade_identifiers(False))
-        msgs.append(self.check_missing_adjacencies(False))
-        msgs.append(self.check_all_air_boundaries_adjacent(False))
-        msgs.append(self.check_rooms_all_air_boundary(False))
+        msgs.append(self.check_duplicate_room_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_face_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_sub_face_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_shade_identifiers(False, detailed))
+        msgs.append(self.check_missing_adjacencies(False, detailed))
+        msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
+        msgs.append(self.check_rooms_all_air_boundary(False, detailed))
         # check that a tolerance has been specified in the model
         assert self.tolerance != 0, \
             'Model must have a non-zero tolerance in order to perform geometry checks.'
@@ -1090,52 +1093,121 @@ class Model(_Base):
         tol = self.tolerance
         ang_tol = self.angle_tolerance
         # perform several checks for Face3D geometry rules
-        msgs.append(self.check_self_intersecting(tol, False))
-        msgs.append(self.check_planar(tol, False))
+        msgs.append(self.check_self_intersecting(tol, False, detailed))
+        msgs.append(self.check_planar(tol, False, detailed))
         # remove colinear vertices to ensure that this doesn't create faces with <3 edges
         for room in self.rooms:
             try:
                 new_room = room.duplicate()  # duplicate to avoid editing the original
                 new_room.remove_colinear_vertices_envelope(tol)
             except ValueError as e:
-                msgs.append(str(e))
+                deg_msg = str(e)
+                if detailed:
+                    deg_msg = [{
+                        'code': '000107',
+                        'type': 'Core',
+                        'element_type': 'Room',
+                        'element_id': room.identifier,
+                        'element_name': room.display_name,
+                        'message': deg_msg
+                    }]
+                msgs.append(deg_msg)
         # perform geometry checks related to parent-child relationships
-        msgs.append(self.check_sub_faces_valid(tol, ang_tol, False))
-        msgs.append(self.check_sub_faces_overlapping(False))
-        msgs.append(self.check_rooms_solid(tol, ang_tol, False))
+        msgs.append(self.check_sub_faces_valid(tol, ang_tol, False, detailed))
+        msgs.append(self.check_sub_faces_overlapping(False, detailed))
+        msgs.append(self.check_rooms_solid(tol, ang_tol, False, detailed))
         # check the extension attributes
-        msgs.extend(self._properties._check_extension_attr())
+        ext_msgs = self._properties._check_extension_attr(detailed)
+        if detailed:
+            ext_msgs = [m for m in ext_msgs if isinstance(m, dict)]
+        msgs.extend(ext_msgs)
+
         # output a final report of errors or raise an exception
-        full_msgs = [msg for msg in msgs if msg != '']
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return full_msgs
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_duplicate_room_identifiers(self, raise_exception=True):
-        """Check that there are no duplicate Room identifiers in the model."""
-        return check_duplicate_identifiers(self._rooms, raise_exception, 'Room')
+    def check_duplicate_room_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate Room identifiers in the model.
 
-    def check_duplicate_face_identifiers(self, raise_exception=True):
-        """Check that there are no duplicate Face identifiers in the model."""
-        return check_duplicate_identifiers_parent(self.faces, raise_exception, 'Face')
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
 
-    def check_duplicate_shade_identifiers(self, raise_exception=True):
-        """Check that there are no duplicate Shade identifiers in the model."""
-        return check_duplicate_identifiers_parent(self.shades, raise_exception, 'Shade')
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        return check_duplicate_identifiers(
+            self._rooms, raise_exception, 'Room', detailed, '000004', 'Core')
 
-    def check_duplicate_sub_face_identifiers(self, raise_exception=True):
+    def check_duplicate_face_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate Face identifiers in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        return check_duplicate_identifiers_parent(
+            self.faces, raise_exception, 'Face', detailed, '000003', 'Core')
+
+    def check_duplicate_sub_face_identifiers(self, raise_exception=True, detailed=False):
         """Check that there are no duplicate sub-face identifiers in the model.
 
         Note that both Apertures and Doors are checked for duplicates since the two
         are counted together by EnergyPlus.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
         sub_faces = self.apertures + self.doors
-        return check_duplicate_identifiers_parent(sub_faces, raise_exception, 'sub-face')
+        return check_duplicate_identifiers_parent(
+            sub_faces, raise_exception, 'sub-face', detailed, '000002', 'Core')
 
-    def check_missing_adjacencies(self, raise_exception=True):
-        """Check that all Faces Apertures, and Doors have adjacent objects in the model.
+    def check_duplicate_shade_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate Shade identifiers in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        return check_duplicate_identifiers_parent(
+            self.shades, raise_exception, 'Shade', detailed, '000001', 'Core')
+
+    def check_missing_adjacencies(self, raise_exception=True, detailed=False):
+        """Check that all Faces Apertures, and Doors have adjacent objects in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if invalid adjacencies are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        detailed = False if raise_exception else detailed
         # loop through all objects and get their adjacent object
         room_ids = []
         face_bc_ids, face_set = [], set()
@@ -1146,19 +1218,19 @@ class Model(_Base):
             for face in room._faces:
                 if isinstance(face.boundary_condition, Surface):
                     sr.append(self._self_adj_check(
-                        'Face', face, face_bc_ids, room_ids, face_set, raise_exception))
+                        'Face', face, face_bc_ids, room_ids, face_set, detailed))
                     for ap in face.apertures:
                         assert isinstance(ap.boundary_condition, Surface), \
                             'Aperture "{}" must have Surface boundary condition ' \
                             'if the parent Face has a Surface BC.'.format(ap.full_id)
                         sr.append(self._self_adj_check(
-                            'Aperture', ap, ap_bc_ids, room_ids, ap_set, raise_exception))
+                            'Aperture', ap, ap_bc_ids, room_ids, ap_set, detailed))
                     for dr in face.doors:
                         assert isinstance(dr.boundary_condition, Surface), \
                             'Door "{}" must have Surface boundary condition ' \
                             'if the parent Face has a Surface BC.'.format(dr.full_id)
                         sr.append(self._self_adj_check(
-                            'Door', dr, door_bc_ids, room_ids, dr_set, raise_exception))
+                            'Door', dr, door_bc_ids, room_ids, dr_set, detailed))
         # check to see if the adjacent objects are in the model
         mr = self._missing_adj_check(self.rooms_by_identifier, room_ids)
         mf = self._missing_adj_check(self.faces_by_identifier, face_bc_ids)
@@ -1172,65 +1244,100 @@ class Model(_Base):
                     if isinstance(face.boundary_condition, Surface):
                         bc_obj, bc_room = self._adj_objects(face)
                         if bc_obj in mf:
-                            self._missing_adj_msg(msgs, face, bc_obj, 'Face', 'Face')
+                            self._missing_adj_msg(
+                                msgs, face, bc_obj, 'Face', 'Face', detailed)
                         if bc_room in mr:
-                            self._missing_adj_msg(msgs, face, bc_room, 'Face', 'Room')
+                            self._missing_adj_msg(
+                                msgs, face, bc_room, 'Face', 'Room', detailed)
                         for ap in face.apertures:
                             bc_obj, bc_room = self._adj_objects(ap)
                             if bc_obj in ma:
                                 self._missing_adj_msg(
-                                    msgs, ap, bc_obj, 'Aperture', 'Aperture')
+                                    msgs, ap, bc_obj, 'Aperture', 'Aperture', detailed)
                             if bc_room in mr:
                                 self._missing_adj_msg(
-                                    msgs, ap, bc_room, 'Aperture', 'Room')
+                                    msgs, ap, bc_room, 'Aperture', 'Room', detailed)
                         for dr in face.doors:
                             bc_obj, bc_room = self._adj_objects(dr)
                             if bc_obj in ma:
-                                self._missing_adj_msg(msgs, dr, bc_obj, 'Door', 'Door')
+                                self._missing_adj_msg(
+                                    msgs, dr, bc_obj, 'Door', 'Door', detailed)
                             if bc_room in mr:
-                                self._missing_adj_msg(msgs, dr, bc_room, 'Door', 'Room')
-        msg = '\n'.join([m for m in sr + msgs if m != ''])
+                                self._missing_adj_msg(
+                                    msgs, dr, bc_room, 'Door', 'Room', detailed)
+        # return the final error messages
+        all_msgs = [m for m in sr + msgs if m]
+        if detailed:
+            return all_msgs
+        msg = '\n'.join(all_msgs)
         if msg != '' and raise_exception:
             raise ValueError(msg)
         return msg
 
-    def check_all_air_boundaries_adjacent(self, raise_exception=True):
+    def check_all_air_boundaries_adjacent(self, raise_exception=True, detailed=False):
         """Check that all Faces with the AirBoundary type are adjacent to other Faces.
 
         This is a requirement for energy simulation.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if an AirBoundary without an adjacency is found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for face in self.faces:
             if isinstance(face.type, AirBoundary) and not \
                     isinstance(face.boundary_condition, Surface):
                 msg = 'Face "{}" is an AirBoundary but is not adjacent ' \
                       'to another Face.'.format(face.full_id)
+                msg = self._validation_message_child(msg, face, detailed, '0206')
                 msgs.append(msg)
+        if detailed:
+            return msgs
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_rooms_all_air_boundary(self, raise_exception=True):
+    def check_rooms_all_air_boundary(self, raise_exception=True, detailed=False):
         """Check that there are no Rooms composed entirely of AirBoundaries.
 
         This is a requirement for energy simulation since EnergyPlus will throw
         a "no surfaces" error if it encounters a Room composed entirely of
         AirBoundaries.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if a Room composed entirely of AirBoundaries is found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for room in self._rooms:
             if all(isinstance(f.type, AirBoundary) for f in room._faces):
                 msg = 'Room "{}" is composed entirely of AirBoundary Faces. It ' \
                     'should be merged with adjacent rooms.'.format(room.full_id)
+                msg = self._validation_message_child(msg, face, detailed, '0207')
                 msgs.append(msg)
+        if detailed:
+            return msgs
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
 
-    def check_rooms_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
+    def check_rooms_solid(self, tolerance=0.01, angle_tolerance=1,
+                          raise_exception=True, detailed=False):
         """Check whether the Model's rooms are closed solid to within tolerances.
 
         Args:
@@ -1241,20 +1348,30 @@ class Model(_Base):
                 allowed to differ from one another in order to consider them colinear.
                 Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
-                if the room geometry does not form a closed solid.
+                if the room geometry does not form a closed solid. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for room in self._rooms:
-            msg = room.check_solid(tolerance, angle_tolerance, raise_exception=False)
-            if msg != '':
+            msg = room.check_solid(tolerance, angle_tolerance, raise_exception, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
                 msgs.append(msg)
+        if detailed:
+            return msgs
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
-                              raise_exception=True):
+                              raise_exception=True, detailed=False):
         """Check that model's sub-faces are co-planar with faces and in the face boundary.
 
         Note this does not check the planarity of the sub-faces themselves, whether
@@ -1268,44 +1385,68 @@ class Model(_Base):
                 differ from one another in order for them to be considered coplanar.
                 Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
-                if an sub-face is not valid.
+                if an sub-face is not valid. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for rm in self._rooms:
-            msg = rm.check_sub_faces_valid(tolerance, angle_tolerance, False)
-            if msg != '':
+            msg = rm.check_sub_faces_valid(tolerance, angle_tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
                 msgs.append(msg)
         for f in self._orphaned_faces:
-            msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False)
-            if msg != '':
+            msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
                 msgs.append(msg)
+        if detailed:
+            return msgs
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_sub_faces_overlapping(self, raise_exception=True):
+    def check_sub_faces_overlapping(self, raise_exception=True, detailed=False):
         """Check that model's sub-faces do not overlap with one another.
 
         Args:
             raise_exception: Boolean to note whether a ValueError should be raised
                 if a sub-faces overlap with one another.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for rm in self._rooms:
             msg = rm.check_sub_faces_overlapping(False)
-            if msg != '':
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
                 msgs.append(msg)
         for f in self._orphaned_faces:
             msg = f.check_sub_faces_overlapping(False)
-            if msg != '':
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
                 msgs.append(msg)
+        if detailed:
+            return msgs
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_planar(self, tolerance, raise_exception=True):
+    def check_planar(self, tolerance, raise_exception=True, detailed=False):
         """Check that all of the Model's geometry components are planar.
 
         This includes all of the Model's Faces, Apertures, Doors and Shades.
@@ -1315,23 +1456,32 @@ class Model(_Base):
                 object's plane at which the vertex is said to lie in the plane.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for face in self.faces:
-            msgs.append(face.check_planar(tolerance, raise_exception=False))
+            msgs.append(face.check_planar(tolerance, False, detailed))
         for shd in self.shades:
-            msgs.append(shd.check_planar(tolerance, raise_exception=False))
+            msgs.append(shd.check_planar(tolerance, False, detailed))
         for ap in self.apertures:
-            msgs.append(ap.check_planar(tolerance, raise_exception=False))
+            msgs.append(ap.check_planar(tolerance, False, detailed))
         for dr in self.doors:
-            msgs.append(dr.check_planar(tolerance, raise_exception=False))
-        full_msgs = [msg for msg in msgs if msg != '']
+            msgs.append(dr.check_planar(tolerance, False, detailed))
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return full_msgs
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_self_intersecting(self, tolerance=0.01, raise_exception=True):
+    def check_self_intersecting(self, tolerance=0.01, raise_exception=True,
+                                detailed=False):
         """Check that no edges of the Model's geometry components self-intersect.
 
         This includes all of the Model's Faces, Apertures, Doors and Shades.
@@ -1341,26 +1491,34 @@ class Model(_Base):
                 vertices at which they can be considered equivalent. Default: 0.01,
                 suitable for objects in meters.
             raise_exception: If True, a ValueError will be raised if an object
-                intersects with itself (like a bowtie). Default: True.
+                intersects with itself (like a bowtie). (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for room in self.rooms:
-            msgs.append(room.check_self_intersecting(tolerance, raise_exception=False))
+            msgs.append(room.check_self_intersecting(tolerance, False, detailed))
         for face in self.orphaned_faces:
-            msgs.append(face.check_self_intersecting(tolerance, raise_exception=False))
+            msgs.append(face.check_self_intersecting(tolerance, False, detailed))
         for shd in self.orphaned_shades:
-            msgs.append(shd.check_self_intersecting(tolerance, raise_exception=False))
+            msgs.append(shd.check_self_intersecting(tolerance, False, detailed))
         for ap in self.orphaned_apertures:
-            msgs.append(ap.check_self_intersecting(tolerance, raise_exception=False))
+            msgs.append(ap.check_self_intersecting(tolerance, False, detailed))
         for dr in self.orphaned_doors:
-            msgs.append(dr.check_self_intersecting(tolerance, raise_exception=False))
-        full_msgs = [msg for msg in msgs if msg != '']
+            msgs.append(dr.check_self_intersecting(tolerance, False, detailed))
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return full_msgs
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_non_zero(self, tolerance=0.0001, raise_exception=True):
+    def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
         """Check that the Model's geometry components are above a "zero" area tolerance.
 
         This includes all of the Model's Faces, Apertures, Doors and Shades.
@@ -1370,18 +1528,26 @@ class Model(_Base):
                 which is equal to 1 cm2 when model units are meters. This is just
                 above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
-                area is below the tolerance. Default: True.
+                area is below the tolerance. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         msgs = []
         for face in self.faces:
-            msgs.append(face.check_non_zero(tolerance, raise_exception))
+            msgs.append(face.check_non_zero(tolerance, False, detailed))
         for shd in self.shades:
-            msgs.append(shd.check_non_zero(tolerance, raise_exception))
+            msgs.append(shd.check_non_zero(tolerance, False, detailed))
         for ap in self.apertures:
-            msgs.append(ap.check_non_zero(tolerance, raise_exception))
+            msgs.append(ap.check_non_zero(tolerance, False, detailed))
         for dr in self.doors:
-            msgs.append(dr.check_non_zero(tolerance, raise_exception))
-        full_msgs = [msg for msg in msgs if msg != '']
+            msgs.append(dr.check_non_zero(tolerance, False, detailed))
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return full_msgs
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
@@ -1883,8 +2049,7 @@ class Model(_Base):
         """
         return conversion_factor_to_meters(units)
 
-    @staticmethod
-    def _self_adj_check(obj_type, hb_obj, bc_ids, room_ids, bc_set, raise_exception):
+    def _self_adj_check(self, obj_type, hb_obj, bc_ids, room_ids, bc_set, detailed):
         """Check that an adjacent object is referencing itself or its own room.
 
         A check will also be performed to ensure the adjacent object doesn't already
@@ -1899,27 +2064,31 @@ class Model(_Base):
         if hb_obj.identifier == bc_obj:
             msg = '{} "{}" cannot reference itself in its Surface boundary ' \
                 'condition.'.format(obj_type, hb_obj.full_id)
-            if raise_exception:
-                raise ValueError(msg)
+            msg = self._validation_message_child(msg, hb_obj, detailed, '0201')
             msgs.append(msg)
         # then ensure that the object is not referencing its own room
         if hb_obj.has_parent and hb_obj.parent.has_parent:
             if hb_obj.parent.parent.identifier == bc_room:
                 msg = '{} "{}" and its adjacent object "{}" cannot be a part of the ' \
                     'same Room "{}".'.format(obj_type, hb_obj.full_id, bc_obj, bc_room)
-                if raise_exception:
-                    raise ValueError(msg)
+                msg = self._validation_message_child(msg, hb_obj, detailed, '0202')
                 msgs.append(msg)
         # lastly make sure the adjacent object doesn't already have an adjacency
         if bc_obj in bc_set:
             msg = '{} "{}" is adjacent to object "{}", which has another adjacent ' \
                 'object in the Model.'.format(obj_type, hb_obj.full_id, bc_obj)
-            if raise_exception:
-                raise ValueError(msg)
+            msg = self._validation_message_child(msg, hb_obj, detailed, '0203')
             msgs.append(msg)
         else:
             bc_set.add(bc_obj)
-        return ''.join(msgs)
+        return msgs if detailed else ''.join(msgs)
+
+    def _missing_adj_msg(self, messages, hb_obj, bc_obj,
+                         obj_type='Face', bc_obj_type='Face', detailed=False):
+        msg = '{} "{}" has an adjacent {} that is missing from the model: ' \
+            '{}'.format(obj_type, hb_obj.full_id, bc_obj_type, bc_obj)
+        msg = self._validation_message_child(msg, hb_obj, detailed, '0204')
+        messages.append(msg)
 
     @staticmethod
     def _missing_adj_check(id_checking_function, bc_ids):
@@ -1936,12 +2105,6 @@ class Model(_Base):
         """Check that an adjacent object is referencing itself."""
         bc_objs = hb_obj.boundary_condition.boundary_condition_objects
         return bc_objs[0], bc_objs[-1]
-
-    @staticmethod
-    def _missing_adj_msg(messages, hb_obj, bc_obj, obj_type='Face', bc_obj_type='Face'):
-        message = '{} "{}" has an adjacent {} that is missing from the model: ' \
-            '{}'.format(obj_type, hb_obj.full_id, bc_obj_type, bc_obj)
-        messages.append(message)
 
     def __add__(self, other):
         new_model = self.duplicate()

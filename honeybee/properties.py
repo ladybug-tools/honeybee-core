@@ -348,23 +348,33 @@ class ModelProperties(_Properties):
                 raise Exception(
                     'Failed to apply {} properties to the Model: {}'.format(atr, e))
 
-    def _check_extension_attr(self):
+    def _check_extension_attr(self, detailed=False):
         """Check the attributes of extensions.
 
         This method should be called within the check_all method of the Model object
         to ensure that the check_all functions of any extension model properties
         are also called.
+
+        Args:
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
         """
         msgs = []
         for atr in self._extension_attributes:
+            check_msg = None
             var = getattr(self, atr)
             if not hasattr(var, 'check_all'):
                 continue
             try:
-                check_msg = var.check_all(raise_exception=False)
-                if check_msg != '':
-                    msgs.append(
-                        'Attributes for {} are invalid.\n{}'.format(atr, check_msg))
+                try:
+                    check_msg = var.check_all(raise_exception=False, detailed=detailed)
+                except TypeError:  # no option availabe for detailed error message
+                    check_msg = var.check_all(raise_exception=False)
+                if detailed and check_msg is not None:
+                    msgs.extend(check_msg)
+                elif check_msg != '':
+                    f_msg = 'Attributes for {} are invalid.\n{}'.format(atr, check_msg)
+                    msgs.append(f_msg)
             except Exception as e:
                 import traceback
                 traceback.print_exc()

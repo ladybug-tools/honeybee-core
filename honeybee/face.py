@@ -1070,7 +1070,7 @@ class Face(_BaseWithShade):
                 self._apertures.pop(i)
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
-                              raise_exception=True):
+                              raise_exception=True, detailed=False):
         """Check that sub-faces are co-planar with this Face within the Face boundary.
 
         Note this does not check the planarity of the sub-faces themselves, whether
@@ -1085,16 +1085,22 @@ class Face(_BaseWithShade):
                 Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an sub-face is not valid.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with dictionaries if detailed is True.
         """
-        ap = self.check_apertures_valid(tolerance, angle_tolerance, False)
-        dr = self.check_doors_valid(tolerance, angle_tolerance, False)
-        full_msgs = [m for m in (ap, dr) if m != '']
+        detailed = False if raise_exception else detailed
+        ap = self.check_apertures_valid(tolerance, angle_tolerance, False, detailed)
+        dr = self.check_doors_valid(tolerance, angle_tolerance, False, detailed)
+        full_msgs = ap + dr if detailed else [m for m in (ap, dr) if m != '']
         if raise_exception and len(full_msgs) != 0:
             raise ValueError('\n'.join(full_msgs))
-        return '\n'.join(full_msgs)
+        return full_msgs if detailed else '\n'.join(full_msgs)
 
     def check_apertures_valid(self, tolerance=0.01, angle_tolerance=1,
-                              raise_exception=True):
+                              raise_exception=True, detailed=False):
         """Check that apertures are co-planar with this Face within the Face boundary.
 
         Note this does not check the planarity of the apertures themselves, whether
@@ -1109,20 +1115,28 @@ class Face(_BaseWithShade):
                 Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an aperture is not valid.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with dictionaries if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         angle_tolerance = math.radians(angle_tolerance)
         msgs = []
         for ap in self._apertures:
             if not self.geometry.is_sub_face(ap.geometry, tolerance, angle_tolerance):
                 msg = 'Aperture "{}" is not coplanar or fully bounded by its parent ' \
                     'Face "{}".'.format(ap.full_id, self.full_id)
+                msg = self._validation_message_child(msg, ap, detailed, '0104')
                 msgs.append(msg)
-        full_msg = '\n'.join(msgs)
+        full_msg = msgs if detailed else '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_doors_valid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True):
+    def check_doors_valid(self, tolerance=0.01, angle_tolerance=1,
+                          raise_exception=True, detailed=False):
         """Check that doors are co-planar with this Face within the Face boundary.
 
         Note this does not check the planarity of the doors themselves, whether
@@ -1137,36 +1151,46 @@ class Face(_BaseWithShade):
                 Default: 1 degree.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an door is not valid.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with dictionaries if detailed is True.
         """
+        detailed = False if raise_exception else detailed
         angle_tolerance = math.radians(angle_tolerance)
         msgs = []
         for dr in self._doors:
             if not self.geometry.is_sub_face(dr.geometry, tolerance, angle_tolerance):
                 msg = 'Door "{}" is not coplanar or fully bounded by its parent ' \
                     'Face "{}".'.format(dr.full_id, self.full_id)
+                msg = self._validation_message_child(msg, dr, detailed, '0104')
                 msgs.append(msg)
-        full_msg = '\n'.join(msgs)
+        full_msg = msgs if detailed else '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_sub_faces_overlapping(self, raise_exception=True):
+    def check_sub_faces_overlapping(self, raise_exception=True, detailed=False):
         """Check that this Face's sub-faces do not overlap with one another.
 
         Args:
             raise_exception: Boolean to note whether a ValueError should be raised
                 if a sub-faces overlap with one another.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with dictionaries if detailed is True.
         """
-        full_msg = ''
         sub_f_area = sum(sf.area for sf in self.sub_faces)
         if sub_f_area > self.area:
-            full_msg = 'Face "{}" contains Apertures and/or ' \
+            msg = 'Face "{}" contains Apertures and/or ' \
                 'Doors that overlap with each other.'.format(self.full_id)
-            if raise_exception:
-                raise ValueError(full_msg)
-        return full_msg
+            return self._validation_message(msg, raise_exception, detailed, '0105')
+        return [] if detailed else ''
 
-    def check_planar(self, tolerance=0.01, raise_exception=True):
+    def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check whether all of the Face's vertices lie within the same plane.
 
         Args:
@@ -1175,17 +1199,21 @@ class Face(_BaseWithShade):
                 Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
         try:
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
             msg = 'Face "{}" is not planar.\n{}'.format(self.full_id, e)
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return ''
+            return self._validation_message(msg, raise_exception, detailed, '0101')
+        return [] if detailed else ''
 
-    def check_self_intersecting(self, tolerance=0.01, raise_exception=True):
+    def check_self_intersecting(self, tolerance=0.01, raise_exception=True,
+                                detailed=False):
         """Check whether the edges of the Face intersect one another (like a bowtie).
 
         Note that objects that have duplicate vertices will not be considered
@@ -1197,21 +1225,24 @@ class Face(_BaseWithShade):
                 suitable for objects in meters.
             raise_exception: If True, a ValueError will be raised if the object
                 intersects with itself. Default: True.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
         if self.geometry.is_self_intersecting:
             msg = 'Face "{}" has self-intersecting edges.'.format(self.full_id)
             try:  # see if it is self-intersecting because of a duplicate vertex
                 new_geo = self.geometry.remove_colinear_vertices(tolerance)
                 if not new_geo.is_self_intersecting:
-                    return ''  # removing the duplicate vertex makes it self-intersecting
+                    return [] if detailed else ''  # valid with removed dup vertex
             except AssertionError:
                 pass  # zero area face; treat it as self-intersecting
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return ''
+            return self._validation_message(msg, raise_exception, detailed, '0102')
+        return [] if detailed else ''
 
-    def check_non_zero(self, tolerance=0.0001, raise_exception=True):
+    def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
         """Check whether the area of the Face is above a certain "zero" tolerance.
 
         Args:
@@ -1220,14 +1251,17 @@ class Face(_BaseWithShade):
                 above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
         if self.area < tolerance:
             msg = 'Face "{}" geometry is too small. Area must be at least {}. ' \
                 'Got {}.'.format(self.full_id, tolerance, self.area)
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return ''
+            return self._validation_message(msg, raise_exception, detailed, '0103')
+        return [] if detailed else ''
 
     @property
     def to(self):

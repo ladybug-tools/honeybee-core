@@ -639,7 +639,7 @@ class Aperture(_BaseWithShade):
                 'Aperture "{}" is invalid with dimensions less than the '
                 'tolerance.\n{}'.format(self.full_id, e))
 
-    def check_planar(self, tolerance=0.01, raise_exception=True):
+    def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check whether all of the Aperture's vertices lie within the same plane.
 
         Args:
@@ -648,17 +648,21 @@ class Aperture(_BaseWithShade):
                 Default: 0.01, suitable for objects in meters.
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
         try:
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
             msg = 'Aperture "{}" is not planar.\n{}'.format(self.full_id, e)
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return ''
+            return self._validation_message(msg, raise_exception, detailed, '0101')
+        return [] if detailed else ''
 
-    def check_self_intersecting(self, tolerance=0.01, raise_exception=True):
+    def check_self_intersecting(self, tolerance=0.01, raise_exception=True,
+                                detailed=False):
         """Check whether the edges of the Aperture intersect one another (like a bowtie).
 
         Note that objects that have duplicate vertices will not be considered
@@ -670,6 +674,11 @@ class Aperture(_BaseWithShade):
                 suitable for objects in meters.
             raise_exception: If True, a ValueError will be raised if the object
                 intersects with itself. Default: True.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
         if self.geometry.is_self_intersecting:
             msg = 'Aperture "{}" has self-intersecting edges.'.format(self.full_id)
@@ -679,12 +688,10 @@ class Aperture(_BaseWithShade):
                     return ''  # removing the duplicate vertex makes it self-intersecting
             except AssertionError:
                 pass  # zero area face; treat it as self-intersecting
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return ''
+            return self._validation_message(msg, raise_exception, detailed, '0102')
+        return [] if detailed else ''
 
-    def check_non_zero(self, tolerance=0.0001, raise_exception=True):
+    def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
         """Check whether the area of the Aperture is above a certain "zero" tolerance.
 
         Args:
@@ -693,14 +700,17 @@ class Aperture(_BaseWithShade):
                 above the smallest size that OpenStudio will accept.
             raise_exception: If True, a ValueError will be raised if the object
                 area is below the tolerance. Default: True.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
         """
         if self.area < tolerance:
             msg = 'Aperture "{}" geometry is too small. Area must be at least {}. ' \
                 'Got {}.'.format(self.full_id, tolerance, self.area)
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return ''
+            return self._validation_message(msg, raise_exception, detailed, '0103')
+        return [] if detailed else ''
 
     @property
     def to(self):
