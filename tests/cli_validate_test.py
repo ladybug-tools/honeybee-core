@@ -29,7 +29,6 @@ def test_validate_model():
     if (sys.version_info >= (3, 7)):
         runner = CliRunner()
         result = runner.invoke(validate_model, [input_model])
-        print(result.output)
         assert result.exit_code == 0
         runner = CliRunner()
         result = runner.invoke(validate_model, [incorrect_input_model])

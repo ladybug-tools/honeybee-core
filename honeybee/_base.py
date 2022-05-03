@@ -97,6 +97,90 @@ class _Base(object):
         """Get a copy of this object."""
         return self.__copy__()
 
+    def _validation_message(
+        self, message, raise_exception=True, detailed=False, code='0000'
+    ):
+        """Handle a validation error message given various options.
+
+        Args:
+            message: Text for the error message.
+            raise_exception: Boolean to note whether an ValueError should be
+                raised with the message. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+            code: Text for the error code. (Default: 0000).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        # first check whether an exception should be raised or the message returned
+        if raise_exception:
+            raise ValueError(message)
+        if not detailed:
+            return message
+        # if not, then assemble a dictionary with detailed error information
+        error_dict = {
+            'code': '00{}'.format(code),
+            'type': 'Core',
+            'element_type': self.__class__.__name__,
+            'element_id': self.identifier,
+            'element_name': self.display_name,
+            'message': message
+        }
+        # add parents to the error dictionary if they exist
+        if getattr(self, '_parent', None) is not None:
+            parents = []
+            rel_obj = self
+            while getattr(rel_obj, '_parent', None) is not None:
+                rel_obj = getattr(rel_obj, '_parent')
+                par_dict = {
+                    'type': rel_obj.__class__.__name__,
+                    'id': rel_obj.identifier,
+                    'name': rel_obj.display_name
+                }
+                parents.append(par_dict)
+            error_dict['parents'] = parents
+        return [error_dict]
+
+    def _validation_message_child(self, message, child_obj, detailed=False, code='0000'):
+        """Process a validation error message of a child object.
+
+        Args:
+            message: Text for the error message.
+            child_obj: The child object instance for which the error message is for.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+            code: Text for the error code. (Default: 0000).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        # first check whether an exception should be raised or the message returned
+        if not detailed:
+            return message
+        # if not, then assemble a dictionary with detailed error information
+        error_dict = {
+            'code': '00{}'.format(code),
+            'type': 'Core',
+            'element_type': child_obj.__class__.__name__,
+            'element_id': child_obj.identifier,
+            'element_name': child_obj.display_name,
+            'message': message
+        }
+        # add parents to the error dictionary
+        parents = []
+        rel_obj = child_obj
+        while getattr(rel_obj, '_parent', None) is not None:
+            rel_obj = getattr(rel_obj, '_parent')
+            par_dict = {
+                'type': rel_obj.__class__.__name__,
+                'id': rel_obj.identifier,
+                'name': rel_obj.display_name
+            }
+            parents.append(par_dict)
+        error_dict['parents'] = parents
+        return error_dict
+
     @staticmethod
     def _from_dict_error_message(obj_dict, exception_obj):
         """Give an error message when the object serialization from_dict fails.

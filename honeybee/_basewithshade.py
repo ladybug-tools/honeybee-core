@@ -194,32 +194,35 @@ class _BaseWithShade(_Base):
         for shade in self._indoor_shades:
             shade.add_prefix(prefix)
 
-    def _check_planar_shades(self, tolerance):
+    def _check_planar_shades(self, tolerance, detailed=False):
         """Check that all of the child shades are planar."""
         msgs = []
         for oshd in self._outdoor_shades:
-            msgs.append(oshd.check_planar(tolerance, False))
+            msgs.append(oshd.check_planar(tolerance, False, detailed))
         for ishd in self._indoor_shades:
-            msgs.append(ishd.check_planar(tolerance, False))
-        return '\n'.join([m for m in msgs if m != ''])
+            msgs.append(ishd.check_planar(tolerance, False, detailed))
+        flat_msgs = [m for m in msgs if m]
+        return flat_msgs if detailed else '\n'.join(flat_msgs)
 
-    def _check_self_intersecting_shades(self, tolerance):
+    def _check_self_intersecting_shades(self, tolerance, detailed=False):
         """Check that no edges of the indoor or outdoor shades self-intersect."""
         msgs = []
         for oshd in self._outdoor_shades:
-            msgs.append(oshd.check_self_intersecting(tolerance, False))
+            msgs.append(oshd.check_self_intersecting(tolerance, False, detailed))
         for ishd in self._indoor_shades:
-            msgs.append(ishd.check_self_intersecting(tolerance, False))
-        return '\n'.join([m for m in msgs if m != ''])
+            msgs.append(ishd.check_self_intersecting(tolerance, False, detailed))
+        flat_msgs = [m for m in msgs if m]
+        return flat_msgs if detailed else '\n'.join(flat_msgs)
 
-    def _check_non_zero_shades(self, tolerance=0.0001):
+    def _check_non_zero_shades(self, tolerance=0.0001, detailed=False):
         """Check that the indoor or outdoor shades are above a "zero" area tolerance."""
         msgs = []
         for oshd in self._outdoor_shades:
-            msgs.append(oshd.check_non_zero(tolerance, False))
+            msgs.append(oshd.check_non_zero(tolerance, False, detailed))
         for ishd in self._indoor_shades:
-            msgs.append(ishd.check_non_zero(tolerance, False))
-        return '\n'.join([m for m in msgs if m != ''])
+            msgs.append(ishd.check_non_zero(tolerance, False, detailed))
+        flat_msgs = [m for m in msgs if m]
+        return flat_msgs if detailed else '\n'.join(flat_msgs)
 
     def _add_shades_to_dict(
             self, base, abridged=False, included_prop=None, include_plane=True):
