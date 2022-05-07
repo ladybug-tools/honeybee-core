@@ -144,8 +144,9 @@ class _Base(object):
             error_dict['parents'] = parents
         return [error_dict]
 
+    @staticmethod
     def _validation_message_child(
-            self, message, child_obj, detailed=False, code='000000', extension='Core'):
+            message, child_obj, detailed=False, code='000000', extension='Core'):
         """Process a validation error message of a child object.
 
         Args:

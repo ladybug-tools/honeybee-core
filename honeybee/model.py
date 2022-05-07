@@ -1073,8 +1073,8 @@ class Model(_Base):
                 dicts with error info or a string with a message. (Default: False).
 
         Returns:
-            A text string with all errors that were found. This string will be empty
-            of no errors were found.
+            A text string with all errors that were found or a list if detailed is True.
+            This string (or list) will be empty if no errors were found.
         """
         # set up defaults to ensure the method runs correctly
         detailed = False if raise_exception else detailed
@@ -1122,13 +1122,13 @@ class Model(_Base):
         # check the extension attributes
         ext_msgs = self._properties._check_extension_attr(detailed)
         if detailed:
-            ext_msgs = [m for m in ext_msgs if isinstance(m, dict)]
+            ext_msgs = [m for m in ext_msgs if isinstance(m, list)]
         msgs.extend(ext_msgs)
 
         # output a final report of errors or raise an exception
         full_msgs = [msg for msg in msgs if msg]
         if detailed:
-            return full_msgs
+            return [m for msg in full_msgs for m in msg]
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
