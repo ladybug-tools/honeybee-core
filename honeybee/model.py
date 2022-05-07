@@ -4,6 +4,7 @@ from __future__ import division
 import os
 import re
 import json
+import math
 import uuid
 try:  # check if we are in IronPython
     import cPickle as pickle
@@ -1075,16 +1076,9 @@ class Model(_Base):
             A text string with all errors that were found. This string will be empty
             of no errors were found.
         """
+        # set up defaults to ensure the method runs correctly
         detailed = False if raise_exception else detailed
         msgs = []
-        # perform checks for key honeybee model schema rules
-        msgs.append(self.check_duplicate_room_identifiers(False, detailed))
-        msgs.append(self.check_duplicate_face_identifiers(False, detailed))
-        msgs.append(self.check_duplicate_sub_face_identifiers(False, detailed))
-        msgs.append(self.check_duplicate_shade_identifiers(False, detailed))
-        msgs.append(self.check_missing_adjacencies(False, detailed))
-        msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
-        msgs.append(self.check_rooms_all_air_boundary(False, detailed))
         # check that a tolerance has been specified in the model
         assert self.tolerance != 0, \
             'Model must have a non-zero tolerance in order to perform geometry checks.'
@@ -1092,6 +1086,15 @@ class Model(_Base):
             'Model must have a non-zero angle_tolerance to perform geometry checks.'
         tol = self.tolerance
         ang_tol = self.angle_tolerance
+        # perform checks for key honeybee model schema rules
+        msgs.append(self.check_duplicate_room_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_face_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_sub_face_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_shade_identifiers(False, detailed))
+        msgs.append(self.check_missing_adjacencies(False, detailed))
+        msgs.append(self.check_matching_adjacent_areas(tol, False, detailed))
+        msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
+        msgs.append(self.check_rooms_all_air_boundary(False, detailed))
         # perform several checks for Face3D geometry rules
         msgs.append(self.check_self_intersecting(tol, False, detailed))
         msgs.append(self.check_planar(tol, False, detailed))
@@ -1274,6 +1277,63 @@ class Model(_Base):
             raise ValueError(msg)
         return msg
 
+    def check_matching_adjacent_areas(self, tolerance=0.01, raise_exception=True,
+                                      detailed=False):
+        """Check that all adjacent Faces have areas that match within the tolerance.
+
+        This is required for energy simulation in order to get matching heat flow
+        across adjacent Faces. Otherwise, conservation of energy is violated.
+        Note that, if there are missing adjacencies in the model, the message from
+        this method will simply note this fact without reporting on mis-matched areas.
+
+        Args:
+            tolerance: tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. (Default: 0.01,
+                suitable for objects in meters).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if invalid adjacencies are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        detailed = False if raise_exception else detailed
+        # first gather all interior faces in the model and their adjacent object
+        base_faces, adj_ids = [], []
+        for room in self._rooms:
+            for face in room._faces:
+                if isinstance(face.boundary_condition, Surface):
+                    base_faces.append(face)
+                    adj_ids.append(face.boundary_condition.boundary_condition_object)
+        # get the adjacent faces
+        try:
+            adj_faces = self.faces_by_identifier(adj_ids)
+        except ValueError as e:  # the model has missing adjacencies
+            if detailed:  # the user will get a more detailed error in honeybee-core
+                return []
+            else:
+                msg = 'Matching adjacent areas could not be verified because ' \
+                    'of missing adjacencies in the model.  \n{}'.format(e)
+                if raise_exception:
+                    raise ValueError(msg)
+                return msg
+        # loop through the adjacent face pairs and report if areas are not matched
+        full_msgs = []
+        for base_f, adj_f in zip(base_faces, adj_faces):
+            tol_area = math.sqrt(base_f.area) * tolerance
+            if abs(base_f.area - adj_f.area) > tol_area:
+                f_msg = 'Face "{}" with area {} is adjacent to Face "{}" with area {}.' \
+                    ' This difference is greater than the tolerance of {}.'.format(
+                        base_f.full_id, base_f.area, adj_f.full_id, adj_f.area, tolerance
+                    )
+                f_msg = self._validation_message_child(f_msg, adj_f, detailed, '000205')
+                full_msgs.append(f_msg)
+        full_msg = full_msgs if detailed else '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
     def check_all_air_boundaries_adjacent(self, raise_exception=True, detailed=False):
         """Check that all Faces with the AirBoundary type are adjacent to other Faces.
 
@@ -1295,7 +1355,7 @@ class Model(_Base):
                     isinstance(face.boundary_condition, Surface):
                 msg = 'Face "{}" is an AirBoundary but is not adjacent ' \
                       'to another Face.'.format(face.full_id)
-                msg = self._validation_message_child(msg, face, detailed, '0206')
+                msg = self._validation_message_child(msg, face, detailed, '000206')
                 msgs.append(msg)
         if detailed:
             return msgs
@@ -1326,7 +1386,7 @@ class Model(_Base):
             if all(isinstance(f.type, AirBoundary) for f in room._faces):
                 msg = 'Room "{}" is composed entirely of AirBoundary Faces. It ' \
                     'should be merged with adjacent rooms.'.format(room.full_id)
-                msg = self._validation_message_child(msg, face, detailed, '0207')
+                msg = self._validation_message_child(msg, face, detailed, '000207')
                 msgs.append(msg)
         if detailed:
             return msgs
@@ -2064,20 +2124,20 @@ class Model(_Base):
         if hb_obj.identifier == bc_obj:
             msg = '{} "{}" cannot reference itself in its Surface boundary ' \
                 'condition.'.format(obj_type, hb_obj.full_id)
-            msg = self._validation_message_child(msg, hb_obj, detailed, '0201')
+            msg = self._validation_message_child(msg, hb_obj, detailed, '000201')
             msgs.append(msg)
         # then ensure that the object is not referencing its own room
         if hb_obj.has_parent and hb_obj.parent.has_parent:
             if hb_obj.parent.parent.identifier == bc_room:
                 msg = '{} "{}" and its adjacent object "{}" cannot be a part of the ' \
                     'same Room "{}".'.format(obj_type, hb_obj.full_id, bc_obj, bc_room)
-                msg = self._validation_message_child(msg, hb_obj, detailed, '0202')
+                msg = self._validation_message_child(msg, hb_obj, detailed, '000202')
                 msgs.append(msg)
         # lastly make sure the adjacent object doesn't already have an adjacency
         if bc_obj in bc_set:
             msg = '{} "{}" is adjacent to object "{}", which has another adjacent ' \
                 'object in the Model.'.format(obj_type, hb_obj.full_id, bc_obj)
-            msg = self._validation_message_child(msg, hb_obj, detailed, '0203')
+            msg = self._validation_message_child(msg, hb_obj, detailed, '000203')
             msgs.append(msg)
         else:
             bc_set.add(bc_obj)
@@ -2087,7 +2147,7 @@ class Model(_Base):
                          obj_type='Face', bc_obj_type='Face', detailed=False):
         msg = '{} "{}" has an adjacent {} that is missing from the model: ' \
             '{}'.format(obj_type, hb_obj.full_id, bc_obj_type, bc_obj)
-        msg = self._validation_message_child(msg, hb_obj, detailed, '0204')
+        msg = self._validation_message_child(msg, hb_obj, detailed, '000204')
         messages.append(msg)
 
     @staticmethod

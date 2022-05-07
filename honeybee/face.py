@@ -1128,7 +1128,7 @@ class Face(_BaseWithShade):
             if not self.geometry.is_sub_face(ap.geometry, tolerance, angle_tolerance):
                 msg = 'Aperture "{}" is not coplanar or fully bounded by its parent ' \
                     'Face "{}".'.format(ap.full_id, self.full_id)
-                msg = self._validation_message_child(msg, ap, detailed, '0104')
+                msg = self._validation_message_child(msg, ap, detailed, '000104')
                 msgs.append(msg)
         full_msg = msgs if detailed else '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
@@ -1164,7 +1164,7 @@ class Face(_BaseWithShade):
             if not self.geometry.is_sub_face(dr.geometry, tolerance, angle_tolerance):
                 msg = 'Door "{}" is not coplanar or fully bounded by its parent ' \
                     'Face "{}".'.format(dr.full_id, self.full_id)
-                msg = self._validation_message_child(msg, dr, detailed, '0104')
+                msg = self._validation_message_child(msg, dr, detailed, '000104')
                 msgs.append(msg)
         full_msg = msgs if detailed else '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
@@ -1187,7 +1187,7 @@ class Face(_BaseWithShade):
         if sub_f_area > self.area:
             msg = 'Face "{}" contains Apertures and/or ' \
                 'Doors that overlap with each other.'.format(self.full_id)
-            return self._validation_message(msg, raise_exception, detailed, '0105')
+            return self._validation_message(msg, raise_exception, detailed, '000105')
         return [] if detailed else ''
 
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
@@ -1209,7 +1209,7 @@ class Face(_BaseWithShade):
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
             msg = 'Face "{}" is not planar.\n{}'.format(self.full_id, e)
-            return self._validation_message(msg, raise_exception, detailed, '0101')
+            return self._validation_message(msg, raise_exception, detailed, '000101')
         return [] if detailed else ''
 
     def check_self_intersecting(self, tolerance=0.01, raise_exception=True,
@@ -1239,7 +1239,7 @@ class Face(_BaseWithShade):
                     return [] if detailed else ''  # valid with removed dup vertex
             except AssertionError:
                 pass  # zero area face; treat it as self-intersecting
-            return self._validation_message(msg, raise_exception, detailed, '0102')
+            return self._validation_message(msg, raise_exception, detailed, '000102')
         return [] if detailed else ''
 
     def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
@@ -1260,7 +1260,7 @@ class Face(_BaseWithShade):
         if self.area < tolerance:
             msg = 'Face "{}" geometry is too small. Area must be at least {}. ' \
                 'Got {}.'.format(self.full_id, tolerance, self.area)
-            return self._validation_message(msg, raise_exception, detailed, '0103')
+            return self._validation_message(msg, raise_exception, detailed, '000103')
         return [] if detailed else ''
 
     @property
