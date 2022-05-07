@@ -98,8 +98,8 @@ class _Base(object):
         return self.__copy__()
 
     def _validation_message(
-        self, message, raise_exception=True, detailed=False, code='0000'
-    ):
+        self, message, raise_exception=True, detailed=False,
+        code='000000', extension='Core'):
         """Handle a validation error message given various options.
 
         Args:
@@ -108,7 +108,9 @@ class _Base(object):
                 raised with the message. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
                 dicts with error info or a string with a message. (Default: False).
-            code: Text for the error code. (Default: 0000).
+            code: Text for the error code. (Default: 000000).
+            extension: Text for the name of the Honeybee extension for which duplicate
+                identifiers are being evaluated. (Default: Core).
 
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
@@ -120,8 +122,8 @@ class _Base(object):
             return message
         # if not, then assemble a dictionary with detailed error information
         error_dict = {
-            'code': '00{}'.format(code),
-            'type': 'Core',
+            'code': code,
+            'type': extension,
             'element_type': self.__class__.__name__,
             'element_id': self.identifier,
             'element_name': self.display_name,
@@ -142,7 +144,8 @@ class _Base(object):
             error_dict['parents'] = parents
         return [error_dict]
 
-    def _validation_message_child(self, message, child_obj, detailed=False, code='0000'):
+    def _validation_message_child(
+            self, message, child_obj, detailed=False, code='000000', extension='Core'):
         """Process a validation error message of a child object.
 
         Args:
@@ -150,7 +153,9 @@ class _Base(object):
             child_obj: The child object instance for which the error message is for.
             detailed: Boolean for whether the returned object is a detailed list of
                 dicts with error info or a string with a message. (Default: False).
-            code: Text for the error code. (Default: 0000).
+            code: Text for the error code. (Default: 000000).
+            extension: Text for the name of the Honeybee extension for which duplicate
+                identifiers are being evaluated. (Default: Core).
 
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
@@ -160,8 +165,8 @@ class _Base(object):
             return message
         # if not, then assemble a dictionary with detailed error information
         error_dict = {
-            'code': '00{}'.format(code),
-            'type': 'Core',
+            'code': code,
+            'type': extension,
             'element_type': child_obj.__class__.__name__,
             'element_id': child_obj.identifier,
             'element_name': child_obj.display_name,

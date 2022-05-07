@@ -468,7 +468,7 @@ class Door(_BaseWithShade):
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
             msg = 'Door "{}" is not planar.\n{}'.format(self.full_id, e)
-            return self._validation_message(msg, raise_exception, detailed, '0101')
+            return self._validation_message(msg, raise_exception, detailed, '000101')
         return [] if detailed else ''
 
     def check_self_intersecting(self, tolerance=0.01, raise_exception=True,
@@ -498,7 +498,7 @@ class Door(_BaseWithShade):
                     return ''  # removing the duplicate vertex makes it self-intersecting
             except AssertionError:
                 pass  # zero area face; treat it as self-intersecting
-            return self._validation_message(msg, raise_exception, detailed, '0102')
+            return self._validation_message(msg, raise_exception, detailed, '000102')
         return [] if detailed else ''
 
     def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
@@ -521,7 +521,7 @@ class Door(_BaseWithShade):
                 'Got {}.'.format(self.full_id, tolerance, self.area)
             if raise_exception:
                 raise ValueError(msg)
-            return self._validation_message(msg, raise_exception, detailed, '0103')
+            return self._validation_message(msg, raise_exception, detailed, '000103')
         return [] if detailed else ''
 
     @property
