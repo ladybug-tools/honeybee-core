@@ -371,7 +371,7 @@ class ModelProperties(_Properties):
                 except TypeError:  # no option availabe for detailed error message
                     check_msg = var.check_all(raise_exception=False)
                 if detailed and check_msg is not None:
-                    msgs.extend(check_msg)
+                    msgs.append(check_msg)
                 elif check_msg != '':
                     f_msg = 'Attributes for {} are invalid.\n{}'.format(atr, check_msg)
                     msgs.append(f_msg)
