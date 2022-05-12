@@ -122,8 +122,9 @@ class _Base(object):
             return message
         # if not, then assemble a dictionary with detailed error information
         error_dict = {
+            'type': 'ValidationError',
             'code': code,
-            'type': extension,
+            'extension_type': extension,
             'element_type': self.__class__.__name__,
             'element_id': self.identifier,
             'element_name': self.display_name,
@@ -136,7 +137,7 @@ class _Base(object):
             while getattr(rel_obj, '_parent', None) is not None:
                 rel_obj = getattr(rel_obj, '_parent')
                 par_dict = {
-                    'type': rel_obj.__class__.__name__,
+                    'parent_type': rel_obj.__class__.__name__,
                     'id': rel_obj.identifier,
                     'name': rel_obj.display_name
                 }
@@ -166,8 +167,9 @@ class _Base(object):
             return message
         # if not, then assemble a dictionary with detailed error information
         error_dict = {
+            'type': 'ValidationError',
             'code': code,
-            'type': extension,
+            'extension_type': extension,
             'element_type': child_obj.__class__.__name__,
             'element_id': child_obj.identifier,
             'element_name': child_obj.display_name,
@@ -179,7 +181,7 @@ class _Base(object):
         while getattr(rel_obj, '_parent', None) is not None:
             rel_obj = getattr(rel_obj, '_parent')
             par_dict = {
-                'type': rel_obj.__class__.__name__,
+                'parent_type': rel_obj.__class__.__name__,
                 'id': rel_obj.identifier,
                 'name': rel_obj.display_name
             }

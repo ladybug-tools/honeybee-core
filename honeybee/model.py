@@ -1107,8 +1107,9 @@ class Model(_Base):
                 deg_msg = str(e)
                 if detailed:
                     deg_msg = [{
+                        'type': 'ValidationError',
                         'code': '000107',
-                        'type': 'Core',
+                        'extension_type': 'Core',
                         'element_type': 'Room',
                         'element_id': room.identifier,
                         'element_name': room.display_name,

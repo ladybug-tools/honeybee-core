@@ -37,8 +37,9 @@ def check_duplicate_identifiers(
             for dup_id in dup:
                 msg = 'There is a duplicated {} identifier: {}'.format(obj_name, dup_id)
                 dup_dict = {
+                    'type': 'ValidationError',
                     'code': code,
-                    'type': extension,
+                    'extension_type': extension,
                     'element_type': obj_name,
                     'element_id': dup_id,
                     'element_name': dup_id,
@@ -104,8 +105,9 @@ def check_duplicate_identifiers_parent(
             err_list = []
             for dup_id, rel_par in zip(dup, top_par):
                 dup_dict = {
+                    'type': 'ValidationError',
                     'code': code,
-                    'type': extension,
+                    'extension_type': extension,
                     'element_type': obj_name,
                     'element_id': dup_id,
                     'element_name': dup_id
@@ -116,7 +118,7 @@ def check_duplicate_identifiers_parent(
                     msg += '\n  Relevant Top-Level Parents:\n'
                     for par_o in rel_par:
                         par_dict = {
-                            'type': par_o.__class__.__name__,
+                            'parent_type': par_o.__class__.__name__,
                             'id': par_o.identifier,
                             'name': par_o.display_name
                         }
