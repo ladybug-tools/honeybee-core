@@ -62,6 +62,7 @@ def validate_model(model_json, plain_text, output_file):
                 output_file.write('\n'.join([error_msg, report]))
         else:
             out_dict = {
+                'type': 'ValidationReport',
                 'honeybee_core': folders.honeybee_core_version_str,
                 'honeybee_schema': folders.honeybee_schema_version_str
             }
