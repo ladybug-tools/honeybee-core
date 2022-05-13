@@ -1272,7 +1272,7 @@ class Model(_Base):
         # return the final error messages
         all_msgs = [m for m in sr + msgs if m]
         if detailed:
-            return all_msgs
+            return [m for msg in all_msgs for m in msg]
         msg = '\n'.join(all_msgs)
         if msg != '' and raise_exception:
             raise ValueError(msg)
@@ -1535,7 +1535,7 @@ class Model(_Base):
             msgs.append(dr.check_planar(tolerance, False, detailed))
         full_msgs = [msg for msg in msgs if msg]
         if detailed:
-            return full_msgs
+            return [m for msg in full_msgs for m in msg]
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
@@ -1573,7 +1573,7 @@ class Model(_Base):
             msgs.append(dr.check_self_intersecting(tolerance, False, detailed))
         full_msgs = [msg for msg in msgs if msg]
         if detailed:
-            return full_msgs
+            return [m for msg in full_msgs for m in msg]
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
@@ -1608,7 +1608,7 @@ class Model(_Base):
             msgs.append(dr.check_non_zero(tolerance, False, detailed))
         full_msgs = [msg for msg in msgs if msg]
         if detailed:
-            return full_msgs
+            return [m for msg in full_msgs for m in msg]
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
@@ -2149,7 +2149,10 @@ class Model(_Base):
         msg = '{} "{}" has an adjacent {} that is missing from the model: ' \
             '{}'.format(obj_type, hb_obj.full_id, bc_obj_type, bc_obj)
         msg = self._validation_message_child(msg, hb_obj, detailed, '000204')
-        messages.append(msg)
+        if detailed:
+            messages.append([msg])
+        else:
+            messages.append(msg)
 
     @staticmethod
     def _missing_adj_check(id_checking_function, bc_ids):
