@@ -6,13 +6,13 @@ import collections
 
 def check_duplicate_identifiers(
         objects_to_check, raise_exception=True, obj_name='', detailed=False,
-        code='000000', extension='Core'):
+        code='000000', extension='Core', error_type='Duplicate Object Identifier'):
     """Check whether there are duplicated identifiers across a list of objects.
 
     Args:
         objects_to_check: A list of honeybee objects across which duplicate
             identifiers will be checked.
-        raise_exception: Boolean to note whether an excpetion should be raised if
+        raise_exception: Boolean to note whether an exception should be raised if
             duplicated identifiers are found. (Default: True).
         obj_name: An optional name for the object to be included in the error
             message. Fro example, 'Room', 'Face', 'Aperture'.
@@ -21,6 +21,9 @@ def check_duplicate_identifiers(
         code: Text for the error code. (Default: 0000).
         extension: Text for the name of the Honeybee extension for which duplicate
             identifiers are being evaluated. (Default: Core).
+        error_type: Text for the type of error. This should be directly linked
+            to the error code and should simply be a human-readable version of
+            the error code. (Default: Unknown Error).
 
     Returns:
         A message string indicating the duplicated identifiers (if detailed is False)
@@ -39,6 +42,7 @@ def check_duplicate_identifiers(
                 dup_dict = {
                     'type': 'ValidationError',
                     'code': code,
+                    'error_type': error_type,
                     'extension_type': extension,
                     'element_type': obj_name,
                     'element_id': dup_id,
@@ -57,7 +61,7 @@ def check_duplicate_identifiers(
 
 def check_duplicate_identifiers_parent(
         objects_to_check, raise_exception=True, obj_name='', detailed=False,
-        code='000000', extension='Core'):
+        code='000000', extension='Core', error_type='Duplicate Object Identifier'):
     """Check whether there are duplicated identifiers across a list of objects.
 
     The error message will include the identifiers of top-level parents in order
@@ -67,7 +71,7 @@ def check_duplicate_identifiers_parent(
         objects_to_check: A list of honeybee objects across which duplicate
             identifiers will be checked. These objects must have the ability to
             have parents for this method to run correctly.
-        raise_exception: Boolean to note whether an excpetion should be raised if
+        raise_exception: Boolean to note whether an exception should be raised if
             duplicated identifiers are found. (Default: True).
         obj_name: An optional name for the object to be included in the error
             message. For example, 'Room', 'Face', 'Aperture'.
@@ -76,6 +80,9 @@ def check_duplicate_identifiers_parent(
         code: Text for the error code. (Default: 0000).
         extension: Text for the name of the Honeybee extension for which duplicate
             identifiers are being evaluated. (Default: Core).
+        error_type: Text for the type of error. This should be directly linked
+            to the error code and should simply be a human-readable version of
+            the error code. (Default: Unknown Error).
 
     Returns:
         A message string indicating the duplicated identifiers (if detailed is False)
@@ -107,6 +114,7 @@ def check_duplicate_identifiers_parent(
                 dup_dict = {
                     'type': 'ValidationError',
                     'code': code,
+                    'error_type': error_type,
                     'extension_type': extension,
                     'element_type': obj_name,
                     'element_id': dup_id,

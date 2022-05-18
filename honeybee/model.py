@@ -1109,6 +1109,7 @@ class Model(_Base):
                     deg_msg = [{
                         'type': 'ValidationError',
                         'code': '000107',
+                        'error_type': 'Degenerate Geometry Error',
                         'extension_type': 'Core',
                         'element_type': 'Room',
                         'element_id': room.identifier,
@@ -1148,7 +1149,8 @@ class Model(_Base):
             A string with the message or a list with a dictionary if detailed is True.
         """
         return check_duplicate_identifiers(
-            self._rooms, raise_exception, 'Room', detailed, '000004', 'Core')
+            self._rooms, raise_exception, 'Room', detailed, '000004', 'Core',
+            'Duplicate Room Identifier')
 
     def check_duplicate_face_identifiers(self, raise_exception=True, detailed=False):
         """Check that there are no duplicate Face identifiers in the model.
@@ -1163,7 +1165,8 @@ class Model(_Base):
             A string with the message or a list with a dictionary if detailed is True.
         """
         return check_duplicate_identifiers_parent(
-            self.faces, raise_exception, 'Face', detailed, '000003', 'Core')
+            self.faces, raise_exception, 'Face', detailed, '000003', 'Core',
+            'Duplicate Face Identifier')
 
     def check_duplicate_sub_face_identifiers(self, raise_exception=True, detailed=False):
         """Check that there are no duplicate sub-face identifiers in the model.
@@ -1182,7 +1185,8 @@ class Model(_Base):
         """
         sub_faces = self.apertures + self.doors
         return check_duplicate_identifiers_parent(
-            sub_faces, raise_exception, 'sub-face', detailed, '000002', 'Core')
+            sub_faces, raise_exception, 'sub-face', detailed, '000002', 'Core',
+            'Duplicate Sub-Face Identifier')
 
     def check_duplicate_shade_identifiers(self, raise_exception=True, detailed=False):
         """Check that there are no duplicate Shade identifiers in the model.
@@ -1197,7 +1201,8 @@ class Model(_Base):
             A string with the message or a list with a dictionary if detailed is True.
         """
         return check_duplicate_identifiers_parent(
-            self.shades, raise_exception, 'Shade', detailed, '000001', 'Core')
+            self.shades, raise_exception, 'Shade', detailed, '000001', 'Core',
+            'Duplicate Shade Identifier')
 
     def check_missing_adjacencies(self, raise_exception=True, detailed=False):
         """Check that all Faces Apertures, and Doors have adjacent objects in the model.
@@ -1328,7 +1333,9 @@ class Model(_Base):
                     ' This difference is greater than the tolerance of {}.'.format(
                         base_f.full_id, base_f.area, adj_f.full_id, adj_f.area, tolerance
                     )
-                f_msg = self._validation_message_child(f_msg, adj_f, detailed, '000205')
+                f_msg = self._validation_message_child(
+                    f_msg, adj_f, detailed, '000205',
+                    error_type='Mismatched Area Adjacency')
                 full_msgs.append(f_msg)
         full_msg = full_msgs if detailed else '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
@@ -1356,7 +1363,8 @@ class Model(_Base):
                     isinstance(face.boundary_condition, Surface):
                 msg = 'Face "{}" is an AirBoundary but is not adjacent ' \
                       'to another Face.'.format(face.full_id)
-                msg = self._validation_message_child(msg, face, detailed, '000206')
+                msg = self._validation_message_child(
+                    msg, face, detailed, '000206', error_type='Non-Adjacent AirBoundary')
                 msgs.append(msg)
         if detailed:
             return msgs
@@ -1387,7 +1395,9 @@ class Model(_Base):
             if all(isinstance(f.type, AirBoundary) for f in room._faces):
                 msg = 'Room "{}" is composed entirely of AirBoundary Faces. It ' \
                     'should be merged with adjacent rooms.'.format(room.full_id)
-                msg = self._validation_message_child(msg, face, detailed, '000207')
+                msg = self._validation_message_child(
+                    msg, room, detailed, '000207',
+                    error_type='Room Composed Entirely of AirBoundaries')
                 msgs.append(msg)
         if detailed:
             return msgs
@@ -1629,8 +1639,8 @@ class Model(_Base):
                 triangle Apertures meant to replace an Aperture with more than
                 4 sides in the model.
 
-            -   parents_to_edit: An list of lists that parellels the triangulated
-                aperturesin that each item represents an Aperture that has been
+            -   parents_to_edit: An list of lists that parallels the triangulated
+                apertures in that each item represents an Aperture that has been
                 triangulated in the model. However, each of these lists holds between
                 1 and 3 values for the identifiers of the original aperture and parents
                 of the aperture. This information is intended to help edit parent
@@ -2006,9 +2016,9 @@ class Model(_Base):
         Args:
             name: A text string for the name of the pickle file. If None, the model
                 identifier wil be used. (Default: None).
-            folder: A text string for the direcotry where the pickle will be written.
-                If unspecified, the default simulation folder will be used. This
-                is usually at "C:\\Users\\USERNAME\\simulation."
+            folder: A text string for the directory where the pickle file will be
+                written. If unspecified, the default simulation folder will be used.
+                This is usually at "C:\\Users\\USERNAME\\simulation."
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if
                 available in properties to_dict. By default all the keys will be
@@ -2046,7 +2056,7 @@ class Model(_Base):
         Args:
             name: A text string for the name of the STL file. If None, the model
                 identifier wil be used. (Default: None).
-            folder: A text string for the direcotry where the STL will be written.
+            folder: A text string for the directory where the STL will be written.
                 If unspecified, the default simulation folder will be used. This
                 is usually at "C:\\Users\\USERNAME\\simulation."
         """
@@ -2125,20 +2135,26 @@ class Model(_Base):
         if hb_obj.identifier == bc_obj:
             msg = '{} "{}" cannot reference itself in its Surface boundary ' \
                 'condition.'.format(obj_type, hb_obj.full_id)
-            msg = self._validation_message_child(msg, hb_obj, detailed, '000201')
+            msg = self._validation_message_child(
+                msg, hb_obj, detailed, '000201',
+                error_type='Self-Referential Adjacency')
             msgs.append(msg)
         # then ensure that the object is not referencing its own room
         if hb_obj.has_parent and hb_obj.parent.has_parent:
             if hb_obj.parent.parent.identifier == bc_room:
                 msg = '{} "{}" and its adjacent object "{}" cannot be a part of the ' \
                     'same Room "{}".'.format(obj_type, hb_obj.full_id, bc_obj, bc_room)
-                msg = self._validation_message_child(msg, hb_obj, detailed, '000202')
+                msg = self._validation_message_child(
+                    msg, hb_obj, detailed, '000202',
+                    error_type='Intra-Room Adjacency')
                 msgs.append(msg)
         # lastly make sure the adjacent object doesn't already have an adjacency
         if bc_obj in bc_set:
             msg = '{} "{}" is adjacent to object "{}", which has another adjacent ' \
                 'object in the Model.'.format(obj_type, hb_obj.full_id, bc_obj)
-            msg = self._validation_message_child(msg, hb_obj, detailed, '000203')
+            msg = self._validation_message_child(
+                msg, hb_obj, detailed, '000203',
+                error_type='Object with Multiple Adjacencies')
             msgs.append(msg)
         else:
             bc_set.add(bc_obj)
@@ -2148,7 +2164,8 @@ class Model(_Base):
                          obj_type='Face', bc_obj_type='Face', detailed=False):
         msg = '{} "{}" has an adjacent {} that is missing from the model: ' \
             '{}'.format(obj_type, hb_obj.full_id, bc_obj_type, bc_obj)
-        msg = self._validation_message_child(msg, hb_obj, detailed, '000204')
+        msg = self._validation_message_child(
+            msg, hb_obj, detailed, '000204', error_type='Missing Adjacency')
         if detailed:
             messages.append([msg])
         else:
