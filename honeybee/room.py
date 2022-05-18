@@ -250,7 +250,7 @@ class Room(_BaseWithShade):
 
         Multipliers are used to speed up the calculation when similar Rooms are
         repeated more than once. Essentially, a given simulation with the
-        Room is run once and then the result is mutliplied by the multiplier.
+        Room is run once and then the result is multiplied by the multiplier.
         This means that the "repetition" isn't in a particular direction (it's
         essentially in the exact same location) and this comes with some
         inaccuracy. However, this error might not be too large if the Rooms
@@ -431,7 +431,7 @@ class Room(_BaseWithShade):
         """Get the height of the room floor averaged over all floor faces in the room.
 
         The resulting value is weighted by the area of each of the floor faces.
-        Will be the minimum Z value of the Room volume if the room posseses no floors.
+        Will be the minimum Z value of the Room volume if the room possesses no floors.
         """
         heights = 0
         areas = 0
@@ -819,7 +819,9 @@ class Room(_BaseWithShade):
             'tolerance.\n  {} naked edges found\n  {} non-manifold edges found'.format(
                 self.full_id, tolerance, angle_tolerance,
                 len(self._geometry.naked_edges), len(self._geometry.non_manifold_edges))
-        return self._validation_message(msg, raise_exception, detailed, '000106')
+        return self._validation_message(
+            msg, raise_exception, detailed, '000106',
+            error_type='Non-Solid Room Geometry')
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
                               raise_exception=True, detailed=False):
@@ -1013,7 +1015,7 @@ class Room(_BaseWithShade):
     def solve_adjacency(rooms, tolerance=0.01):
         """Solve for adjacencies between a list of rooms.
 
-        Note that this method will mutate the input roooms by setting Surface
+        Note that this method will mutate the input rooms by setting Surface
         boundary conditions for any adjacent objects. However, it does NOT overwrite
         existing Surface boundary conditions and only adds new ones if faces are
         found to be adjacent with equivalent areas.

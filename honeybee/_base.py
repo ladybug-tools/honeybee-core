@@ -99,7 +99,7 @@ class _Base(object):
 
     def _validation_message(
         self, message, raise_exception=True, detailed=False,
-        code='000000', extension='Core'):
+        code='000000', extension='Core', error_type='Unknown Error'):
         """Handle a validation error message given various options.
 
         Args:
@@ -111,6 +111,9 @@ class _Base(object):
             code: Text for the error code. (Default: 000000).
             extension: Text for the name of the Honeybee extension for which duplicate
                 identifiers are being evaluated. (Default: Core).
+            error_type: Text for the type of error. This should be directly linked
+                to the error code and should simply be a human-readable version of
+                the error code. (Default: Unknown Error).
 
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
@@ -124,6 +127,7 @@ class _Base(object):
         error_dict = {
             'type': 'ValidationError',
             'code': code,
+            'error_type': error_type,
             'extension_type': extension,
             'element_type': self.__class__.__name__,
             'element_id': self.identifier,
@@ -147,7 +151,8 @@ class _Base(object):
 
     @staticmethod
     def _validation_message_child(
-            message, child_obj, detailed=False, code='000000', extension='Core'):
+            message, child_obj, detailed=False, code='000000', extension='Core',
+            error_type='Unknown Error'):
         """Process a validation error message of a child object.
 
         Args:
@@ -158,6 +163,9 @@ class _Base(object):
             code: Text for the error code. (Default: 000000).
             extension: Text for the name of the Honeybee extension for which duplicate
                 identifiers are being evaluated. (Default: Core).
+            error_type: Text for the type of error. This should be directly linked
+                to the error code and should simply be a human-readable version of
+                the error code. (Default: Unknown Error).
 
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
@@ -169,6 +177,7 @@ class _Base(object):
         error_dict = {
             'type': 'ValidationError',
             'code': code,
+            'error_type': error_type,
             'extension_type': extension,
             'element_type': child_obj.__class__.__name__,
             'element_id': child_obj.identifier,

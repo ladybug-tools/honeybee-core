@@ -368,7 +368,7 @@ class ModelProperties(_Properties):
             try:
                 try:
                     check_msg = var.check_all(raise_exception=False, detailed=detailed)
-                except TypeError:  # no option availabe for detailed error message
+                except TypeError:  # no option available for detailed error message
                     check_msg = var.check_all(raise_exception=False)
                 if detailed and check_msg is not None:
                     msgs.append(check_msg)
