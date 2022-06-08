@@ -53,7 +53,7 @@ class Folders(object):
         # load paths from the config JSON file
         self.config_file = config_file
 
-        # set python version to only be retrived if requested
+        # set python version to only be retrieved if requested
         self._python_version = None
         self._python_version_str = None
 
