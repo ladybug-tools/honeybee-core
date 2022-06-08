@@ -133,8 +133,14 @@ class _ColorObject(object):
         """Process the attribute name and assign it to this object."""
         self._attr_name = str(attr_name)
         at_split = self._attr_name.split('.')
-        self._attr_name_end = at_split[-1] if len(at_split) == 1 or \
-            at_split[-1] != 'display_name' else at_split[-2]
+        if len(at_split) == 1:
+            self._attr_name_end = at_split[-1]
+        elif at_split[-1] == 'display_name':
+            self._attr_name_end = at_split[-2]
+        elif at_split[-1] == '__name__' and at_split[-2] == '__class__':
+            self._attr_name_end = at_split[-3]
+        else:
+            self._attr_name_end = at_split[-1]
 
     def _process_attributes(self, hb_objs):
         """Process the attributes of honeybee objects."""

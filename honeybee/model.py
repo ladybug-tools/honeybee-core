@@ -1429,7 +1429,7 @@ class Model(_Base):
         detailed = False if raise_exception else detailed
         msgs = []
         for room in self._rooms:
-            msg = room.check_solid(tolerance, angle_tolerance, raise_exception, detailed)
+            msg = room.check_solid(tolerance, angle_tolerance, False, detailed)
             if detailed:
                 msgs.extend(msg)
             elif msg != '':

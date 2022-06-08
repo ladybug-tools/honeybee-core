@@ -59,7 +59,7 @@ def model_extension_dicts(data, extension_key, room_ext_dicts, face_ext_dicts,
 
 def room_extension_dicts(room_list, extension_key, room_ext_dicts, face_ext_dicts,
                          shade_ext_dicts, aperture_ext_dicts, door_ext_dicts):
-    """Get all Room property dictionaires of an extension organized by geometry type.
+    """Get all Room property dictionaries of an extension organized by geometry type.
 
     Args:
         room_list: A list of Room dictionaries.
@@ -97,7 +97,7 @@ def room_extension_dicts(room_list, extension_key, room_ext_dicts, face_ext_dict
 
 def face_extension_dicts(face_list, extension_key, face_ext_dicts,
                          shade_ext_dicts, aperture_ext_dicts, door_ext_dicts):
-    """Get all Face property dictionaires of an extension organized by geometry type.
+    """Get all Face property dictionaries of an extension organized by geometry type.
 
     Args:
         face_list: A list of Room dictionaries.
@@ -135,7 +135,7 @@ def face_extension_dicts(face_list, extension_key, face_ext_dicts,
 
 
 def shade_extension_dicts(shade_list, extension_key, shade_ext_dicts):
-    """Get all Shade property dictionaires of an extension organized by geometry type.
+    """Get all Shade property dictionaries of an extension organized by geometry type.
 
     Args:
         shade_list: A list of Shade dictionaries.
@@ -154,7 +154,7 @@ def shade_extension_dicts(shade_list, extension_key, shade_ext_dicts):
 
 def aperture_extension_dicts(aperture_list, extension_key, aperture_ext_dicts,
                              shade_ext_dicts):
-    """Get all Aperture property dictionaires of an extension organized by geometry type.
+    """Get all Aperture property dictionaries of an extension organized by geometry type.
 
     Args:
         aperture_list: A list of Aperture dictionaries.
@@ -181,7 +181,7 @@ def aperture_extension_dicts(aperture_list, extension_key, aperture_ext_dicts,
 
 def door_extension_dicts(door_list, extension_key, door_ext_dicts,
                          shade_ext_dicts):
-    """Get all Door property dictionaires of an extension organized by geometry type.
+    """Get all Door property dictionaries of an extension organized by geometry type.
 
     Args:
         door_list: A list of Door dictionaries.
