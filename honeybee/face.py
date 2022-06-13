@@ -1332,8 +1332,8 @@ class Face(_BaseWithShade):
     def _acceptable_sub_face_check(self, sub_face_type=Aperture):
         """Check whether the Face can accept sub-faces and raise an exception if not."""
         assert isinstance(self.boundary_condition, Outdoors), \
-            '{} can only be added to Faces with a Outdoor boundary condition.'.format(
-                sub_face_type.__name__)
+            '{} cannot be added to Faces with a {} boundary condition.'.format(
+                sub_face_type.__name__, self.boundary_condition)
         assert not isinstance(self.type, AirBoundary), \
             '{} cannot be added to AirBoundary.'.format(sub_face_type.__name__)
 
