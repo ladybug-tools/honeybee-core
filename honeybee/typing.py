@@ -253,7 +253,7 @@ def clean_and_id_rad_string(value, input_name=''):
 def clean_and_id_ep_string(value, input_name=''):
     """Clean a string and add 8 unique characters to it to make it unique for EnergyPlus.
 
-    This includes stripping out all illegal charactersand removing trailing white spaces.
+    This includes stripping out all illegal characters and removing trailing white spaces.
     Strings longer than 50 characters will be truncated before adding the ID.
     """
     try:

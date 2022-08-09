@@ -2,6 +2,7 @@
 """Honeybee Model."""
 from __future__ import division
 import os
+import sys
 import re
 import json
 import math
@@ -233,8 +234,12 @@ class Model(_Base):
             hbjson_file: Path to HBJSON file.
         """
         assert os.path.isfile(hbjson_file), 'Failed to find %s' % hbjson_file
-        with open(hbjson_file) as inf:
-            data = json.load(inf)
+        if (sys.version_info < (3, 0)):
+            with open(hbjson_file) as inf:
+                data = json.load(inf)
+        else:
+            with open(hbjson_file, encoding='utf-8') as inf:
+                data = json.load(inf)
         return cls.from_dict(data)
 
     @classmethod
@@ -1975,7 +1980,7 @@ class Model(_Base):
         Args:
             name: A text string for the name of the HBJSON file. If None, the model
                 identifier wil be used. (Default: None).
-            folder: A text string for the direcotry where the HBJSON will be written.
+            folder: A text string for the directory where the HBJSON will be written.
                 If unspecified, the default simulation folder will be used. This
                 is usually at "C:\\Users\\USERNAME\\simulation."
             indent: A positive integer to set the indentation used in the resulting
