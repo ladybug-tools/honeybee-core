@@ -756,8 +756,8 @@ class Room(_BaseWithShade):
             tolerance: The minimum distance between a vertex and the boundary segments
                 at which point the vertex is considered colinear. Default: 0.01,
                 suitable for objects in meters.
-            delete_invalid: Boolean to note whether degenerate Faces, Apertures and
-                Doors (objects the evaluate to less than 3 vertices at the tolerance)
+            delete_degenerate: Boolean to note whether degenerate Faces, Apertures and
+                Doors (objects that evaluate to less than 3 vertices at the tolerance)
                 should be deleted from the Room instead of raising a ValueError.
                 (Default: False).
         """
