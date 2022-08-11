@@ -1504,13 +1504,13 @@ class Model(_Base):
         detailed = False if raise_exception else detailed
         msgs = []
         for rm in self._rooms:
-            msg = rm.check_sub_faces_overlapping(False)
+            msg = rm.check_sub_faces_overlapping(False, detailed)
             if detailed:
                 msgs.extend(msg)
             elif msg != '':
                 msgs.append(msg)
         for f in self._orphaned_faces:
-            msg = f.check_sub_faces_overlapping(False)
+            msg = f.check_sub_faces_overlapping(False, detailed)
             if detailed:
                 msgs.extend(msg)
             elif msg != '':
