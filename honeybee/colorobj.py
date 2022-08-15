@@ -127,7 +127,7 @@ class _ColorObject(object):
         if l_par.is_title_default:
             l_par.title = self.attr_name_end.replace('_', ' ').title()
 
-        return GraphicContainer(values, self.min_point, self._max_point, l_par)
+        return GraphicContainer(values, self.min_point, self.max_point, l_par)
 
     def _process_attribute_name(self, attr_name):
         """Process the attribute name and assign it to this object."""
