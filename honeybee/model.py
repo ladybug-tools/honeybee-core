@@ -2210,7 +2210,7 @@ class Model(_Base):
             [aperture.duplicate() for aperture in self._orphaned_apertures],
             [door.duplicate() for door in self._orphaned_doors],
             self.units, self.tolerance, self.angle_tolerance)
-        new_model._display_name = self.display_name
+        new_model._display_name = self._display_name
         new_model._user_data = None if self.user_data is None else self.user_data.copy()
         new_model._properties._duplicate_extension_attr(self._properties)
         return new_model

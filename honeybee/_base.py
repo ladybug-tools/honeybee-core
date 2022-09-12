@@ -47,14 +47,18 @@ class _Base(object):
 
         If not set, this will be equal to the identifier.
         """
+        if self._display_name is None:
+            return self._identifier
         return self._display_name
 
     @display_name.setter
     def display_name(self, value):
-        try:
-            self._display_name = str(value)
-        except UnicodeEncodeError:  # Python 2 machine lacking the character set
-            self._display_name = value  # keep it as unicode
+        if value is not None:
+            try:
+                value = str(value)
+            except UnicodeEncodeError:  # Python 2 machine lacking the character set
+                pass  # keep it as unicode
+        self._display_name = value
 
     @property
     def full_id(self):
@@ -248,7 +252,7 @@ class _Base(object):
 
     def __copy__(self):
         new_obj = self.__class__(self.identifier)
-        new_obj._display_name = self.display_name
+        new_obj._display_name = self._display_name
         new_obj._user_data = None if self.user_data is None else self.user_data.copy()
         return new_obj
 
