@@ -586,7 +586,7 @@ class Door(_BaseWithShade):
     def __copy__(self):
         new_door = Door(self.identifier, self.geometry, self.boundary_condition,
                         self.is_glass)
-        new_door._display_name = self.display_name
+        new_door._display_name = self._display_name
         new_door._user_data = None if self.user_data is None else self.user_data.copy()
         self._duplicate_child_shades(new_door)
         new_door._properties._duplicate_extension_attr(self._properties)

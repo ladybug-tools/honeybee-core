@@ -1339,7 +1339,7 @@ class Face(_BaseWithShade):
 
     def __copy__(self):
         new_f = Face(self.identifier, self.geometry, self.type, self.boundary_condition)
-        new_f._display_name = self.display_name
+        new_f._display_name = self._display_name
         new_f._user_data = None if self.user_data is None else self.user_data.copy()
         new_f._apertures = [ap.duplicate() for ap in self._apertures]
         new_f._doors = [dr.duplicate() for dr in self._doors]

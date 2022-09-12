@@ -1,8 +1,8 @@
 """Boundary Condition for Face, Aperture, Door."""
+import re
+
 from .typing import float_in_range, tuple_with_length
 from .altnumber import autocalculate
-
-import re
 
 
 class _BoundaryCondition(object):
@@ -12,7 +12,7 @@ class _BoundaryCondition(object):
 
     def __init__(self):
         """Initialize Boundary condition."""
-        pass
+
 
     @property
     def name(self):
@@ -39,6 +39,7 @@ class _BoundaryCondition(object):
         return {'type': self.name}
 
     def ToString(self):
+        """Overwrite .NET ToString."""
         return self.__repr__()
 
     def __repr__(self):
@@ -121,7 +122,7 @@ class Outdoors(_BoundaryCondition):
         Args:
             full: Set to True to get the full dictionary which includes energy
                 simulation specific keys such as sun_exposure, wind_exposure and
-                view_factor. Default: False.
+                view_factor. (Default: False).
         """
         bc_dict = {'type': self.name}
         if full:
@@ -150,7 +151,7 @@ class Surface(_BoundaryCondition):
                 will be the parent Face of the adjacent sub-face and the third object
                  will be the parent Room of the adjacent sub-face.
             sub_face: Boolean to note whether this boundary condition is applied to a
-                sub-face (an Aperture or a Door) instead of a Face. Default: False.
+                sub-face (an Aperture or a Door) instead of a Face. (Default: False).
         """
         if sub_face:
             self._boundary_condition_objects = tuple_with_length(
@@ -270,7 +271,8 @@ class _BoundaryConditions(object):
         Args:
             other_object: The other object that is adjacent to the one that will
                 bear this Surface boundary condition.
-            sub_face: Boolean to note whether
+            sub_face: Boolean to note whether the boundary condition is for a
+                sub-face (Aperture or Door) instead of a Face. (Default: False).
         """
         return Surface.from_other_object(other_object, sub_face)
 
@@ -320,7 +322,7 @@ def get_bc_from_position(positions, ground_depth=0):
     Outdoors boundary condition will be returned.
 
     args:
-        positions: A list of ladybug_geometry Point3D objects represeting the
+        positions: A list of ladybug_geometry Point3D objects representing the
             vertices of an object.
         ground_depth: The Z value above which positions are considered Outdoors
             instead of Ground.

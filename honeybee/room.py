@@ -1,17 +1,7 @@
 # coding: utf-8
 """Honeybee Room."""
 from __future__ import division
-
-from ._basewithshade import _BaseWithShade
-from .typing import float_in_range, int_in_range, valid_string, clean_string, \
-    invalid_dict_error
-from .properties import RoomProperties
-from .face import Face
-from .facetype import AirBoundary, get_type_from_normal, Wall, Floor, RoofCeiling
-from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, \
-    boundary_conditions
-from honeybee.orientation import angles_from_num_orient, orient_index
-import honeybee.writer.room as writer
+import math
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
@@ -20,7 +10,16 @@ from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.mesh import Mesh3D
 from ladybug_geometry.geometry3d.polyface import Polyface3D
 
-import math
+import honeybee.writer.room as writer
+from ._basewithshade import _BaseWithShade
+from .typing import float_in_range, int_in_range, clean_string, \
+    invalid_dict_error
+from .properties import RoomProperties
+from .face import Face
+from .facetype import AirBoundary, get_type_from_normal, Wall, Floor, RoofCeiling
+from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, \
+    boundary_conditions
+from .orientation import angles_from_num_orient, orient_index
 
 
 class Room(_BaseWithShade):
@@ -137,7 +136,7 @@ class Room(_BaseWithShade):
             assert data['type'] == 'Room', 'Expected Room dictionary. ' \
                 'Got {}.'.format(data['type'])
 
-            # create the room object and assing properties
+            # create the room object and assign properties
             faces = []
             for f_dict in data['faces']:
                 try:
@@ -943,7 +942,7 @@ class Room(_BaseWithShade):
                 vertices at which they can be considered equivalent. Default: 0.01,
                 suitable for objects in meters.
             raise_exception: If True, a ValueError will be raised if an object
-                intersects with itself (like a bowtie). (Default: True).
+                intersects with itself (like a bow tie). (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
                 dicts with error info or a string with a message. (Default: False).
 
@@ -1391,7 +1390,7 @@ class Room(_BaseWithShade):
 
     def __copy__(self):
         new_r = Room(self.identifier, tuple(face.duplicate() for face in self._faces))
-        new_r._display_name = self.display_name
+        new_r._display_name = self._display_name
         new_r._user_data = None if self.user_data is None else self.user_data.copy()
         new_r._multiplier = self.multiplier
         new_r._story = self.story

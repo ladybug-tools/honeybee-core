@@ -774,7 +774,7 @@ class Aperture(_BaseWithShade):
     def __copy__(self):
         new_ap = Aperture(self.identifier, self.geometry, self.boundary_condition,
                           self.is_operable)
-        new_ap._display_name = self.display_name
+        new_ap._display_name = self._display_name
         new_ap._user_data = None if self.user_data is None else self.user_data.copy()
         self._duplicate_child_shades(new_ap)
         new_ap._properties._duplicate_extension_attr(self._properties)

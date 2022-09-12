@@ -438,7 +438,7 @@ class Shade(_Base):
 
     def __copy__(self):
         new_shade = Shade(self.identifier, self.geometry, self.is_detached)
-        new_shade._display_name = self.display_name
+        new_shade._display_name = self._display_name
         new_shade._user_data = None if self.user_data is None else self.user_data.copy()
         new_shade._properties._duplicate_extension_attr(self._properties)
         return new_shade
