@@ -55,7 +55,7 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
     Args:
         obj_instance: An instance of a Python object. Typically, this is a honeybee
             object like a Model, Room, Face, Aperture, Door, or Shade.
-        attr_name: A string of an attribute that the input obj_instace should have.
+        attr_name: A string of an attribute that the input obj_instance should have.
             This can have '.' that separate the nested attributes from one another.
             For example, 'properties.energy.construction'.
         decimal_count: An optional integer to be used to round the property to a
