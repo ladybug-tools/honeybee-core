@@ -23,7 +23,7 @@ class _Base(object):
     def __init__(self, identifier):
         """Initialize base object."""
         self.identifier = identifier
-        self._display_name = self._identifier
+        self._display_name = None
         self._properties = None
         self._user_data = None
 
