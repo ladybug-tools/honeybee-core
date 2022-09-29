@@ -1190,7 +1190,7 @@ class Model(_Base):
         """
         sub_faces = self.apertures + self.doors
         return check_duplicate_identifiers_parent(
-            sub_faces, raise_exception, 'sub-face', detailed, '000002', 'Core',
+            sub_faces, raise_exception, 'SubFace', detailed, '000002', 'Core',
             'Duplicate Sub-Face Identifier')
 
     def check_duplicate_shade_identifiers(self, raise_exception=True, detailed=False):
