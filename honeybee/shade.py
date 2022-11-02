@@ -1,16 +1,16 @@
 # coding: utf-8
 """Honeybee Shade."""
 from __future__ import division
+import math
+
+from ladybug_geometry.geometry3d.pointvector import Point3D
+from ladybug_geometry.geometry3d.face import Face3D
+from ladybug.color import Color
 
 from ._base import _Base
 from .typing import clean_string
 from .properties import ShadeProperties
 import honeybee.writer.shade as writer
-
-from ladybug_geometry.geometry3d.pointvector import Point3D
-from ladybug_geometry.geometry3d.face import Face3D
-
-import math
 
 
 class Shade(_Base):
@@ -43,9 +43,18 @@ class Shade(_Base):
         * max
         * altitude
         * azimuth
+        * type_color
+        * bc_color
         * user_data
     """
     __slots__ = ('_geometry', '_parent', '_is_indoor', '_is_detached')
+    TYPE_COLORS = {
+        (False, False): Color(120, 75, 190),
+        (False, True): Color(80, 50, 128),
+        (True, False): Color(159, 99, 255),
+        (True, True): Color(159, 99, 255)
+    }
+    BC_COLOR = Color(120, 75, 190)
 
     def __init__(self, identifier, geometry, is_detached=False):
         """A single planar shade."""
@@ -231,6 +240,16 @@ class Shade(_Base):
         """
         return math.degrees(self._geometry.azimuth)
 
+    @property
+    def type_color(self):
+        """Get a Color to be used in visualizations by type."""
+        return self.TYPE_COLORS[(self.is_indoor, self.is_detached)]
+
+    @property
+    def bc_color(self):
+        """Get a Color to be used in visualizations by boundary condition."""
+        return self.BC_COLOR
+
     def add_prefix(self, prefix):
         """Change the identifier of this object by inserting a prefix.
 
@@ -317,6 +336,23 @@ class Shade(_Base):
                 'Shade "{}" is invalid with dimensions less than the '
                 'tolerance.\n{}'.format(self.full_id, e))
 
+    def is_geo_equivalent(self, shade, tolerance=0.01):
+        """Get a boolean for whether this object is geometrically equivalent to another.
+
+        The total number of vertices and the ordering of these vertices can be
+        different but the geometries must share the same center point and be
+        next to one another to within the tolerance.
+
+        Args:
+            shade: Another Shade for which geometric equivalency will be tested.
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered geometrically equivalent.
+
+        Returns:
+            True if geometrically equivalent. False if not geometrically equivalent.
+        """
+        return self.geometry.is_centered_adjacent(shade.geometry, tolerance)
+
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check whether all of the Shade's vertices lie within the same plane.
 
@@ -392,6 +428,10 @@ class Shade(_Base):
                 msg, raise_exception, detailed, '000103',
                 error_type='Zero-Area Geometry')
         return [] if detailed else ''
+
+    def display_dict(self):
+        """Get a list of DisplayFace3D dictionaries for visualizing the object."""
+        return [self._display_face(self.geometry, self.type_color)]
 
     @property
     def to(self):

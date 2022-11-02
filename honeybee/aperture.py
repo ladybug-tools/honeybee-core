@@ -1,6 +1,12 @@
 # coding: utf-8
 """Honeybee Aperture."""
 from __future__ import division
+import math
+
+from ladybug_geometry.geometry2d.pointvector import Vector2D
+from ladybug_geometry.geometry3d.pointvector import Point3D
+from ladybug_geometry.geometry3d.face import Face3D
+from ladybug.color import Color
 
 from ._basewithshade import _BaseWithShade
 from .typing import clean_string
@@ -8,12 +14,6 @@ from .properties import ApertureProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
 from .shade import Shade
 import honeybee.writer.aperture as writer
-
-from ladybug_geometry.geometry2d.pointvector import Vector2D
-from ladybug_geometry.geometry3d.pointvector import Point3D
-from ladybug_geometry.geometry3d.face import Face3D
-
-import math
 
 
 class Aperture(_BaseWithShade):
@@ -50,9 +50,19 @@ class Aperture(_BaseWithShade):
         * max
         * altitude
         * azimuth
+        * type_color
+        * bc_color
         * user_data
     """
     __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_operable')
+    TYPE_COLORS = {
+        False: Color(64, 180, 255, 100),
+        True: Color(128, 204, 255, 100)
+    }
+    BC_COLORS = {
+        'Outdoors': Color(128, 204, 255, 100),
+        'Surface': Color(0, 190, 0, 100)
+    }
 
     def __init__(self, identifier, geometry, boundary_condition=None, is_operable=False):
         """A single planar aperture in a face."""
@@ -255,6 +265,16 @@ class Aperture(_BaseWithShade):
         This will be zero if the Face3D is perfectly horizontal.
         """
         return math.degrees(self._geometry.azimuth)
+
+    @property
+    def type_color(self):
+        """Get a Color to be used in visualizations by type."""
+        return self.TYPE_COLORS[self.is_operable]
+
+    @property
+    def bc_color(self):
+        """Get a Color to be used in visualizations by boundary condition."""
+        return self.BC_COLORS[self.boundary_condition.name]
 
     def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
         """Get a number between 0 and 360 for the orientation of the aperture in degrees.
@@ -639,6 +659,23 @@ class Aperture(_BaseWithShade):
                 'Aperture "{}" is invalid with dimensions less than the '
                 'tolerance.\n{}'.format(self.full_id, e))
 
+    def is_geo_equivalent(self, aperture, tolerance=0.01):
+        """Get a boolean for whether this object is geometrically equivalent to another.
+
+        The total number of vertices and the ordering of these vertices can be
+        different but the geometries must share the same center point and be
+        next to one another to within the tolerance.
+
+        Args:
+            aperture: Another Aperture for which geometric equivalency will be tested.
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered geometrically equivalent.
+
+        Returns:
+            True if geometrically equivalent. False if not geometrically equivalent.
+        """
+        return self.geometry.is_centered_adjacent(aperture.geometry, tolerance)
+
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check whether all of the Aperture's vertices lie within the same plane.
 
@@ -717,6 +754,13 @@ class Aperture(_BaseWithShade):
                 msg, raise_exception, detailed, '000103',
                 error_type='Zero-Area Geometry')
         return [] if detailed else ''
+
+    def display_dict(self):
+        """Get a list of DisplayFace3D dictionaries for visualizing the object."""
+        base = [self._display_face(self.geometry, self.type_color)]
+        for shd in self.shades:
+            base.extend(shd.display_dict())
+        return base
 
     @property
     def to(self):

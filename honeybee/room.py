@@ -785,6 +785,27 @@ class Room(_BaseWithShade):
             self._geometry = Polyface3D.from_faces(
                 tuple(face.geometry for face in self._faces), tolerance)
 
+    def is_geo_equivalent(self, room, tolerance=0.01):
+        """Get a boolean for whether this object is geometrically equivalent to another.
+
+        This will also check all child Faces, Apertures and Doors for equivalency
+        but not assigned shades.
+
+        Args:
+            room: Another Room for which geometric equivalency will be tested.
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered geometrically equivalent.
+
+        Returns:
+            True if geometrically equivalent. False if not geometrically equivalent.
+        """
+        if len(self._faces) != len(room._faces):
+            return False
+        for f1, f2 in zip(self._faces, room._faces):
+            if not f1.is_geo_equivalent(f2, tolerance):
+                return False
+        return True
+
     def check_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True,
                     detailed=False):
         """Check whether the Room is a closed solid to within the input tolerances.
@@ -1274,6 +1295,15 @@ class Room(_BaseWithShade):
                     continue  # preserve any existing user-assigned story values
                 room.story = story_name
         return story_names
+
+    def display_dict(self):
+        """Get a list of DisplayFace3D dictionaries for visualizing the object."""
+        base = []
+        for f in self._faces:
+            base.extend(f.display_dict())
+        for shd in self.shades:
+            base.extend(shd.display_dict())
+        return base
 
     @property
     def to(self):
