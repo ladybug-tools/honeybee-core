@@ -971,6 +971,45 @@ def test_from_dict_method_extensions():
     assert isinstance(parsed_model, Model)
 
 
+def test_comparison_report():
+    """Test the comparison_report method."""
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.apertures[0].move_shades(Vector3D(0, 0, -0.5))
+    north_face = room[1]
+    door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
+                  Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+    aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
+                      Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+    door = Door('FrontDoor', Face3D(door_verts))
+    north_face.add_door(door)
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
+    north_face.add_aperture(aperture)
+    model = Model('TinyHouse', [room])
+
+    new_model = model.duplicate()
+    comp_report = model.comparison_report(new_model)
+    assert len(comp_report['changed_objects']) == 0
+    assert len(comp_report['added_objects']) == 0
+    assert len(comp_report['deleted_objects']) == 0
+
+    new_model.convert_to_units('Feet')
+    comp_report = model.comparison_report(new_model)
+    assert len(comp_report['changed_objects']) == 0
+    assert len(comp_report['added_objects']) == 0
+    assert len(comp_report['deleted_objects']) == 0
+
+    north_face.remove_apertures()
+    comp_report = model.comparison_report(new_model)
+    assert len(comp_report['changed_objects']) == 1
+    assert comp_report['changed_objects'][0]['geometry_changed']
+    assert len(comp_report['added_objects']) == 0
+    assert len(comp_report['deleted_objects']) == 0
+
+
 def test_from_hbjson():
     """Test from_hbjson."""
     model_json = './tests/json/model_with_adiabatic.hbjson'

@@ -9,7 +9,7 @@ import math
 import uuid
 try:  # check if we are in IronPython
     import cPickle as pickle
-except ImportError:  # wea re in cPython
+except ImportError:  # wea are in cPython
     import pickle
 
 from ladybug_geometry.geometry3d.plane import Plane
@@ -95,6 +95,9 @@ class Model(_Base):
         * exterior_aperture_area
         * exterior_wall_aperture_area
         * exterior_skylight_aperture_area
+        * min
+        * max
+        * top_level_dict
         * user_data
     """
     __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
@@ -618,6 +621,23 @@ class Model(_Base):
         """Get a Point3D for the max bounding box vertex in the XY plane."""
         return self._calculate_max(self._all_objects())
 
+    @property
+    def top_level_dict(self):
+        """Get dictionary of top-level model objects with identifiers as the keys.
+
+        This is useful for matching these objects to others using identifiers.
+        """
+        base = {r.identifier: r for r in self._rooms}
+        for f in self._orphaned_faces:
+            base[f.identifier] = f
+        for a in self._orphaned_apertures:
+            base[a.identifier] = a
+        for d in self._orphaned_doors:
+            base[d.identifier] = d
+        for s in self._orphaned_shades:
+            base[s.identifier] = s
+        return base
+
     def add_model(self, other_model):
         """Add another Model object to this model."""
         assert isinstance(other_model, Model), \
@@ -1060,6 +1080,55 @@ class Model(_Base):
             self.scale(scale_fac)
             self.tolerance = self.tolerance * scale_fac
             self.units = units
+
+    def comparison_report(self, model, ignore_deleted=False, ignore_added=False):
+        """Get a dictionary outlining the differences between this model and another.
+
+        Args:
+            model: A new Model to which this current model will be compared.
+            ignore_deleted: A boolean to note whether objects that appear in this
+                current model but not in the new model should be reported. It is
+                useful to set this to True when the new model represents only a
+                subset of the current model. (Default: False).
+            ignore_added: A boolean to note whether objects that appear in the new
+                model but not in the current model should be reported. (Default: False).
+        """
+        # make sure the unit systems of the two models align
+        tol = self.tolerance
+        if self.units != model.units:
+            model = model.duplicate()
+            model.convert_to_units(self.units)
+        # set up lists and dictionaries of objects for comparison
+        compare_dict = {'type': 'ComparisonReport'}
+        self_dict = self.top_level_dict
+        other_dict = model.top_level_dict
+        # loop through the new objects and detect changes between them
+        changed, added_objs = [], []
+        for obj_id, new_obj in other_dict.items():
+            try:
+                exist_obj = self_dict[obj_id]
+                change_dict = exist_obj._changed_dict(new_obj, tol)
+                if change_dict is not None:
+                    changed.append(change_dict)
+            except KeyError:
+                added_objs.append(new_obj)
+        compare_dict['changed_objects'] = changed
+        # include the added objects in the comparison dictionary
+        if not ignore_added:
+            added = []
+            for new_obj in added_objs:
+                added.append(new_obj._base_report_dict('AddedObject'))
+            compare_dict['added_objects'] = added
+        # include the deleted objects in the comparison dictionary
+        if not ignore_deleted:
+            deleted = []
+            for obj_id, exist_obj in self_dict.items():
+                try:
+                    new_obj = other_dict[obj_id]
+                except KeyError:
+                    deleted.append(exist_obj._base_report_dict('DeletedObject'))
+            compare_dict['deleted_objects'] = deleted
+        return compare_dict
 
     def check_all(self, raise_exception=True, detailed=False):
         """Check all of the aspects of the Model for possible errors.
@@ -1706,7 +1775,7 @@ class Model(_Base):
             -   triangulated_doors: A list of lists where each list is a set of triangle
                 Doors meant to replace a Door with more than 4 sides in the model.
 
-            -   parents_to_edit: An list of lists that parellels the triangulated_doors
+            -   parents_to_edit: An list of lists that parallels the triangulated_doors
                 in that each item represents a Door that has been triangulated
                 in the model. However, each of these lists holds between 1 and 3 values
                 for the identifiers of the original door and parents of the door.

@@ -101,6 +101,51 @@ class _Base(object):
         """Get a copy of this object."""
         return self.__copy__()
 
+    def display_dict(self):
+        """Get a list of DisplayFace3D dictionaries for visualizing the object."""
+        return []
+
+    def _changed_dict(self, other_object, tolerance):
+        """Get a dictionary reporting changes between this object and another.
+
+        Args:
+            other_object: Another object of the same type to be compared to this one.
+            tolerance: The tolerance to be used in checking whether the geometry
+                has been changed.
+
+        Returns:
+            A dictionary with a report of differences. This will be None if there
+            are no differences detected between this object and the other object.
+        """
+        # check whether each type of property has changed
+        geo_changed = not other_object.is_geo_equivalent(self, tolerance)
+        if not geo_changed:
+            return None
+        # establish the base dictionary
+        base_dict = {
+            'type': 'ChangedObject',
+            'element_type': self.__class__.__name__,
+            'element_id': self.identifier,
+            'element_name': self.display_name,
+            'geometry_changed': geo_changed
+        }
+        # add a representation of the geometry if it has changed
+        if geo_changed:
+            base_dict['existing_geometry'] = self.display_dict()
+            base_dict['changed_geometry '] = other_object.display_dict()
+        return base_dict
+
+    def _base_report_dict(self, dict_type='AddedObject'):
+        """Get a dictionary reporting the object as an addition/deletion to/from a Model.
+        """
+        return {
+            'type': dict_type,
+            'element_type': self.__class__.__name__,
+            'element_id': self.identifier,
+            'element_name': self.display_name,
+            'geometry': self.display_dict()
+        }
+
     def _validation_message(
         self, message, raise_exception=True, detailed=False,
         code='000000', extension='Core', error_type='Unknown Error'):
@@ -221,6 +266,16 @@ class _Base(object):
         msg = '{} "{}" is not valid and is not following honeybee-schema:\n{}'.format(
             obj_name, full_id, exception_obj)
         raise ValueError(msg)
+
+    @staticmethod
+    def _display_face(face3d, color):
+        """Create a DisplayFace3D dictionary from a Face3D and color."""
+        return {
+            'type': 'DisplayFace3D',
+            'geometry': face3d.to_dict(),
+            'color': color.to_dict(),
+            'display_mode': 'SurfaceWithEdges'
+        }
 
     @staticmethod
     def _calculate_min(geometry_objects):

@@ -1,25 +1,25 @@
 # coding: utf-8
 """Honeybee Face."""
 from __future__ import division
+import math
+
+from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
+from ladybug_geometry.geometry3d.pointvector import Point3D
+from ladybug_geometry.geometry3d.plane import Plane
+from ladybug_geometry.geometry3d.face import Face3D
+from ladybug.color import Color
 
 from ._basewithshade import _BaseWithShade
 from .typing import clean_string, invalid_dict_error
 from .properties import FaceProperties
 from .facetype import face_types, get_type_from_normal, AirBoundary
 from .boundarycondition import boundary_conditions, get_bc_from_position, \
-    _BoundaryCondition, Outdoors, Surface
+    _BoundaryCondition, Outdoors, Surface, Ground
 from .shade import Shade
 from .aperture import Aperture
 from .door import Door
 import honeybee.boundarycondition as hbc
 import honeybee.writer.face as writer
-
-from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
-from ladybug_geometry.geometry3d.pointvector import Point3D
-from ladybug_geometry.geometry3d.plane import Plane
-from ladybug_geometry.geometry3d.face import Face3D
-
-import math
 
 
 class Face(_BaseWithShade):
@@ -67,11 +67,30 @@ class Face(_BaseWithShade):
         * aperture_ratio
         * altitude
         * azimuth
+        * type_color
+        * bc_color
         * user_data
     """
     TYPES = face_types
     __slots__ = ('_geometry', '_parent', '_punched_geometry',
                  '_apertures', '_doors', '_type', '_boundary_condition')
+    TYPE_COLORS = {
+        'Wall': Color(230, 180, 60),
+        'RoofCeiling': Color(128, 20, 20),
+        'Floor': Color(128, 128, 128),
+        'AirBoundary': Color(255, 255, 200, 100),
+        'InteriorWall': Color(230, 215, 150),
+        'InteriorRoofCeiling': Color(255, 128, 128),
+        'InteriorFloor': Color(255, 128, 128),
+        'InteriorAirBoundary': Color(255, 255, 200, 100)
+    }
+    BC_COLORS = {
+        'Outdoors': Color(64, 180, 255),
+        'Surface': Color(0, 128, 0),
+        'Ground': Color(165, 82, 0),
+        'Adiabatic': Color(255, 128, 128),
+        'Other': Color(255, 255, 200)
+    }
 
     def __init__(self, identifier, geometry, type=None, boundary_condition=None):
         """A single planar face."""
@@ -360,6 +379,21 @@ class Face(_BaseWithShade):
         This will be zero if the Face3D is perfectly horizontal.
         """
         return math.degrees(self._geometry.azimuth)
+
+    @property
+    def type_color(self):
+        """Get a Color to be used in visualizations by type."""
+        ts = self.type.name if isinstance(self.boundary_condition, (Outdoors, Ground)) \
+            else 'Interior{}'.format(self.type.name)
+        return self.TYPE_COLORS[ts]
+
+    @property
+    def bc_color(self):
+        """Get a Color to be used in visualizations by boundary condition."""
+        try:
+            return self.BC_COLORS[self.boundary_condition.name]
+        except KeyError:  # extension boundary condition
+            return self.BC_COLORS['Other']
 
     def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
         """Get a number between 0 and 360 for the orientation of the face in degrees.
@@ -710,7 +744,7 @@ class Face(_BaseWithShade):
 
         Note that this method will effectively fill any rectangular portions of
         this Face with apertures at the specified width, height and separation.
-        If no rectangluar portion of this Face can be identified, no apertures
+        If no rectangular portion of this Face can be identified, no apertures
         will be added.
 
         Args:
@@ -1069,6 +1103,34 @@ class Face(_BaseWithShade):
             except ValueError:
                 self._apertures.pop(i)
 
+    def is_geo_equivalent(self, face, tolerance=0.01):
+        """Get a boolean for whether this object is geometrically equivalent to another.
+
+        This will also check all child Apertures and Doors for equivalency but not
+        assigned shades.
+
+        Args:
+            face: Another Face for which geometric equivalency will be tested.
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered geometrically equivalent.
+
+        Returns:
+            True if geometrically equivalent. False if not geometrically equivalent.
+        """
+        if not self.geometry.is_centered_adjacent(face.geometry, tolerance):
+            return False
+        if len(self._apertures) != len(face._apertures):
+            return False
+        if len(self._doors) != len(face._doors):
+            return False
+        for ap1, ap2 in zip(self._apertures, face._apertures):
+            if not ap1.is_geo_equivalent(ap2, tolerance):
+                return False
+        for dr1, dr2 in zip(self._doors, face._doors):
+            if not dr1.is_geo_equivalent(dr2, tolerance):
+                return False
+        return True
+
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
                               raise_exception=True, detailed=False):
         """Check that sub-faces are co-planar with this Face within the Face boundary.
@@ -1272,6 +1334,17 @@ class Face(_BaseWithShade):
                 msg, raise_exception, detailed, '000103',
                 error_type='Zero-Area Geometry')
         return [] if detailed else ''
+
+    def display_dict(self):
+        """Get a list of DisplayFace3D dictionaries for visualizing the object."""
+        base = [self._display_face(self.punched_geometry, self.type_color)]
+        for ap in self._apertures:
+            base.extend(ap.display_dict())
+        for dr in self._doors:
+            base.extend(dr.display_dict())
+        for shd in self.shades:
+            base.extend(shd.display_dict())
+        return base
 
     @property
     def to(self):
