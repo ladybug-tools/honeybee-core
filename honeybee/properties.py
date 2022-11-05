@@ -175,6 +175,22 @@ class _Properties(object):
                 raise Exception('Failed test is_equivalent for {}: {}'.format(var, e))
         return eq_dict
 
+    def _update_by_sync(self, change, existing_prop, updated_prop):
+        """Update properties using change instructions and existing/updated objects."""
+        for atr in self._extension_attributes:
+            up_atr = 'update_{}'.format(atr)
+            if up_atr in change:
+                var = getattr(updated_prop, atr) if change[up_atr] \
+                    else getattr(existing_prop, atr)
+                if not hasattr(var, 'duplicate'):
+                    continue
+                try:
+                    setattr(self, '_' + atr, var.duplicate(self.host))
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    raise Exception('Failed to duplicate {}: {}'.format(var, e))
+
     def _duplicate_extension_attr(self, original_properties):
         """Duplicate the attributes added by extensions.
 
