@@ -151,3 +151,11 @@ def check_duplicate_identifiers_parent(
             raise ValueError(msg)
         return msg
     return [] if detailed else ''
+
+
+def is_equivalent(object_1, object_2):
+    """Check if two objects are equal with an initial check for the same instance.
+    """
+    if object_1 is object_2:  # first see if they're the same instance
+        return True
+    return object_1 == object_2  # two objects that should have == operators
