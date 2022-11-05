@@ -136,7 +136,7 @@ class _Base(object):
         # add a representation of the geometry if it has changed
         if geo_changed:
             base_dict['existing_geometry'] = self.display_dict()
-            base_dict['changed_geometry '] = other_object.display_dict()
+            base_dict['geometry'] = other_object.display_dict()
         return base_dict
 
     def _base_report_dict(self, dict_type='AddedObject'):

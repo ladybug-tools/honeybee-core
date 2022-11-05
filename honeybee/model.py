@@ -355,6 +355,70 @@ class Model(_Base):
         return cls(identifier, rooms, faces, shades, apertures, doors, units,
                    tolerance, angle_tolerance)
 
+    @classmethod
+    def from_sync(cls, existing_model, updated_model, sync_instructions):
+        """Initialize a Model from two existing models and instructions for syncing them.
+
+        The SyncInstructions dictionary schema is essentially a variant of the
+        ComparisonReport schema that can be obtained by calling
+        existing_model.comparison_report(updated_model). The main difference is
+        that the XXX_changed properties should be replaced with update_XXX properties
+        for whether the change from the updated_model should be accepted into
+        the new model or rejected from it.
+
+        Args:
+            existing_model: An existing Honeybee Model that forms the base of
+                the new model to be created.
+            updated_model: An updated Honeybee Model that contains changes to
+                the existing model to be merged into the existing_model.
+            sync_instructions: A dictionary of SyncInstructions that states which
+                changes from the updated_model should be accepted or rejected
+                when building a new Model from the existing_model.
+        """
+        # make sure the unit systems of the two models align
+        tol = existing_model.tolerance
+        if existing_model.units != updated_model.units:
+            updated_model = updated_model.duplicate()
+            updated_model.convert_to_units(existing_model.units)
+        # set up dictionaries of objects and lists of changes
+        exist_dict = existing_model.top_level_dict
+        updated_dict = updated_model.top_level_dict
+        add_dict = {'Room': [], 'Face': [], 'Aperture': [], 'Door': [], 'Shade': []}
+        del_dict = {'Room': [], 'Face': [], 'Aperture': [], 'Door': [], 'Shade': []}
+        # loop through the changed objects and record changes
+        if 'changed_objects' in sync_instructions:
+            for change in sync_instructions['changed_objects']:
+                ex_obj = exist_dict[change['element_id']]
+                up_obj = updated_dict[change['element_id']]
+                base_obj = up_obj if 'update_geometry' in change \
+                    and change['update_geometry'] else ex_obj
+                base_obj.properties._update_by_sync(
+                    change, ex_obj.properties, up_obj.properties)
+                del_dict[change['element_type']].append(change['element_id'])
+                add_dict[change['element_type']].append(base_obj)
+        # loop through deleted objects and record changes
+        if 'deleted_objects' in sync_instructions:
+            for change in sync_instructions['deleted_objects']:
+                del_dict[change['element_type']].append(change['element_id'])
+        # loop through added objects and record changes
+        if 'added_objects' in sync_instructions:
+            for change in sync_instructions['added_objects']:
+                up_obj = updated_dict[change['element_id']]
+                add_dict[change['element_type']].append(up_obj)
+        # duplicate the base model and make changes to it
+        new_model = existing_model.duplicate()
+        new_model.remove_rooms(del_dict['Room'])
+        new_model.remove_faces(del_dict['Face'])
+        new_model.remove_apertures(del_dict['Aperture'])
+        new_model.remove_doors(del_dict['Door'])
+        new_model.remove_shades(del_dict['Shade'])
+        new_model.add_rooms(add_dict['Room'])
+        new_model.add_faces(add_dict['Face'])
+        new_model.add_apertures(add_dict['Aperture'])
+        new_model.add_doors(add_dict['Door'])
+        new_model.add_shades(add_dict['Shade'])
+        return new_model
+
     @property
     def units(self):
         """Get or set Text for the units system in which the model geometry exists."""
@@ -686,25 +750,53 @@ class Model(_Base):
             'the model instead of the Shade.'.format(obj.display_name)
         self._orphaned_shades.append(obj)
 
-    def remove_rooms(self):
-        """Remove all Rooms from the model."""
-        self._rooms = []
+    def remove_rooms(self, room_ids=None):
+        """Remove Rooms from the model.
+        
+        Args:
+            room_ids: An optional list of Room identifiers to only remove certain rooms
+                from the model. If None, all Rooms will be removed. (Default: None).
+        """
+        self._rooms = self._remove_by_ids(self.rooms, room_ids)
 
-    def remove_faces(self):
-        """Remove all orphaned Faces from the model."""
-        self._orphaned_faces = []
+    def remove_faces(self, face_ids=None):
+        """Remove orphaned Faces from the model.
+        
+        Args:
+            face_ids: An optional list of Face identifiers to only remove certain faces
+                from the model. If None, all Faces will be removed. (Default: None).
+        """
+        self._orphaned_faces = self._remove_by_ids(self._orphaned_faces, face_ids)
 
-    def remove_apertures(self):
-        """Remove all orphaned Apertures from the model."""
-        self._orphaned_apertures = []
+    def remove_apertures(self, aperture_ids=None):
+        """Remove orphaned Apertures from the model.
 
-    def remove_doors(self):
-        """Remove all orphaned Doors from the model."""
-        self._orphaned_doors = []
+        Args:
+            aperture_ids: An optional list of Aperture identifiers to only remove
+                certain apertures from the model. If None, all Apertures will
+                be removed. (Default: None).
+        """
+        self._orphaned_apertures = self._remove_by_ids(
+            self._orphaned_apertures, aperture_ids)
 
-    def remove_shades(self):
-        """Remove all orphaned Shades from the model, typically representing context."""
-        self._orphaned_shades = []
+    def remove_doors(self, door_ids=None):
+        """Remove orphaned Doors from the model.
+        
+        Args:
+            door_ids: An optional list of Door identifiers to only remove certain doors
+                from the model. If None, all Doors will be removed. (Default: None).
+        """
+        self._orphaned_doors = self._remove_by_ids(self._orphaned_doors, door_ids)
+
+    def remove_shades(self, shade_ids=None):
+        """Remove orphaned Shades from the model.
+
+        Args:
+            shade_ids: An optional list of Shade identifiers to only remove
+            certain shades from the model. If None, all Shades will be
+            removed. (Default: None).
+        """
+        self._orphaned_shades = self._remove_by_ids(self._orphaned_shades, shade_ids)
 
     def remove_assigned_apertures(self):
         """Remove all Apertures assigned to the model's Faces.
@@ -776,6 +868,31 @@ class Model(_Base):
         """
         self.remove_shades()
         self.remove_assigned_shades()
+
+    def add_rooms(self, objs):
+        """Add a list of Room objects to the model."""
+        for obj in objs:
+            self.add_room(obj)
+
+    def add_faces(self, objs):
+        """Add a list of orphaned Face objects to the model."""
+        for obj in objs:
+            self.add_face(obj)
+
+    def add_apertures(self, objs):
+        """Add a list of orphaned Aperture objects to the model."""
+        for obj in objs:
+            self.add_aperture(obj)
+
+    def add_doors(self, objs):
+        """Add a list of orphaned Door objects to the model."""
+        for obj in objs:
+            self.add_door(obj)
+
+    def add_shades(self, objs):
+        """Add a list of orphaned Shade objects to the model."""
+        for obj in objs:
+            self.add_shade(obj)
 
     def rooms_by_identifier(self, identifiers):
         """Get a list of Room objects in the model given the Room identifiers."""
@@ -1081,27 +1198,43 @@ class Model(_Base):
             self.tolerance = self.tolerance * scale_fac
             self.units = units
 
-    def comparison_report(self, model, ignore_deleted=False, ignore_added=False):
+    def comparison_report(self, other_model, ignore_deleted=False, ignore_added=False):
         """Get a dictionary outlining the differences between this model and another.
 
+        The resulting dictionary will only report top-level objects that are different
+        between this model and the other. If an object has not changed at all,
+        then it will not show up in the report.
+
+        Changes to geometry are reported separately from changes in metadata
+        (aka. properties) for each of the top level objects.
+
+        If the Model units or tolerance are different between the two models,
+        then the units and tolerance of this model will take precedence and
+        the other_model will be converted to these units and tolerance for
+        geometry comparison.
+
         Args:
-            model: A new Model to which this current model will be compared.
+            other_model: A new Model to which this current model will be compared.
             ignore_deleted: A boolean to note whether objects that appear in this
-                current model but not in the new model should be reported. It is
-                useful to set this to True when the new model represents only a
+                current model but not in the other model should be reported. It is
+                useful to set this to True when the other model represents only a
                 subset of the current model. (Default: False).
-            ignore_added: A boolean to note whether objects that appear in the new
+            ignore_added: A boolean to note whether objects that appear in the other
                 model but not in the current model should be reported. (Default: False).
+        
+        Returns:
+            A dictionary of differences between this model and the other model in
+            the format below.
         """
         # make sure the unit systems of the two models align
         tol = self.tolerance
-        if self.units != model.units:
-            model = model.duplicate()
-            model.convert_to_units(self.units)
+        if self.units != other_model.units:
+            other_model = other_model.duplicate()
+            other_model.convert_to_units(self.units)
         # set up lists and dictionaries of objects for comparison
         compare_dict = {'type': 'ComparisonReport'}
         self_dict = self.top_level_dict
-        other_dict = model.top_level_dict
+        other_dict = other_model.top_level_dict
         # loop through the new objects and detect changes between them
         changed, added_objs = [], []
         for obj_id, new_obj in other_dict.items():
@@ -2260,6 +2393,19 @@ class Model(_Base):
         """Check that an adjacent object is referencing itself."""
         bc_objs = hb_obj.boundary_condition.boundary_condition_objects
         return bc_objs[0], bc_objs[-1]
+
+    @staticmethod
+    def _remove_by_ids(objs, obj_ids):
+        """Remove items from a list using a list of object IDs."""
+        if obj_ids == []:
+            return objs
+        new_objs = []
+        if obj_ids is not None:
+            obj_id_set = set(obj_ids)
+            for obj in objs:
+                if obj.identifier not in obj_id_set:
+                    new_objs.append(obj)
+        return new_objs
 
     def __add__(self, other):
         new_model = self.duplicate()
