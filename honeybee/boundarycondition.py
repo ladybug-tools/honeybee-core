@@ -132,6 +132,16 @@ class Outdoors(_BoundaryCondition):
                 self.view_factor == autocalculate else self.view_factor
         return bc_dict
 
+    def __key(self):
+        """A tuple based on the object properties, useful for hashing."""
+        return (self.sun_exposure, self.wind_exposure, self.view_factor)
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other):
+        return isinstance(other, Outdoors) and self.__key() == other.__key()
+
 
 class Surface(_BoundaryCondition):
     """Boundary condition when an object is adjacent to another object."""
@@ -230,6 +240,16 @@ class Surface(_BoundaryCondition):
         return {'type': self.name,
                 'boundary_condition_objects': self.boundary_condition_objects}
 
+    def __key(self):
+        """A tuple based on the object properties, useful for hashing."""
+        return self.boundary_condition_objects
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other):
+        return isinstance(other, Surface) and self.__key() == other.__key()
+
 
 class Ground(_BoundaryCondition):
     """Ground boundary condition.
@@ -245,6 +265,9 @@ class Ground(_BoundaryCondition):
         assert data['type'] == 'Ground', 'Expected dictionary for Ground boundary ' \
             'condition. Got {}.'.format(data['type'])
         return cls()
+
+    def __eq__(self, other):
+        return isinstance(other, Ground)
 
 
 class _BoundaryConditions(object):

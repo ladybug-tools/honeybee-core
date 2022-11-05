@@ -119,7 +119,8 @@ class _Base(object):
         """
         # check whether each type of property has changed
         geo_changed = not other_object.is_geo_equivalent(self, tolerance)
-        if not geo_changed:
+        meta_changed = other_object.properties.is_equivalent(self.properties)
+        if not geo_changed and all(meta_changed.values()):
             return None
         # establish the base dictionary
         base_dict = {
@@ -129,6 +130,9 @@ class _Base(object):
             'element_name': self.display_name,
             'geometry_changed': geo_changed
         }
+        # add booleans for whether metadata changed
+        for atr, equiv in meta_changed.items():
+            base_dict['{}_changed'.format(atr)] = not equiv
         # add a representation of the geometry if it has changed
         if geo_changed:
             base_dict['existing_geometry'] = self.display_dict()

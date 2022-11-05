@@ -55,7 +55,7 @@ class _Properties(object):
                 raise Exception('Failed to move {}: {}'.format(var, e))
 
     def rotate(self, axis, angle, origin):
-        """Apply a rotatation transform to extension attributes.
+        """Apply a rotation transform to extension attributes.
 
         This is useful in cases where extension attributes possess geometric data
         that should be rotated alongside the host object. For example, dynamic
@@ -80,7 +80,7 @@ class _Properties(object):
                 raise Exception('Failed to rotate {}: {}'.format(var, e))
 
     def rotate_xy(self, angle, origin):
-        """Apply a rotatation in the XY plane to extension attributes.
+        """Apply a rotation in the XY plane to extension attributes.
 
         This is useful in cases where extension attributes possess geometric data
         that should be rotated alongside the host object. For example, dynamic
@@ -149,6 +149,31 @@ class _Properties(object):
                 import traceback
                 traceback.print_exc()
                 raise Exception('Failed to scale {}: {}'.format(var, e))
+
+    def is_equivalent(self, other_properties):
+        """Get a dictionary noting the equivalency of these properties to other ones.
+
+        The keys of this dictionary will note the name of each extension (eg.
+        energy, radiance) and the values will be a boolean for whether the
+        extension properties are equivalent or not.
+
+        Args:
+            other_properties: Properties of another object for which equivalency
+                will be tested.
+        """
+        eq_dict = {}
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if not hasattr(var, 'is_equivalent'):
+                continue
+            other_var = getattr(other_properties, atr)
+            try:
+                eq_dict[atr] = var.is_equivalent(other_var)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed test is_equivalent for {}: {}'.format(var, e))
+        return eq_dict
 
     def _duplicate_extension_attr(self, original_properties):
         """Duplicate the attributes added by extensions.
