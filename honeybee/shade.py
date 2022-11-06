@@ -351,6 +351,9 @@ class Shade(_Base):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
+        tol_val = tolerance * self.area
+        if not shade.area - tol_val <= self.area <= shade.area + tol_val:
+            return False
         return self.geometry.is_centered_adjacent(shade.geometry, tolerance)
 
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
