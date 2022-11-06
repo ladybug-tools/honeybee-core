@@ -134,9 +134,9 @@ class _Base(object):
         for atr, equiv in meta_changed.items():
             base_dict['{}_changed'.format(atr)] = not equiv
         # add a representation of the geometry if it has changed
+        base_dict['geometry'] = other_object.display_dict()
         if geo_changed:
             base_dict['existing_geometry'] = self.display_dict()
-            base_dict['geometry'] = other_object.display_dict()
         return base_dict
 
     def _base_report_dict(self, dict_type='AddedObject'):
