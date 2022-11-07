@@ -10,7 +10,7 @@ from honeybee.config import folders
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands for validating Honeybee JSON files.')
+@click.group(help='Commands for validating Honeybee objects.')
 def validate():
     pass
 
@@ -31,12 +31,26 @@ def validate():
     default=True, show_default=True)
 @click.option(
     '--output-file', '-f', help='Optional file to output the full report '
-    'of any errors detected. By default it will be printed out to stdout',
+    'of the validation. By default it will be printed out to stdout',
     type=click.File('w'), default='-')
 def validate_model(model_json, plain_text, output_file):
-    """Validate all properties of a Model JSON file against the Honeybee schema.
+    """Validate all properties of a Model file against the Honeybee schema.
 
-    This includes basic properties like adjacency checks and all geometry checks.
+    This includes checking basic compliance with the 5 rules of honeybee geometry
+    as well as checks for all extension attributes. The 5 rules of honeybee geometry
+    are as follows.
+
+    1. All Face3Ds must be planar to within the model tolerance.
+
+    2. All Face3Ds must NOT be self-intersecting (like a bowtie shape)
+
+    3. All children sub-faces (Apertures and Doors) must be co-planar with
+        their parent Face and lie completely within its boundary.
+
+    4. All adjacent object pairs (faces and sub-faces with a Surface boundary
+        condition) must have matching areas.
+
+    5. All Room volumes must be closed solids.
 
     \b
     Args:
@@ -102,7 +116,7 @@ def validate_room_volumes(model_json, output_file):
         model_json: Full path to a Model JSON file.
     """
     try:
-        # re-serialize the Model and collect all naked and non-maifold edges
+        # re-serialize the Model and collect all naked and non-manifold edges
         parsed_model = Model.from_hbjson(model_json)
         problem_edges = []
         for room in parsed_model.rooms:

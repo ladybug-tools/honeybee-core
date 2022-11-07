@@ -674,8 +674,7 @@ class Aperture(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
-        tol_val = tolerance * self.area
-        if not aperture.area - tol_val <= self.area <= aperture.area + tol_val:
+        if abs(self.area - aperture.area) > tolerance * self.area:
             return False
         return self.geometry.is_centered_adjacent(aperture.geometry, tolerance)
 
