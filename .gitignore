@@ -13,3 +13,4 @@ tox.ini
 /.vscode
 .eggs
 honeybee.log*
+/build

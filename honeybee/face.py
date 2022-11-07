@@ -1117,8 +1117,7 @@ class Face(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
-        tol_val = tolerance * self.area
-        if not face.area - tol_val <= self.area <= face.area + tol_val:
+        if abs(self.area - face.area) > tolerance * self.area:
             return False
         if not self.geometry.is_centered_adjacent(face.geometry, tolerance):
             return False

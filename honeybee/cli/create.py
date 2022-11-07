@@ -310,3 +310,46 @@ def _rooms_from_footprint(
         for room in rooms[:len(first_floor)]:
             room[0].boundary_condition = ad_bc  # make the floor adiabatic
     return rooms
+
+
+@create.command('from-sync')
+@click.argument('base-model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.argument('other-model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.argument('sync-instructions-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--output-file', '-f', help='Optional file to output the Model JSON '
+    'string. By default it will be printed out to stdout',
+    type=click.File('w'), default='-')
+def create_from_sync(
+        base_model_file, other_model_file, sync_instructions_file, output_file):
+    """Create a Model from two similar model files and instructions for syncing them.
+
+    \b
+    Args:
+        base_model_file: An base Honeybee Model (as HBJON or HBPkl)
+            that forms the base of the new model to be created.
+        other_model_file: An other Honeybee Model (as HBJON or HBPkl)
+            that contains changes to the base model to be merged into
+            the base_model.
+        sync_instructions: A JSON file of SyncInstructions that states which
+            changes from the other model should be accepted or rejected
+            when building a new Model from the base model. The SyncInstructions
+            schema is essentially a variant of the ComparisonReport schema
+            that can be obtained by calling `honeybee compare models base_model_file
+            other_model_file --json`. The main difference is that the XXX_changed
+            properties should be replaced with update_XXX properties for
+            whether the change from the other_model should be accepted into
+            the new model or rejected from it.
+    """
+    try:
+        new_model = Model.from_sync_files(
+            base_model_file, other_model_file, sync_instructions_file)
+        output_file.write(json.dumps(new_model.to_dict()))
+    except Exception as e:
+        _logger.exception('Model from sync failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)

@@ -290,6 +290,18 @@ def truncate_and_id_string(value, truncate_len=32, uuid_len=0, input_name=''):
     return val
 
 
+def fixed_string_length(value, target_len=32):
+    """Truncate a string or add trailing spaces to hit a target character length.
+
+    This is useful when trying to construct human-readable tables of text.
+    """
+    if len(value) > target_len:
+        return value[:target_len]
+    elif len(value) < target_len:
+        return value + ' ' * (target_len - len(value))
+    else:
+        return value
+
 def invalid_dict_error(invalid_dict, error):
     """Raise a ValueError for an invalid dictionary that failed to serialize.
 

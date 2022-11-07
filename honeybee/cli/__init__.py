@@ -62,6 +62,7 @@ import json
 from ..config import folders
 from honeybee.cli.setconfig import set_config
 from honeybee.cli.validate import validate
+from honeybee.cli.compare import compare
 from honeybee.cli.create import create
 from honeybee.cli.edit import edit
 
@@ -105,6 +106,7 @@ def viz():
 
 main.add_command(set_config, name='set-config')
 main.add_command(validate)
+main.add_command(compare)
 main.add_command(create)
 main.add_command(edit)
 

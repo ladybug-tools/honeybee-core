@@ -237,7 +237,7 @@ class Model(_Base):
             hbjson_file: Path to HBJSON file.
         """
         assert os.path.isfile(hbjson_file), 'Failed to find %s' % hbjson_file
-        if (sys.version_info < (3, 0)):
+        if sys.version_info < (3, 0):
             with open(hbjson_file) as inf:
                 data = json.load(inf)
         else:
@@ -356,40 +356,39 @@ class Model(_Base):
                    tolerance, angle_tolerance)
 
     @classmethod
-    def from_sync(cls, existing_model, updated_model, sync_instructions):
-        """Initialize a Model from two existing models and instructions for syncing them.
+    def from_sync(cls, base_model, other_model, sync_instructions):
+        """Initialize a Model from two models and instructions for syncing them.
 
         The SyncInstructions dictionary schema is essentially a variant of the
         ComparisonReport schema that can be obtained by calling
-        existing_model.comparison_report(updated_model). The main difference is
+        base_model.comparison_report(other_model). The main difference is
         that the XXX_changed properties should be replaced with update_XXX properties
-        for whether the change from the updated_model should be accepted into
+        for whether the change from the other_model should be accepted into
         the new model or rejected from it.
 
         Args:
-            existing_model: An existing Honeybee Model that forms the base of
+            base_model: An base Honeybee Model that forms the base of
                 the new model to be created.
-            updated_model: An updated Honeybee Model that contains changes to
-                the existing model to be merged into the existing_model.
+            other_model: An other Honeybee Model that contains changes to
+                the base model to be merged into the base_model.
             sync_instructions: A dictionary of SyncInstructions that states which
-                changes from the updated_model should be accepted or rejected
-                when building a new Model from the existing_model.
+                changes from the other_model should be accepted or rejected
+                when building a new Model from the base_model.
         """
         # make sure the unit systems of the two models align
-        tol = existing_model.tolerance
-        if existing_model.units != updated_model.units:
-            updated_model = updated_model.duplicate()
-            updated_model.convert_to_units(existing_model.units)
+        if base_model.units != other_model.units:
+            other_model = other_model.duplicate()
+            other_model.convert_to_units(base_model.units)
         # set up dictionaries of objects and lists of changes
-        exist_dict = existing_model.top_level_dict
-        updated_dict = updated_model.top_level_dict
+        exist_dict = base_model.top_level_dict
+        other_dict = other_model.top_level_dict
         add_dict = {'Room': [], 'Face': [], 'Aperture': [], 'Door': [], 'Shade': []}
         del_dict = {'Room': [], 'Face': [], 'Aperture': [], 'Door': [], 'Shade': []}
         # loop through the changed objects and record changes
         if 'changed_objects' in sync_instructions:
             for change in sync_instructions['changed_objects']:
                 ex_obj = exist_dict[change['element_id']]
-                up_obj = updated_dict[change['element_id']]
+                up_obj = other_dict[change['element_id']]
                 base_obj = up_obj if 'update_geometry' in change \
                     and change['update_geometry'] else ex_obj
                 base_obj.properties._update_by_sync(
@@ -403,10 +402,10 @@ class Model(_Base):
         # loop through added objects and record changes
         if 'added_objects' in sync_instructions:
             for change in sync_instructions['added_objects']:
-                up_obj = updated_dict[change['element_id']]
+                up_obj = other_dict[change['element_id']]
                 add_dict[change['element_type']].append(up_obj)
         # duplicate the base model and make changes to it
-        new_model = existing_model.duplicate()
+        new_model = base_model.duplicate()
         new_model.remove_rooms(del_dict['Room'])
         new_model.remove_faces(del_dict['Face'])
         new_model.remove_apertures(del_dict['Aperture'])
@@ -418,6 +417,39 @@ class Model(_Base):
         new_model.add_doors(add_dict['Door'])
         new_model.add_shades(add_dict['Shade'])
         return new_model
+
+    @classmethod
+    def from_sync_files(
+            cls, base_model_file, other_model_file, sync_instructions_file):
+        """Initialize a Model from two model files and instructions for syncing them.
+
+        Args:
+            base_model_file: An base Honeybee Model (as HBJON or HBPkl)
+                that forms the base of the new model to be created.
+            other_model_file: An other Honeybee Model (as HBJON or HBPkl)
+                that contains changes to the base model to be merged into
+                the base_model.
+            sync_instructions: A JSON of SyncInstructions that states which
+                changes from the other_model should be accepted or rejected
+                when building a new Model from the base_model. The SyncInstructions
+                schema is essentially a variant of the ComparisonReport schema
+                that can be obtained by calling base_model.comparison_report(
+                other_model). The main difference is that the XXX_changed
+                properties should be replaced with update_XXX properties for
+                whether the change from the other_model should be accepted into
+                the new model or rejected from it.
+        """
+        base_model = cls.from_file(base_model_file)
+        other_model = cls.from_file(other_model_file)
+        assert os.path.isfile(sync_instructions_file), \
+            'Failed to find %s' % sync_instructions_file
+        if sys.version_info < (3, 0):
+            with open(sync_instructions_file) as inf:
+                sync_instructions = json.load(inf)
+        else:
+            with open(sync_instructions_file, encoding='utf-8') as inf:
+                sync_instructions = json.load(inf)
+        return cls.from_sync(base_model, other_model, sync_instructions)
 
     @property
     def units(self):
@@ -752,7 +784,7 @@ class Model(_Base):
 
     def remove_rooms(self, room_ids=None):
         """Remove Rooms from the model.
-        
+
         Args:
             room_ids: An optional list of Room identifiers to only remove certain rooms
                 from the model. If None, all Rooms will be removed. (Default: None).
@@ -761,7 +793,7 @@ class Model(_Base):
 
     def remove_faces(self, face_ids=None):
         """Remove orphaned Faces from the model.
-        
+
         Args:
             face_ids: An optional list of Face identifiers to only remove certain faces
                 from the model. If None, all Faces will be removed. (Default: None).
@@ -781,7 +813,7 @@ class Model(_Base):
 
     def remove_doors(self, door_ids=None):
         """Remove orphaned Doors from the model.
-        
+
         Args:
             door_ids: An optional list of Door identifiers to only remove certain doors
                 from the model. If None, all Doors will be removed. (Default: None).
@@ -1221,7 +1253,7 @@ class Model(_Base):
                 subset of the current model. (Default: False).
             ignore_added: A boolean to note whether objects that appear in the other
                 model but not in the current model should be reported. (Default: False).
-        
+
         Returns:
             A dictionary of differences between this model and the other model in
             the format below.
