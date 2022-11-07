@@ -484,6 +484,9 @@ class Door(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
+        tol_val = tolerance * self.area
+        if not door.area - tol_val <= self.area <= door.area + tol_val:
+            return False
         return self.geometry.is_centered_adjacent(door.geometry, tolerance)
 
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
