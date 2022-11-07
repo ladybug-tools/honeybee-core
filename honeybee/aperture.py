@@ -674,6 +674,9 @@ class Aperture(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
+        tol_val = tolerance * self.area
+        if not aperture.area - tol_val <= self.area <= aperture.area + tol_val:
+            return False
         return self.geometry.is_centered_adjacent(aperture.geometry, tolerance)
 
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
