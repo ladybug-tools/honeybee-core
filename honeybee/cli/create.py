@@ -3,19 +3,8 @@ import click
 import sys
 import logging
 import json
-import math
-import uuid
-
-from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
-from ladybug_geometry.geometry2d.polygon import Polygon2D
-from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
-from ladybug_geometry.geometry3d.face import Face3D
-from ladybug_geometry.geometry3d.polyface import Polyface3D
-from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
 from honeybee.model import Model
-from honeybee.room import Room
-from honeybee.units import UNITS_TOLERANCES
 from honeybee.boundarycondition import boundary_conditions as bcs
 try:
     ad_bc = bcs.adiabatic
@@ -64,25 +53,10 @@ def shoe_box(width, depth, height, orientation_angle, window_ratio, adiabatic,
         height: Number for the height of the box (in the Z direction).
     """
     try:
-        unique_id = str(uuid.uuid4())[:8]  # unique identifier for the shoe box
-
-        # create the box room and assign all of the attributes
-        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
-        room_id = 'Shoe_Box_Room_{}'.format(unique_id)
-        room = Room.from_box(room_id, width, depth, height, orientation_angle)
-        room.display_name = 'Shoe_Box_Room'
-        front_face = room[1]
-        front_face.apertures_by_ratio(window_ratio, tolerance)
-        if adiabatic and ad_bc:
-            room[0].boundary_condition = ad_bc  # make the floor adiabatic
-            for face in room[2:]:  # make all other face adiabatic
-                face.boundary_condition = ad_bc
-
         # create the model object
-        model_id = 'Shoe_Box_Model_{}'.format(unique_id)
-        model = Model(model_id, [room], units=units,
-                      tolerance=tolerance, angle_tolerance=1)
-
+        model = Model.from_shoe_box(
+            width, depth, height, orientation_angle, window_ratio,
+            adiabatic, units, tolerance)
         # write the model out to the file or stdout
         output_file.write(json.dumps(model.to_dict()))
     except Exception as e:
@@ -96,8 +70,8 @@ def shoe_box(width, depth, height, orientation_angle, window_ratio, adiabatic,
 @click.argument('width', type=float)
 @click.argument('length', type=float)
 @click.argument('floor-to-floor-height', type=float)
-@click.option('--perimeter-offset', '-p', help='An optional positive number that will be'
-              ' used  to offset the perimeter to create core/perimeter Rooms. '
+@click.option('--perimeter-offset', '-p', help='An optional positive number that will '
+              'be used to offset the perimeter to create core/perimeter Rooms. '
               'If this value is 0, no offset will occur and each floor will have one '
               'Room', type=float, default=0, show_default=True)
 @click.option('--story-count', '-s', help='An integer for the number of stories to '
@@ -136,36 +110,10 @@ def rectangle_plan(width, length, floor_to_floor_height, perimeter_offset, story
             (in the Z direction).
     """
     try:
-        # create the geometry of the rooms for the first floor
-        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
-        footprint = [Face3D.from_rectangle(width, length)]
-        if perimeter_offset != 0:  # use the straight skeleton methods
-            assert perimeter_offset > 0, 'perimeter_offset cannot be less than than 0.'
-            try:
-                footprint = []
-                base = Polygon2D.from_rectangle(Point2D(), Vector2D(0, 1), width, length)
-                sub_polys_perim, sub_polys_core = perimeter_core_subpolygons(
-                    polygon=base, distance=perimeter_offset, tol=tolerance)
-                for s_poly in sub_polys_perim + sub_polys_core:
-                    sub_face = Face3D([Point3D(pt.x, pt.y, 0) for pt in s_poly])
-                    footprint.append(sub_face)
-            except RuntimeError:
-                pass
-
-        # create the honeybee rooms
-        unique_id = str(uuid.uuid4())[:8]  # unique identifier for the model
-        rm_ids = ['Room'] if len(footprint) == 1 else ['Front', 'Right', 'Back', 'Left']
-        if len(footprint) == 5:
-            rm_ids.append('Core')
-        rooms = _rooms_from_footprint(
-            footprint, rm_ids, unique_id, floor_to_floor_height, orientation_angle,
-            story_count, outdoor_roof, ground_floor)
-
         # create the model object
-        model_id = 'Rectangle_Plan_Model_{}'.format(unique_id)
-        model = Model(model_id, rooms, units=units,
-                      tolerance=tolerance, angle_tolerance=1)
-
+        model = Model.from_rectangle_plan(
+            width, length, floor_to_floor_height, perimeter_offset, story_count,
+            orientation_angle, outdoor_roof, ground_floor, units, tolerance)
         # write the model out to the file or stdout
         output_file.write(json.dumps(model.to_dict()))
     except Exception as e:
@@ -225,40 +173,11 @@ def l_shaped_plan(width_1, length_1, width_2, length_2, floor_to_floor_height,
             (in the Z direction).
     """
     try:
-        # create the geometry of the rooms for the first floor
-        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
-        max_x, max_y = width_2 + length_1, width_1 + length_2
-        pts = [(0, 0), (max_x, 0), (max_x, width_1), (width_2, width_1),
-               (width_2, max_y), (0, max_y)]
-        footprint = Face3D(tuple(Point3D(*pt) for pt in pts))
-        if perimeter_offset != 0:  # use the straight skeleton methods
-            assert perimeter_offset > 0, 'perimeter_offset cannot be less than than 0.'
-            try:
-                footprint = []
-                base = Polygon2D(tuple(Point2D(*pt) for pt in pts))
-                sub_polys_perim, sub_polys_core = perimeter_core_subpolygons(
-                    polygon=base, distance=perimeter_offset, tol=tolerance)
-                for s_poly in sub_polys_perim + sub_polys_core:
-                    sub_face = Face3D([Point3D(pt.x, pt.y, 0) for pt in s_poly])
-                    footprint.append(sub_face)
-            except RuntimeError:
-                pass
-
-        # create the honeybee rooms
-        unique_id = str(uuid.uuid4())[:8]  # unique identifier for the model
-        rm_ids = ['Room'] if len(footprint) == 1 else \
-            ['LongEdge1', 'End1', 'ShortEdge1', 'ShortEdge2', 'End2', 'LongEdge2']
-        if len(footprint) == 7:
-            rm_ids.append('Core')
-        rooms = _rooms_from_footprint(
-            footprint, rm_ids, unique_id, floor_to_floor_height, orientation_angle,
-            story_count, outdoor_roof, ground_floor)
-
         # create the model object
-        model_id = 'L_Shaped_Plan_Model_{}'.format(unique_id)
-        model = Model(model_id, rooms, units=units,
-                      tolerance=tolerance, angle_tolerance=1)
-
+        model = Model.from_l_shaped_plan(
+            width_1, length_1, width_2, length_2, floor_to_floor_height,
+            perimeter_offset, story_count, orientation_angle, outdoor_roof, ground_floor,
+            units, tolerance)
         # write the model out to the file or stdout
         output_file.write(json.dumps(model.to_dict()))
     except Exception as e:
@@ -266,50 +185,6 @@ def l_shaped_plan(width_1, length_1, width_2, length_2, floor_to_floor_height,
         sys.exit(1)
     else:
         sys.exit(0)
-
-
-def _rooms_from_footprint(
-        footprint, room_ids, unique_id, floor_to_floor_height, orientation_angle,
-        story_count, outdoor_roof, ground_floor):
-    """Function to convert footprint geometry into full honeybee rooms."""
-    # extrude the footprint into solids
-    first_floor = [Polyface3D.from_offset_face(geo, floor_to_floor_height)
-                   for geo in footprint]
-
-    # rotate the geometries if an orientation angle is specified
-    if orientation_angle != 0:
-        angle, origin = math.radians(orientation_angle), Point3D()
-        first_floor = [geo.rotate_xy(angle, origin) for geo in first_floor]
-
-    # create the initial rooms for the first floor
-    rooms = []
-    for polyface, rmid in zip(first_floor, room_ids):
-        rooms.append(Room.from_polyface3d('{}_{}'.format(rmid, unique_id), polyface))
-
-    # if there are multiple stories, duplicate the first floor rooms
-    if story_count != 1:
-        all_rooms = []
-        for i in range(story_count):
-            for room in rooms:
-                new_room = room.duplicate()
-                new_room.add_prefix('Floor{}'.format(i + 1))
-                m_vec = Vector3D(0, 0, floor_to_floor_height * i)
-                new_room.move(m_vec)
-                all_rooms.append(new_room)
-        rooms = all_rooms
-
-    # assign readable names for the display_name (without the UUID)
-    for room in rooms:
-        room.display_name = room.identifier[:-9]
-
-    # assign adiabatic boundary conditions if requested
-    if not outdoor_roof and ad_bc:
-        for room in rooms[-len(first_floor):]:
-            room[-1].boundary_condition = ad_bc  # make the roof adiabatic
-    if not ground_floor and ad_bc:
-        for room in rooms[:len(first_floor)]:
-            room[0].boundary_condition = ad_bc  # make the floor adiabatic
-    return rooms
 
 
 @create.command('from-sync')
@@ -329,9 +204,9 @@ def create_from_sync(
 
     \b
     Args:
-        base_model_file: An base Honeybee Model (as HBJON or HBPkl)
+        base_model_file: An base Honeybee Model (as HBJSON or HBPkl)
             that forms the base of the new model to be created.
-        other_model_file: An other Honeybee Model (as HBJON or HBPkl)
+        other_model_file: An other Honeybee Model (as HBJSON or HBPkl)
             that contains changes to the base model to be merged into
             the base_model.
         sync_instructions: A JSON file of SyncInstructions that states which

@@ -12,9 +12,9 @@ try:  # check if we are in IronPython
 except ImportError:  # wea are in cPython
     import pickle
 
-from ladybug_geometry.geometry3d.plane import Plane
-from ladybug_geometry.geometry3d.face import Face3D
+from ladybug_geometry.geometry3d import Plane, Face3D
 from ladybug_geometry.interop.stl import STL
+from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
 from ._base import _Base
 from .units import conversion_factor_to_meters, UNITS, UNITS_TOLERANCES
@@ -30,6 +30,11 @@ from .config import folders
 from .boundarycondition import Surface
 from .facetype import AirBoundary
 import honeybee.writer.model as writer
+from honeybee.boundarycondition import boundary_conditions as bcs
+try:
+    ad_bc = bcs.adiabatic
+except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
+    ad_bc = None
 
 
 class Model(_Base):
@@ -304,58 +309,6 @@ class Model(_Base):
                          tolerance=tolerance, angle_tolerance=angle_tolerance)
 
     @classmethod
-    def from_objects(cls, identifier, objects, units='Meters',
-                     tolerance=None, angle_tolerance=1.0):
-        """Initialize a Model from a list of any type of honeybee-core geometry objects.
-
-        Args:
-            identifier: Text string for a unique Model ID. Must be < 100 characters and
-                not contain any spaces or special characters.
-            objects: A list of honeybee Rooms, Faces, Shades, Apertures and Doors.
-            units: Text for the units system in which the model geometry
-                exists. Default: 'Meters'. Choose from the following:
-
-                * Meters
-                * Millimeters
-                * Feet
-                * Inches
-                * Centimeters
-
-            tolerance: The maximum difference between x, y, and z values at which
-                vertices are considered equivalent. Zero indicates that no tolerance
-                checks should be performed. None indicates that the tolerance will be
-                set based on the units above, with the tolerance consistently being
-                between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
-                SDK and EnergyPlus). (Default: None).
-            angle_tolerance: The max angle difference in degrees that vertices
-                are allowed to differ from one another in order to consider them
-                colinear. Zero indicates that no angle tolerance checks should be
-                performed. (Default: 1.0).
-        """
-        rooms = []
-        faces = []
-        shades = []
-        apertures = []
-        doors = []
-        for obj in objects:
-            if isinstance(obj, Room):
-                rooms.append(obj)
-            elif isinstance(obj, Face):
-                faces.append(obj)
-            elif isinstance(obj, Shade):
-                shades.append(obj)
-            elif isinstance(obj, Aperture):
-                apertures.append(obj)
-            elif isinstance(obj, Door):
-                doors.append(obj)
-            else:
-                raise TypeError('Expected Room, Face, Shade, Aperture or Door '
-                                'for Model. Got {}'.format(type(obj)))
-
-        return cls(identifier, rooms, faces, shades, apertures, doors, units,
-                   tolerance, angle_tolerance)
-
-    @classmethod
     def from_sync(cls, base_model, other_model, sync_instructions):
         """Initialize a Model from two models and instructions for syncing them.
 
@@ -424,9 +377,9 @@ class Model(_Base):
         """Initialize a Model from two model files and instructions for syncing them.
 
         Args:
-            base_model_file: An base Honeybee Model (as HBJON or HBPkl)
+            base_model_file: An base Honeybee Model (as HBJSON or HBPkl)
                 that forms the base of the new model to be created.
-            other_model_file: An other Honeybee Model (as HBJON or HBPkl)
+            other_model_file: An other Honeybee Model (as HBJSON or HBPkl)
                 that contains changes to the base model to be merged into
                 the base_model.
             sync_instructions: A JSON of SyncInstructions that states which
@@ -450,6 +403,214 @@ class Model(_Base):
             with open(sync_instructions_file, encoding='utf-8') as inf:
                 sync_instructions = json.load(inf)
         return cls.from_sync(base_model, other_model, sync_instructions)
+
+    @classmethod
+    def from_objects(cls, identifier, objects, units='Meters',
+                     tolerance=None, angle_tolerance=1.0):
+        """Initialize a Model from a list of any type of honeybee-core geometry objects.
+
+        Args:
+            identifier: Text string for a unique Model ID. Must be < 100 characters and
+                not contain any spaces or special characters.
+            objects: A list of honeybee Rooms, Faces, Shades, Apertures and Doors.
+            units: Text for the units system in which the model geometry
+                exists. Default: 'Meters'. Choose from the following:
+
+                * Meters
+                * Millimeters
+                * Feet
+                * Inches
+                * Centimeters
+
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. Zero indicates that no tolerance
+                checks should be performed. None indicates that the tolerance will be
+                set based on the units above, with the tolerance consistently being
+                between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
+                SDK and EnergyPlus). (Default: None).
+            angle_tolerance: The max angle difference in degrees that vertices
+                are allowed to differ from one another in order to consider them
+                colinear. Zero indicates that no angle tolerance checks should be
+                performed. (Default: 1.0).
+        """
+        rooms = []
+        faces = []
+        shades = []
+        apertures = []
+        doors = []
+        for obj in objects:
+            if isinstance(obj, Room):
+                rooms.append(obj)
+            elif isinstance(obj, Face):
+                faces.append(obj)
+            elif isinstance(obj, Shade):
+                shades.append(obj)
+            elif isinstance(obj, Aperture):
+                apertures.append(obj)
+            elif isinstance(obj, Door):
+                doors.append(obj)
+            else:
+                raise TypeError('Expected Room, Face, Shade, Aperture or Door '
+                                'for Model. Got {}'.format(type(obj)))
+
+        return cls(identifier, rooms, faces, shades, apertures, doors, units,
+                   tolerance, angle_tolerance)
+
+    @classmethod
+    def from_shoe_box(
+        cls, width, depth, height, orientation_angle=0, window_ratio=0,
+        adiabatic=True, units='Meters', tolerance=None, angle_tolerance=1.0):
+        """Create a model with a single shoe box Room.
+
+        Args:
+            width: Number for the width of the box (in the X direction).
+            depth: Number for the depth of the box (in the Y direction).
+            height: Number for the height of the box (in the Z direction).
+            orientation_angle: A number between 0 and 360 for the clockwise
+                orientation of the box in degrees. (0=North, 90=East, 180=South,
+                270=West). (Default: 0).
+            window_ratio: A number between 0 and 1 (but not equal to 1) for the ratio
+                between aperture area and area of the face pointing towards the
+                orientation-angle. Using 0 will generate no windows. (Default: 0).
+            adiabatic: Boolean to note whether the faces that are not in the direction
+                of the orientation-angle are adiabatic or outdoors. (Default: True)
+            units: Text for the units system in which the model geometry
+                exists. (Default: 'Meters').
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. Zero indicates that no tolerance
+                checks should be performed. None indicates that the tolerance will be
+                set based on the units above, with the tolerance consistently being
+                between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
+                SDK and EnergyPlus). (Default: None).
+            angle_tolerance: The max angle difference in degrees that vertices
+                are allowed to differ from one another in order to consider them
+                colinear. Zero indicates that no angle tolerance checks should be
+                performed. (Default: 1.0).
+        """
+        # create the box room and assign all of the attributes
+        unique_id = str(uuid.uuid4())[:8]  # unique identifier for the shoe box
+        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
+        room_id = 'Shoe_Box_Room_{}'.format(unique_id)
+        room = Room.from_box(room_id, width, depth, height, orientation_angle)
+        room.display_name = 'Shoe_Box_Room'
+        front_face = room[1]
+        front_face.apertures_by_ratio(window_ratio, tolerance)
+        if adiabatic and ad_bc:
+            room[0].boundary_condition = ad_bc  # make the floor adiabatic
+            for face in room[2:]:  # make all other face adiabatic
+                face.boundary_condition = ad_bc
+        # create the model object
+        model_id = 'Shoe_Box_Model_{}'.format(unique_id)
+        return cls(model_id, [room], units=units, tolerance=tolerance,
+                   angle_tolerance=angle_tolerance)
+
+    @classmethod
+    def from_rectangle_plan(
+        cls, width, length, floor_to_floor_height, perimeter_offset=0, story_count=1,
+        orientation_angle=0, outdoor_roof=True, ground_floor=True,
+        units='Meters', tolerance=None, angle_tolerance=1.0):
+        """Create a model with a rectangular floor plan.
+
+        Note that the resulting Rooms in the model won't have any windows or solved
+        adjacencies. These can be added by using the Room.solve_adjacency method
+        and the various Face.apertures_by_XXX methods.
+
+        Args:
+            width: Number for the width of the plan (in the X direction).
+            length: Number for the length of the plan (in the Y direction).
+            floor_to_floor_height: Number for the height of each floor of the model
+                (in the Z direction).
+            perimeter_offset: An optional positive number that will be used to offset
+                the perimeter to create core/perimeter Rooms. If this value is 0,
+                no offset will occur and each floor will have one Room. (Default: 0).
+            story_count: An integer for the number of stories to generate. (Default: 1).
+            orientation_angle: A number between 0 and 360 for the counterclockwise
+                orientation that the width of the box faces. (0=North, 90=East,
+                180=South, 270=West). (Default: 0).
+            outdoor_roof: Boolean to note whether the roof faces of the top floor
+                should be outdoor or adiabatic. (Default: True).
+            ground_floor: Boolean to note whether the floor faces of the bottom
+                floor should be ground or adiabatic. (Default: True).
+            units: Text for the units system in which the model geometry
+                exists. (Default: 'Meters').
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. Zero indicates that no tolerance
+                checks should be performed. None indicates that the tolerance will be
+                set based on the units above, with the tolerance consistently being
+                between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
+                SDK and EnergyPlus). (Default: None).
+            angle_tolerance: The max angle difference in degrees that vertices
+                are allowed to differ from one another in order to consider them
+                colinear. Zero indicates that no angle tolerance checks should be
+                performed. (Default: 1.0).
+        """
+        # create the honeybee rooms
+        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
+        unique_id = str(uuid.uuid4())[:8]  # unique identifier for the model
+        rooms = Room.rooms_from_rectangle_plan(
+            width, length, floor_to_floor_height, perimeter_offset, story_count,
+            orientation_angle, outdoor_roof, ground_floor, unique_id, tolerance)
+        # create the model object
+        model_id = 'Rectangle_Plan_Model_{}'.format(unique_id)
+        return cls(model_id, rooms, units=units, tolerance=tolerance,
+                   angle_tolerance=angle_tolerance)
+
+    @classmethod
+    def from_l_shaped_plan(
+        cls, width_1, length_1, width_2, length_2, floor_to_floor_height,
+        perimeter_offset=0, story_count=1, orientation_angle=0,
+        outdoor_roof=True, ground_floor=True,
+        units='Meters', tolerance=None, angle_tolerance=1.0):
+        """Create a model with an L-shaped floor plan.
+
+        Note that the resulting Rooms in the model won't have any windows or solved
+        adjacencies. These can be added by using the Room.solve_adjacency method
+        and the various Face.apertures_by_XXX methods.
+
+        Args:
+            width_1: Number for the width of the lower part of the L segment.
+            length_1: Number for the length of the lower part of the L segment, not
+                counting the overlap between the upper and lower segments.
+            width_2: Number for the width of the upper (left) part of the L segment.
+            length_2: Number for the length of the upper (left) part of the L segment,
+                not counting the overlap between the upper and lower segments.
+            floor_to_floor_height: Number for the height of each floor of the model
+                (in the Z direction).
+            perimeter_offset: An optional positive number that will be used to offset
+                the perimeter to create core/perimeter Rooms. If this value is 0,
+                no offset will occur and each floor will have one Room. (Default: 0).
+            story_count: An integer for the number of stories to generate. (Default: 1).
+            orientation_angle: A number between 0 and 360 for the counterclockwise
+                orientation that the width of the box faces. (0=North, 90=East,
+                180=South, 270=West). (Default: 0).
+            outdoor_roof: Boolean to note whether the roof faces of the top floor
+                should be outdoor or adiabatic. (Default: True).
+            ground_floor: Boolean to note whether the floor faces of the bottom
+                floor should be ground or adiabatic. (Default: True).
+            units: Text for the units system in which the model geometry
+                exists. (Default: 'Meters').
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. Zero indicates that no tolerance
+                checks should be performed. None indicates that the tolerance will be
+                set based on the units above, with the tolerance consistently being
+                between 1 cm and 1 mm (roughly the tolerance implicit in the OpenStudio
+                SDK and EnergyPlus). (Default: None).
+            angle_tolerance: The max angle difference in degrees that vertices
+                are allowed to differ from one another in order to consider them
+                colinear. Zero indicates that no angle tolerance checks should be
+                performed. (Default: 1.0).
+        """
+        # create the honeybee rooms
+        tolerance = tolerance if tolerance is not None else UNITS_TOLERANCES[units]
+        unique_id = str(uuid.uuid4())[:8]  # unique identifier for the model
+        rooms = Room.rooms_from_l_shaped_plan(
+            width_1, length_1, width_2, length_2, floor_to_floor_height,
+            perimeter_offset, story_count,
+            orientation_angle, outdoor_roof, ground_floor, unique_id, tolerance)
+        # create the model object
+        model_id = 'L_Shaped_Plan_Model_{}'.format(unique_id)
+        return cls(model_id, rooms, units=units, tolerance=tolerance,
+                   angle_tolerance=angle_tolerance)
 
     @property
     def units(self):

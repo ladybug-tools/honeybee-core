@@ -2,13 +2,12 @@
 """Honeybee Room."""
 from __future__ import division
 import math
+import uuid
 
-from ladybug_geometry.geometry2d.pointvector import Vector2D
-from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
-from ladybug_geometry.geometry3d.ray import Ray3D
-from ladybug_geometry.geometry3d.plane import Plane
-from ladybug_geometry.geometry3d.mesh import Mesh3D
-from ladybug_geometry.geometry3d.polyface import Polyface3D
+from ladybug_geometry.geometry2d import Point2D, Vector2D, Polygon2D
+from ladybug_geometry.geometry3d import Point3D, Vector3D, Ray3D, Plane, Face3D, \
+    Mesh3D, Polyface3D
+from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
 import honeybee.writer.room as writer
 from ._basewithshade import _BaseWithShade
@@ -20,6 +19,10 @@ from .facetype import AirBoundary, get_type_from_normal, Wall, Floor, RoofCeilin
 from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, \
     boundary_conditions
 from .orientation import angles_from_num_orient, orient_index
+try:
+    ad_bc = boundary_conditions.adiabatic
+except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
+    ad_bc = None
 
 
 class Room(_BaseWithShade):
@@ -1295,6 +1298,187 @@ class Room(_BaseWithShade):
                     continue  # preserve any existing user-assigned story values
                 room.story = story_name
         return story_names
+
+    @staticmethod
+    def rooms_from_rectangle_plan(
+        width, length, floor_to_floor_height, perimeter_offset=0, story_count=1,
+        orientation_angle=0, outdoor_roof=True, ground_floor=True,
+        unique_id=None, tolerance=0.01):
+        """Create a Rooms that represent a rectangular floor plan.
+
+        Note that the resulting Rooms won't have any windows or solved adjacencies.
+        These can be added by using the Room.solve_adjacency method and the
+        various Face.apertures_by_XXX methods.
+
+        Args:
+            width: Number for the width of the plan (in the X direction).
+            length: Number for the length of the plan (in the Y direction).
+            floor_to_floor_height: Number for the height of each floor of the model
+                (in the Z direction).
+            perimeter_offset: An optional positive number that will be used to offset
+                the perimeter to create core/perimeter Rooms. If this value is 0,
+                no offset will occur and each floor will have one Room. (Default: 0).
+            story_count: An integer for the number of stories to generate. (Default: 1).
+            orientation_angle: A number between 0 and 360 for the counterclockwise
+                orientation that the width of the box faces. (0=North, 90=East,
+                180=South, 270=West). (Default: 0).
+            outdoor_roof: Boolean to note whether the roof faces of the top floor
+                should be outdoor or adiabatic. (Default: True).
+            ground_floor: Boolean to note whether the floor faces of the bottom
+                floor should be ground or adiabatic. (Default: True).
+            unique_id: Text for a unique identifier to be incorporated into all
+                of the Room identifiers. If None, a default one will be generated.
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. (Default: 0.01, suitable
+                for objects in meters).
+        """
+        footprint = [Face3D.from_rectangle(width, length)]
+        if perimeter_offset != 0:  # use the straight skeleton methods
+            assert perimeter_offset > 0, 'perimeter_offset cannot be less than than 0.'
+            try:
+                footprint = []
+                base = Polygon2D.from_rectangle(Point2D(), Vector2D(0, 1), width, length)
+                sub_polys_perim, sub_polys_core = perimeter_core_subpolygons(
+                    polygon=base, distance=perimeter_offset, tol=tolerance)
+                for s_poly in sub_polys_perim + sub_polys_core:
+                    sub_face = Face3D([Point3D(pt.x, pt.y, 0) for pt in s_poly])
+                    footprint.append(sub_face)
+            except RuntimeError:
+                pass
+        # create the honeybee rooms
+        if unique_id is None:
+            unique_id = str(uuid.uuid4())[:8]  # unique identifier for the rooms
+        rm_ids = ['Room'] if len(footprint) == 1 else ['Front', 'Right', 'Back', 'Left']
+        if len(footprint) == 5:
+            rm_ids.append('Core')
+        return Room.rooms_from_footprint(
+            footprint, floor_to_floor_height, rm_ids, unique_id, orientation_angle,
+            story_count, outdoor_roof, ground_floor)
+
+    @staticmethod
+    def rooms_from_l_shaped_plan(
+        width_1, length_1, width_2, length_2, floor_to_floor_height, perimeter_offset=0,
+        story_count=1, orientation_angle=0, outdoor_roof=True, ground_floor=True,
+        unique_id=None, tolerance=0.01):
+        """Create a Rooms that represent an L-shaped floor plan.
+
+        Note that the resulting Rooms in the model won't have any windows or solved
+        adjacencies. These can be added by using the Room.solve_adjacency method
+        and the various Face.apertures_by_XXX methods.
+
+        Args:
+            width_1: Number for the width of the lower part of the L segment.
+            length_1: Number for the length of the lower part of the L segment, not
+                counting the overlap between the upper and lower segments.
+            width_2: Number for the width of the upper (left) part of the L segment.
+            length_2: Number for the length of the upper (left) part of the L segment,
+                not counting the overlap between the upper and lower segments.
+            floor_to_floor_height: Number for the height of each floor of the model
+                (in the Z direction).
+            perimeter_offset: An optional positive number that will be used to offset
+                the perimeter to create core/perimeter Rooms. If this value is 0,
+                no offset will occur and each floor will have one Room. (Default: 0).
+            story_count: An integer for the number of stories to generate. (Default: 1).
+            orientation_angle: A number between 0 and 360 for the counterclockwise
+                orientation that the width of the box faces. (0=North, 90=East,
+                180=South, 270=West). (Default: 0).
+            outdoor_roof: Boolean to note whether the roof faces of the top floor
+                should be outdoor or adiabatic. (Default: True).
+            ground_floor: Boolean to note whether the floor faces of the bottom
+                floor should be ground or adiabatic. (Default: True).
+            unique_id: Text for a unique identifier to be incorporated into all
+                of the Room identifiers. If None, a default one will be generated.
+            tolerance: The maximum difference between x, y, and z values at which
+                vertices are considered equivalent. (Default: 0.01, suitable
+                for objects in meters).
+        """
+        # create the geometry of the rooms for the first floor
+        max_x, max_y = width_2 + length_1, width_1 + length_2
+        pts = [(0, 0), (max_x, 0), (max_x, width_1), (width_2, width_1),
+               (width_2, max_y), (0, max_y)]
+        footprint = Face3D(tuple(Point3D(*pt) for pt in pts))
+        if perimeter_offset != 0:  # use the straight skeleton methods
+            assert perimeter_offset > 0, 'perimeter_offset cannot be less than than 0.'
+            try:
+                footprint = []
+                base = Polygon2D(tuple(Point2D(*pt) for pt in pts))
+                sub_polys_perim, sub_polys_core = perimeter_core_subpolygons(
+                    polygon=base, distance=perimeter_offset, tol=tolerance)
+                for s_poly in sub_polys_perim + sub_polys_core:
+                    sub_face = Face3D([Point3D(pt.x, pt.y, 0) for pt in s_poly])
+                    footprint.append(sub_face)
+            except RuntimeError:
+                pass
+        # create the honeybee rooms
+        unique_id = '' if unique_id is None else '_{}'.format(unique_id)
+        rm_ids = ['Room'] if len(footprint) == 1 else \
+            ['LongEdge1', 'End1', 'ShortEdge1', 'ShortEdge2', 'End2', 'LongEdge2']
+        if len(footprint) == 7:
+            rm_ids.append('Core')
+        return Room.rooms_from_footprint(
+            footprint, floor_to_floor_height, rm_ids, unique_id, orientation_angle,
+            story_count, outdoor_roof, ground_floor)
+
+    @staticmethod
+    def rooms_from_footprint(
+        footprints, floor_to_floor_height, room_ids=None, unique_id=None,
+        orientation_angle=0, story_count=1, outdoor_roof=True, ground_floor=True):
+        """Create several Honeybee Rooms from footprint Face3Ds.
+
+        Args:
+            footprints: A list of Face3Ds representing the floors of Rooms.
+            floor_to_floor_height: Number for the height of each floor of the model
+                (in the Z direction).
+            room_ids: A list of strings for the identifiers of the Rooms to be generated.
+                If None, default unique IDs will be generated. (Default: None)
+            unique_id: Text for a unique identifier to be incorporated into all
+                Room identifiers. (Default: None).
+            orientation_angle: A number between 0 and 360 for the counterclockwise
+                orientation that the width of the box faces. (0=North, 90=East,
+                180=South, 270=West). (Default: 0).
+            story_count: An integer for the number of stories to generate. (Default: 1).
+            outdoor_roof: Boolean to note whether the roof faces of the top floor
+                should be outdoor or adiabatic. (Default: True).
+            ground_floor: Boolean to note whether the floor faces of the bottom
+                floor should be ground or adiabatic. (Default: True).
+        """
+        # set default identifiers if not provided
+        if room_ids is None:
+            room_ids = ['Room_{}'.format(str(uuid.uuid4())[:8]) for _ in footprints]
+        # extrude the footprint into solids
+        first_floor = [Polyface3D.from_offset_face(geo, floor_to_floor_height)
+                       for geo in footprints]
+        # rotate the geometries if an orientation angle is specified
+        if orientation_angle != 0:
+            angle, origin = math.radians(orientation_angle), Point3D()
+            first_floor = [geo.rotate_xy(angle, origin) for geo in first_floor]
+        # create the initial rooms for the first floor
+        rooms = []
+        unique_id = '' if unique_id is None else '_{}'.format(unique_id)
+        for polyface, rmid in zip(first_floor, room_ids):
+            rooms.append(Room.from_polyface3d('{}{}'.format(rmid, unique_id), polyface))
+        # if there are multiple stories, duplicate the first floor rooms
+        if story_count != 1:
+            all_rooms = []
+            for i in range(story_count):
+                for room in rooms:
+                    new_room = room.duplicate()
+                    new_room.add_prefix('Floor{}'.format(i + 1))
+                    m_vec = Vector3D(0, 0, floor_to_floor_height * i)
+                    new_room.move(m_vec)
+                    all_rooms.append(new_room)
+            rooms = all_rooms
+        # assign readable names for the display_name (without the UUID)
+        for room in rooms:
+            room.display_name = room.identifier[:-9]
+        # assign adiabatic boundary conditions if requested
+        if not outdoor_roof and ad_bc:
+            for room in rooms[-len(first_floor):]:
+                room[-1].boundary_condition = ad_bc  # make the roof adiabatic
+        if not ground_floor and ad_bc:
+            for room in rooms[:len(first_floor)]:
+                room[0].boundary_condition = ad_bc  # make the floor adiabatic
+        return rooms
 
     def display_dict(self):
         """Get a list of DisplayFace3D dictionaries for visualizing the object."""
