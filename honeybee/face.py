@@ -628,12 +628,11 @@ class Face(_BaseWithShade):
         self.remove_sub_faces()
         if ratio == 0:
             return
-        else:
-            try:
-                geo = self._geometry.remove_colinear_vertices(tolerance)
-            except AssertionError:  # degenerate face that should not have apertures
-                return
-            ap_faces = geo.sub_faces_by_ratio_rectangle(ratio, tolerance)
+        try:
+            geo = self._geometry.remove_colinear_vertices(tolerance)
+        except AssertionError:  # degenerate face that should not have apertures
+            return
+        ap_faces = geo.sub_faces_by_ratio_rectangle(ratio, tolerance)
         for i, ap_face in enumerate(ap_faces):
             aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
             self.add_aperture(aperture)
@@ -684,19 +683,18 @@ class Face(_BaseWithShade):
         self.remove_sub_faces()
         if ratio == 0:
             return
-        else:
-            try:
-                geo = self._geometry.remove_colinear_vertices(tolerance)
-            except AssertionError:  # degenerate face that should not have apertures
-                return
-            ap_faces = geo.sub_faces_by_ratio_sub_rectangle(
-                ratio, aperture_height, sill_height, horizontal_separation,
-                vertical_separation, tolerance)
+        try:
+            geo = self._geometry.remove_colinear_vertices(tolerance)
+        except AssertionError:  # degenerate face that should not have apertures
+            return
+        ap_faces = geo.sub_faces_by_ratio_sub_rectangle(
+            ratio, aperture_height, sill_height, horizontal_separation,
+            vertical_separation, tolerance)
         for i, ap_face in enumerate(ap_faces):
             aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
             self.add_aperture(aperture)
 
-    def apertures_by_ratio_gridded(self, ratio, x_dim, y_dim=None):
+    def apertures_by_ratio_gridded(self, ratio, x_dim, y_dim=None, tolerance=0.01):
         """Add apertures to this face given a ratio of aperture area to face area.
 
         Note that this method removes any existing apertures on the Face.
@@ -716,6 +714,9 @@ class Face(_BaseWithShade):
             x_dim: The x dimension of the grid cells as a number.
             y_dim: The y dimension of the grid cells as a number. Default is None,
                 which will assume the same cell dimension for y as is set for x.
+            tolerance: The maximum difference between point values for them to be
+                considered a part of a rectangle. Default: 0.01, suitable for
+                objects in meters.
 
         Usage:
 
@@ -729,8 +730,11 @@ class Face(_BaseWithShade):
         self.remove_sub_faces()
         if ratio == 0:
             return
-        else:
-            ap_faces = self._geometry.sub_faces_by_ratio_gridded(ratio, x_dim, y_dim)
+        try:
+            geo = self._geometry.remove_colinear_vertices(tolerance)
+        except AssertionError:  # degenerate face that should not have apertures
+            return
+        ap_faces = geo.sub_faces_by_ratio_gridded(ratio, x_dim, y_dim)
         for i, ap_face in enumerate(ap_faces):
             aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
             self.add_aperture(aperture)
@@ -768,15 +772,17 @@ class Face(_BaseWithShade):
             room = Room.from_box(5.0, 10.0, 3.2, 180)
             room.faces[1].apertures_by_width_height_rectangle(1.5, 2, 0.8, 2.5)
         """
-        assert aperture_height > 0, \
-            'aperture_height must be above 0. Got {}'.format(aperture_height)
-        assert aperture_width > 0, \
-            'aperture_width must be above 0. Got {}'.format(aperture_width)
         assert horizontal_separation > 0, \
             'horizontal_separation must be above 0. Got {}'.format(horizontal_separation)
+        if aperture_height <= 0 or aperture_width <= 0:
+            return
         self._acceptable_sub_face_check(Aperture)
         self.remove_sub_faces()
-        ap_faces = self._geometry.sub_faces_by_dimension_rectangle(
+        try:
+            geo = self._geometry.remove_colinear_vertices(tolerance)
+        except AssertionError:  # degenerate face that should not have apertures
+            return
+        ap_faces = geo.sub_faces_by_dimension_rectangle(
             aperture_height, aperture_width, sill_height, horizontal_separation,
             tolerance)
         for i, ap_face in enumerate(ap_faces):
@@ -801,7 +807,7 @@ class Face(_BaseWithShade):
         Args:
             width: A number for the Aperture width.
             height: A number for the Aperture height.
-            sill_height: A number for the sill height. Default: 1.
+            sill_height: A number for the sill height. (Default: 1).
             aperture_identifier: Optional string for the aperture identifier.
                 If None, the default will follow the convention
                 "[face_identifier]_Glz[count]" where [count] is one more than
@@ -820,6 +826,8 @@ class Face(_BaseWithShade):
             room[2].aperture_by_width_height(4, 0.5, 2.2)  # aperture on right
         """
         # Perform checks
+        if width <= 0 or height <= 0:
+            return
         self._acceptable_sub_face_check(Aperture)
         # Generate the aperture geometry
         face_plane = Plane(self._geometry.plane.n, self._geometry.min)
