@@ -764,13 +764,15 @@ class Room(_BaseWithShade):
                 (Default: False).
         """
         if delete_degenerate:
-            new_faces = list(self._faces)
+            new_faces, i_to_remove = list(self._faces), []
             for i, face in enumerate(new_faces):
                 try:
                     face.remove_colinear_vertices(tolerance)
                     face.remove_degenerate_sub_faces(tolerance)
                 except ValueError:  # degenerate face found!
-                    new_faces.pop(i)
+                    i_to_remove.append(i)
+            for i in reversed(i_to_remove):
+                new_faces.pop(i)
             self._faces = tuple(new_faces)
         else:
             try:

@@ -181,6 +181,10 @@ class _ColorObject(object):
         self._min_point = Point3D(min_pt[0], min_pt[1], min_pt[2])
         self._max_point = Point3D(max_pt[0], max_pt[1], max_pt[2])
 
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
+
 
 class ColorRoom(_ColorObject):
     """Object for visualizing room-level attributes.

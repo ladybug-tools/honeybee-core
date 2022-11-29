@@ -26,7 +26,7 @@ class Aperture(_BaseWithShade):
         boundary_condition: Boundary condition object (Outdoors, Surface).
             Default: Outdoors.
         is_operable: Boolean to note whether the Aperture can be opened for
-            ventilation. Default: False
+            ventilation. (Default: False).
 
     Properties:
         * identifier
@@ -55,10 +55,7 @@ class Aperture(_BaseWithShade):
         * user_data
     """
     __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_operable')
-    TYPE_COLORS = {
-        False: Color(64, 180, 255, 100),
-        True: Color(128, 204, 255, 100)
-    }
+    TYPE_COLOR = Color(64, 180, 255, 100)
     BC_COLORS = {
         'Outdoors': Color(128, 204, 255, 100),
         'Surface': Color(0, 190, 0, 100)
@@ -269,7 +266,7 @@ class Aperture(_BaseWithShade):
     @property
     def type_color(self):
         """Get a Color to be used in visualizations by type."""
-        return self.TYPE_COLORS[self.is_operable]
+        return self.TYPE_COLOR
 
     @property
     def bc_color(self):
