@@ -1391,6 +1391,51 @@ class Model(_Base):
             self.tolerance = self.tolerance * scale_fac
             self.units = units
 
+    def remove_degenerate_geometry(self, tolerance=None):
+        """Remove any degenerate geometry from the model.
+
+        Degenerate geometry refers to any objects that evaluate to less than 3 vertices
+        when duplicate and colinear vertices are removed at the tolerance.
+
+        Args:
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered distinct. If None, the
+                Model's tolerance will be used. (Default: None).
+        """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        for room in self.rooms:
+            try:
+                room.remove_colinear_vertices_envelope(
+                    tolerance=tolerance, delete_degenerate=True)
+            except AssertionError as e:  # room removed; likely wrong units
+                error = 'Your Model units system is: {}. ' \
+                    'Is this correct?\n{}'.format(original_model.units, e)
+                raise ValueError(error)
+        self._remove_degenerate_faces(self._orphaned_faces, tolerance)
+        self._remove_degenerate_faces(self._orphaned_apertures, tolerance)
+        self._remove_degenerate_faces(self._orphaned_doors, tolerance)
+        self._remove_degenerate_faces(self._orphaned_shades, tolerance)
+
+    def triangulate_non_planar_quads(self, tolerance=None):
+        """Triangulate any non-planar orphaned geometry in the model.
+
+        This method will only planarize the orphaned Faces, Apertures, Doors and
+        Shades that are quadrilaterals, which usually has a minimal impact on results.
+        It does not impact the Rooms at all.
+
+        Args:
+            tolerance: The minimum distance from the geometry plane at which the
+                geometry is not considered planar. If None, the Model's tolerance
+                will be used. (Default: None).
+        """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        self._orphaned_apertures = \
+            self._triangulate_quad_faces(self._orphaned_apertures, tolerance)
+        self._orphaned_doors = \
+            self._triangulate_quad_faces(self._orphaned_doors, tolerance)
+        self._orphaned_shades = \
+            self._triangulate_quad_faces(self._orphaned_shades, tolerance)
+
     def comparison_report(self, other_model, ignore_deleted=False, ignore_added=False):
         """Get a dictionary outlining the differences between this model and another.
 
@@ -2158,6 +2203,36 @@ class Model(_Base):
             except ValueError:
                 pass  # degenerate triangle; remove it
         return clean_face3ds
+
+    def _remove_degenerate_faces(self, hb_objs, tolerance):
+        """Remove degenerate Faces, Apertures, Doors, or Shades from a list."""
+        i_to_remove = []
+        for i, face in enumerate(hb_objs):
+            try:
+                face.remove_colinear_vertices(tolerance)
+            except ValueError:  # degenerate face found!
+                i_to_remove.append(i)
+        for i in reversed(i_to_remove):
+            hb_objs.pop(i)
+
+    def _triangulate_quad_faces(self, hb_objs, tolerance):
+        """Triangulate quad geometries."""
+        clean_objects = []
+        for i, geo_obj in enumerate(hb_objs):
+            geo = geo_obj.geometry
+            if len(geo.vertices) == 4 and not geo.check_planar(tolerance, False):
+                verts = geo.vertices
+                obj_1 = geo_obj.duplicate()
+                obj_1.identifier = '{}..0'.format(geo_obj.identifier)
+                obj_1._geometry = Face3D((verts[0], verts[1], verts[2]))
+                clean_objects.append(obj_1)
+                obj_2 = geo_obj.duplicate()
+                obj_2.identifier = '{}..1'.format(geo_obj.identifier)
+                obj_2._geometry = Face3D((verts[2], verts[3], verts[0]))
+                clean_objects.append(obj_2)
+            else:
+                clean_objects.append(geo_obj)
+        return clean_objects
 
     def _replace_aperture(self, original_ap, new_ap_geo):
         """Get new Apertures generated from new_ap_geo and the properties of original_ap.
