@@ -899,6 +899,8 @@ class Model(_Base):
         """Add another Model object to this model."""
         assert isinstance(other_model, Model), \
             'Expected Model. Got {}.'.format(type(other_model))
+        if self.units != other_model.units:
+            other_model.convert_to_units(self.units)
         for room in other_model._rooms:
             self._rooms.append(room)
         for face in other_model._orphaned_faces:
