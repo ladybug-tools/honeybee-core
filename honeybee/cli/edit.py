@@ -27,7 +27,7 @@ def edit():
 
 
 @edit.command('convert-units')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.argument('units', type=str)
 @click.option('--scale/--do-not-scale', ' /-ns', help='Flag to note whether the model '
@@ -36,17 +36,17 @@ def edit():
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with solved adjacency. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def convert_units(model_json, units, scale, output_file):
+def convert_units(model_file, units, scale, output_file):
     """Convert a Model to a given units system.
 
     \b
     Args:
-        model_json: Full path to a Honeybee Model JSON file.
+        model_file: Full path to a Honeybee Model file.
         units: Text for the units system to which the model will be converted.
             Choose from (Meters, Millimeters, Feet, Inches, Centimeters).
     """
     try:
-        parsed_model = Model.from_file(model_json)
+        parsed_model = Model.from_file(model_file)
         if scale:
             parsed_model.convert_to_units(units)
         else:
@@ -61,7 +61,7 @@ def convert_units(model_json, units, scale, output_file):
 
 
 @edit.command('solve-adjacency')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--wall/--air-boundary', ' /-ab', help='Flag to note whether the '
               'wall adjacencies should be of the air boundary face type.',
@@ -75,16 +75,16 @@ def convert_units(model_json, units, scale, output_file):
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with solved adjacency. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def solve_adjacency(model_json, wall, surface, no_overwrite, output_file):
-    """Solve adjacency between Rooms of a Model JSON file.
+def solve_adjacency(model_file, wall, surface, no_overwrite, output_file):
+    """Solve adjacency between Rooms of a Model file.
 
     \b
     Args:
-        model_json: Full path to a Honeybee Model JSON file.
+        model_file: Full path to a Honeybee Model file.
     """
     try:
         # serialize the Model to Python and check the tolerance
-        parsed_model = Model.from_file(model_json)
+        parsed_model = Model.from_file(model_file)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use solve-adjacency.'
         tol = parsed_model.tolerance
@@ -121,13 +121,13 @@ def solve_adjacency(model_json, wall, surface, no_overwrite, output_file):
 
 
 @edit.command('windows-by-ratio')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.argument('ratio', type=float)
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with windows. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def windows_by_ratio(model_json, ratio, output_file):
+def windows_by_ratio(model_file, ratio, output_file):
     """Add apertures to all outdoor walls of a model given a ratio.
 
     Note that this method removes any existing apertures and doors from the Walls.
@@ -135,13 +135,13 @@ def windows_by_ratio(model_json, ratio, output_file):
 
     \b
     Args:
-        model_json: Full path to a Honeybee Model JSON file.
+        model_file: Full path to a Honeybee Model file.
         ratio: A number between 0 and 1 (but not perfectly equal to 1)
             for the desired ratio between window area and wall area.
     """
     try:
         # serialize the Model and check the Model tolerance
-        parsed_model = Model.from_file(model_json)
+        parsed_model = Model.from_file(model_file)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use windows-by-ratio.'
         tol = parsed_model.tolerance
@@ -163,7 +163,7 @@ def windows_by_ratio(model_json, ratio, output_file):
 
 
 @edit.command('windows-by-ratio-rect')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.argument('ratio', type=float)
 @click.option('--aperture-height', '-ah', help='A number for the target height of the '
@@ -181,7 +181,7 @@ def windows_by_ratio(model_json, ratio, output_file):
               'the value will be interpreted in the honeybee model units.',
               type=str, default='0.8m', show_default=True)
 @click.option('--horizontal-separation', '-hs', help='A number for the target '
-              'separation between individual aperture centerlines. If this number is '
+              'separation between individual aperture center lines. If this number is '
               'larger than the parent rectangle base, only one aperture will be '
               'produced. This can include the units of the distance (eg. 3ft) or, if '
               'no units are provided, the value will be interpreted in the honeybee '
@@ -194,7 +194,7 @@ def windows_by_ratio(model_json, ratio, output_file):
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with windows. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
+def windows_by_ratio_rect(model_file, ratio, aperture_height, sill_height,
                           horizontal_separation, vertical_separation, output_file):
     """Add apertures to all outdoor walls of a model given a ratio.
 
@@ -204,13 +204,13 @@ def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
 
     \b
     Args:
-        model_json: Full path to a Honeybee Model JSON file.
+        model_file: Full path to a Honeybee Model file.
         ratio: A number between 0 and 1 (but not perfectly equal to 1)
             for the desired ratio between window area and wall area.
     """
     try:
         # serialize the Model and check the Model tolerance
-        parsed_model = Model.from_file(model_json)
+        parsed_model = Model.from_file(model_file)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use windows-by-ratio-rect.'
         tol, units = parsed_model.tolerance, parsed_model.units
@@ -240,7 +240,7 @@ def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
 
 
 @edit.command('extruded-border')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--depth', '-d', help='A number for the extrusion depth. This can include '
               'the units of the distance (eg. 3ft) or, if no units are provided, '
@@ -251,16 +251,16 @@ def windows_by_ratio_rect(model_json, ratio, aperture_height, sill_height,
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with borders. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def extruded_border(model_json, depth, outdoor, output_file):
+def extruded_border(model_file, depth, outdoor, output_file):
     """Add extruded borders to all windows in walls.
 
     \b
     Args:
-        model_json: Full path to a Honeybee Model JSON file.
+        model_file: Full path to a Honeybee Model file.
     """
     try:
         # serialize the Model to Python
-        parsed_model = Model.from_file(model_json)
+        parsed_model = Model.from_file(model_file)
         indoor = not outdoor
 
         # generate the overhangs for all walls of rooms
@@ -282,7 +282,7 @@ def extruded_border(model_json, depth, outdoor, output_file):
 
 
 @edit.command('overhang')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--depth', '-d', help='A number for the overhang depth. This can include '
               'the units of the distance (eg. 3ft) or, if no units are provided, '
@@ -307,17 +307,17 @@ def extruded_border(model_json, depth, outdoor, output_file):
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with overhangs. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor,
+def overhang(model_file, depth, angle, vertical_offset, per_window, outdoor,
              output_file):
     """Add overhangs to all outdoor walls or windows in walls.
 
     \b
     Args:
-        model_json: Full path to a Honeybee Model JSON file.
+        model_file: Full path to a Honeybee Model file.
     """
     try:
         # serialize the Model to Python and check the Model tolerance
-        parsed_model = Model.from_file(model_json)
+        parsed_model = Model.from_file(model_file)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use overhang.'
         tol, units = parsed_model.tolerance, parsed_model.units
@@ -353,7 +353,7 @@ def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor,
 
 
 @edit.command('louvers-by-count')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.argument('louver-count', type=int)
 @click.option('--depth', '-d', help='A number for the depth of the louvers. This can '
@@ -383,18 +383,18 @@ def overhang(model_json, depth, angle, vertical_offset, per_window, outdoor,
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with louvers. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
+def louvers_by_count(model_file, louver_count, depth, angle, offset, horizontal,
                      per_window, outdoor, no_flip, output_file):
     """Add louvers to all outdoor walls or windows in walls.
 
     \b
     Args:
-        model_json: Full path to a Honeybee Model JSON file.
+        model_file: Full path to a Honeybee Model file.
         louver_count: A positive integer for the number of louvers to generate.
     """
     try:
         # serialize the Model and check the Model tolerance
-        parsed_model = Model.from_file(model_json)
+        parsed_model = Model.from_file(model_file)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use overhang.'
         tol, units = parsed_model.tolerance, parsed_model.units
@@ -427,7 +427,7 @@ def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
 
 
 @edit.command('louvers-by-spacing')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--spacing', '-s', help='A number for the distance between each louver. '
               'This can include the units of the distance (eg. 2ft) or, if no units are '
@@ -463,17 +463,17 @@ def louvers_by_count(model_json, louver_count, depth, angle, offset, horizontal,
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with louvers. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def louvers_by_spacing(model_json, spacing, depth, angle, offset, horizontal,
+def louvers_by_spacing(model_file, spacing, depth, angle, offset, horizontal,
                        max_count, per_window, outdoor, no_flip, output_file):
     """Add louvers to all outdoor walls or windows in walls.
 
     \b
     Args:
-        model_json: Full path to a Honeybee Model JSON file.
+        model_file: Full path to a Honeybee Model file.
     """
     try:
         # serialize the Model to Python and check the Model tolerance
-        parsed_model = Model.from_file(model_json)
+        parsed_model = Model.from_file(model_file)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use overhang.'
         tol, units = parsed_model.tolerance, parsed_model.units
