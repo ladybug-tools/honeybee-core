@@ -621,7 +621,7 @@ class Model(_Base):
     def units(self, value):
         value = value.title()
         assert value in UNITS, '{} is not supported as a units system. ' \
-            'Choose from the following: {}'.format(value, self.units)
+            'Choose from the following: {}'.format(value, UNITS)
         self._units = value
 
     @property
