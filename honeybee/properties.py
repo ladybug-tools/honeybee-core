@@ -14,8 +14,10 @@ class _Properties(object):
         host: A honeybee-core geometry object that hosts these properties
             (ie. Model, Room, Face, Shade, Aperture, Door).
     """
-    _exclude = set(('host', 'move', 'rotate', 'rotate_xy', 'reflect', 'scale',
-                    'add_prefix', 'reset_to_default', 'to_dict', 'ToString'))
+    _exclude = set(
+        ('host', 'move', 'rotate', 'rotate_xy', 'reflect', 'scale', 'is_equivalent',
+         'add_prefix', 'reset_to_default', 'to_dict', 'apply_properties_from_dict',
+         'ToString'))
 
     def __init__(self, host):
         """Initialize properties."""
