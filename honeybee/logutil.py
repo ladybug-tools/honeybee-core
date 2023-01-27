@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
+import tempfile
 
 
 # This is copied from logging module since python 2 doesn't have it under the same name.
@@ -27,6 +28,8 @@ _name_to_level = {
 
 def _get_log_folder():
     home_folder = os.getenv('HOME') or os.path.expanduser('~')
+    if not os.access(home_folder, os.W_OK):
+        home_folder = tempfile.gettempdir()
     log_folder = os.path.join(home_folder, '.honeybee')
     if not os.path.isdir(log_folder):
         try:
