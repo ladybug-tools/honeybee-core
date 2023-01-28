@@ -18,6 +18,7 @@ import platform
 import sys
 import subprocess
 import json
+import tempfile
 
 
 class Folders(object):
@@ -258,6 +259,8 @@ class Folders(object):
         An attempt will be made to create the directory if it does not already exist.
         """
         home_folder = os.getenv('HOME') or os.path.expanduser('~')
+        if not os.access(home_folder, os.W_OK):
+            home_folder = tempfile.gettempdir()
         sim_folder = os.path.join(home_folder, 'simulation')
         if not os.path.isdir(sim_folder):
             try:
