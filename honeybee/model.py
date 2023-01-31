@@ -1410,8 +1410,7 @@ class Model(_Base):
                 room.remove_colinear_vertices_envelope(
                     tolerance=tolerance, delete_degenerate=True)
             except AssertionError as e:  # room removed; likely wrong units
-                error = 'Your Model units system is: {}. ' \
-                    'Is this correct?\n{}'.format(original_model.units, e)
+                error = 'Failed to remove degenerate geometry.\n{}'.format(e)
                 raise ValueError(error)
         self._remove_degenerate_faces(self._orphaned_faces, tolerance)
         self._remove_degenerate_faces(self._orphaned_apertures, tolerance)
