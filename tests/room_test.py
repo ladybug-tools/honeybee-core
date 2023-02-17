@@ -290,6 +290,23 @@ def test_generate_grid():
     assert len(mesh_grid.faces) == 50
 
 
+def test_generate_exterior_face_grid():
+    """Test the generate_exterior_face_grid method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    mesh_grid = room.generate_exterior_face_grid(1, face_type='Wall')
+    assert len(mesh_grid.faces) == 60 + 30
+    mesh_grid = room.generate_exterior_face_grid(0.5, face_type='All')
+    assert len(mesh_grid.faces) == 200 + 240 + 120
+
+
+def test_generate_exterior_aperture_grid():
+    """Test the generate_exterior_aperture_grid method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    room[3].apertures_by_ratio(0.4)
+    mesh_grid = room.generate_exterior_aperture_grid(1)
+    assert len(mesh_grid.faces) != 0
+
+
 def test_ground_by_custom_surface():
     """Test the ground_by_custom_surface method."""
     room = Room.from_box('ShoeBoxZone', 5, 10, 3, origin=Point3D(0, 0, 3))
