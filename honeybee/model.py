@@ -12,7 +12,7 @@ try:  # check if we are in IronPython
 except ImportError:  # wea are in cPython
     import pickle
 
-from ladybug_geometry.geometry3d import Plane, Face3D
+from ladybug_geometry.geometry3d import Plane, Face3D, Mesh3D
 from ladybug_geometry.interop.stl import STL
 from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
@@ -27,8 +27,8 @@ from .aperture import Aperture
 from .door import Door
 from .typing import float_positive, invalid_dict_error, clean_string
 from .config import folders
-from .boundarycondition import Surface
-from .facetype import AirBoundary
+from .boundarycondition import Outdoors, Surface
+from .facetype import AirBoundary, Wall, Floor, RoofCeiling
 import honeybee.writer.model as writer
 from honeybee.boundarycondition import boundary_conditions as bcs
 try:
@@ -1305,6 +1305,106 @@ class Model(_Base):
         for door in self._orphaned_doors:
             door.scale(factor, origin)
         self.properties.scale(factor, origin)
+
+    def generate_exterior_face_grid(self, dimension, offset=0.1, face_type='Wall'):
+        """Get a gridded Mesh3D offset from all exterior Faces of this Model.
+
+        The Face geometry without windows punched into it will be used. This
+        will be None if the Model has no exterior Faces.
+
+        Args:
+            dimension: The dimension of the grid cells as a number.
+            offset: A number for how far to offset the grid from the base face.
+                Positive numbers indicate an offset towards the exterior. (Default
+                is 0.1, which will offset the grid to be 0.1 unit from the faces).
+            face_type: Text to specify the type of face that will be used to
+                generate grids. Note that only Faces with Outdoors boundary
+                conditions will be used, meaning that most Floors will typically
+                be excluded unless they represent the underside of a cantilever.
+                Choose from the following. (Default: Wall).
+
+                * Wall
+                * Roof
+                * Floor
+                * All
+        """
+        # select the correct face type based on the input
+        face_t = face_type.title()
+        if face_t == 'Wall':
+            ft = Wall
+        elif face_t in ('Roof', 'Roofceiling'):
+            ft = RoofCeiling
+        elif face_t == 'All':
+            ft = (Wall, RoofCeiling, Floor)
+        elif face_t == 'Floor':
+            ft = Floor
+        else:
+            raise ValueError('Unrecognized face_type "{}".'.format(face_type))
+        # loop through the faces and generate grids
+        face_grids = []
+        for face in self.faces:
+            if isinstance(face.type, ft) and \
+                    isinstance(face.boundary_condition, Outdoors):
+                try:
+                    face_grids.append(
+                        face.geometry.mesh_grid(dimension, None, offset, False))
+                except AssertionError:  # grid tolerance not fine enough
+                    pass
+        # join the grids together if there are several ones
+        if len(face_grids) == 1:
+            return face_grids[0]
+        elif len(face_grids) > 1:
+            return Mesh3D.join_meshes(face_grids)
+        return None
+
+    def generate_exterior_aperture_grid(
+            self, dimension, offset=0.1, aperture_type='All'):
+        """Get a gridded Mesh3D offset from the exterior Apertures of this Model.
+
+        Will be None if the Model has no exterior Apertures.
+
+        Args:
+            dimension: The dimension of the grid cells as a number.
+            offset: A number for how far to offset the grid from the base face.
+                Positive numbers indicate an offset towards the exterior while
+                negative numbers indicate an offset towards the interior, essentially
+                modeling the value of sun on the building interior. (Default
+                is 0.1, which will offset the grid to be 0.1 unit from the faces).
+            aperture_type: Text to specify the type of Aperture that will be used to
+                generate grids. Window indicates Apertures in Walls. Choose from
+                the following. (Default: All).
+
+                * Window
+                * Skylight
+                * All
+        """
+        # select the correct face type based on the input
+        ap_t = aperture_type.title()
+        if ap_t == 'Window':
+            ft = Wall
+        elif ap_t == 'Skylight':
+            ft = RoofCeiling
+        elif ap_t == 'All':
+            ft = (Wall, RoofCeiling, Floor)
+        else:
+            raise ValueError('Unrecognized aperture_type "{}".'.format(aperture_type))
+        # loop through the faces and generate grids
+        ap_grids = []
+        for face in self.faces:
+            if isinstance(face.type, ft) and \
+                    isinstance(face.boundary_condition, Outdoors):
+                for ap in face.apertures:
+                    try:
+                        ap_grids.append(
+                            ap.geometry.mesh_grid(dimension, None, offset, False))
+                    except AssertionError:  # grid tolerance not fine enough
+                        pass
+        # join the grids together if there are several ones
+        if len(ap_grids) == 1:
+            return ap_grids[0]
+        elif len(ap_grids) > 1:
+            return Mesh3D.join_meshes(ap_grids)
+        return None
 
     def wall_apertures_by_ratio(self, ratio, tolerance=0.01):
         """Add apertures to all exterior walls given a ratio of aperture to face area.

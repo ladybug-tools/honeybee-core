@@ -512,7 +512,7 @@ class Room(_BaseWithShade):
         self.add_indoor_shade(shade)
 
     def generate_grid(self, x_dim, y_dim=None, offset=1.0):
-        """Get a list of gridded Mesh3D objects offset from the floors of this room.
+        """Get a gridded Mesh3D objects offset from the floors of this room.
 
         Note that the x_dim and y_dim refer to dimensions within the XY coordinate
         system of the floor faces's planes. So rotating the planes of the floor faces
@@ -525,7 +525,7 @@ class Room(_BaseWithShade):
             y_dim: The y dimension of the grid cells as a number. Default is None,
                 which will assume the same cell dimension for y as is set for x.
             offset: A number for how far to offset the grid from the base face.
-                Default is 1.0, which will not offset the grid to be 1 unit above
+                Default is 1.0, which will offset the grid to be 1 unit above
                 the floor.
 
         Usage:
@@ -539,11 +539,132 @@ class Room(_BaseWithShade):
         floor_grids = []
         for face in self._faces:
             if isinstance(face.type, Floor):
-                floor_grids.append(face.geometry.mesh_grid(x_dim, y_dim, offset, True))
+                try:
+                    floor_grids.append(
+                        face.geometry.mesh_grid(x_dim, y_dim, offset, True))
+                except AssertionError:  # grid tolerance not fine enough
+                    pass
         if len(floor_grids) == 1:
             return floor_grids[0]
         elif len(floor_grids) > 1:
             return Mesh3D.join_meshes(floor_grids)
+        return None
+
+    def generate_exterior_face_grid(self, dimension, offset=0.1, face_type='Wall'):
+        """Get a gridded Mesh3D offset from the exterior Faces of this room.
+
+        The Face geometry without windows punched into it will be used. This
+        will be None if the Room has no exterior Faces.
+
+        Args:
+            dimension: The dimension of the grid cells as a number.
+            offset: A number for how far to offset the grid from the base face.
+                Positive numbers indicate an offset towards the exterior. (Default
+                is 0.1, which will offset the grid to be 0.1 unit from the faces).
+            face_type: Text to specify the type of face that will be used to
+                generate grids. Note that only Faces with Outdoors boundary
+                conditions will be used, meaning that most Floors will typically
+                be excluded unless they represent the underside of a cantilever.
+                Choose from the following. (Default: Wall).
+
+                * Wall
+                * Roof
+                * Floor
+                * All
+
+        Usage:
+
+        .. code-block:: python
+
+            room = Room.from_box(3.0, 6.0, 3.2, 180)
+            face_mesh = room.generate_exterior_face_grid(0.5)
+            test_points = face_mesh.face_centroids
+        """
+        # select the correct face type based on the input
+        face_t = face_type.title()
+        if face_t == 'Wall':
+            ft = Wall
+        elif face_t in ('Roof', 'Roofceiling'):
+            ft = RoofCeiling
+        elif face_t == 'All':
+            ft = (Wall, RoofCeiling, Floor)
+        elif face_t == 'Floor':
+            ft = Floor
+        else:
+            raise ValueError('Unrecognized face_type "{}".'.format(face_type))
+        # loop through the faces and generate grids
+        face_grids = []
+        for face in self._faces:
+            if isinstance(face.type, ft) and \
+                    isinstance(face.boundary_condition, Outdoors):
+                try:
+                    face_grids.append(
+                        face.geometry.mesh_grid(dimension, None, offset, False))
+                except AssertionError:  # grid tolerance not fine enough
+                    pass
+        # join the grids together if there are several ones
+        if len(face_grids) == 1:
+            return face_grids[0]
+        elif len(face_grids) > 1:
+            return Mesh3D.join_meshes(face_grids)
+        return None
+
+    def generate_exterior_aperture_grid(
+            self, dimension, offset=0.1, aperture_type='All'):
+        """Get a gridded Mesh3D offset from the exterior Apertures of this room.
+
+        Will be None if the Room has no exterior Apertures.
+
+        Args:
+            dimension: The dimension of the grid cells as a number.
+            offset: A number for how far to offset the grid from the base face.
+                Positive numbers indicate an offset towards the exterior while
+                negative numbers indicate an offset towards the interior, essentially
+                modeling the value of sun on the building interior. (Default
+                is 0.1, which will offset the grid to be 0.1 unit from the faces).
+            aperture_type: Text to specify the type of Aperture that will be used to
+                generate grids. Window indicates Apertures in Walls. Choose from
+                the following. (Default: All).
+
+                * Window
+                * Skylight
+                * All
+
+        Usage:
+
+        .. code-block:: python
+
+            room = Room.from_box(3.0, 6.0, 3.2, 180)
+            room[3].apertures_by_ratio(0.4)
+            aperture_mesh = room.generate_exterior_aperture_grid(0.5)
+            test_points = aperture_mesh.face_centroids
+        """
+        # select the correct face type based on the input
+        ap_t = aperture_type.title()
+        if ap_t == 'Window':
+            ft = Wall
+        elif ap_t == 'Skylight':
+            ft = RoofCeiling
+        elif ap_t == 'All':
+            ft = (Wall, RoofCeiling, Floor)
+        else:
+            raise ValueError('Unrecognized aperture_type "{}".'.format(aperture_type))
+        # loop through the faces and generate grids
+        ap_grids = []
+        for face in self._faces:
+            if isinstance(face.type, ft) and \
+                    isinstance(face.boundary_condition, Outdoors):
+                for ap in face.apertures:
+                    try:
+                        ap_grids.append(
+                            ap.geometry.mesh_grid(dimension, None, offset, False))
+                    except AssertionError:  # grid tolerance not fine enough
+                        pass
+        # join the grids together if there are several ones
+        if len(ap_grids) == 1:
+            return ap_grids[0]
+        elif len(ap_grids) > 1:
+            return Mesh3D.join_meshes(ap_grids)
         return None
 
     def wall_apertures_by_ratio(self, ratio, tolerance=0.01):
