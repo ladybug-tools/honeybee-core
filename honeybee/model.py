@@ -1306,11 +1306,11 @@ class Model(_Base):
             door.scale(factor, origin)
         self.properties.scale(factor, origin)
 
-    def generate_exterior_face_grid(self, dimension, offset=0.1, face_type='Wall'):
-        """Get a gridded Mesh3D offset from all exterior Faces of this Model.
+    def generate_exterior_face_grid(
+            self, dimension, offset=0.1, face_type='Wall', punched_geometry=False):
+        """Get a gridded Mesh3D offset from the exterior Faces of this Model.
 
-        The Face geometry without windows punched into it will be used. This
-        will be None if the Model has no exterior Faces.
+        This will be None if the Model has no exterior Faces.
 
         Args:
             dimension: The dimension of the grid cells as a number.
@@ -1327,6 +1327,10 @@ class Model(_Base):
                 * Roof
                 * Floor
                 * All
+
+            punched_geometry: Boolean to note whether the punched_geometry of the faces
+                should be used (True) with the areas of sub-faces removed from the grid
+                or the full geometry should be used (False). (Default:False).
         """
         # select the correct face type based on the input
         face_t = face_type.title()
@@ -1340,14 +1344,16 @@ class Model(_Base):
             ft = Floor
         else:
             raise ValueError('Unrecognized face_type "{}".'.format(face_type))
+        face_attr = 'punched_geometry' if punched_geometry else 'geometry'
         # loop through the faces and generate grids
         face_grids = []
         for face in self.faces:
             if isinstance(face.type, ft) and \
                     isinstance(face.boundary_condition, Outdoors):
                 try:
+                    f_geo = getattr(face, face_attr)
                     face_grids.append(
-                        face.geometry.mesh_grid(dimension, None, offset, False))
+                        f_geo.mesh_grid(dimension, None, offset, False))
                 except AssertionError:  # grid tolerance not fine enough
                     pass
         # join the grids together if there are several ones
@@ -1365,11 +1371,11 @@ class Model(_Base):
 
         Args:
             dimension: The dimension of the grid cells as a number.
-            offset: A number for how far to offset the grid from the base face.
+            offset: A number for how far to offset the grid from the base aperture.
                 Positive numbers indicate an offset towards the exterior while
                 negative numbers indicate an offset towards the interior, essentially
                 modeling the value of sun on the building interior. (Default
-                is 0.1, which will offset the grid to be 0.1 unit from the faces).
+                is 0.1, which will offset the grid to be 0.1 unit from the aperture).
             aperture_type: Text to specify the type of Aperture that will be used to
                 generate grids. Window indicates Apertures in Walls. Choose from
                 the following. (Default: All).
