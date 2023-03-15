@@ -1163,6 +1163,145 @@ class Room(_BaseWithShade):
             raise ValueError(full_msg)
         return full_msg
 
+    def coplanar_split(self, geometry, tolerance=0.01, angle_tolerance=1):
+        """Split the Faces of this Room with coplanar geometry (Polyface3D or Face3D).
+
+        This method attempts to preserve as many properties as possible for the
+        split Faces, including all extension attributes and sub-faces (as long
+        as they don't fall in the path of the intersection).
+
+        Args:
+            polyfaces: A list of coplanar geometry (either Polyface3D or Face3D)
+                that will be used to split the Faces of this Room. Typically, these
+                are Polyface3D of other Room geometries to be intersected with this
+                one but they can also be Face3D if only one intersection is desired.
+            tolerance: The minimum difference between the coordinate values of two
+                faces at which they can be considered adjacent. Default: 0.01,
+                suitable for objects in meters.
+            angle_tolerance: The max angle in degrees that the plane normals can
+                differ from one another in order for them to be considered
+                coplanar. (Default: 1 degree).
+
+        Returns:
+            A list containing only the new Faces that were created as part of the
+            splitting process. These new Faces will have as many properties of the
+            original Face assigned to them as possible but they will not have a
+            Surface boundary condition if the original Face had one. Having just
+            the new Faces here can be used in operations like setting new Surface
+            boundary conditions.
+        """
+        # make a dictionary of all face geometry to be intersected
+        geo_dict = {f.identifier: [f.geometry] for f in self.faces}
+
+        # loop through the polyface geometries and intersect this room's geometry
+        ang_tol = math.radians(angle_tolerance)
+        for s_geo in geometry:
+            if isinstance(s_geo, Polyface3D) and not \
+                    Polyface3D.overlapping_bounding_boxes(
+                        self.geometry, s_geo, tolerance):
+                continue  # no overlap in bounding box; intersection impossible
+            s_geos = s_geo.faces if isinstance(s_geo, Polyface3D) else [s_geo]
+            for face_1 in self.faces:
+                for face_2 in s_geos:
+                    if not face_1.geometry.plane.is_coplanar_tolerance(
+                            face_2.plane, tolerance, ang_tol):
+                        continue  # not coplanar; intersection impossible
+                    if face_1.geometry.is_centered_adjacent(face_2, tolerance):
+                        tol_area = math.sqrt(face_1.geometry.area) * tolerance
+                        if abs(face_1.geometry.area - face_2.area) > tol_area:
+                            continue  # already intersected; no need to re-do
+                    new_geo = []
+                    for f_geo in geo_dict[face_1.identifier]:
+                        f_split, _ = Face3D.coplanar_split(
+                            f_geo, face_2, tolerance, ang_tol)
+                        new_geo.extend(f_split)
+                    geo_dict[face_1.identifier] = new_geo
+
+        # use the intersected geometry to remake this room's faces
+        all_faces, new_faces = [], []
+        for face in self.faces:
+            int_faces = geo_dict[face.identifier]
+            if len(int_faces) == 1:  # just use the old Face object
+                all_faces.append(face)
+            else:  # make new Face objects
+                new_bc = face.boundary_condition \
+                    if not isinstance(face.boundary_condition, Surface) \
+                    else boundary_conditions.outdoors
+                new_aps = [ap.duplicate() for ap in face.apertures]
+                new_drs = [dr.duplicate() for dr in face.doors]
+                for x, nf_geo in enumerate(int_faces):
+                    new_id = '{}_{}'.format(face.identifier, x)
+                    new_face = Face(new_id, nf_geo, face.type, new_bc)
+                    new_face._display_name = face._display_name
+                    new_face._user_data = None if face.user_data is None \
+                        else face.user_data.copy()
+                    for ap in new_aps:
+                        if nf_geo.is_sub_face(ap.geometry, tolerance, ang_tol):
+                            new_face.add_aperture(ap)
+                    for dr in new_drs:
+                        if nf_geo.is_sub_face(dr.geometry, tolerance, ang_tol):
+                            new_face.add_door(dr)
+                    if x == 0:
+                        face._duplicate_child_shades(new_face)
+                    new_face._parent = face._parent
+                    new_face._properties._duplicate_extension_attr(face._properties)
+                    new_faces.append(new_face)
+                    all_faces.append(new_face)
+
+        # make a new polyface from the updated faces
+        room_polyface = Polyface3D.from_faces(
+            tuple(face.geometry for face in all_faces), tolerance)
+        if not room_polyface.is_solid:
+            room_polyface = room_polyface.merge_overlapping_edges(tolerance, ang_tol)
+        # replace honeybee face geometry with versions that are facing outwards
+        if room_polyface.is_solid:
+            for i, correct_face3d in enumerate(room_polyface.faces):
+                face = all_faces[i]
+                norm_init = face._geometry.normal
+                face._geometry = correct_face3d
+                if face.has_sub_faces:  # flip sub-faces to align with parent Face
+                    if norm_init.angle(face._geometry.normal) > (math.pi / 2):
+                        for ap in face._apertures:
+                            ap._geometry = ap._geometry.flip()
+                        for dr in face._doors:
+                            dr._geometry = dr._geometry.flip()
+        # reset the faces and geometry of the room with the new faces
+        self._faces = tuple(all_faces)
+        self._geometry = room_polyface
+        return new_faces
+
+    @staticmethod
+    def intersect_adjacency(rooms, tolerance=0.01, angle_tolerance=1):
+        """Intersect the Faces of an array of Rooms to ensure matching adjacencies.
+
+        Note that this method may remove Apertures and Doors if they align with
+        an intersection so it is typically recommended that this method be used
+        before sub-faces are assigned (if possible). Sub-faces that do not fall
+        along an intersection will be preserved.
+
+        Also note that this method does not actually set the walls that are next to one
+        another to be adjacent. The solve_adjacency method must be used for this after
+        running this method.
+
+        Args:
+            rooms: A list of Rooms for which adjacent Faces will be intersected.
+            tolerance: The minimum difference between the coordinate values of two
+                faces at which they can be considered adjacent. Default: 0.01,
+                suitable for objects in meters.
+            angle_tolerance: The max angle in degrees that the plane normals can
+                differ from one another in order for them to be considered
+                coplanar. (Default: 1 degree).
+
+        Returns:
+            An array of Rooms that have been intersected with one another.
+        """
+        # get all of the room polyfaces
+        room_geos = [r.geometry for r in rooms]
+        # intersect all adjacencies between rooms
+        for i, room in enumerate(rooms):
+            other_rooms = room_geos[:i] + room_geos[i + 1:]
+            room.coplanar_split(other_rooms, tolerance, angle_tolerance)
+
     @staticmethod
     def solve_adjacency(rooms, tolerance=0.01):
         """Solve for adjacencies between a list of rooms.
@@ -1218,7 +1357,7 @@ class Room(_BaseWithShade):
                                         face_info['adjacent_doors'])
                                     break
             except IndexError:
-                pass  # we have reached the end of the list of zones
+                pass  # we have reached the end of the list of rooms
         return adj_info
 
     @staticmethod
