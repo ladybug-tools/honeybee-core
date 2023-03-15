@@ -4,6 +4,7 @@ import pytest
 from click.testing import CliRunner
 
 from honeybee.model import Model
+from honeybee.boundarycondition import Surface
 from honeybee.facetype import AirBoundary
 from honeybee.cli.edit import convert_units, solve_adjacency, windows_by_ratio, \
     windows_by_ratio_rect, extruded_border, overhang, louvers_by_count, \
@@ -34,6 +35,21 @@ def test_solve_adjacency():
         if isinstance(face.type, AirBoundary):
             ab_count += 1
     assert ab_count > 10
+
+
+def test_solve_adjacency_intersect():
+    input_model = './tests/json/model_without_adjacency.hbjson'
+    runner = CliRunner()
+    result = runner.invoke(solve_adjacency, [input_model, '--intersect'])
+    assert result.exit_code == 0
+
+    model_dict = json.loads(result.output)
+    new_model = Model.from_dict(model_dict)
+    adj_count = 0
+    for face in new_model.faces:
+        if isinstance(face.boundary_condition, Surface):
+            adj_count += 1
+    assert adj_count == 24
 
 
 def test_windows_by_ratio():

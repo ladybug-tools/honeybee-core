@@ -69,13 +69,16 @@ def convert_units(model_file, units, scale, output_file):
 @click.option('--surface/--adiabatic', ' /-a', help='Flag to note whether the '
               'adjacencies should be surface or adiabatic.',
               default=True, show_default=True)
+@click.option('--no-intersect/--intersect', ' /-i', help='Flag to note whether the '
+              'Faces of the Rooms should be intersected with one another before '
+              'the adjacencies are solved.', default=True, show_default=True)
 @click.option('--no-overwrite/--overwrite', ' /-ow', help='Flag to note whether existing'
               ' Surface boundary conditions should be overwritten.',
               default=True, show_default=True)
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with solved adjacency. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def solve_adjacency(model_file, wall, surface, no_overwrite, output_file):
+def solve_adjacency(model_file, wall, surface, no_intersect, no_overwrite, output_file):
     """Solve adjacency between Rooms of a Model file.
 
     \b
@@ -87,7 +90,11 @@ def solve_adjacency(model_file, wall, surface, no_overwrite, output_file):
         parsed_model = Model.from_file(model_file)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use solve-adjacency.'
-        tol = parsed_model.tolerance
+        tol, ang_tol = parsed_model.tolerance, parsed_model.angle_tolerance
+
+         # intersect adjacencies if requested
+        if not no_intersect:
+            Room.intersect_adjacency(parsed_model.rooms, tol, ang_tol)
 
         # solve adjacency
         if no_overwrite:  # only assign new adjacencies
