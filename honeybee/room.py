@@ -1208,7 +1208,7 @@ class Room(_BaseWithShade):
                         continue  # not coplanar; intersection impossible
                     if face_1.geometry.is_centered_adjacent(face_2, tolerance):
                         tol_area = math.sqrt(face_1.geometry.area) * tolerance
-                        if abs(face_1.geometry.area - face_2.area) > tol_area:
+                        if abs(face_1.geometry.area - face_2.area) < tol_area:
                             continue  # already intersected; no need to re-do
                     new_geo = []
                     for f_geo in geo_dict[face_1.identifier]:
@@ -1247,6 +1247,8 @@ class Room(_BaseWithShade):
                     new_face._properties._duplicate_extension_attr(face._properties)
                     new_faces.append(new_face)
                     all_faces.append(new_face)
+        if len(new_faces) == 0:
+            return new_faces  # nothing has been intersected
 
         # make a new polyface from the updated faces
         room_polyface = Polyface3D.from_faces(
