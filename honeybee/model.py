@@ -1820,7 +1820,7 @@ class Model(_Base):
                                     msgs, ap, bc_room, 'Aperture', 'Room', detailed)
                         for dr in face.doors:
                             bc_obj, bc_room = self._adj_objects(dr)
-                            if bc_obj in ma:
+                            if bc_obj in md:
                                 self._missing_adj_msg(
                                     msgs, dr, bc_obj, 'Door', 'Door', detailed)
                             if bc_room in mr:
