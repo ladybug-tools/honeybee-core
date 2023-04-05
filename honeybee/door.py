@@ -484,9 +484,17 @@ class Door(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
+        meta_1 = (self.display_name, self.is_glass, self.boundary_condition)
+        meta_2 = (door.display_name, door.is_glass, door.boundary_condition)
+        if meta_1 != meta_2:
+            return False
         if abs(self.area - door.area) > tolerance * self.area:
             return False
-        return self.geometry.is_centered_adjacent(door.geometry, tolerance)
+        if not self.geometry.is_centered_adjacent(door.geometry, tolerance):
+            return False
+        if not self._are_shades_equivalent(door, tolerance):
+            return False
+        return True
 
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check whether all of the Door's vertices lie within the same plane.

@@ -1125,6 +1125,10 @@ class Face(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
+        meta_1 = (self.display_name, self.type, self.boundary_condition)
+        meta_2 = (face.display_name, face.type, face.boundary_condition)
+        if meta_1 != meta_2:
+            return False
         if abs(self.area - face.area) > tolerance * self.area:
             return False
         if not self.geometry.is_centered_adjacent(face.geometry, tolerance):
@@ -1139,6 +1143,8 @@ class Face(_BaseWithShade):
         for dr1, dr2 in zip(self._doors, face._doors):
             if not dr1.is_geo_equivalent(dr2, tolerance):
                 return False
+        if not self._are_shades_equivalent(face, tolerance):
+            return False
         return True
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
