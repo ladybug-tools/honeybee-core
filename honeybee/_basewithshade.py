@@ -295,3 +295,26 @@ class _BaseWithShade(_Base):
         all_geo = self._outdoor_shades + self._indoor_shades
         all_geo.append(geometry)
         return self._calculate_max(all_geo)
+
+    def _are_shades_equivalent(self, other, tolerance=0.01):
+        """Get a boolean for whether this object's shades are equivalent to another.
+
+        Args:
+            other: Another object for which shade equivalency will be tested.
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered geometrically equivalent.
+
+        Returns:
+            True if shades are equivalent. False if shades are not equivalent.
+        """
+        if len(self._outdoor_shades) != len(other._outdoor_shades):
+            return False
+        for f1, f2 in zip(self._outdoor_shades, other._outdoor_shades):
+            if not f1.is_geo_equivalent(f2, tolerance):
+                return False
+        if len(self._indoor_shades) != len(other._indoor_shades):
+            return False
+        for f1, f2 in zip(self._indoor_shades, other._indoor_shades):
+            if not f1.is_geo_equivalent(f2, tolerance):
+                return False
+        return True

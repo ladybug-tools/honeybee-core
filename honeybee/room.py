@@ -920,8 +920,8 @@ class Room(_BaseWithShade):
     def is_geo_equivalent(self, room, tolerance=0.01):
         """Get a boolean for whether this object is geometrically equivalent to another.
 
-        This will also check all child Faces, Apertures and Doors for equivalency
-        but not assigned shades.
+        This will also check all child Faces, Apertures, Doors and Shades
+        for equivalency.
 
         Args:
             room: Another Room for which geometric equivalency will be tested.
@@ -931,11 +931,17 @@ class Room(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
+        met_1 = (self.display_name, self.multiplier, self.story, self.exclude_floor_area)
+        met_2 = (room.display_name, room.multiplier, room.story, room.exclude_floor_area)
+        if met_1 != met_2:
+            return False
         if len(self._faces) != len(room._faces):
             return False
         for f1, f2 in zip(self._faces, room._faces):
             if not f1.is_geo_equivalent(f2, tolerance):
                 return False
+        if not self._are_shades_equivalent(room, tolerance):
+           return False
         return True
 
     def check_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True,

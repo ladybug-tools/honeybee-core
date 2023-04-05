@@ -351,6 +351,10 @@ class Shade(_Base):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
+        meta_1 = (self.display_name, self.is_detached)
+        meta_2 = (shade.display_name, shade.is_detached)
+        if meta_1 != meta_2:
+            return False
         if abs(self.area - shade.area) > tolerance * self.area:
             return False
         return self.geometry.is_centered_adjacent(shade.geometry, tolerance)

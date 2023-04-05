@@ -671,9 +671,18 @@ class Aperture(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
+        meta_1 = (self.display_name, self.is_operable, self.boundary_condition)
+        meta_2 = (aperture.display_name, aperture.is_operable,
+                  aperture.boundary_condition)
+        if meta_1 != meta_2:
+            return False
         if abs(self.area - aperture.area) > tolerance * self.area:
             return False
-        return self.geometry.is_centered_adjacent(aperture.geometry, tolerance)
+        if not self.geometry.is_centered_adjacent(aperture.geometry, tolerance):
+            return False
+        if not self._are_shades_equivalent(aperture, tolerance):
+            return False
+        return True
 
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check whether all of the Aperture's vertices lie within the same plane.

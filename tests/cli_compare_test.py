@@ -19,6 +19,6 @@ def test_compare_model():
     runner = CliRunner()
     result = runner.invoke(compare_models, [base_model, other_model, '--json'])
     compare_dict = json.loads(result.output)
-    assert len(compare_dict['changed_objects']) == 2
+    assert len(compare_dict['changed_objects']) == 9
     assert len(compare_dict['added_objects']) == 1
     assert len(compare_dict['deleted_objects']) == 1
