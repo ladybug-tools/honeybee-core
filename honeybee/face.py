@@ -271,7 +271,7 @@ class Face(_BaseWithShade):
 
     @property
     def punched_geometry(self):
-        """Get a ladybug_geometry Face3D object with holes cut in it for apertures and doors.
+        """Get a Face3D object with holes cut in it for apertures and doors.
         """
         if self._punched_geometry is None:
             _sub_faces = tuple(sub_f.geometry for sub_f in self._apertures + self._doors)
@@ -313,7 +313,7 @@ class Face(_BaseWithShade):
 
     @property
     def normal(self):
-        """Get a ladybug_geometry Vector3D for the direction in which the face is pointing.
+        """Get a Vector3D for the direction in which the face is pointing.
         """
         return self._geometry.normal
 
@@ -427,7 +427,7 @@ class Face(_BaseWithShade):
         return orient_text[0]
 
     def add_prefix(self, prefix):
-        """Change the identifier of this object and all child objects by inserting a prefix.
+        """Change the identifier of this object and child objects by inserting a prefix.
 
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
