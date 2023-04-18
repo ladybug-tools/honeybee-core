@@ -92,7 +92,7 @@ def solve_adjacency(model_file, wall, surface, no_intersect, no_overwrite, outpu
             'Model must have a non-zero tolerance to use solve-adjacency.'
         tol, ang_tol = parsed_model.tolerance, parsed_model.angle_tolerance
 
-         # intersect adjacencies if requested
+        # intersect adjacencies if requested
         if not no_intersect:
             Room.intersect_adjacency(parsed_model.rooms, tol, ang_tol)
 

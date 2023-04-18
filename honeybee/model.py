@@ -14,7 +14,6 @@ except ImportError:  # wea are in cPython
 
 from ladybug_geometry.geometry3d import Plane, Face3D, Mesh3D
 from ladybug_geometry.interop.stl import STL
-from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
 from ._base import _Base
 from .units import conversion_factor_to_meters, UNITS, UNITS_TOLERANCES
@@ -458,8 +457,8 @@ class Model(_Base):
 
     @classmethod
     def from_shoe_box(
-        cls, width, depth, height, orientation_angle=0, window_ratio=0,
-        adiabatic=True, units='Meters', tolerance=None, angle_tolerance=1.0):
+            cls, width, depth, height, orientation_angle=0, window_ratio=0,
+            adiabatic=True, units='Meters', tolerance=None, angle_tolerance=1.0):
         """Create a model with a single shoe box Room.
 
         Args:
@@ -506,9 +505,9 @@ class Model(_Base):
 
     @classmethod
     def from_rectangle_plan(
-        cls, width, length, floor_to_floor_height, perimeter_offset=0, story_count=1,
-        orientation_angle=0, outdoor_roof=True, ground_floor=True,
-        units='Meters', tolerance=None, angle_tolerance=1.0):
+            cls, width, length, floor_to_floor_height, perimeter_offset=0, story_count=1,
+            orientation_angle=0, outdoor_roof=True, ground_floor=True,
+            units='Meters', tolerance=None, angle_tolerance=1.0):
         """Create a model with a rectangular floor plan.
 
         Note that the resulting Rooms in the model won't have any windows or solved
@@ -557,10 +556,10 @@ class Model(_Base):
 
     @classmethod
     def from_l_shaped_plan(
-        cls, width_1, length_1, width_2, length_2, floor_to_floor_height,
-        perimeter_offset=0, story_count=1, orientation_angle=0,
-        outdoor_roof=True, ground_floor=True,
-        units='Meters', tolerance=None, angle_tolerance=1.0):
+            cls, width_1, length_1, width_2, length_2, floor_to_floor_height,
+            perimeter_offset=0, story_count=1, orientation_angle=0,
+            outdoor_roof=True, ground_floor=True,
+            units='Meters', tolerance=None, angle_tolerance=1.0):
         """Create a model with an L-shaped floor plan.
 
         Note that the resulting Rooms in the model won't have any windows or solved
@@ -1139,7 +1138,8 @@ class Model(_Base):
         if len(missing_ids) != 0:
             all_objs = ' '.join(['"' + rid + '"' for rid in missing_ids])
             raise ValueError(
-                'The following Apertures were not found in the model: {}'.format(all_objs)
+                'The following Apertures were not found in the model:\n'
+                '{}'.format(all_objs)
             )
         return apertures
 
@@ -1511,10 +1511,11 @@ class Model(_Base):
                 Model's tolerance will be used. (Default: None).
         """
         tolerance = self.tolerance if tolerance is None else tolerance
+        adj_dict = {}  # dictionary to track adjacent geometries
         for room in self.rooms:
             try:
-                room.remove_colinear_vertices_envelope(
-                    tolerance=tolerance, delete_degenerate=True)
+                r_adj = room.clean_envelope(adj_dict, tolerance=tolerance)
+                adj_dict.update(r_adj)
             except AssertionError as e:  # room removed; likely wrong units
                 error = 'Failed to remove degenerate geometry.\n{}'.format(e)
                 raise ValueError(error)
@@ -1889,6 +1890,20 @@ class Model(_Base):
                     f_msg, adj_f, detailed, '000205',
                     error_type='Mismatched Area Adjacency')
                 full_msgs.append(f_msg)
+            else:  # check to ensure the shapes are the same when vertices are removed
+                base_f_geo = base_f.geometry.remove_colinear_vertices(tolerance)
+                adj_f_geo = adj_f.geometry.remove_colinear_vertices(tolerance)
+                if len(base_f_geo) != len(adj_f_geo):
+                    f_msg = 'Face "{}" is a shape with {} distinct vertices and is ' \
+                        'adjacent to Face "{}", which has {} distinct vertices' \
+                        ' within the model tolerance of {}.'.format(
+                            base_f.full_id, len(base_f_geo),
+                            adj_f.full_id, len(adj_f_geo), tolerance
+                        )
+                    f_msg = self._validation_message_child(
+                        f_msg, adj_f, detailed, '000205',
+                        error_type='Mismatched Area Adjacency')
+                    full_msgs.append(f_msg)
         full_msg = full_msgs if detailed else '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
@@ -1958,7 +1973,6 @@ class Model(_Base):
             raise ValueError(full_msg)
         return full_msg
 
-
     def check_rooms_solid(self, tolerance=0.01, angle_tolerance=1,
                           raise_exception=True, detailed=False):
         """Check whether the Model's rooms are closed solid to within tolerances.
@@ -1995,7 +2009,7 @@ class Model(_Base):
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
                               raise_exception=True, detailed=False):
-        """Check that model's sub-faces are co-planar with faces and in the face boundary.
+        """Check that model's sub-faces are co-planar with faces and in their boundary.
 
         Note this does not check the planarity of the sub-faces themselves, whether
         they self-intersect, or whether they have a non-zero area.
@@ -2647,7 +2661,6 @@ class Model(_Base):
             name = self.identifier
         file_name = name if name.lower().endswith('.stl') else '{}.stl'.format(name)
         folder = folder if folder is not None else folders.default_simulation_folder
-        hb_file = os.path.join(folder, file_name)
 
         # collect all of the Face3Ds across the model as triangles and normals
         all_geo = []
@@ -2675,7 +2688,7 @@ class Model(_Base):
 
         # write the geometry into an STL file
         stl_obj = STL(_face_vertices, _face_normals, self.identifier)
-        return stl_obj.to_file(folder, name)
+        return stl_obj.to_file(folder, file_name)
 
     def _all_objects(self):
         """Get a single list of all the Honeybee objects in a Model."""

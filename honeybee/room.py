@@ -469,7 +469,7 @@ class Room(_BaseWithShade):
         return orientations / areas if areas != 0 else None
 
     def add_prefix(self, prefix):
-        """Change the identifier of this object and all child objects by inserting a prefix.
+        """Change the identifier of this object and child objects by inserting a prefix.
 
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
@@ -917,6 +917,75 @@ class Room(_BaseWithShade):
             self._geometry = Polyface3D.from_faces(
                 tuple(face.geometry for face in self._faces), tolerance)
 
+    def clean_envelope(self, adjacency_dict, tolerance=0.01):
+        """Remove colinear and duplicate vertices from this object's Faces and Sub-faces.
+
+        This method also automatically removes degenerate Faces and coordinates
+        adjacent Faces with the adjacency_dict to ensure matching numbers of
+        vertices, which is a requirement for engines like EnergyPlus.
+
+        Args:
+            adjacency_dict: A dictionary containing the identifiers of Room Faces as
+                keys and Honeybee Face objects as values. This is used to indicate the
+                target number of vertices that each Face should have after colinear
+                vertices are removed. This can be used to ensure adjacent Faces
+                have matching numbers of vertices, which is a requirement for
+                certain interfaces like EnergyPlus.
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered colinear. Default: 0.01,
+                suitable for objects in meters.
+
+        Returns:
+            A dictionary containing the identifiers of adjacent Faces as keys and
+            Honeybee Face objects as values. This can be used as an input in future
+            Rooms on which this method is run to ensure adjacent Faces have matching
+            numbers of vertices, which is a requirement for certain interfaces
+            like EnergyPlus.
+        """
+        adj_dict = {}
+        new_faces, i_to_remove = list(self._faces), []
+        for i, face in enumerate(new_faces):
+            try:  # first make sure that the geometry is not degenerate
+                new_geo = face.geometry.remove_colinear_vertices(tolerance)
+            except AssertionError:  # degenerate face found!
+                i_to_remove.append(i)
+                continue
+            # see if the geometry matches its adjacent geometry
+            if isinstance(face.boundary_condition, Surface):
+                try:
+                    adj_face = adjacency_dict[face.identifier]
+                    if len(new_geo) > len(adj_face.geometry):
+                        # gradually increase tolerance until vertices match
+                        tol_incr, iter_c = tolerance / 10, 50
+                        test_tol = tolerance + tol_incr
+                        while iter_c > 0 and len(new_geo) > len(adj_face.geometry):
+                            new_geo = face.geometry.remove_colinear_vertices(test_tol)
+                            test_tol += tol_incr
+                            iter_c -= 1
+                    elif len(new_geo) < len(adj_face.geometry):
+                        # gradually decrease tolerance until vertices match
+                        tol_incr, iter_c = tolerance / 100, 50
+                        test_tol = tolerance - tol_incr
+                        while iter_c > 0 and len(new_geo) < len(adj_face.geometry):
+                            new_geo = face.geometry.remove_colinear_vertices(test_tol)
+                            test_tol -= tol_incr
+                            iter_c -= 1
+                except KeyError:  # the adjacent object has not been found yet
+                    pass
+                adj_dict[face.boundary_condition.boundary_condition_object] = face
+            # update geometry and remove degenerate Apertures and Doors
+            face._geometry = new_geo
+            face._punched_geometry = None  # reset so that it can be re-computed
+            face.remove_degenerate_sub_faces(tolerance)
+        # remove any degenerate Faces from the Room
+        for i in reversed(i_to_remove):
+            new_faces.pop(i)
+        self._faces = tuple(new_faces)
+        if self._geometry is not None:
+            self._geometry = Polyface3D.from_faces(
+                tuple(face.geometry for face in self._faces), tolerance)
+        return adj_dict
+
     def is_geo_equivalent(self, room, tolerance=0.01):
         """Get a boolean for whether this object is geometrically equivalent to another.
 
@@ -941,7 +1010,7 @@ class Room(_BaseWithShade):
             if not f1.is_geo_equivalent(f2, tolerance):
                 return False
         if not self._are_shades_equivalent(room, tolerance):
-           return False
+            return False
         return True
 
     def check_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True,
@@ -1577,9 +1646,9 @@ class Room(_BaseWithShade):
 
     @staticmethod
     def rooms_from_rectangle_plan(
-        width, length, floor_to_floor_height, perimeter_offset=0, story_count=1,
-        orientation_angle=0, outdoor_roof=True, ground_floor=True,
-        unique_id=None, tolerance=0.01):
+            width, length, floor_to_floor_height, perimeter_offset=0, story_count=1,
+            orientation_angle=0, outdoor_roof=True, ground_floor=True,
+            unique_id=None, tolerance=0.01):
         """Create a Rooms that represent a rectangular floor plan.
 
         Note that the resulting Rooms won't have any windows or solved adjacencies.
@@ -1633,9 +1702,9 @@ class Room(_BaseWithShade):
 
     @staticmethod
     def rooms_from_l_shaped_plan(
-        width_1, length_1, width_2, length_2, floor_to_floor_height, perimeter_offset=0,
-        story_count=1, orientation_angle=0, outdoor_roof=True, ground_floor=True,
-        unique_id=None, tolerance=0.01):
+            width_1, length_1, width_2, length_2, floor_to_floor_height,
+            perimeter_offset=0, story_count=1, orientation_angle=0,
+            outdoor_roof=True, ground_floor=True, unique_id=None, tolerance=0.01):
         """Create a Rooms that represent an L-shaped floor plan.
 
         Note that the resulting Rooms in the model won't have any windows or solved
@@ -1697,8 +1766,8 @@ class Room(_BaseWithShade):
 
     @staticmethod
     def rooms_from_footprint(
-        footprints, floor_to_floor_height, room_ids=None, unique_id=None,
-        orientation_angle=0, story_count=1, outdoor_roof=True, ground_floor=True):
+            footprints, floor_to_floor_height, room_ids=None, unique_id=None,
+            orientation_angle=0, story_count=1, outdoor_roof=True, ground_floor=True):
         """Create several Honeybee Rooms from footprint Face3Ds.
 
         Args:
