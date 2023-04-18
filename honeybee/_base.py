@@ -151,8 +151,8 @@ class _Base(object):
         }
 
     def _validation_message(
-        self, message, raise_exception=True, detailed=False,
-        code='000000', extension='Core', error_type='Unknown Error'):
+            self, message, raise_exception=True, detailed=False,
+            code='000000', extension='Core', error_type='Unknown Error'):
         """Handle a validation error message given various options.
 
         Args:

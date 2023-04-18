@@ -1959,9 +1959,14 @@ class Model(_Base):
         detailed = False if raise_exception else detailed
         msgs = []
         for room in self._rooms:
-            if all(isinstance(f.type, AirBoundary) for f in room._faces):
-                msg = 'Room "{}" is composed entirely of AirBoundary Faces. It ' \
-                    'should be merged with adjacent rooms.'.format(room.full_id)
+            non_ab = [f for f in room._faces if not isinstance(f.type, AirBoundary)]
+            if all(len(f.apertures) > 0 for f in non_ab):
+                st_msg = 'is composed entirely of AirBoundary Faces' \
+                    if len(non_ab) == 0 else \
+                    'is almost entirely composed of AirBoundary Faces with the ' \
+                    'other {} Faces having Apertures'.format(len(non_ab))
+                msg = 'Room "{}" {}. It should be merged with adjacent rooms.'.format(
+                    room.full_id, st_msg)
                 msg = self._validation_message_child(
                     msg, room, detailed, '000207',
                     error_type='Room Composed Entirely of AirBoundaries')
