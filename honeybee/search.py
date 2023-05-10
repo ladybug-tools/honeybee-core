@@ -42,7 +42,7 @@ def any_keywords_in_string(name, keywords):
     """Check whether any keywords in an array exist within a given string.
 
     Args:
-        name: A string which will be tested for whether it posseses any of the keywords.
+        name: A string which will be tested for whether it possesses any of the keywords.
         keywords: An array of strings representing keywords, which will be searched for
             in the name.
     """
