@@ -305,7 +305,7 @@ class Aperture(_BaseWithShade):
         return orient_text[0]
 
     def add_prefix(self, prefix):
-        """Change the identifier of this object and all child objects by inserting a prefix.
+        """Change the identifier of this object and child objects by inserting a prefix.
 
         This is particularly useful in workflows where you duplicate and edit
         a starting object and then want to combine it with the original object
@@ -602,7 +602,7 @@ class Aperture(_BaseWithShade):
         self._reset_parent_geometry()
 
     def rotate_xy(self, angle, origin):
-        """Rotate this Aperture counterclockwise in the world XY plane by a certain angle.
+        """Rotate this Aperture counterclockwise in the world XY plane by an angle.
 
         Args:
             angle: An angle in degrees.
@@ -730,7 +730,7 @@ class Aperture(_BaseWithShade):
         if self.geometry.is_self_intersecting:
             msg = 'Aperture "{}" has self-intersecting edges.'.format(self.full_id)
             try:  # see if it is self-intersecting because of a duplicate vertex
-                new_geo = self.geometry.remove_colinear_vertices(tolerance)
+                new_geo = self.geometry.remove_duplicate_vertices(tolerance)
                 if not new_geo.is_self_intersecting:
                     return ''  # removing the duplicate vertex makes it self-intersecting
             except AssertionError:

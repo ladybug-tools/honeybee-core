@@ -1318,7 +1318,7 @@ class Face(_BaseWithShade):
         if self.geometry.is_self_intersecting:
             msg = 'Face "{}" has self-intersecting edges.'.format(self.full_id)
             try:  # see if it is self-intersecting because of a duplicate vertex
-                new_geo = self.geometry.remove_colinear_vertices(tolerance)
+                new_geo = self.geometry.remove_duplicate_vertices(tolerance)
                 if not new_geo.is_self_intersecting:
                     return [] if detailed else ''  # valid with removed dup vertex
             except AssertionError:
