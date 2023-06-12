@@ -59,10 +59,12 @@ def validate_model(model_json, plain_text, output_file):
     try:
         if plain_text:
             # re-serialize the Model to make sure no errors are found
+            c_ver = folders.honeybee_core_version_str
+            s_ver = folders.honeybee_schema_version_str
             click.echo(
-                'Validating Model using honeybee-core=={} and honeybee-schema=={}'.format(
-                    folders.honeybee_core_version_str, folders.honeybee_schema_version_str
-                ))
+                'Validating Model using honeybee-core=={} and '
+                'honeybee-schema=={}'.format(c_ver, s_ver)
+            )
             parsed_model = Model.from_hbjson(model_json)
             click.echo('Re-serialization passed.')
             # perform several other checks for geometry rules and others
@@ -77,8 +79,9 @@ def validate_model(model_json, plain_text, output_file):
         else:
             out_dict = {
                 'type': 'ValidationReport',
-                'honeybee_core': folders.honeybee_core_version_str,
-                'honeybee_schema': folders.honeybee_schema_version_str
+                'app_name': 'Honeybee',
+                'app_version': folders.honeybee_core_version_str,
+                'schema_version': folders.honeybee_schema_version_str
             }
             try:
                 parsed_model = Model.from_hbjson(model_json)
