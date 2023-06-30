@@ -830,7 +830,8 @@ class Face(_BaseWithShade):
             return
         self._acceptable_sub_face_check(Aperture)
         # Generate the aperture geometry
-        face_plane = Plane(self._geometry.plane.n, self._geometry.min)
+        origin = self._geometry.lower_left_counter_clockwise_vertices[0]
+        face_plane = Plane(self._geometry.plane.n, origin)
         if face_plane.y.z < 0:
             face_plane = face_plane.rotate(face_plane.n, math.pi, face_plane.o)
         center2d = face_plane.xyz_to_xy(self._geometry.center)
