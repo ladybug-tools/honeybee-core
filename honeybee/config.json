@@ -1,4 +1,5 @@
 {
     "__comment__": "Add full paths to folders (eg. C:/sim_folder, /usr/local/sim_folder).",
-    "default_simulation_folder": ""
+    "default_simulation_folder": "",
+    "default_standards_folder": ""
 }

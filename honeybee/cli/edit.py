@@ -513,3 +513,58 @@ def louvers_by_spacing(model_file, spacing, depth, angle, offset, horizontal,
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@edit.command('reset-resource-ids')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--by-name/--by-name-and-uuid', ' /-uuid', help='Flag to note whether '
+    'newly-generated resource object IDs should be derived only from a '
+    'cleaned display_name or whether this new ID should also have a unique '
+    'set of 8 characters appended to it to guarantee uniqueness.', default=True
+)
+@click.option(
+    '--output-file', '-f', help='Optional hbjson file to output the JSON '
+    'string of the converted model. By default this will be printed out to '
+    'stdout', type=click.File('w'), default='-', show_default=True
+)
+def reset_resource_ids(model_file, by_name, output_file):
+    """Reset the identifiers of all resource objects in a Model file.
+
+    This will reset the identifiers of all resources of all extensions and
+    is useful when human-readable names are needed when the model is
+    exported to simulation engines.
+
+    \b
+    Args:
+        model_file: Full path to a Honeybee Model (HBJSON) file.
+    """
+    try:
+        # load the model file and separately load up the resource objects
+        if sys.version_info < (3, 0):
+            with open(model_file) as inf:
+                data = json.load(inf)
+        else:
+            with open(model_file, encoding='utf-8') as inf:
+                data = json.load(inf)
+        model = Model.from_dict(data)
+        # reset the identifiers of resources in the dictionary
+        add_uuid = not by_name
+        for atr in model.properties._extension_attributes:
+            var = getattr(model.properties, atr)
+            if not hasattr(var, 'reset_resource_ids_in_dict'):
+                continue
+            try:
+                data = var.reset_resource_ids_in_dict(data, add_uuid)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to reset resource IDs for {}: {}'.format(var, e))
+        # write the dictionary into a JSON
+        output_file.write(json.dumps(data))
+    except Exception as e:
+        _logger.exception('Resetting resource identifiers failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
