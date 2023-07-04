@@ -43,6 +43,7 @@ class Folders(object):
         * python_exe_path
         * python_version
         * python_version_str
+        * default_standards_folder
         * config_file
         * mute
     """
@@ -193,6 +194,23 @@ class Folders(object):
         return self._python_version_str
 
     @property
+    def default_standards_folder(self):
+        """Get or set the path to the default standards library used by extensions.
+        """
+        return self._default_standards_folder
+
+    @default_standards_folder.setter
+    def default_standards_folder(self, path):
+        if not path:  # check the default locations of the template library
+            path = self._find_default_standards_folder()
+
+        # set the default_standards_folder
+        self._default_standards_folder = path
+        if path and not self.mute:
+            print('Path to the default_standards_folder is set to: '
+                  '{}'.format(self._default_standards_folder))
+
+    @property
     def config_file(self):
         """Get or set the path to the config.json file from which folders are loaded.
 
@@ -221,7 +239,8 @@ class Folders(object):
 
         # set the default paths to be all blank
         default_path = {
-            "default_simulation_folder": r''
+            "default_simulation_folder": r'',
+            "default_standards_folder": r''
         }
 
         with open(file_path, 'r') as cfg:
@@ -237,6 +256,7 @@ class Folders(object):
 
         # set paths for the default_simulation_folder
         self.default_simulation_folder = default_path["default_simulation_folder"]
+        self.default_standards_folder = default_path["default_standards_folder"]
 
     def _python_version_from_cli(self):
         """Set this object's Python version by making a call to a Python command."""
@@ -270,6 +290,34 @@ class Folders(object):
                     raise OSError('Failed to create default simulation '
                                   'folder: %s\n%s' % (sim_folder, e))
         return sim_folder
+
+    @staticmethod
+    def _find_default_standards_folder():
+        """Find the user standards library in its default location.
+
+        The %AppData%/ladybug_tools/standards folder will be checked first, which
+        can contain libraries that are not overwritten with the update of the
+        honeybee_energy package. If this is not found, the ladybug_tools/resources/
+        standards/honeybee_standards folder will be checked next. If no such folder
+        is found, this None will be returned.
+        """
+        # first check if there's a user-defined folder in AppData
+        app_folder = os.getenv('APPDATA')
+        if app_folder is not None:
+            lib_folder = os.path.join(app_folder, 'ladybug_tools', 'standards')
+            if os.path.isdir(lib_folder):
+                return lib_folder
+
+        # then check the ladybug_tools installation folder were permanent lib is
+        lb_install = lb_config.folders.ladybug_tools_folder
+        if os.path.isdir(lb_install):
+            lib_folder = os.path.join(
+                lb_install, 'resources', 'standards', 'honeybee_standards')
+            if os.path.isdir(lib_folder):
+                return lib_folder
+
+        # default to None if nothing was found
+        return None
 
     def _find_honeybee_core_version(self):
         """Get a tuple of 3 integers for the version of honeybee_core if installed."""

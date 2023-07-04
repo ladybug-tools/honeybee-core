@@ -65,6 +65,7 @@ from honeybee.cli.validate import validate
 from honeybee.cli.compare import compare
 from honeybee.cli.create import create
 from honeybee.cli.edit import edit
+from honeybee.cli.lib import lib
 
 _logger = logging.getLogger(__name__)
 
@@ -88,7 +89,8 @@ def config(output_file):
             'python_package_path': folders.python_package_path,
             'python_scripts_path': folders.python_scripts_path,
             'python_exe_path': folders.python_exe_path,
-            'python_version': folders.python_version_str
+            'python_version': folders.python_version_str,
+            'default_standards_folder': folders.default_standards_folder
         }
         output_file.write(json.dumps(config_dict, indent=4))
     except Exception as e:
@@ -109,6 +111,7 @@ main.add_command(validate)
 main.add_command(compare)
 main.add_command(create)
 main.add_command(edit)
+main.add_command(lib)
 
 
 if __name__ == "__main__":

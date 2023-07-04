@@ -8,7 +8,7 @@ from honeybee.boundarycondition import Surface
 from honeybee.facetype import AirBoundary
 from honeybee.cli.edit import convert_units, solve_adjacency, windows_by_ratio, \
     windows_by_ratio_rect, extruded_border, overhang, louvers_by_count, \
-    louvers_by_spacing
+    louvers_by_spacing, reset_resource_ids
 
 
 def test_convert_units():
@@ -140,3 +140,19 @@ def test_louvers_by_spacing():
     model_dict = json.loads(result.output)
     new_model = Model.from_dict(model_dict)
     assert all(len(ap.indoor_shades) > 2 for ap in new_model.apertures)
+
+
+def reset_resource_ids_test():
+    """This test should only be run locally as it requires honeybee-energy."""
+    runner = CliRunner()
+    input_hb_model = './tests/json/ShoeBox.json'
+
+    c_args = [input_hb_model, '-uuid']
+    result = runner.invoke(reset_resource_ids, c_args)
+    assert result.exit_code == 0
+    model_dict = json.loads(result.output)
+    new_model = Model.from_dict(model_dict)
+    new_con_set = new_model.properties.energy.construction_sets[0]
+    old_id = '2013::ClimateZone5::SteelFramed'
+    assert new_con_set.identifier.startswith(old_id)
+    assert new_con_set.identifier != old_id
