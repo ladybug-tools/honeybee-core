@@ -250,6 +250,13 @@ def test_apertures_and_shades():
     tree_canopy_geo = Face3D.from_regular_polygon(6, 2, Plane(o=Point3D(5, -3, 4)))
     room.add_outdoor_shade(Shade('TreeCanopy', tree_canopy_geo))
 
+    assert len(room.walls) == 4
+    assert len(room.floors) == 1
+    assert len(room.roof_ceilings) == 1
+    assert len(room.air_boundaries) == 0
+    assert len(room.apertures) == 1
+    assert len(room.exterior_apertures) == 1
+
     assert room.exterior_aperture_area == pytest.approx(7.5, rel=1e-3)
     assert len(room.indoor_shades) == 1
     assert len(room.outdoor_shades) == 1
