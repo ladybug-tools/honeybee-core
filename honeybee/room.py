@@ -15,7 +15,7 @@ from .typing import float_in_range, int_in_range, clean_string, \
     invalid_dict_error
 from .properties import RoomProperties
 from .face import Face
-from .facetype import AirBoundary, get_type_from_normal, Wall, Floor, RoofCeiling
+from .facetype import AirBoundary, Wall, Floor, RoofCeiling, get_type_from_normal
 from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, \
     boundary_conditions
 from .orientation import angles_from_num_orient, orient_index
@@ -60,6 +60,13 @@ class Room(_BaseWithShade):
         * indoor_furniture
         * indoor_shades
         * outdoor_shades
+        * walls
+        * floors
+        * roof_ceilings
+        * air_boundaries
+        * doors
+        * apertures
+        * exterior_apertures
         * geometry
         * center
         * min
@@ -308,6 +315,54 @@ class Room(_BaseWithShade):
         furniture objects should be added here to the Room.
         """
         return tuple(self._indoor_shades)
+
+    @property
+    def walls(self):
+        """Get a tuple of all of the Wall Faces of the Room."""
+        return tuple(face for face in self._faces if isinstance(face.type, Wall))
+
+    @property
+    def floors(self):
+        """Get a tuple of all of the Floor Faces of the Room."""
+        return tuple(face for face in self._faces if isinstance(face.type, Floor))
+
+    @property
+    def roof_ceilings(self):
+        """Get a tuple of all of the RoofCeiling Faces of the Room."""
+        return tuple(face for face in self._faces if isinstance(face.type, RoofCeiling))
+
+    @property
+    def air_boundaries(self):
+        """Get a tuple of all of the AirBoundary Faces of the Room."""
+        return tuple(face for face in self._faces if isinstance(face.type, AirBoundary))
+
+    @property
+    def doors(self):
+        """Get a tuple of all Doors of the Room."""
+        drs = []
+        for face in self._faces:
+            if len(face._doors) > 0:
+                drs.extend(face._doors)
+        return tuple(drs)
+
+    @property
+    def apertures(self):
+        """Get a tuple of all Apertures of the Room."""
+        aps = []
+        for face in self._faces:
+            if len(face._apertures) > 0:
+                aps.extend(face._apertures)
+        return tuple(aps)
+
+    @property
+    def exterior_apertures(self):
+        """Get a tuple of all exterior Apertures of the Room."""
+        aps = []
+        for face in self._faces:
+            if isinstance(face.boundary_condition, Outdoors) and \
+                    len(face._apertures) > 0:
+                aps.extend(face._apertures)
+        return tuple(aps)
 
     @property
     def geometry(self):
