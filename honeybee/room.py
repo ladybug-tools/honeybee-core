@@ -1254,6 +1254,29 @@ class Room(_BaseWithShade):
             raise ValueError(full_msg)
         return full_msg
 
+    def check_degenerate(self, tolerance=0.01, raise_exception=True, detailed=False):
+        """Check whether the Room is degenerate with zero volume.
+
+        Args:
+            tolerance: tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. (Default: 0.01,
+                suitable for objects in meters).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if the room geometry is degenerate. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        if len(self._faces) >= 4 and self.volume > tolerance:
+            return [] if detailed else ''
+        msg = 'Room "{}" is degenerate with zero volume. It should be deleted'.format(
+                self.full_id)
+        return self._validation_message(
+            msg, raise_exception, detailed, '000107',
+            error_type='Degenerate Room Volume')
+
     def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
         """Check that the Room's geometry components are above a "zero" area tolerance.
 
