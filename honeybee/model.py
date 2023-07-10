@@ -1673,6 +1673,7 @@ class Model(_Base):
         # perform geometry checks related to parent-child relationships
         msgs.append(self.check_sub_faces_valid(tol, ang_tol, False, detailed))
         msgs.append(self.check_sub_faces_overlapping(False, detailed))
+        msgs.append(self.check_degenerate_rooms(tol, False, detailed))
         msgs.append(self.check_rooms_solid(tol, ang_tol, False, detailed))
         # check the extension attributes
         ext_msgs = self._properties._check_extension_attr(detailed)
@@ -2157,6 +2158,37 @@ class Model(_Base):
             return [m for msg in full_msgs for m in msg]
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_degenerate_rooms(
+            self, tolerance=0.01, raise_exception=True, detailed=False):
+        """Check whether there are degenerate Rooms (with zero volume) within the Model.
+
+        Args:
+            tolerance: tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. (Default: 0.01,
+                suitable for objects in meters).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if degenerate Rooms are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for room in self._rooms:
+            msg = room.check_degenerate(tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        if detailed:
+            return msgs
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
