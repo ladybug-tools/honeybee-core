@@ -544,6 +544,47 @@ class Room(_BaseWithShade):
             face.add_prefix(prefix)
         self._add_prefix_shades(prefix)
 
+    def horizontal_boundary(self, tolerance=0.01):
+        """Get a list of Face3D representing the horizontal boundary around the Room.
+        
+        This will be generated from all downward-facing Faces of the Room (essentially
+        the Floor faces but can also include overhanging slanted walls). So the result
+        should almost always represents the minimum number of Face3D to encompass
+        the Room in the XY plane. The only case where the result will not be clean
+        is if there are multiple overlapping downward-facing geometries (eg. a wall
+        slanting inward to the volume and then slanting back out again).
+
+        The Z height of the resulting Face3D will be at the minimum floor height.
+    
+        Args:
+            tolerance: The minimum difference between x, y, and z coordinate values
+                at which points are considered distinct. (Default: 0.01,
+                suitable for objects in Meters).
+        """
+        z_axis = Vector3D(0, 0, 1)
+        flr_geo = []
+        for face in self.faces:
+            if math.degrees(z_axis.angle(face.normal)) >= 91:
+                flr_geo.append(face.geometry)
+        if len(flr_geo) <= 1:
+            return flr_geo
+        else:  # multiple geometries to be joined together
+            floor_height = self.geometry.min.z
+            horiz_geo = []
+            for fg in flr_geo:
+                if fg.is_horizontal(tolerance) and \
+                        abs(floor_height - fg.min.z) <= tolerance:
+                    horiz_geo.append(fg)
+                else:  # project the face geometry into the XY plane
+                    bound = [Point3D(p.x, p.y, floor_height) for p in fg.boundary]
+                    holes = None
+                    if fg.has_holes:
+                        holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
+                                for hole in fg.holes]
+                    horiz_geo.append(Face3D(bound, holes=holes))
+            # TODO: Consider sensing overlapping geometries before trying to merge
+            return Face3D.join_coplanar_faces(horiz_geo, tolerance)
+
     def remove_indoor_furniture(self):
         """Remove all indoor furniture assigned to this Room.
 
@@ -738,10 +779,7 @@ class Room(_BaseWithShade):
             ratio: A number between 0 and 1 (but not perfectly equal to 1)
                 for the desired ratio between aperture area and face area.
             tolerance: The maximum difference between point values for them to be
-                considered a part of a rectangle. This is used in the event that
-                this face is concave and an attempt to subdivide the face into a
-                rectangle is made. It does not affect the ability to produce apertures
-                for convex Faces. Default: 0.01, suitable for objects in meters.
+                considered equivalent. (Default: 0.01, suitable for objects in meters).
 
         Usage:
 
@@ -766,10 +804,7 @@ class Room(_BaseWithShade):
             ratio: A number between 0 and 1 (but not perfectly equal to 1)
                 for the desired ratio between aperture area and face area.
             tolerance: The maximum difference between point values for them to be
-                considered a part of a rectangle. This is used in the event that
-                this face is concave and an attempt to subdivide the face into a
-                rectangle is made. It does not affect the ability to produce apertures
-                for convex Faces. Default: 0.01, suitable for objects in meters.
+                considered equivalent. (Default: 0.01, suitable for objects in meters).
 
         Usage:
 
@@ -1316,6 +1351,106 @@ class Room(_BaseWithShade):
             raise ValueError(full_msg)
         return full_msg
 
+    def merge_coplanar_faces(self, tolerance=0.01, angle_tolerance=1):
+        """Merge coplanar Faces of this Room.
+
+        This is often useful before running Room.intersect_adjacency between
+        multiple Rooms as it will ensure the result is clean with any previous
+        intersections erased.
+
+        This method attempts to preserve as many properties as possible for the
+        split Faces but, when Faces are merged, the properties of one of the
+        merged faces will determine the face type and boundary condition. Also, all
+        Face extension attributes will be removed (reset to default) and, if merged
+        Faces originally had Surface boundary conditions, they will be reset
+        to Outdoors.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                faces at which they can be considered adjacent. Default: 0.01,
+                suitable for objects in meters.
+            angle_tolerance: The max angle in degrees that the plane normals can
+                differ from one another in order for them to be considered
+                coplanar. (Default: 1 degree).
+        
+        Returns:
+            A list containing only the new Faces that were created as part of the
+            merging process. These new Faces will have as many properties of the
+            original Face assigned to them as possible but they will not have a
+            Surface boundary condition if the original Face had one. Having
+            the new Faces here can be used in operations like setting new Surface
+            boundary conditions or re-assigning extension attributes.
+        """
+        # group the Faces of the Room by their co-planarity
+        tol, a_tol = tolerance, math.radians(angle_tolerance)
+        coplanar_dict = {self._faces[0].geometry.plane: [self._faces[0]]}
+        for face in self._faces[1:]:
+            for pln, f_list in coplanar_dict.items():
+                if face.geometry.plane.is_coplanar_tolerance(pln, tol, a_tol):
+                    f_list.append(face)
+                    break
+            else:  # the first face with this type of plane
+                coplanar_dict[face.geometry.plane] = [face]
+
+        # merge any of the coplanar Faces together
+        all_faces, new_faces = [], []
+        for face_list in coplanar_dict.values():
+            if len(face_list) == 1:  # no faces to merge
+                all_faces.append(face_list[0])
+            else:  # there are faces to merge
+                f_geos = [f.geometry for f in face_list]
+                joined_geos = Face3D.join_coplanar_faces(f_geos, tolerance)
+                if len(joined_geos) < len(f_geos):  # faces were merged
+                    prop_f = face_list[0]
+                    apertures, doors, in_shades, out_shades = [], [], [], []
+                    for f in face_list:
+                        apertures.extend(f._apertures)
+                        doors.extend(f._doors)
+                        in_shades.extend(f._indoor_shades)
+                        out_shades.extend(f._outdoor_shades)
+                    for i, new_geo in enumerate(joined_geos):
+                        fid = prop_f.identifier if i == 0 else \
+                            '{}_{}'.format(prop_f.identifier, i)
+                        fbc = prop_f.boundary_condition if not \
+                            isinstance(prop_f.boundary_condition, Surface) \
+                            else boundary_conditions.outdoors
+                        nf = Face(fid, new_geo, prop_f.type, fbc)
+                        for ap in apertures:
+                            if nf.geometry.is_sub_face(ap.geometry, tol, a_tol):
+                                nf.add_aperture(ap)
+                        for dr in doors:
+                            if nf.geometry.is_sub_face(dr.geometry, tol, a_tol):
+                                nf.add_door(dr)
+                        if i == 0:  # add all assigned shades to this face
+                            nf.add_indoor_shades(in_shades)
+                            nf.add_outdoor_shades(out_shades)
+                        all_faces.append(nf)
+                        new_faces.append(nf)
+        if len(new_faces) == 0:
+            return new_faces  # nothing has been merged
+
+        # make a new polyface from the updated faces
+        room_polyface = Polyface3D.from_faces(
+            tuple(face.geometry for face in all_faces), tolerance)
+        if not room_polyface.is_solid:
+            room_polyface = room_polyface.merge_overlapping_edges(tolerance, a_tol)
+        # replace honeybee face geometry with versions that are facing outwards
+        if room_polyface.is_solid:
+            for i, correct_face3d in enumerate(room_polyface.faces):
+                face = all_faces[i]
+                norm_init = face._geometry.normal
+                face._geometry = correct_face3d
+                if face.has_sub_faces:  # flip sub-faces to align with parent Face
+                    if norm_init.angle(face._geometry.normal) > (math.pi / 2):
+                        for ap in face._apertures:
+                            ap._geometry = ap._geometry.flip()
+                        for dr in face._doors:
+                            dr._geometry = dr._geometry.flip()
+        # reset the faces and geometry of the room with the new faces
+        self._faces = tuple(all_faces)
+        self._geometry = room_polyface
+        return new_faces
+
     def coplanar_split(self, geometry, tolerance=0.01, angle_tolerance=1):
         """Split the Faces of this Room with coplanar geometry (Polyface3D or Face3D).
 
@@ -1324,7 +1459,7 @@ class Room(_BaseWithShade):
         as they don't fall in the path of the intersection).
 
         Args:
-            polyfaces: A list of coplanar geometry (either Polyface3D or Face3D)
+            geometry: A list of coplanar geometry (either Polyface3D or Face3D)
                 that will be used to split the Faces of this Room. Typically, these
                 are Polyface3D of other Room geometries to be intersected with this
                 one but they can also be Face3D if only one intersection is desired.
@@ -1721,6 +1856,97 @@ class Room(_BaseWithShade):
                     continue  # preserve any existing user-assigned story values
                 room.story = story_name
         return story_names
+
+    @staticmethod
+    def grouped_horizontal_boundary(rooms, min_separation=0, tolerance=0.01):
+        """Get a list of Face3D for the horizontal boundary around several Rooms.
+        
+        This method will attempt to produce a boundary that follows along the 
+        exterior parts of the Floors of the Rooms so it is not suitable for
+        Rooms that lack Floors or Rooms with overlapping Floors in plan. Rooms with
+        such conditions will be ignored in the result and, when the input rooms
+        are composed entirely  of Rooms with these criteria, this method will
+        return an empty list. This method may also return an empty list if the
+        min_separation is so large that a continuous boundary could not
+        be determined.
+    
+        Args:
+            rooms: A list of Honeybee Rooms for which the horizontal boundary will
+                be computed.
+            min_separation: A number for the minimum distance between Rooms that
+                is considered a meaningful separation. Gaps between Rooms that
+                are less than this distance will be ignored and the boundary
+                will continue across the gap. When the input rooms represent
+                volumes of interior Faces, this input can be thought of as the
+                maximum interior wall thickness, which should be ignored in
+                the calculation of the overall boundary of the Rooms. When Rooms
+                are touching one another (with Room volumes representing center lines
+                of walls), this value can be set to zero or anything less than
+                or equal to the tolerance. Doing so will yield a cleaner result for
+                the boundary, which will be faster. Note that care should be taken
+                not to set this value higher than the length of any meaningful
+                exterior wall segments. Otherwise, the exterior segments
+                will be ignored in the result. This can be particularly dangerous
+                around curved exterior walls that have been planarized through
+                subdivision into small segments. (Default: 0).
+            tolerance: The maximum difference between coordinate values of two
+                vertices at which they can be considered equivalent. (Default: 0.01,
+                suitable for objects in meters).
+        """
+        # get the horizontal boundary geometry of each room
+        floor_geos = []
+        for room in rooms:
+            floor_geos.extend(room.horizontal_boundary(tolerance))
+        
+        # remove colinear vertices and degenerate faces
+        clean_floor_geos = []
+        for geo in floor_geos:
+            try:
+                clean_floor_geos.append(geo.remove_colinear_vertices(tolerance))
+            except AssertionError:  # degenerate geometry to ignore
+                pass
+        if len(clean_floor_geos) == 0:
+            return []  # no Room boundary to be found
+
+        # convert the floor Face3Ds into counterclockwise Polygon2Ds
+        floor_polys, z_vals = [], []
+        for flr_geo in clean_floor_geos:
+            z_vals.append(flr_geo.min.z)
+            b_poly = Polygon2D([Point2D(pt.x, pt.y) for pt in flr_geo.boundary])
+            floor_polys.append(b_poly)
+            if flr_geo.has_holes:
+                for hole in flr_geo.holes:
+                    h_poly = Polygon2D([Point2D(pt.x, pt.y) for pt in hole])
+                    floor_polys.append(h_poly)
+        z_min = min(z_vals)
+
+        # if the min_separation is small, use the more reliable intersection method
+        if min_separation <= tolerance:
+            closed_polys = Polygon2D.joined_intersected_boundary(floor_polys, tolerance)
+        else: # otherwise, use the more intense and less reliable gap crossing method
+            closed_polys = Polygon2D.gap_crossing_boundary(
+                floor_polys, min_separation, tolerance)
+
+        # remove colinear vertices from the resulting polygons
+        clean_polys = []
+        for poly in closed_polys:
+            try:
+                clean_polys.append(poly.remove_colinear_vertices(tolerance))
+            except AssertionError:
+                pass  # degenerate polygon to ignore
+
+        # figure out if polygons represent holes in the others and make Face3D
+        if len(clean_polys) == 0:
+            return []
+        elif len(clean_polys) == 1:  # can be represented with a single Face3D
+            pts3d = [Point3D(pt.x, pt.y, z_min) for pt in clean_polys[0]]
+            return [Face3D(pts3d)]
+        else:  # need to separate holes from distinct Face3Ds
+            bound_faces = []
+            for poly in clean_polys:
+                pts3d = tuple(Point3D(pt.x, pt.y, z_min) for pt  in poly)
+                bound_faces.append(Face3D(pts3d))
+            return Face3D.merge_faces_to_holes(bound_faces, tolerance)
 
     @staticmethod
     def rooms_from_rectangle_plan(
