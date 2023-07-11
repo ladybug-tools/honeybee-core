@@ -1,4 +1,10 @@
 """Test Room class."""
+import json
+import pytest
+
+from ladybug_geometry.geometry2d import Vector2D, Polygon2D
+from ladybug_geometry.geometry3d import Point3D, Vector3D, Plane, Face3D, Polyface3D
+
 from honeybee.face import Face
 from honeybee.aperture import Aperture
 from honeybee.shade import Shade
@@ -6,13 +12,6 @@ from honeybee.room import Room
 from honeybee.boundarycondition import boundary_conditions, Surface, Outdoors, Ground
 from honeybee.facetype import face_types
 
-from ladybug_geometry.geometry2d.pointvector import Vector2D
-from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
-from ladybug_geometry.geometry3d.plane import Plane
-from ladybug_geometry.geometry3d.face import Face3D
-from ladybug_geometry.geometry3d.polyface import Polyface3D
-
-import pytest
 
 
 def test_init():
@@ -547,6 +546,41 @@ def test_check_non_zero():
     assert room_2.check_non_zero(0.01, False) != ''
 
 
+def test_merge_coplanar_faces():
+    """Test the merge_coplanar_faces method."""
+    pts_1 = [Point3D(0, 0, 0), Point3D(0, 10, 0), Point3D(10, 10, 0), Point3D(10, 0, 0)]
+    pts_2 = [Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(0, 10, 3), Point3D(0, 10, 0)]
+    pts_3 = [Point3D(0, 0, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(0, 0, 3)]
+    pts_4 = [Point3D(10, 10, 0), Point3D(0, 10, 0), Point3D(0, 10, 3), Point3D(10, 10, 3)]
+    pts_5 = [Point3D(10, 10, 0), Point3D(10, 0, 0), Point3D(10, 0, 3), Point3D(10, 10, 3)]
+    pts_6 = [Point3D(10, 0, 3), Point3D(10, 2.5, 3), Point3D(0, 2.5, 3), Point3D(0, 0, 3)]
+    pts_7 = [Point3D(10, 2.5, 3), Point3D(10, 5, 3), Point3D(0, 5, 3), Point3D(0, 2.5, 3)]
+    pts_8 = [Point3D(10, 5, 3), Point3D(10, 10, 3), Point3D(0, 10, 3), Point3D(0, 5, 3)]
+    face_1 = Face('Face1', Face3D(pts_1))
+    face_2 = Face('Face2', Face3D(pts_2))
+    face_3 = Face('Face3', Face3D(pts_3))
+    face_4 = Face('Face4', Face3D(pts_4))
+    face_5 = Face('Face5', Face3D(pts_5))
+    face_6 = Face('Face6', Face3D(pts_6))
+    face_7 = Face('Face7', Face3D(pts_7))
+    face_8 = Face('Face8', Face3D(pts_8))
+    room = Room('ZoneSHOE_BOX920980',
+                [face_1, face_2, face_3, face_4, face_5, face_6, face_7, face_8],
+                0.01, 1)
+    room[-1].apertures_by_ratio(0.2)
+    room[-2].apertures_by_ratio(0.2)
+
+    room.merge_coplanar_faces(0.01, 1)
+
+    assert len(room.faces) == 6
+    assert len(room.apertures) == 2
+    assert room.volume == 300
+    assert room.floor_area == 100
+    assert room.exposed_area == 220
+    assert room.exterior_wall_area == 120
+    room.check_solid(0.01, 1)
+
+
 def test_solve_adjacency():
     """Test the solve adjacency method."""
     room_south = Room.from_box('SouthZone', 5, 5, 3, origin=Point3D(0, 0, 0))
@@ -716,6 +750,28 @@ def test_group_by_orientation():
     assert len(grouped_rooms) == 4
     assert len(core_rooms) == 1
     assert orientations == [0.0, 90.0, 180.0, 270.0]
+
+
+def test_grouped_horizontal_boundary():
+    """Test the grouped_horizontal_boundary method."""
+    geo_file = './tests/json/polygons_for_gap_boundary.json'
+    with open(geo_file, 'r') as fp:
+        geo_dict = json.load(fp)
+    polygons = [Polygon2D.from_dict(p) for p in geo_dict]
+    cc_poly = []
+    for poly in polygons:
+        if poly.is_clockwise:
+            cc_poly.append(poly.reverse())
+        else:
+            cc_poly.append(poly)
+    faces = [Face3D([Point3D(p.x, p.y, 0) for p in poly]) for poly in cc_poly]
+    polyfaces = [Polyface3D.from_offset_face(face, 3) for face in faces]
+    rooms = [
+        Room.from_polyface3d('Room_{}'.format(i), pf) for i, pf in enumerate(polyfaces)]
+
+    horiz_boundary = Room.grouped_horizontal_boundary(rooms, 0.25, 0.01)
+    assert len(horiz_boundary) == 1
+    assert horiz_boundary[0].area > 1600
 
 
 def test_to_dict():

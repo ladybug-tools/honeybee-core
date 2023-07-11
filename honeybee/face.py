@@ -524,6 +524,11 @@ class Face(_BaseWithShade):
         for door in doors:
             self.add_door(door)
 
+    def replace_apertures(self, apertures):
+        """Replace all sub-faces assigned to this Face with a new list of Apertures."""
+        self.remove_sub_faces()
+        self.add_apertures(apertures)
+
     def set_adjacency(self, other_face, tolerance=0.01):
         """Set this face adjacent to another and set the other face adjacent to this one.
 

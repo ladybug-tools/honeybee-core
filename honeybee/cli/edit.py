@@ -63,22 +63,29 @@ def convert_units(model_file, units, scale, output_file):
 @edit.command('solve-adjacency')
 @click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.option('--wall/--air-boundary', ' /-ab', help='Flag to note whether the '
-              'wall adjacencies should be of the air boundary face type.',
-              default=True, show_default=True)
-@click.option('--surface/--adiabatic', ' /-a', help='Flag to note whether the '
-              'adjacencies should be surface or adiabatic.',
-              default=True, show_default=True)
+@click.option('--no-merge/--merge-coplanar', ' /-m', help='Flag to note whether '
+              'coplanar Faces of the Rooms should be merged before proceeding with '
+              'the rest of the adjacency solving. This is particularly helpful when '
+              'used with the --intersect option since it will ensure the Room geometry '
+              'is relatively clean before the intersection and adjacency solving '
+              'occurs.', default=True, show_default=True)
 @click.option('--no-intersect/--intersect', ' /-i', help='Flag to note whether the '
               'Faces of the Rooms should be intersected with one another before '
               'the adjacencies are solved.', default=True, show_default=True)
 @click.option('--no-overwrite/--overwrite', ' /-ow', help='Flag to note whether existing'
               ' Surface boundary conditions should be overwritten.',
               default=True, show_default=True)
+@click.option('--wall/--air-boundary', ' /-ab', help='Flag to note whether the '
+              'wall adjacencies should be of the air boundary face type.',
+              default=True, show_default=True)
+@click.option('--surface/--adiabatic', ' /-a', help='Flag to note whether the '
+              'adjacencies should be surface or adiabatic.',
+              default=True, show_default=True)
 @click.option('--output-file', '-f', help='Optional file to output the Model JSON string'
               ' with solved adjacency. By default it will be printed out to stdout',
               type=click.File('w'), default='-')
-def solve_adjacency(model_file, wall, surface, no_intersect, no_overwrite, output_file):
+def solve_adjacency(model_file, no_merge, no_intersect, no_overwrite,
+                    wall, surface, output_file):
     """Solve adjacency between Rooms of a Model file.
 
     \b
@@ -91,6 +98,11 @@ def solve_adjacency(model_file, wall, surface, no_intersect, no_overwrite, outpu
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use solve-adjacency.'
         tol, ang_tol = parsed_model.tolerance, parsed_model.angle_tolerance
+
+        # merge coplanar faces if requested
+        if not no_merge:
+            for room in parsed_model.rooms:
+                room.merge_coplanar_faces(tol, ang_tol)
 
         # intersect adjacencies if requested
         if not no_intersect:
