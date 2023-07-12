@@ -3,10 +3,8 @@
 from __future__ import division
 import math
 
-from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
-from ladybug_geometry.geometry3d.pointvector import Point3D
-from ladybug_geometry.geometry3d.plane import Plane
-from ladybug_geometry.geometry3d.face import Face3D
+from ladybug_geometry.geometry2d import Vector2D, Point2D, Polygon2D, Mesh2D
+from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, Face3D
 from ladybug.color import Color
 
 from ._basewithshade import _BaseWithShade
@@ -605,6 +603,249 @@ class Face(_BaseWithShade):
                     self.display_name, other_face.display_name)
 
         return adj_info
+
+    def rectangularize_apertures(
+            self, subdivision_distance=None, max_separation=None,
+            tolerance=0.01, angle_tolerance=1.0):
+        """Convert all Apertures on this Face to be rectangular.
+
+        This is useful when exporting to simulation engines that only accept
+        rectangular window geometry. This method will always result ing Rooms where
+        all Apertures are rectangular. However, if the subdivision_distance is not
+        set, some Apertures may extend past the parent Face or may collide with
+        one another.
+
+        Args:
+            subdivision_distance: A number for the resolution at which the
+                non-rectangular Apertures will be subdivided into smaller
+                rectangular units. Specifying a number here ensures that the
+                resulting rectangular Apertures do not extend past the parent
+                Face or collide with one another. If None, all non-rectangular
+                Apertures will be rectangularized by taking the bounding rectangle
+                around the Aperture. (Default: None).
+            max_separation: A number for the maximum distance between non-rectangular
+                Apertures at which point the Apertures will be merged into a single
+                rectangular geometry. This is often helpful when there are several
+                triangular Apertures that together make a rectangle when they are
+                merged across their frames. In such cases, this max_separation
+                should be set to a value that is slightly larger than the window frame.
+                If None, no merging of Apertures will happen before they are
+                converted to rectangles. (Default: None).
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. (Default: 0.01, suitable for objects in meters).
+            angle_tolerance: The max angle in degrees that the corners of the
+                rectangle can differ from a right angle before it is not
+                considered a rectangle. (Default: 1).
+        
+        Returns:
+            A list of any new Apertures that were created as part of the
+            rectangularization process. 
+        """
+        # sort the rectangular and non-rectangular apertures
+        apertures = self._apertures
+        if len(apertures) == 0:
+            return apertures
+        tol, ang_tol = tolerance, math.radians(angle_tolerance)
+        rect_aps, non_rect_aps = [], []
+        for aperture in apertures:
+            try:
+                clean_geo = aperture.geometry.remove_colinear_vertices(tol)
+            except AssertionError:  # degenerate Aperture to be ignored
+                continue
+            if clean_geo.polygon2d.is_rectangle(ang_tol):
+                rect_aps.append(aperture)
+            else:
+                non_rect_aps.append(clean_geo)
+        if not non_rect_aps:  # nothing to be rectangularized
+            return non_rect_aps
+
+        # reset boundary conditions to outdoors so new apertures can be added
+        if not isinstance(self.boundary_condition, Outdoors):
+            self.boundary_condition = boundary_conditions.outdoors
+            for ap in rect_aps:
+                ap.boundary_condition = boundary_conditions.outdoors
+
+        # try to merge the non-rectangular apertures if a max_separation is specified
+        ref_plane = self._reference_plane(ang_tol)
+        if max_separation is not None and len(non_rect_aps) > 1:
+            if max_separation <= tol:  #  just join the Apertures at the tolerance
+                non_rect_aps = Face3D.join_coplanar_faces(non_rect_aps, tol)
+            else:  # join the Apertures using the max_separation
+                # get polygons for the faces that all lie within the same plane
+                face_polys = []
+                for fg in non_rect_aps:
+                    verts2d = tuple(ref_plane.xyz_to_xy(_v) for _v in fg.boundary)
+                    face_polys.append(Polygon2D(verts2d))
+                    if fg.has_holes:
+                        for hole in fg.holes:
+                            verts2d = tuple(ref_plane.xyz_to_xy(_v) for _v in hole)
+                            face_polys.append(Polygon2D(verts2d))
+                # get the joined boundaries around the Polygon2D
+                joined_bounds = Polygon2D.gap_crossing_boundary(
+                    face_polys, max_separation, tolerance)
+                # convert the boundary polygons back to Face3D
+                if len(joined_bounds) == 1:  # can be represented with a single Face3D
+                    verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in joined_bounds[0])
+                    non_rect_aps = [Face3D(verts3d, plane=ref_plane)]
+                else:  # need to separate holes from distinct Face3Ds
+                    bound_faces = []
+                    for poly in joined_bounds:
+                        verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in poly)
+                        bound_faces.append(Face3D(verts3d, plane=ref_plane))
+                    non_rect_aps = Face3D.merge_faces_to_holes(bound_faces, tolerance)
+            clean_aps = []
+            for ap_geo in non_rect_aps:
+                try:
+                    clean_aps.append(ap_geo.remove_colinear_vertices(tol))
+                except AssertionError:  # degenerate Aperture to be ignored
+                    continue
+            non_rect_aps = clean_aps
+
+        # convert the remaining Aperture geometries to rectangles
+        if subdivision_distance is None:  # just take the bounding rectangle
+            # get the bounding rectangle around all of the geometries
+            ap_geos = []
+            for ap_geo in non_rect_aps:
+                if ap_geo.polygon2d.is_rectangle(ang_tol):
+                    ap_geos.append(ap_geo)  # catch rectangles found in merging
+                    continue
+                geo_2d = Polygon2D([ref_plane.xyz_to_xy(v) for v in ap_geo.vertices])
+                g_min, g_max = geo_2d.min, geo_2d.max
+                base, hgt = g_max.x - g_min.x, g_max.y - g_min.y
+                bound_poly = Polygon2D.from_rectangle(g_min, Vector2D(0, 1), base, hgt)
+                geo_3d = Face3D([ref_plane.xy_to_xyz(v) for v in bound_poly.vertices])
+                ap_geos.append(geo_3d)
+
+            # create Aperture objects from all of the merged geometries
+            new_aps = []
+            for i, ap_face in enumerate(ap_geos):
+                new_aps.append(Aperture('{}_Glz{}'.format(self.identifier, i), ap_face))
+            self.remove_apertures()
+            self.add_apertures(rect_aps + new_aps)
+            return new_aps
+
+        # if distance is provided, subdivide the apertures into strips
+        ap_geos = []
+        for ap_geo in non_rect_aps:
+            if ap_geo.polygon2d.is_rectangle(ang_tol):
+                ap_geos.append(ap_geo)  # catch rectangles found in merging
+                continue
+            # create a mesh grid over the Aperture in the reference plane
+            geo_2d = Polygon2D([ref_plane.xyz_to_xy(v) for v in ap_geo.vertices])
+            try:
+                grid = Mesh2D.from_polygon_grid(
+                    geo_2d, subdivision_distance, subdivision_distance, False)
+            except AssertionError:  # Aperture smaller than resolution; ignore
+                continue
+
+            # group face by y value. All the rows will be merged together.
+            vertices = grid.vertices
+            groups = {}
+            for face in grid.faces:
+                min_2d = vertices[face[0]]
+                for y in groups:
+                    if abs(min_2d.y - y) < 0.01:
+                        groups[y].append(face)
+                        break
+                else:
+                    groups[min_2d.y] = [face]
+
+            # merge the rows if they have the same number of grids
+            sorted_groups = []
+            for group in groups.values():
+                # find min_2d and max_2d for each group
+                group.sort(key=lambda x: vertices[x[0]].x)
+                min_2d = vertices[group[0][0]]
+                max_2d = vertices[group[-1][2]]
+                sorted_groups.append({'min': min_2d, 'max': max_2d})
+
+            def _get_last_row(groups, start=0):
+                """An internal function to return the index for the last row that can be
+                merged with the start row that is passed to this function.
+
+                This function compares the min and max x and y values for each row to see
+                if they can be merged into a rectangle.
+                """
+                for count, group in enumerate(groups[start:]):
+                    next_group = groups[count + start + 1]
+                    if abs(group['min'].x - next_group['min'].x) <= 0.01 \
+                        and abs(group['max'].x - next_group['max'].x) <= 0.01 \
+                            and abs(next_group['min'].y - group['max'].y) <= 0.01:
+                        continue
+                    else:
+                        return start + count
+
+                return start + count + 1
+
+            # sort based on y
+            sorted_groups.sort(key=lambda x: x['min'].y)
+            merged_groups = []
+            start_row = 0
+            last_row = -1
+            while last_row < len(sorted_groups):
+                try:
+                    last_row = _get_last_row(sorted_groups, start=start_row)
+                except IndexError:
+                    merged_groups.append(
+                        {
+                            'min': sorted_groups[start_row]['min'],
+                            'max': sorted_groups[len(sorted_groups) - 1]['max']
+                        }
+                    )
+                    break
+                else:
+                    merged_groups.append(
+                        {
+                            'min': sorted_groups[start_row]['min'],
+                            'max': sorted_groups[last_row]['max']
+                        }
+                    )
+                    if last_row == start_row:
+                        # the row was not grouped with anything else
+                        start_row += 1
+                    else:
+                        start_row = last_row + 1
+
+            # convert the groups into rectangular strips
+            for group in merged_groups:
+                min_2d = group['min']
+                max_2d = group['max']
+                base, hgt = max_2d.x - min_2d.x, max_2d.y - min_2d.y
+                bound_poly = Polygon2D.from_rectangle(min_2d, Vector2D(0, 1), base, hgt)
+                geo_3d = Face3D([ref_plane.xy_to_xyz(v) for v in bound_poly.vertices])
+                ap_geos.append(geo_3d)
+
+        # create Aperture objects from all of the merged geometries
+        new_aps = []
+        for i, ap_face in enumerate(ap_geos):
+            new_aps.append(Aperture('{}_Glz{}'.format(self.identifier, i), ap_face))
+        self.remove_apertures()
+        self.add_apertures(rect_aps + new_aps)
+        return new_aps
+
+    def _reference_plane(self, angle_tolerance):
+        """Get a Plane for this Face geometry derived from the Face3D plane.
+        
+        This will be oriented with the plane Y-Axis either aligned with the
+        World Z or World Y, which is helpful in rectangularization.
+
+        Args:
+            angle_tolerance: The max angle in radians that Face normal can differ
+                from the World Z before the Face is treated as being in the
+                World XY plane.
+        """
+        parent_llc = self.geometry.lower_left_corner
+        rel_plane = self.geometry.plane
+        vertical = Vector3D(0, 0, 1)
+        vert_ang = rel_plane.n.angle(vertical)
+        if vert_ang <= angle_tolerance or vert_ang >= math.pi - angle_tolerance:
+            proj_x = Vector3D(1, 0, 0)
+        else:
+            proj_y = vertical.project(rel_plane.n)
+            proj_x = proj_y.rotate(rel_plane.n, math.pi / -2)
+
+        ref_plane = Plane(rel_plane.n, parent_llc, proj_x)
+        return ref_plane
 
     def apertures_by_ratio(self, ratio, tolerance=0.01):
         """Add apertures to this Face given a ratio of aperture area to face area.

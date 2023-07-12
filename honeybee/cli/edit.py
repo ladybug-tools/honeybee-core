@@ -97,38 +97,15 @@ def solve_adjacency(model_file, no_merge, no_intersect, no_overwrite,
         parsed_model = Model.from_file(model_file)
         assert parsed_model.tolerance != 0, \
             'Model must have a non-zero tolerance to use solve-adjacency.'
-        tol, ang_tol = parsed_model.tolerance, parsed_model.angle_tolerance
-
-        # merge coplanar faces if requested
-        if not no_merge:
-            for room in parsed_model.rooms:
-                room.merge_coplanar_faces(tol, ang_tol)
-
-        # intersect adjacencies if requested
-        if not no_intersect:
-            Room.intersect_adjacency(parsed_model.rooms, tol, ang_tol)
 
         # solve adjacency
-        if no_overwrite:  # only assign new adjacencies
-            adj_info = Room.solve_adjacency(parsed_model.rooms, tol)
-        else:  # overwrite existing Surface BC
-            adj_faces = Room.find_adjacency(parsed_model.rooms, tol)
-            for face_pair in adj_faces:
-                face_pair[0].set_adjacency(face_pair[1])
-            adj_info = {'adjacent_faces': adj_faces}
-
-        # try to assign the air boundary face type
-        if not wall:
-            for face_pair in adj_info['adjacent_faces']:
-                if isinstance(face_pair[0].type, Wall):
-                    face_pair[0].type = face_types.air_boundary
-                    face_pair[1].type = face_types.air_boundary
-
-        # try to assign the adiabatic boundary condition
-        if not surface and ad_bc:
-            for face_pair in adj_info['adjacent_faces']:
-                face_pair[0].boundary_condition = ad_bc
-                face_pair[1].boundary_condition = ad_bc
+        merge_coplanar = not no_merge
+        intersect = not no_intersect
+        overwrite = not no_overwrite
+        air_boundary = not wall
+        adiabatic = not surface
+        parsed_model.solve_adjacency(
+            merge_coplanar, intersect, overwrite, air_boundary, adiabatic)
 
         # write the new model out to the file or stdout
         output_file.write(json.dumps(parsed_model.to_dict()))

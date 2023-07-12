@@ -818,6 +818,64 @@ class Room(_BaseWithShade):
                     isinstance(face.type, RoofCeiling):
                 face.apertures_by_ratio(ratio, tolerance)
 
+    def simplify_apertures(self, tolerance=0.01):
+        """Convert all Apertures on this Room to be a simple window ratio.
+
+        This is useful for studies where faster simulation times are desired and
+        the window ratio is the critical factor driving the results (as opposed
+        to the detailed geometry of the window). Apertures assigned to concave
+        Faces will not be simplified given that the apertures_by_ratio method
+        likely won't improve the cleanliness of the apertures for such cases.
+
+        Args:
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. (Default: 0.01, suitable for objects in meters).
+        """
+        for face in self.faces:
+            f_ap = face._apertures
+            if len(f_ap) != 0 and face.geometry.is_convex:
+                # reset boundary conditions to outdoors so new apertures can be added
+                if not isinstance(face.boundary_condition, Outdoors):
+                    face.boundary_condition = boundary_conditions.outdoors
+                face.apertures_by_ratio(face.aperture_ratio, tolerance)
+    
+    def rectangularize_apertures(
+            self, subdivision_distance=None, max_separation=None,
+            tolerance=0.01, angle_tolerance=1.0):
+        """Convert all Apertures on this Room to be rectangular.
+
+        This is useful when exporting to simulation engines that only accept
+        rectangular window geometry. This method will always result ing Rooms where
+        all Apertures are rectangular. However, if the subdivision_distance is not
+        set, some Apertures may extend past the parent Face or may collide with
+        one another.
+
+        Args:
+            subdivision_distance: A number for the resolution at which the
+                non-rectangular Apertures will be subdivided into smaller
+                rectangular units. Specifying a number here ensures that the
+                resulting rectangular Apertures do not extend past the parent
+                Face or collide with one another. If None, all non-rectangular
+                Apertures will be rectangularized by taking the bounding rectangle
+                around the Aperture. (Default: None).
+            max_separation: A number for the maximum distance between non-rectangular
+                Apertures at which point the Apertures will be merged into a single
+                rectangular geometry. This is often helpful when there are several
+                triangular Apertures that together make a rectangle when they are
+                merged across their frames. In such cases, this max_separation
+                should be set to a value that is slightly larger than the window frame.
+                If None, no merging of Apertures will happen before they are
+                converted to rectangles. (Default: None).
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. (Default: 0.01, suitable for objects in meters).
+            angle_tolerance: The max angle in degrees that the corners of the
+                rectangle can differ from a right angle before it is not
+                considered a rectangle. (Default: 1).
+        """
+        for face in self._faces:
+            face.rectangularize_apertures(
+                subdivision_distance, max_separation, tolerance, angle_tolerance)
+
     def ground_by_custom_surface(self, ground_geometry, tolerance=0.01,
                                  angle_tolerance=1.0):
         """Set ground boundary conditions using an array of Face3D for the ground.
