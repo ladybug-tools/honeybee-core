@@ -27,7 +27,7 @@ from .door import Door
 from .typing import float_positive, invalid_dict_error, clean_string
 from .config import folders
 from .boundarycondition import Outdoors, Surface
-from .facetype import AirBoundary, Wall, Floor, RoofCeiling
+from .facetype import AirBoundary, Wall, Floor, RoofCeiling, face_types
 import honeybee.writer.model as writer
 from honeybee.boundarycondition import boundary_conditions as bcs
 try:
@@ -1203,6 +1203,70 @@ class Model(_Base):
         for door in self._orphaned_doors:
             door.add_prefix(prefix)
 
+    def solve_adjacency(
+            self, merge_coplanar=False, intersect=False, overwrite=False,
+            air_boundary=False, adiabatic=False,
+            tolerance=None, angle_tolerance=None):
+        """Solve adjacency between Rooms of the Model.
+
+        Args:
+            merge_coplanar: Boolean to note whether coplanar Faces of the Rooms
+                should be merged before proceeding with the rest of the adjacency
+                solving. This is particularly helpful when used with the intersect
+                option since it will ensure the Room geometry is relatively
+                clean before the intersection and adjacency solving
+                occurs. (Default: False).
+            intersect: Boolean to note whether the Faces of the Rooms should be
+                intersected with one another before the adjacencies are
+                solved. (Default: False).
+            overwrite: Boolean to note whether existing Surface boundary
+                conditions should be overwritten. (Default: False).
+            air_boundary: Boolean to note whether the wall adjacencies should be
+                of the air boundary face type. (Default: False).
+            adiabatic: Boolean to note whether the adjacencies should be
+                surface or adiabatic. Note that this requires honeybee-energy
+                to be installed in order to have any meaning. (Default: False).
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. If None, the Model tolerance will be
+                used. (Default: None).
+            angle_tolerance: The max angle difference in degrees where Face normals
+                are no longer considered coplanar. If None, the Model
+                angle_tolerance will be used. (Default: None).
+        """
+        tol = tolerance if tolerance else self.tolerance
+        ang_tol = angle_tolerance if angle_tolerance else self.angle_tolerance
+
+        # merge coplanar faces if requested
+        if merge_coplanar:
+            for room in self.rooms:
+                room.merge_coplanar_faces(tol, ang_tol)
+
+        # intersect adjacencies if requested
+        if intersect:
+            Room.intersect_adjacency(self.rooms, tol, ang_tol)
+
+        # solve adjacency
+        if not overwrite:  # only assign new adjacencies
+            adj_info = Room.solve_adjacency(self.rooms, tol)
+        else:  # overwrite existing Surface BC
+            adj_faces = Room.find_adjacency(self.rooms, tol)
+            for face_pair in adj_faces:
+                face_pair[0].set_adjacency(face_pair[1])
+            adj_info = {'adjacent_faces': adj_faces}
+
+        # try to assign the air boundary face type
+        if air_boundary:
+            for face_pair in adj_info['adjacent_faces']:
+                if isinstance(face_pair[0].type, Wall):
+                    face_pair[0].type = face_types.air_boundary
+                    face_pair[1].type = face_types.air_boundary
+
+        # try to assign the adiabatic boundary condition
+        if adiabatic and ad_bc:
+            for face_pair in adj_info['adjacent_faces']:
+                face_pair[0].boundary_condition = ad_bc
+                face_pair[1].boundary_condition = ad_bc
+
     def move(self, moving_vec):
         """Move this Model along a vector.
 
@@ -1412,7 +1476,66 @@ class Model(_Base):
             return Mesh3D.join_meshes(ap_grids)
         return None
 
-    def wall_apertures_by_ratio(self, ratio, tolerance=0.01):
+    def simplify_apertures(self, tolerance=None):
+        """Convert all Apertures in this Model to be a simple window ratio.
+
+        This is useful for studies where faster simulation times are desired and
+        the window ratio is the critical factor driving the results (as opposed
+        to the detailed geometry of the window). Apertures assigned to concave
+        Faces will not be simplified given that the Face.apertures_by_ratio method
+        likely won't improve the cleanliness of the apertures for such cases.
+
+        Args:
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. If None, the Model tolerance will be
+                used. (Default: None).
+        """
+        tol = tolerance if tolerance else self.tolerance
+        for room in self._rooms:
+            room.simplify_apertures(tol)
+    
+    def rectangularize_apertures(
+            self, subdivision_distance=None, max_separation=None,
+            tolerance=None, angle_tolerance=None):
+        """Convert all Apertures on this Room to be rectangular.
+
+        This is useful when exporting to simulation engines that only accept
+        rectangular window geometry. This method will always result ing Rooms where
+        all Apertures are rectangular. However, if the subdivision_distance is not
+        set, some Apertures may extend past the parent Face or may collide with
+        one another.
+
+        Args:
+            subdivision_distance: A number for the resolution at which the
+                non-rectangular Apertures will be subdivided into smaller
+                rectangular units. Specifying a number here ensures that the
+                resulting rectangular Apertures do not extend past the parent
+                Face or collide with one another. If None, all non-rectangular
+                Apertures will be rectangularized by taking the bounding rectangle
+                around the Aperture. (Default: None).
+            max_separation: A number for the maximum distance between non-rectangular
+                Apertures at which point the Apertures will be merged into a single
+                rectangular geometry. This is often helpful when there are several
+                triangular Apertures that together make a rectangle when they are
+                merged across their frames. In such cases, this max_separation
+                should be set to a value that is slightly larger than the window frame.
+                If None, no merging of Apertures will happen before they are
+                converted to rectangles. (Default: None).
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. If None, the Model tolerance will be
+                used. (Default: None).
+            angle_tolerance: The max angle in degrees that the corners of the
+                rectangle can differ from a right angle before it is not
+                considered a rectangle. If None, the Model angle_tolerance will be
+                used. (Default: None).
+        """
+        tol = tolerance if tolerance else self.tolerance
+        a_tol = angle_tolerance if angle_tolerance else self.angle_tolerance
+        for room in self._rooms:
+            room.rectangularize_apertures(
+                subdivision_distance, max_separation, tol, a_tol)
+
+    def wall_apertures_by_ratio(self, ratio, tolerance=None):
         """Add apertures to all exterior walls given a ratio of aperture to face area.
 
         Note this method only affects the Models rooms (no orphaned faces) and it
@@ -1426,12 +1549,14 @@ class Model(_Base):
                 considered a part of a rectangle. This is used in the event that
                 this face is concave and an attempt to subdivide the face into a
                 rectangle is made. It does not affect the ability to produce apertures
-                for convex Faces. Default: 0.01, suitable for objects in meters.
+                for convex Faces. If None, the Model tolerance will be
+                used. (Default: None).
         """
+        tol = tolerance if tolerance else self.tolerance
         for room in self._rooms:
-            room.wall_apertures_by_ratio(ratio, tolerance)
+            room.wall_apertures_by_ratio(ratio, tol)
 
-    def skylight_apertures_by_ratio(self, ratio, tolerance=0.01):
+    def skylight_apertures_by_ratio(self, ratio, tolerance=None):
         """Add apertures to all exterior roofs given a ratio of aperture to face area.
 
         Note this method only affects the Models rooms (no orphaned faces) and
@@ -1445,10 +1570,12 @@ class Model(_Base):
                 considered a part of a rectangle. This is used in the event that
                 this face is concave and an attempt to subdivide the face into a
                 rectangle is made. It does not affect the ability to produce apertures
-                for convex Faces. Default: 0.01, suitable for objects in meters.
+                for convex Faces. If None, the Model tolerance will be
+                used. (Default: None).
         """
+        tol = tolerance if tolerance else self.tolerance
         for room in self._rooms:
-            room.skylight_apertures_by_ratio(ratio, tolerance)
+            room.skylight_apertures_by_ratio(ratio, tol)
 
     def assign_stories_by_floor_height(self, min_difference=2.0, overwrite=False):
         """Assign story properties to the rooms of this Model using their floor heights.
@@ -1837,7 +1964,7 @@ class Model(_Base):
             raise ValueError(msg)
         return msg
 
-    def check_matching_adjacent_areas(self, tolerance=0.01, raise_exception=True,
+    def check_matching_adjacent_areas(self, tolerance=None, raise_exception=True,
                                       detailed=False):
         """Check that all adjacent Faces have areas that match within the tolerance.
 
@@ -1848,8 +1975,8 @@ class Model(_Base):
 
         Args:
             tolerance: tolerance: The maximum difference between x, y, and z values
-                at which face vertices are considered equivalent. (Default: 0.01,
-                suitable for objects in meters).
+                at which face vertices are considered equivalent. If None, the Model
+                tolerance will be used. (Default: None).
             raise_exception: Boolean to note whether a ValueError should be raised
                 if invalid adjacencies are found. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
@@ -1858,6 +1985,7 @@ class Model(_Base):
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
         """
+        tolerance = self.tolerance if tolerance is None else tolerance
         detailed = False if raise_exception else detailed
         # first gather all interior faces in the model and their adjacent object
         base_faces, adj_ids = [], []
@@ -1979,17 +2107,19 @@ class Model(_Base):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_rooms_solid(self, tolerance=0.01, angle_tolerance=1,
+    def check_rooms_solid(self, tolerance=None, angle_tolerance=None,
                           raise_exception=True, detailed=False):
         """Check whether the Model's rooms are closed solid to within tolerances.
 
         Args:
             tolerance: tolerance: The maximum difference between x, y, and z values
                 at which face vertices are considered equivalent. Default: 0.01,
-                suitable for objects in meters.
+                suitable for objects in meters. If None, the Model tolerance will
+                be used. (Default: None).
             angle_tolerance: The max angle difference in degrees that vertices are
                 allowed to differ from one another in order to consider them colinear.
-                Default: 1 degree.
+                Default: 1 degree. If None, the Model angle_tolerance will be
+                used. (Default: None).
             raise_exception: Boolean to note whether a ValueError should be raised
                 if the room geometry does not form a closed solid. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
@@ -1998,6 +2128,9 @@ class Model(_Base):
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
         """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        angle_tolerance = self.angle_tolerance \
+            if angle_tolerance is None else angle_tolerance
         detailed = False if raise_exception else detailed
         msgs = []
         for room in self._rooms:
@@ -2013,7 +2146,7 @@ class Model(_Base):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
+    def check_sub_faces_valid(self, tolerance=None, angle_tolerance=None,
                               raise_exception=True, detailed=False):
         """Check that model's sub-faces are co-planar with faces and in their boundary.
 
@@ -2023,10 +2156,11 @@ class Model(_Base):
         Args:
             tolerance: The minimum difference between the coordinate values of two
                 vertices at which they can be considered equivalent. Default: 0.01,
-                suitable for objects in meters.
+                suitable for objects in meters. If None, the Model tolerance will
+                be used. (Default: None).
             angle_tolerance: The max angle in degrees that the plane normals can
                 differ from one another in order for them to be considered coplanar.
-                Default: 1 degree.
+                If None, the Model angle_tolerance will be used. (Default: None).
             raise_exception: Boolean to note whether a ValueError should be raised
                 if an sub-face is not valid. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
@@ -2035,6 +2169,9 @@ class Model(_Base):
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
         """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        angle_tolerance = self.angle_tolerance \
+            if angle_tolerance is None else angle_tolerance
         detailed = False if raise_exception else detailed
         msgs = []
         for rm in self._rooms:
@@ -2089,7 +2226,7 @@ class Model(_Base):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_planar(self, tolerance, raise_exception=True, detailed=False):
+    def check_planar(self, tolerance=None, raise_exception=True, detailed=False):
         """Check that all of the Model's geometry components are planar.
 
         This includes all of the Model's Faces, Apertures, Doors and Shades.
@@ -2097,6 +2234,7 @@ class Model(_Base):
         Args:
             tolerance: The minimum distance between a given vertex and a the
                 object's plane at which the vertex is said to lie in the plane.
+                If None, the Model tolerance will be used. (Default: None).
             raise_exception: Boolean to note whether an ValueError should be
                 raised if a vertex does not lie within the object's plane.
             detailed: Boolean for whether the returned object is a detailed list of
@@ -2105,6 +2243,7 @@ class Model(_Base):
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
         """
+        tolerance = self.tolerance if tolerance is None else tolerance
         detailed = False if raise_exception else detailed
         msgs = []
         for face in self.faces:
@@ -2123,7 +2262,7 @@ class Model(_Base):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_self_intersecting(self, tolerance=0.01, raise_exception=True,
+    def check_self_intersecting(self, tolerance=None, raise_exception=True,
                                 detailed=False):
         """Check that no edges of the Model's geometry components self-intersect.
 
@@ -2131,8 +2270,8 @@ class Model(_Base):
 
         Args:
             tolerance: The minimum difference between the coordinate values of two
-                vertices at which they can be considered equivalent. Default: 0.01,
-                suitable for objects in meters.
+                vertices at which they can be considered equivalent. If None, the
+                Model tolerance will be used. (Default: None).
             raise_exception: If True, a ValueError will be raised if an object
                 intersects with itself (like a bowtie). (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
@@ -2141,6 +2280,7 @@ class Model(_Base):
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
         """
+        tolerance = self.tolerance if tolerance is None else tolerance
         detailed = False if raise_exception else detailed
         msgs = []
         for room in self.rooms:
@@ -2162,13 +2302,13 @@ class Model(_Base):
         return full_msg
 
     def check_degenerate_rooms(
-            self, tolerance=0.01, raise_exception=True, detailed=False):
+            self, tolerance=None, raise_exception=True, detailed=False):
         """Check whether there are degenerate Rooms (with zero volume) within the Model.
 
         Args:
-            tolerance: tolerance: The maximum difference between x, y, and z values
-                at which face vertices are considered equivalent. (Default: 0.01,
-                suitable for objects in meters).
+            tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. If None, the
+                Model tolerance will be used. (Default: None).
             raise_exception: Boolean to note whether a ValueError should be raised
                 if degenerate Rooms are found. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
@@ -2177,6 +2317,7 @@ class Model(_Base):
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
         """
+        tolerance = self.tolerance if tolerance is None else tolerance
         detailed = False if raise_exception else detailed
         msgs = []
         for room in self._rooms:

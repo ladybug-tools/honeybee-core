@@ -641,6 +641,31 @@ def test_reflect():
     assert room[1].doors[0].center.z == pytest.approx(d_cent.z, rel=1e-3)
 
 
+def test_simplify_apertures():
+    """Test the rectangularize_apertures method."""
+    model_json = './tests/json/minor_geometry/existing_model.hbjson'
+    parsed_model = Model.from_hbjson(model_json)
+    assert isinstance(parsed_model, Model)
+    start_ratio = parsed_model.exterior_aperture_area
+
+    parsed_model.simplify_apertures()
+    parsed_model.solve_adjacency()
+
+    parsed_model.check_sub_faces_valid()
+    end_area = parsed_model.exterior_aperture_area
+    assert start_ratio == pytest.approx(end_area, rel=1e-3)
+
+
+def test_rectangularize_apertures():
+    """Test the rectangularize_apertures method."""
+    model_json = './tests/json/minor_geometry/existing_model.hbjson'
+    parsed_model = Model.from_hbjson(model_json)
+    assert isinstance(parsed_model, Model)
+
+    parsed_model.rectangularize_apertures(0.65)
+    parsed_model.check_sub_faces_valid()
+
+
 def test_check_duplicate_room_identifiers():
     """Test the check_duplicate_room_identifiers method."""
     room_south = Room.from_box('Zone1', 5, 5, 3, origin=Point3D(0, 0, 0))
