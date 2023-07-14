@@ -649,7 +649,6 @@ def test_simplify_apertures():
     start_ratio = parsed_model.exterior_aperture_area
 
     parsed_model.simplify_apertures()
-    parsed_model.solve_adjacency()
 
     parsed_model.check_sub_faces_valid()
     end_area = parsed_model.exterior_aperture_area
