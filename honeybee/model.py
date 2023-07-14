@@ -1476,7 +1476,7 @@ class Model(_Base):
             return Mesh3D.join_meshes(ap_grids)
         return None
 
-    def simplify_apertures(self, tolerance=None):
+    def simplify_apertures(self, resolve_adjacency=True, tolerance=None):
         """Convert all Apertures in this Model to be a simple window ratio.
 
         This is useful for studies where faster simulation times are desired and
@@ -1486,6 +1486,12 @@ class Model(_Base):
         likely won't improve the cleanliness of the apertures for such cases.
 
         Args:
+            resolve_adjacency: Boolean to note whether Room adjacencies should be
+                re-solved after the Apertures have been simplified. Setting this
+                to True should ensure that and interior Apertures that are
+                simplified retain their Surface boundary conditions. If False,
+                all interior Apertures that have been simplified will have an
+                Outdoors boundary condition. (Default: True).
             tolerance: The maximum difference between point values for them to be
                 considered equivalent. If None, the Model tolerance will be
                 used. (Default: None).
@@ -1493,10 +1499,12 @@ class Model(_Base):
         tol = tolerance if tolerance else self.tolerance
         for room in self._rooms:
             room.simplify_apertures(tol)
+        if resolve_adjacency:
+            self.solve_adjacency()
     
     def rectangularize_apertures(
             self, subdivision_distance=None, max_separation=None,
-            tolerance=None, angle_tolerance=None):
+            resolve_adjacency=True, tolerance=None, angle_tolerance=None):
         """Convert all Apertures on this Room to be rectangular.
 
         This is useful when exporting to simulation engines that only accept
@@ -1521,6 +1529,12 @@ class Model(_Base):
                 should be set to a value that is slightly larger than the window frame.
                 If None, no merging of Apertures will happen before they are
                 converted to rectangles. (Default: None).
+            resolve_adjacency: Boolean to note whether Room adjacencies should be
+                re-solved after the Apertures have been rectangularized. Setting this
+                to True should ensure that and interior Apertures that are
+                rectangularized retain their Surface boundary conditions. If False,
+                all interior Apertures that have been rectangularized will have an
+                Outdoors boundary condition. (Default: True).
             tolerance: The maximum difference between point values for them to be
                 considered equivalent. If None, the Model tolerance will be
                 used. (Default: None).
@@ -1534,6 +1548,8 @@ class Model(_Base):
         for room in self._rooms:
             room.rectangularize_apertures(
                 subdivision_distance, max_separation, tol, a_tol)
+        if resolve_adjacency:
+            self.solve_adjacency()
 
     def wall_apertures_by_ratio(self, ratio, tolerance=None):
         """Add apertures to all exterior walls given a ratio of aperture to face area.
