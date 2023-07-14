@@ -752,6 +752,20 @@ def test_group_by_orientation():
     assert orientations == [0.0, 90.0, 180.0, 270.0]
 
 
+def test_horizontal_boundary():
+    """Test the horizontal_boundary method for a variety of shapes."""
+    geo_file = './tests/json/complex_polyfaces.json'
+    with open(geo_file, 'r') as fp:
+        geo_dict = json.load(fp)
+    polyfaces = [Polyface3D.from_dict(p) for p in geo_dict]
+    rooms = [Room.from_polyface3d('Room_{}'.format(i), p)
+             for i, p in enumerate(polyfaces)]
+
+    for room in rooms:
+        hb = room.horizontal_boundary(0.01)
+        assert isinstance(hb, Face3D)
+        assert hb.area > 99
+
 def test_grouped_horizontal_boundary():
     """Test the grouped_horizontal_boundary method."""
     geo_file = './tests/json/polygons_for_gap_boundary.json'
