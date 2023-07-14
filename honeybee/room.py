@@ -545,14 +545,12 @@ class Room(_BaseWithShade):
         self._add_prefix_shades(prefix)
 
     def horizontal_boundary(self, tolerance=0.01):
-        """Get a list of Face3D representing the horizontal boundary around the Room.
+        """Get a Face3D representing the horizontal boundary around the Room.
         
         This will be generated from all downward-facing Faces of the Room (essentially
-        the Floor faces but can also include overhanging slanted walls). So the result
-        should almost always represents the minimum number of Face3D to encompass
-        the Room in the XY plane. The only case where the result will not be clean
-        is if there are multiple overlapping downward-facing geometries (eg. a wall
-        slanting inward to the volume and then slanting back out again).
+        the Floor faces but can also include overhanging slanted walls). So, for
+        a valid closed-volume Honeybee Room, the result should always represent
+        the Room in the XY plane.
 
         The Z height of the resulting Face3D will be at the minimum floor height.
     
@@ -566,8 +564,17 @@ class Room(_BaseWithShade):
         for face in self.faces:
             if math.degrees(z_axis.angle(face.normal)) >= 91:
                 flr_geo.append(face.geometry)
-        if len(flr_geo) <= 1:
-            return flr_geo
+        if len(flr_geo) == 1:
+            if flr_geo[0].is_horizontal(tolerance):
+                return flr_geo[0]
+            else:
+                floor_height = self.geometry.min.z
+                bound = [Point3D(p.x, p.y, floor_height) for p in flr_geo[0].boundary]
+                holes = None
+                if flr_geo[0].has_holes:
+                    holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
+                            for hole in flr_geo[0].holes]
+                return Face3D(bound, holes=holes)
         else:  # multiple geometries to be joined together
             floor_height = self.geometry.min.z
             horiz_geo = []
@@ -582,8 +589,25 @@ class Room(_BaseWithShade):
                         holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
                                 for hole in fg.holes]
                     horiz_geo.append(Face3D(bound, holes=holes))
-            # TODO: Consider sensing overlapping geometries before trying to merge
-            return Face3D.join_coplanar_faces(horiz_geo, tolerance)
+            # sense if there are overlapping geometries to be boolean unioned
+            overlap_groups = Face3D.group_by_coplanar_overlap(horiz_geo, tolerance)
+            if all(len(g) == 1 for g in overlap_groups):  # no overlaps; just join
+                return Face3D.join_coplanar_faces(horiz_geo, tolerance)[0]
+            # we must do a boolean union
+            clean_geo = []
+            for og in overlap_groups:
+                if len(og) == 1:
+                    clean_geo.extend(og)
+                else:
+                    while len(og) > 1:
+                        a_tol = math.radians(1)
+                        union = Face3D.coplanar_union(og[0], og[1], tolerance, a_tol)
+                        og.pop(0)
+                        og[0] = union
+                    clean_geo.extend(og)
+            if len(clean_geo) == 1:
+                return clean_geo[0]
+            return Face3D.join_coplanar_faces(clean_geo, tolerance)[0]
 
     def remove_indoor_furniture(self):
         """Remove all indoor furniture assigned to this Room.
@@ -1954,8 +1978,8 @@ class Room(_BaseWithShade):
         # get the horizontal boundary geometry of each room
         floor_geos = []
         for room in rooms:
-            floor_geos.extend(room.horizontal_boundary(tolerance))
-        
+            floor_geos.append(room.horizontal_boundary(tolerance))
+
         # remove colinear vertices and degenerate faces
         clean_floor_geos = []
         for geo in floor_geos:
