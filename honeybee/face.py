@@ -636,17 +636,16 @@ class Face(_BaseWithShade):
             angle_tolerance: The max angle in degrees that the corners of the
                 rectangle can differ from a right angle before it is not
                 considered a rectangle. (Default: 1).
-        
+
         Returns:
-            A list of any new Apertures that were created as part of the
-            rectangularization process. 
+            True if the Apertures were changed. False if they were unchanged.
         """
         # sort the rectangular and non-rectangular apertures
         apertures = self._apertures
         if len(apertures) == 0:
-            return apertures
+            return False
         tol, ang_tol = tolerance, math.radians(angle_tolerance)
-        rect_aps, non_rect_aps = [], []
+        rect_aps, non_rect_aps, non_rect_geos = [], [], []
         for aperture in apertures:
             try:
                 clean_geo = aperture.geometry.remove_colinear_vertices(tol)
@@ -655,25 +654,28 @@ class Face(_BaseWithShade):
             if clean_geo.polygon2d.is_rectangle(ang_tol):
                 rect_aps.append(aperture)
             else:
-                non_rect_aps.append(clean_geo)
-        if not non_rect_aps:  # nothing to be rectangularized
-            return non_rect_aps
+                non_rect_aps.append(aperture)
+                non_rect_geos.append(clean_geo)
+        if not non_rect_geos:  # nothing to be rectangularized
+            return False
 
         # reset boundary conditions to outdoors so new apertures can be added
         if not isinstance(self.boundary_condition, Outdoors):
             self.boundary_condition = boundary_conditions.outdoors
             for ap in rect_aps:
                 ap.boundary_condition = boundary_conditions.outdoors
+        edits_occurred = False
 
         # try to merge the non-rectangular apertures if a max_separation is specified
         ref_plane = self._reference_plane(ang_tol)
-        if max_separation is not None and len(non_rect_aps) > 1:
+        if max_separation is not None and len(non_rect_geos) > 1:
+            edits_occurred = True
             if max_separation <= tol:  #  just join the Apertures at the tolerance
-                non_rect_aps = Face3D.join_coplanar_faces(non_rect_aps, tol)
+                non_rect_geos = Face3D.join_coplanar_faces(non_rect_geos, tol)
             else:  # join the Apertures using the max_separation
                 # get polygons for the faces that all lie within the same plane
                 face_polys = []
-                for fg in non_rect_aps:
+                for fg in non_rect_geos:
                     verts2d = tuple(ref_plane.xyz_to_xy(_v) for _v in fg.boundary)
                     face_polys.append(Polygon2D(verts2d))
                     if fg.has_holes:
@@ -686,26 +688,27 @@ class Face(_BaseWithShade):
                 # convert the boundary polygons back to Face3D
                 if len(joined_bounds) == 1:  # can be represented with a single Face3D
                     verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in joined_bounds[0])
-                    non_rect_aps = [Face3D(verts3d, plane=ref_plane)]
+                    non_rect_geos = [Face3D(verts3d, plane=ref_plane)]
                 else:  # need to separate holes from distinct Face3Ds
                     bound_faces = []
                     for poly in joined_bounds:
                         verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in poly)
                         bound_faces.append(Face3D(verts3d, plane=ref_plane))
-                    non_rect_aps = Face3D.merge_faces_to_holes(bound_faces, tolerance)
+                    non_rect_geos = Face3D.merge_faces_to_holes(bound_faces, tolerance)
             clean_aps = []
-            for ap_geo in non_rect_aps:
+            for ap_geo in non_rect_geos:
                 try:
                     clean_aps.append(ap_geo.remove_colinear_vertices(tol))
                 except AssertionError:  # degenerate Aperture to be ignored
                     continue
-            non_rect_aps = clean_aps
+            non_rect_geos = clean_aps
 
         # convert the remaining Aperture geometries to rectangles
         if subdivision_distance is None:  # just take the bounding rectangle
+            edits_occurred = True
             # get the bounding rectangle around all of the geometries
             ap_geos = []
-            for ap_geo in non_rect_aps:
+            for ap_geo in non_rect_geos:
                 if ap_geo.polygon2d.is_rectangle(ang_tol):
                     ap_geos.append(ap_geo)  # catch rectangles found in merging
                     continue
@@ -715,20 +718,42 @@ class Face(_BaseWithShade):
                 bound_poly = Polygon2D.from_rectangle(g_min, Vector2D(0, 1), base, hgt)
                 geo_3d = Face3D([ref_plane.xy_to_xyz(v) for v in bound_poly.vertices])
                 ap_geos.append(geo_3d)
+            non_rect_geos = ap_geos
 
-            # create Aperture objects from all of the merged geometries
+        # create Aperture objects from all of the merged geometries
+        if not edits_occurred:
+            new_aps = non_rect_aps
+        else:
             new_aps = []
-            for i, ap_face in enumerate(ap_geos):
-                new_aps.append(Aperture('{}_Glz{}'.format(self.identifier, i), ap_face))
+            for i, ap_face in enumerate(non_rect_geos):
+                exist_ap = None
+                for old_ap in non_rect_aps:
+                    if old_ap.center.is_equivalent(ap_face.center, tolerance):
+                        exist_ap = old_ap
+                        break
+                if exist_ap is None:  # could not be matched; just make a new aperture
+                    new_ap = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
+                else:
+                    new_ap = Aperture(exist_ap.identifier, ap_face,
+                                      is_operable=exist_ap.is_operable)
+                    new_ap.display_name = '{}_{}'.format(exist_ap.display_name, i)
+                new_aps.append(new_ap)
+        
+        # we can just add the apertures if there's no subdivision going on
+        if subdivision_distance is None:
+            # remove any Apertures that are overlapping
+            all_aps = rect_aps + new_aps
+            all_aps = self._remove_overlapping_sub_faces(all_aps, tolerance)
             self.remove_apertures()
-            self.add_apertures(rect_aps + new_aps)
-            return new_aps
+            self.add_apertures(all_aps)
+            return True
 
         # if distance is provided, subdivide the apertures into strips
-        ap_geos = []
-        for ap_geo in non_rect_aps:
+        new_ap_objs = []
+        for ap_obj in new_aps:
+            ap_geo = ap_obj.geometry
             if ap_geo.polygon2d.is_rectangle(ang_tol):
-                ap_geos.append(ap_geo)  # catch rectangles found in merging
+                new_ap_objs.append(ap_obj)  # catch rectangles found in merging
                 continue
             # create a mesh grid over the Aperture in the reference plane
             geo_2d = Polygon2D([ref_plane.xyz_to_xy(v) for v in ap_geo.vertices])
@@ -807,21 +832,22 @@ class Face(_BaseWithShade):
                         start_row = last_row + 1
 
             # convert the groups into rectangular strips
-            for group in merged_groups:
+            for i, group in enumerate(merged_groups):
                 min_2d = group['min']
                 max_2d = group['max']
                 base, hgt = max_2d.x - min_2d.x, max_2d.y - min_2d.y
                 bound_poly = Polygon2D.from_rectangle(min_2d, Vector2D(0, 1), base, hgt)
                 geo_3d = Face3D([ref_plane.xy_to_xyz(v) for v in bound_poly.vertices])
-                ap_geos.append(geo_3d)
+                new_ap = Aperture(
+                    '{}_Glz{}'.format(ap_obj.identifier, i),
+                    geo_3d, is_operable=ap_obj.is_operable)
+                new_ap.display_name = '{}_{}'.format(ap_obj.display_name, i)
+                new_ap_objs.append(new_ap)
 
-        # create Aperture objects from all of the merged geometries
-        new_aps = []
-        for i, ap_face in enumerate(ap_geos):
-            new_aps.append(Aperture('{}_Glz{}'.format(self.identifier, i), ap_face))
+        # replace the apertures with the new ones
         self.remove_apertures()
-        self.add_apertures(rect_aps + new_aps)
-        return new_aps
+        self.add_apertures(rect_aps + new_ap_objs)
+        return True
 
     def _reference_plane(self, angle_tolerance):
         """Get a Plane for this Face geometry derived from the Face3D plane.
@@ -1673,6 +1699,50 @@ class Face(_BaseWithShade):
         assert not isinstance(self.type, AirBoundary), \
             '{} cannot be added to AirBoundary Face "{}".'.format(
                 sub_face_type.__name__, self.full_id)
+
+    @staticmethod
+    def _remove_overlapping_sub_faces(sub_faces, tolerance):
+        """Get a list of Apertures and/or Doors with no overlaps.
+
+        Args:
+            sub_faces: A list of Apertures or Doors to be checked for overlapping.
+            tolerance: The minimum distance from the edge of a neighboring Face3D
+                at which a point is considered to overlap with that Face3D.
+
+        Returns:
+            A list of the input sub_faces with smaller overlapping geometries removed.
+        """
+        # sort the sub-faces by area
+        sub_faces = list(sorted(sub_faces, key=lambda x: x.area, reverse=True))
+        # create polygons for all of the faces
+        r_plane = sub_faces[0].geometry.plane
+        polygons = [Polygon2D([r_plane.xyz_to_xy(pt) for pt in face.vertices])
+                    for face in sub_faces]
+        # loop through the polygons and check to see if it overlaps with the others
+        grouped_polys, grouped_sfs = [[polygons[0]]], [[sub_faces[0]]]
+        for poly, face in zip(polygons[1:], sub_faces[1:]):
+            group_found = False
+            for poly_group, face_group in zip(grouped_polys, grouped_sfs):
+                for oth_poly in poly_group:
+                    if poly.polygon_relationship(oth_poly, tolerance) >= 0:
+                        poly_group.append(poly)
+                        face_group.append(face)
+                        group_found = True
+                        break
+                if group_found:
+                    break
+            if not group_found:  # the polygon does not overlap with any of the others
+                grouped_polys.append([poly])  # make a new group for the polygon
+                grouped_sfs.append([face])  # make a new group for the face
+        # build a list of sub-faces without any overlaps
+        clean_sub_faces = []
+        for sf_group in grouped_sfs:
+            if len(sf_group) == 1:
+                clean_sub_faces.append(sf_group[0])
+            else:  # take the subface with the largest area
+                sf_group.sort(key=lambda x: x.area, reverse=True)
+                clean_sub_faces.append(sf_group[0])
+        return clean_sub_faces
 
     def __copy__(self):
         new_f = Face(self.identifier, self.geometry, self.type, self.boundary_condition)
