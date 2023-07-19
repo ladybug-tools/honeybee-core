@@ -582,7 +582,7 @@ class Room(_BaseWithShade):
         # insert the wall vertices into the polygon
         wall_polys = []
         for st_poly in polys:
-            st_poly = st_poly.remove_colinear_vertices(0.01)
+            st_poly = st_poly.remove_colinear_vertices(tolerance)
             polygon_update = []
             for pt in wall_st_pts_2d:
                 for v in st_poly.vertices:  # check if pt is already included

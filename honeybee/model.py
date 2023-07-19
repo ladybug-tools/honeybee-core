@@ -1660,7 +1660,8 @@ class Model(_Base):
                 r_adj = room.clean_envelope(adj_dict, tolerance=tolerance)
                 adj_dict.update(r_adj)
             except AssertionError as e:  # room removed; likely wrong units
-                error = 'Failed to remove degenerate geometry.\n{}'.format(e)
+                error = 'Failed to remove degenerate geometry for Room {}.\n{}'.format(
+                    room.full_id, e)
                 raise ValueError(error)
         self._remove_degenerate_faces(self._orphaned_faces, tolerance)
         self._remove_degenerate_faces(self._orphaned_apertures, tolerance)
