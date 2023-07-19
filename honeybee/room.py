@@ -544,7 +544,7 @@ class Room(_BaseWithShade):
             face.add_prefix(prefix)
         self._add_prefix_shades(prefix)
 
-    def horizontal_boundary(self, tolerance=0.01):
+    def horizontal_boundary(self, match_walls=False, tolerance=0.01):
         """Get a Face3D representing the horizontal boundary around the Room.
         
         This will be generated from all downward-facing Faces of the Room (essentially
@@ -555,59 +555,52 @@ class Room(_BaseWithShade):
         The Z height of the resulting Face3D will be at the minimum floor height.
     
         Args:
+            match_walls: Boolean to note whether vertices should be inserted into
+                the result that will help match the segments of the horizontal
+                boundary back to the walls that are adjacent to the floors.
+                If False, the result may lack some colinear vertices that relate
+                to the Walls, though setting this to True does not guarantee that
+                all walls (Default: False).
             tolerance: The minimum difference between x, y, and z coordinate values
                 at which points are considered distinct. (Default: 0.01,
                 suitable for objects in Meters).
         """
-        z_axis = Vector3D(0, 0, 1)
-        flr_geo = []
-        for face in self.faces:
-            if math.degrees(z_axis.angle(face.normal)) >= 91:
-                flr_geo.append(face.geometry)
-        if len(flr_geo) == 1:
-            if flr_geo[0].is_horizontal(tolerance):
-                return flr_geo[0]
-            else:
-                floor_height = self.geometry.min.z
-                bound = [Point3D(p.x, p.y, floor_height) for p in flr_geo[0].boundary]
-                holes = None
-                if flr_geo[0].has_holes:
-                    holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
-                            for hole in flr_geo[0].holes]
-                return Face3D(bound, holes=holes)
-        else:  # multiple geometries to be joined together
-            floor_height = self.geometry.min.z
-            horiz_geo = []
-            for fg in flr_geo:
-                if fg.is_horizontal(tolerance) and \
-                        abs(floor_height - fg.min.z) <= tolerance:
-                    horiz_geo.append(fg)
-                else:  # project the face geometry into the XY plane
-                    bound = [Point3D(p.x, p.y, floor_height) for p in fg.boundary]
-                    holes = None
-                    if fg.has_holes:
-                        holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
-                                for hole in fg.holes]
-                    horiz_geo.append(Face3D(bound, holes=holes))
-            # sense if there are overlapping geometries to be boolean unioned
-            overlap_groups = Face3D.group_by_coplanar_overlap(horiz_geo, tolerance)
-            if all(len(g) == 1 for g in overlap_groups):  # no overlaps; just join
-                return Face3D.join_coplanar_faces(horiz_geo, tolerance)[0]
-            # we must do a boolean union
-            clean_geo = []
-            for og in overlap_groups:
-                if len(og) == 1:
-                    clean_geo.extend(og)
+        # get the starting horizontal boundary
+        horiz_bound = self._base_horiz_boundary(tolerance)
+        if not match_walls:
+            return horiz_bound
+        # get 2D vertices for all of the walls
+        wall_st_pts = [
+            f.geometry.lower_left_counter_clockwise_vertices[0] for f in self.walls]
+        wall_st_pts_2d = [Point2D(v[0], v[1]) for v in wall_st_pts]
+        # get 2D polygons for the horizontal boundary
+        z_val = horiz_bound[0].z
+        polys = [Polygon2D([Point2D(v.x, v.y) for v in horiz_bound.boundary])]
+        if horiz_bound.holes is not None:
+            for hole in horiz_bound.holes:
+                polys.append(Polygon2D([Point2D(v.x, v.y) for v in hole]))
+        # insert the wall vertices into the polygon
+        wall_polys = []
+        for st_poly in polys:
+            st_poly = st_poly.remove_colinear_vertices(0.01)
+            polygon_update = []
+            for pt in wall_st_pts_2d:
+                for v in st_poly.vertices:  # check if pt is already included
+                    if pt.distance_to_point(v) <= tolerance:
+                        break
                 else:
-                    while len(og) > 1:
-                        a_tol = math.radians(1)
-                        union = Face3D.coplanar_union(og[0], og[1], tolerance, a_tol)
-                        og.pop(0)
-                        og[0] = union
-                    clean_geo.extend(og)
-            if len(clean_geo) == 1:
-                return clean_geo[0]
-            return Face3D.join_coplanar_faces(clean_geo, tolerance)[0]
+                    values = [seg.distance_to_point(pt) for seg in st_poly.segments]
+                    if min(values) < tolerance:
+                        index_min = min(range(len(values)), key=values.__getitem__)
+                        polygon_update.append((index_min, pt))
+            if polygon_update:
+                end_poly = Polygon2D._insert_updates_in_order(st_poly, polygon_update)
+                wall_polys.append(end_poly)
+            else:
+                wall_polys.append(st_poly)
+        # rebuild the Face3D from the polygons
+        pts_3d = [[Point3D(p.x, p.y, z_val) for p in poly] for poly in wall_polys]
+        return Face3D(pts_3d[0], holes=pts_3d[1:])
 
     def remove_indoor_furniture(self):
         """Remove all indoor furniture assigned to this Room.
@@ -1978,7 +1971,7 @@ class Room(_BaseWithShade):
         # get the horizontal boundary geometry of each room
         floor_geos = []
         for room in rooms:
-            floor_geos.append(room.horizontal_boundary(tolerance))
+            floor_geos.append(room.horizontal_boundary(tolerance=tolerance))
 
         # remove colinear vertices and degenerate faces
         clean_floor_geos = []
@@ -2267,6 +2260,66 @@ class Room(_BaseWithShade):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def _base_horiz_boundary(self, tolerance=0.01):
+        """Get a starting horizontal boundary for the Room.
+
+        This is the raw result obtained by merging all downward-facing Faces of the Room.
+
+        Args:
+            tolerance: The minimum difference between x, y, and z coordinate values
+                at which points are considered distinct. (Default: 0.01,
+                suitable for objects in Meters).
+        """
+        z_axis = Vector3D(0, 0, 1)
+        flr_geo = []
+        for face in self.faces:
+            if math.degrees(z_axis.angle(face.normal)) >= 91:
+                flr_geo.append(face.geometry)
+        if len(flr_geo) == 1:
+            if flr_geo[0].is_horizontal(tolerance):
+                return flr_geo[0]
+            else:
+                floor_height = self.geometry.min.z
+                bound = [Point3D(p.x, p.y, floor_height) for p in flr_geo[0].boundary]
+                holes = None
+                if flr_geo[0].has_holes:
+                    holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
+                            for hole in flr_geo[0].holes]
+                return Face3D(bound, holes=holes)
+        else:  # multiple geometries to be joined together
+            floor_height = self.geometry.min.z
+            horiz_geo = []
+            for fg in flr_geo:
+                if fg.is_horizontal(tolerance) and \
+                        abs(floor_height - fg.min.z) <= tolerance:
+                    horiz_geo.append(fg)
+                else:  # project the face geometry into the XY plane
+                    bound = [Point3D(p.x, p.y, floor_height) for p in fg.boundary]
+                    holes = None
+                    if fg.has_holes:
+                        holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
+                                for hole in fg.holes]
+                    horiz_geo.append(Face3D(bound, holes=holes))
+            # sense if there are overlapping geometries to be boolean unioned
+            overlap_groups = Face3D.group_by_coplanar_overlap(horiz_geo, tolerance)
+            if all(len(g) == 1 for g in overlap_groups):  # no overlaps; just join
+                return Face3D.join_coplanar_faces(horiz_geo, tolerance)[0]
+            # we must do a boolean union
+            clean_geo = []
+            for og in overlap_groups:
+                if len(og) == 1:
+                    clean_geo.extend(og)
+                else:
+                    while len(og) > 1:
+                        a_tol = math.radians(1)
+                        union = Face3D.coplanar_union(og[0], og[1], tolerance, a_tol)
+                        og.pop(0)
+                        og[0] = union
+                    clean_geo.extend(og)
+            if len(clean_geo) == 1:
+                return clean_geo[0]
+            return Face3D.join_coplanar_faces(clean_geo, tolerance)[0]
 
     @staticmethod
     def _adjacency_grouping(rooms, adj_finding_function):
