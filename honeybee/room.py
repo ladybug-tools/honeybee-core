@@ -1044,7 +1044,8 @@ class Room(_BaseWithShade):
     def remove_colinear_vertices_envelope(self, tolerance=0.01, delete_degenerate=False):
         """Remove colinear and duplicate vertices from this object's Faces and Sub-faces.
 
-        Note that this does not affect any assigned Shades.
+        If degenerate geometry is found in the process of removing colinear vertices,
+        an exception will be raised. Note that this does not affect the assigned Shades.
 
         Args:
             tolerance: The minimum distance between a vertex and the boundary segments
@@ -1255,10 +1256,14 @@ class Room(_BaseWithShade):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_sub_faces_overlapping(self, raise_exception=True, detailed=False):
-        """Check that this Face's sub-faces do not overlap with one another.
+    def check_sub_faces_overlapping(
+            self, tolerance=0.01, raise_exception=True, detailed=False):
+        """Check that this Room's sub-faces do not overlap with one another.
 
         Args:
+            tolerance: The minimum distance that two sub-faces must overlap in order
+                for them to be considered overlapping and invalid. (Default: 0.01,
+                suitable for objects in meters).
             raise_exception: Boolean to note whether a ValueError should be raised
                 if a sub-faces overlap with one another. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
@@ -1270,7 +1275,7 @@ class Room(_BaseWithShade):
         detailed = False if raise_exception else detailed
         msgs = []
         for f in self._faces:
-            msg = f.check_sub_faces_overlapping(False, detailed)
+            msg = f.check_sub_faces_overlapping(tolerance, False, detailed)
             if detailed:
                 msgs.extend(msg)
             elif msg != '':
@@ -1386,45 +1391,6 @@ class Room(_BaseWithShade):
         return self._validation_message(
             msg, raise_exception, detailed, '000107',
             error_type='Degenerate Room Volume')
-
-    def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
-        """Check that the Room's geometry components are above a "zero" area tolerance.
-
-        This includes all of the Room's Faces, Apertures, Doors and Shades.
-
-        Args:
-            tolerance: The minimum acceptable area of the object. Default is 0.0001,
-                which is equal to 1 cm2 when model units are meters. This is just
-                above the smallest size that OpenStudio will accept.
-            raise_exception: If True, a ValueError will be raised if the object
-                area is below the tolerance. (Default: True).
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        detailed = False if raise_exception else detailed
-        msgs = [self._check_non_zero_shades(tolerance, detailed)]
-        for face in self._faces:
-            msgs.append(face.check_non_zero(tolerance, False, detailed))
-            msgs.append(face._check_non_zero_shades(tolerance, detailed))
-            for ap in face._apertures:
-                msgs.append(ap.check_non_zero(tolerance, False, detailed))
-                msgs.append(ap._check_non_zero_shades(tolerance, detailed))
-            for dr in face._doors:
-                msgs.append(dr.check_non_zero(tolerance, False, detailed))
-                msgs.append(dr._check_non_zero_shades(tolerance, detailed))
-        full_msgs = [msg for msg in msgs if msg]
-        if len(full_msgs) == 0:
-            return [] if detailed else ''
-        elif detailed:
-            return [m for megs in full_msgs for m in megs]
-        full_msg = 'Room "{}" contains zero area geometry.' \
-            '\n  {}'.format(self.full_id, '\n  '.join(full_msgs))
-        if raise_exception and len(full_msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
 
     def merge_coplanar_faces(self, tolerance=0.01, angle_tolerance=1):
         """Merge coplanar Faces of this Room.

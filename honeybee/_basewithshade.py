@@ -214,16 +214,6 @@ class _BaseWithShade(_Base):
         flat_msgs = [m for m in msgs if m]
         return flat_msgs if detailed else '\n'.join(flat_msgs)
 
-    def _check_non_zero_shades(self, tolerance=0.0001, detailed=False):
-        """Check that the indoor or outdoor shades are above a "zero" area tolerance."""
-        msgs = []
-        for oshd in self._outdoor_shades:
-            msgs.append(oshd.check_non_zero(tolerance, False, detailed))
-        for ishd in self._indoor_shades:
-            msgs.append(ishd.check_non_zero(tolerance, False, detailed))
-        flat_msgs = [m for m in msgs if m]
-        return flat_msgs if detailed else '\n'.join(flat_msgs)
-
     def _add_shades_to_dict(
             self, base, abridged=False, included_prop=None, include_plane=True):
         """Method used to add child shades to the parent base dictionary.
