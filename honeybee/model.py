@@ -1783,19 +1783,17 @@ class Model(_Base):
             'Model must have a non-zero angle_tolerance to perform geometry checks.'
         tol = self.tolerance
         ang_tol = self.angle_tolerance
-        # perform checks for key honeybee model schema rules
+
+        # perform checks for duplicate identifiers, which might mess with other checks
         msgs.append(self.check_duplicate_room_identifiers(False, detailed))
         msgs.append(self.check_duplicate_face_identifiers(False, detailed))
         msgs.append(self.check_duplicate_sub_face_identifiers(False, detailed))
         msgs.append(self.check_duplicate_shade_identifiers(False, detailed))
-        msgs.append(self.check_missing_adjacencies(False, detailed))
-        msgs.append(self.check_matching_adjacent_areas(tol, False, detailed))
-        msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
-        msgs.append(self.check_rooms_all_air_boundary(False, detailed))
-        # perform several checks for Face3D geometry rules
-        msgs.append(self.check_self_intersecting(tol, False, detailed))
+
+        # perform several checks for the Honeybee schema geometry rules
         msgs.append(self.check_planar(tol, False, detailed))
-        # remove colinear vertices to ensure that this doesn't create faces with <3 edges
+        msgs.append(self.check_self_intersecting(tol, False, detailed))
+        # perform checks for degenerate rooms with a test that removes colinear vertices
         for room in self.rooms:
             try:
                 new_room = room.duplicate()  # duplicate to avoid editing the original
@@ -1806,19 +1804,26 @@ class Model(_Base):
                     deg_msg = [{
                         'type': 'ValidationError',
                         'code': '000107',
-                        'error_type': 'Degenerate Geometry Error',
+                        'error_type': 'Degenerate Room Volume',
                         'extension_type': 'Core',
                         'element_type': 'Room',
-                        'element_id': room.identifier,
-                        'element_name': room.display_name,
+                        'element_id': [room.identifier],
+                        'element_name': [room.display_name],
                         'message': deg_msg
                     }]
                 msgs.append(deg_msg)
+        msgs.append(self.check_degenerate_rooms(tol, False, detailed))
         # perform geometry checks related to parent-child relationships
         msgs.append(self.check_sub_faces_valid(tol, ang_tol, False, detailed))
-        msgs.append(self.check_sub_faces_overlapping(False, detailed))
-        msgs.append(self.check_degenerate_rooms(tol, False, detailed))
+        msgs.append(self.check_sub_faces_overlapping(tol, False, detailed))
         msgs.append(self.check_rooms_solid(tol, ang_tol, False, detailed))
+
+        # perform checks related to adjacency relationships
+        msgs.append(self.check_missing_adjacencies(False, detailed))
+        msgs.append(self.check_matching_adjacent_areas(tol, False, detailed))
+        msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
+        msgs.append(self.check_rooms_all_air_boundary(False, detailed))
+
         # check the extension attributes
         ext_msgs = self._properties._check_extension_attr(detailed)
         if detailed:
@@ -1901,6 +1906,235 @@ class Model(_Base):
         return check_duplicate_identifiers_parent(
             self.shades, raise_exception, 'Shade', detailed, '000001', 'Core',
             'Duplicate Shade Identifier')
+
+    def check_planar(self, tolerance=None, raise_exception=True, detailed=False):
+        """Check that all of the Model's geometry components are planar.
+
+        This includes all of the Model's Faces, Apertures, Doors and Shades.
+
+        Args:
+            tolerance: The minimum distance between a given vertex and a the
+                object's plane at which the vertex is said to lie in the plane.
+                If None, the Model tolerance will be used. (Default: None).
+            raise_exception: Boolean to note whether an ValueError should be
+                raised if a vertex does not lie within the object's plane.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for face in self.faces:
+            msgs.append(face.check_planar(tolerance, False, detailed))
+        for shd in self.shades:
+            msgs.append(shd.check_planar(tolerance, False, detailed))
+        for ap in self.apertures:
+            msgs.append(ap.check_planar(tolerance, False, detailed))
+        for dr in self.doors:
+            msgs.append(dr.check_planar(tolerance, False, detailed))
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return [m for msg in full_msgs for m in msg]
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_self_intersecting(self, tolerance=None, raise_exception=True,
+                                detailed=False):
+        """Check that no edges of the Model's geometry components self-intersect.
+
+        This includes all of the Model's Faces, Apertures, Doors and Shades.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. If None, the
+                Model tolerance will be used. (Default: None).
+            raise_exception: If True, a ValueError will be raised if an object
+                intersects with itself (like a bowtie). (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for room in self.rooms:
+            msgs.append(room.check_self_intersecting(tolerance, False, detailed))
+        for face in self.orphaned_faces:
+            msgs.append(face.check_self_intersecting(tolerance, False, detailed))
+        for shd in self.orphaned_shades:
+            msgs.append(shd.check_self_intersecting(tolerance, False, detailed))
+        for ap in self.orphaned_apertures:
+            msgs.append(ap.check_self_intersecting(tolerance, False, detailed))
+        for dr in self.orphaned_doors:
+            msgs.append(dr.check_self_intersecting(tolerance, False, detailed))
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return [m for msg in full_msgs for m in msg]
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_degenerate_rooms(
+            self, tolerance=None, raise_exception=True, detailed=False):
+        """Check whether there are degenerate Rooms (with zero volume) within the Model.
+
+        Args:
+            tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. If None, the
+                Model tolerance will be used. (Default: None).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if degenerate Rooms are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for room in self._rooms:
+            msg = room.check_degenerate(tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        if detailed:
+            return msgs
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_sub_faces_valid(self, tolerance=None, angle_tolerance=None,
+                              raise_exception=True, detailed=False):
+        """Check that model's sub-faces are co-planar with faces and in their boundary.
+
+        Note this does not check the planarity of the sub-faces themselves, whether
+        they self-intersect, or whether they have a non-zero area.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. If None, the
+                Model tolerance will be used. (Default: None).
+            angle_tolerance: The max angle in degrees that the plane normals can
+                differ from one another in order for them to be considered coplanar.
+                If None, the Model angle_tolerance will be used. (Default: None).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if an sub-face is not valid. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        angle_tolerance = self.angle_tolerance \
+            if angle_tolerance is None else angle_tolerance
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for rm in self._rooms:
+            msg = rm.check_sub_faces_valid(tolerance, angle_tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        for f in self._orphaned_faces:
+            msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        if detailed:
+            return msgs
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_sub_faces_overlapping(
+            self, tolerance=None, raise_exception=True, detailed=False):
+        """Check that model's sub-faces do not overlap with one another.
+
+        Args:
+            tolerance: The minimum distance that two sub-faces must overlap in order
+                for them to be considered overlapping and invalid. If None, the
+                Model tolerance will be used. (Default: None).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if a sub-faces overlap with one another.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for rm in self._rooms:
+            msg = rm.check_sub_faces_overlapping(tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        for f in self._orphaned_faces:
+            msg = f.check_sub_faces_overlapping(tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        if detailed:
+            return msgs
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_rooms_solid(self, tolerance=None, angle_tolerance=None,
+                          raise_exception=True, detailed=False):
+        """Check whether the Model's rooms are closed solid to within tolerances.
+
+        Args:
+            tolerance: tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. If None, the Model
+                tolerance will be used. (Default: None).
+            angle_tolerance: The max angle difference in degrees that vertices are
+                allowed to differ from one another in order to consider them colinear.
+                Default: 1 degree. If None, the Model angle_tolerance will be
+                used. (Default: None).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if the room geometry does not form a closed solid. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        tolerance = self.tolerance if tolerance is None else tolerance
+        angle_tolerance = self.angle_tolerance \
+            if angle_tolerance is None else angle_tolerance
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for room in self._rooms:
+            msg = room.check_solid(tolerance, angle_tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        if detailed:
+            return msgs
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
 
     def check_missing_adjacencies(self, raise_exception=True, detailed=False):
         """Check that all Faces Apertures, and Doors have adjacent objects in the model.
@@ -2024,8 +2258,10 @@ class Model(_Base):
                     raise ValueError(msg)
                 return msg
         # loop through the adjacent face pairs and report if areas are not matched
-        full_msgs = []
+        full_msgs, reported_items = [], set()
         for base_f, adj_f in zip(base_faces, adj_faces):
+            if (base_f.identifier, adj_f.identifier) in reported_items:
+                continue
             tol_area = math.sqrt(base_f.area) * tolerance
             if abs(base_f.area - adj_f.area) > tol_area:
                 f_msg = 'Face "{}" with area {} is adjacent to Face "{}" with area {}.' \
@@ -2033,9 +2269,24 @@ class Model(_Base):
                         base_f.full_id, base_f.area, adj_f.full_id, adj_f.area, tolerance
                     )
                 f_msg = self._validation_message_child(
-                    f_msg, adj_f, detailed, '000205',
+                    f_msg, base_f, detailed, '000205',
                     error_type='Mismatched Area Adjacency')
+                if detailed:
+                    f_msg['element_id'].append(adj_f.identifier)
+                    f_msg['element_name'].append(adj_f.display_name)
+                    parents = []
+                    rel_obj = adj_f
+                    while getattr(rel_obj, '_parent', None) is not None:
+                        rel_obj = getattr(rel_obj, '_parent')
+                        par_dict = {
+                            'parent_type': rel_obj.__class__.__name__,
+                            'id': rel_obj.identifier,
+                            'name': rel_obj.display_name
+                        }
+                        parents.append(par_dict)
+                    f_msg['parents'].append(parents)
                 full_msgs.append(f_msg)
+                reported_items.add((adj_f.identifier, base_f.identifier))
             else:  # check to ensure the shapes are the same when vertices are removed
                 base_f_geo = base_f.geometry.remove_colinear_vertices(tolerance)
                 adj_f_geo = adj_f.geometry.remove_colinear_vertices(tolerance)
@@ -2047,9 +2298,24 @@ class Model(_Base):
                             adj_f.full_id, len(adj_f_geo), tolerance
                         )
                     f_msg = self._validation_message_child(
-                        f_msg, adj_f, detailed, '000205',
+                        f_msg, base_f, detailed, '000205',
                         error_type='Mismatched Area Adjacency')
+                    if detailed:
+                        f_msg['element_id'].append(adj_f.identifier)
+                        f_msg['element_name'].append(adj_f.display_name)
+                        parents = []
+                        rel_obj = adj_f
+                        while getattr(rel_obj, '_parent', None) is not None:
+                            rel_obj = getattr(rel_obj, '_parent')
+                            par_dict = {
+                                'parent_type': rel_obj.__class__.__name__,
+                                'id': rel_obj.identifier,
+                                'name': rel_obj.display_name
+                            }
+                            parents.append(par_dict)
+                        f_msg['parents'].append(parents)
                     full_msgs.append(f_msg)
+                    reported_items.add((adj_f.identifier, base_f.identifier))
         full_msg = full_msgs if detailed else '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
@@ -2121,267 +2387,6 @@ class Model(_Base):
             return msgs
         full_msg = '\n'.join(msgs)
         if raise_exception and len(msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
-
-    def check_rooms_solid(self, tolerance=None, angle_tolerance=None,
-                          raise_exception=True, detailed=False):
-        """Check whether the Model's rooms are closed solid to within tolerances.
-
-        Args:
-            tolerance: tolerance: The maximum difference between x, y, and z values
-                at which face vertices are considered equivalent. Default: 0.01,
-                suitable for objects in meters. If None, the Model tolerance will
-                be used. (Default: None).
-            angle_tolerance: The max angle difference in degrees that vertices are
-                allowed to differ from one another in order to consider them colinear.
-                Default: 1 degree. If None, the Model angle_tolerance will be
-                used. (Default: None).
-            raise_exception: Boolean to note whether a ValueError should be raised
-                if the room geometry does not form a closed solid. (Default: True).
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        tolerance = self.tolerance if tolerance is None else tolerance
-        angle_tolerance = self.angle_tolerance \
-            if angle_tolerance is None else angle_tolerance
-        detailed = False if raise_exception else detailed
-        msgs = []
-        for room in self._rooms:
-            msg = room.check_solid(tolerance, angle_tolerance, False, detailed)
-            if detailed:
-                msgs.extend(msg)
-            elif msg != '':
-                msgs.append(msg)
-        if detailed:
-            return msgs
-        full_msg = '\n'.join(msgs)
-        if raise_exception and len(msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
-
-    def check_sub_faces_valid(self, tolerance=None, angle_tolerance=None,
-                              raise_exception=True, detailed=False):
-        """Check that model's sub-faces are co-planar with faces and in their boundary.
-
-        Note this does not check the planarity of the sub-faces themselves, whether
-        they self-intersect, or whether they have a non-zero area.
-
-        Args:
-            tolerance: The minimum difference between the coordinate values of two
-                vertices at which they can be considered equivalent. Default: 0.01,
-                suitable for objects in meters. If None, the Model tolerance will
-                be used. (Default: None).
-            angle_tolerance: The max angle in degrees that the plane normals can
-                differ from one another in order for them to be considered coplanar.
-                If None, the Model angle_tolerance will be used. (Default: None).
-            raise_exception: Boolean to note whether a ValueError should be raised
-                if an sub-face is not valid. (Default: True).
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        tolerance = self.tolerance if tolerance is None else tolerance
-        angle_tolerance = self.angle_tolerance \
-            if angle_tolerance is None else angle_tolerance
-        detailed = False if raise_exception else detailed
-        msgs = []
-        for rm in self._rooms:
-            msg = rm.check_sub_faces_valid(tolerance, angle_tolerance, False, detailed)
-            if detailed:
-                msgs.extend(msg)
-            elif msg != '':
-                msgs.append(msg)
-        for f in self._orphaned_faces:
-            msg = f.check_sub_faces_valid(tolerance, angle_tolerance, False, detailed)
-            if detailed:
-                msgs.extend(msg)
-            elif msg != '':
-                msgs.append(msg)
-        if detailed:
-            return msgs
-        full_msg = '\n'.join(msgs)
-        if raise_exception and len(msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
-
-    def check_sub_faces_overlapping(self, raise_exception=True, detailed=False):
-        """Check that model's sub-faces do not overlap with one another.
-
-        Args:
-            raise_exception: Boolean to note whether a ValueError should be raised
-                if a sub-faces overlap with one another.
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        detailed = False if raise_exception else detailed
-        msgs = []
-        for rm in self._rooms:
-            msg = rm.check_sub_faces_overlapping(False, detailed)
-            if detailed:
-                msgs.extend(msg)
-            elif msg != '':
-                msgs.append(msg)
-        for f in self._orphaned_faces:
-            msg = f.check_sub_faces_overlapping(False, detailed)
-            if detailed:
-                msgs.extend(msg)
-            elif msg != '':
-                msgs.append(msg)
-        if detailed:
-            return msgs
-        full_msg = '\n'.join(msgs)
-        if raise_exception and len(msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
-
-    def check_planar(self, tolerance=None, raise_exception=True, detailed=False):
-        """Check that all of the Model's geometry components are planar.
-
-        This includes all of the Model's Faces, Apertures, Doors and Shades.
-
-        Args:
-            tolerance: The minimum distance between a given vertex and a the
-                object's plane at which the vertex is said to lie in the plane.
-                If None, the Model tolerance will be used. (Default: None).
-            raise_exception: Boolean to note whether an ValueError should be
-                raised if a vertex does not lie within the object's plane.
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        tolerance = self.tolerance if tolerance is None else tolerance
-        detailed = False if raise_exception else detailed
-        msgs = []
-        for face in self.faces:
-            msgs.append(face.check_planar(tolerance, False, detailed))
-        for shd in self.shades:
-            msgs.append(shd.check_planar(tolerance, False, detailed))
-        for ap in self.apertures:
-            msgs.append(ap.check_planar(tolerance, False, detailed))
-        for dr in self.doors:
-            msgs.append(dr.check_planar(tolerance, False, detailed))
-        full_msgs = [msg for msg in msgs if msg]
-        if detailed:
-            return [m for msg in full_msgs for m in msg]
-        full_msg = '\n'.join(full_msgs)
-        if raise_exception and len(full_msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
-
-    def check_self_intersecting(self, tolerance=None, raise_exception=True,
-                                detailed=False):
-        """Check that no edges of the Model's geometry components self-intersect.
-
-        This includes all of the Model's Faces, Apertures, Doors and Shades.
-
-        Args:
-            tolerance: The minimum difference between the coordinate values of two
-                vertices at which they can be considered equivalent. If None, the
-                Model tolerance will be used. (Default: None).
-            raise_exception: If True, a ValueError will be raised if an object
-                intersects with itself (like a bowtie). (Default: True).
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        tolerance = self.tolerance if tolerance is None else tolerance
-        detailed = False if raise_exception else detailed
-        msgs = []
-        for room in self.rooms:
-            msgs.append(room.check_self_intersecting(tolerance, False, detailed))
-        for face in self.orphaned_faces:
-            msgs.append(face.check_self_intersecting(tolerance, False, detailed))
-        for shd in self.orphaned_shades:
-            msgs.append(shd.check_self_intersecting(tolerance, False, detailed))
-        for ap in self.orphaned_apertures:
-            msgs.append(ap.check_self_intersecting(tolerance, False, detailed))
-        for dr in self.orphaned_doors:
-            msgs.append(dr.check_self_intersecting(tolerance, False, detailed))
-        full_msgs = [msg for msg in msgs if msg]
-        if detailed:
-            return [m for msg in full_msgs for m in msg]
-        full_msg = '\n'.join(full_msgs)
-        if raise_exception and len(full_msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
-
-    def check_degenerate_rooms(
-            self, tolerance=None, raise_exception=True, detailed=False):
-        """Check whether there are degenerate Rooms (with zero volume) within the Model.
-
-        Args:
-            tolerance: The maximum difference between x, y, and z values
-                at which face vertices are considered equivalent. If None, the
-                Model tolerance will be used. (Default: None).
-            raise_exception: Boolean to note whether a ValueError should be raised
-                if degenerate Rooms are found. (Default: True).
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        tolerance = self.tolerance if tolerance is None else tolerance
-        detailed = False if raise_exception else detailed
-        msgs = []
-        for room in self._rooms:
-            msg = room.check_degenerate(tolerance, False, detailed)
-            if detailed:
-                msgs.extend(msg)
-            elif msg != '':
-                msgs.append(msg)
-        if detailed:
-            return msgs
-        full_msg = '\n'.join(msgs)
-        if raise_exception and len(msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
-
-    def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
-        """Check that the Model's geometry components are above a "zero" area tolerance.
-
-        This includes all of the Model's Faces, Apertures, Doors and Shades.
-
-        Args:
-            tolerance: The minimum acceptable area of the object. Default is 0.0001,
-                which is equal to 1 cm2 when model units are meters. This is just
-                above the smallest size that OpenStudio will accept.
-            raise_exception: If True, a ValueError will be raised if the object
-                area is below the tolerance. (Default: True).
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        detailed = False if raise_exception else detailed
-        msgs = []
-        for face in self.faces:
-            msgs.append(face.check_non_zero(tolerance, False, detailed))
-        for shd in self.shades:
-            msgs.append(shd.check_non_zero(tolerance, False, detailed))
-        for ap in self.apertures:
-            msgs.append(ap.check_non_zero(tolerance, False, detailed))
-        for dr in self.doors:
-            msgs.append(dr.check_non_zero(tolerance, False, detailed))
-        full_msgs = [msg for msg in msgs if msg]
-        if detailed:
-            return [m for msg in full_msgs for m in msg]
-        full_msg = '\n'.join(full_msgs)
-        if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 

@@ -53,3 +53,15 @@ def test_validate_model_json():
         valid_report = json.loads(outp)
         assert not valid_report['valid']
         assert len(valid_report['errors']) != 0
+
+
+def test_validate_mismatched_adjacency():
+    incorrect_input_model = './tests/json/mismatched_area_adj.hbjson'
+    if (sys.version_info >= (3, 7)):
+        runner = CliRunner()
+        result = runner.invoke(validate_model, [incorrect_input_model, '--json'])
+        outp = result.output
+        valid_report = json.loads(outp)
+        assert not valid_report['valid']
+        assert len(valid_report['errors']) == 1
+        assert len(valid_report['errors'][0]['element_id']) == 2
