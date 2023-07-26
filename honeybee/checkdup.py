@@ -36,8 +36,16 @@ def check_duplicate_identifiers(
     dup = [t for t, c in collections.Counter(obj_id_iter).items() if c > 1]
     if len(dup) != 0:
         if detailed:
+            # find the object display names
+            dis_names = []
+            for obj_id in dup:
+                dis_name = None
+                for obj in objects_to_check:
+                    if obj.identifier == obj_id:
+                        dis_name = obj.display_name
+                dis_names.append(dis_name)
             err_list = []
-            for dup_id in dup:
+            for dup_id, dis_name in zip(dup, dis_names):
                 msg = 'There is a duplicated {} identifier: {}'.format(obj_name, dup_id)
                 dup_dict = {
                     'type': 'ValidationError',
@@ -45,10 +53,11 @@ def check_duplicate_identifiers(
                     'error_type': error_type,
                     'extension_type': extension,
                     'element_type': obj_name,
-                    'element_id': dup_id,
-                    'element_name': dup_id,
+                    'element_id': [dup_id],
                     'message': msg
                 }
+                if dis_name is not None:
+                    dup_dict['element_name'] = [dis_name]
                 err_list.append(dup_dict)
             return err_list
         msg = 'The following duplicated {} identifiers were found:\n{}'.format(
@@ -95,11 +104,12 @@ def check_duplicate_identifiers_parent(
     dup = [t for t, c in collections.Counter(obj_id_iter).items() if c > 1]
     if len(dup) != 0:
         # find the relevant top-level parents
-        top_par = []
+        top_par, dis_names = [], []
         for obj_id in dup:
-            rel_parents = []
+            rel_parents, dis_name = [], None
             for obj in objects_to_check:
                 if obj.identifier == obj_id:
+                    dis_name = obj.display_name
                     if obj.has_parent:
                         try:
                             par_obj = obj.top_level_parent
@@ -107,19 +117,21 @@ def check_duplicate_identifiers_parent(
                             par_obj = obj.parent
                         rel_parents.append(par_obj)
             top_par.append(rel_parents)
+            dis_names.append(dis_name)
         # if a detailed dictionary is requested, then create it
         if detailed:
             err_list = []
-            for dup_id, rel_par in zip(dup, top_par):
+            for dup_id, dis_name, rel_par in zip(dup, dis_names, top_par):
                 dup_dict = {
                     'type': 'ValidationError',
                     'code': code,
                     'error_type': error_type,
                     'extension_type': extension,
                     'element_type': obj_name,
-                    'element_id': dup_id,
-                    'element_name': dup_id
+                    'element_id': [dup_id]
                 }
+                if dis_name is not None:
+                    dup_dict['element_name'] = [dis_name]
                 msg = 'There is a duplicated {} identifier: {}'.format(obj_name, dup_id)
                 if len(rel_par) != 0:
                     dup_dict['top_parents'] = []

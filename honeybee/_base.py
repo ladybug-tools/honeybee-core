@@ -183,8 +183,8 @@ class _Base(object):
             'error_type': error_type,
             'extension_type': extension,
             'element_type': self.__class__.__name__,
-            'element_id': self.identifier,
-            'element_name': self.display_name,
+            'element_id': [self.identifier],
+            'element_name': [self.display_name],
             'message': message
         }
         # add parents to the error dictionary if they exist
@@ -199,7 +199,7 @@ class _Base(object):
                     'name': rel_obj.display_name
                 }
                 parents.append(par_dict)
-            error_dict['parents'] = parents
+            error_dict['parents'] = [parents]
         return [error_dict]
 
     @staticmethod
@@ -221,7 +221,7 @@ class _Base(object):
                 the error code. (Default: Unknown Error).
 
         Returns:
-            A string with the message or a list with a dictionary if detailed is True.
+            A string with the message or a dictionary if detailed is True.
         """
         # first check whether an exception should be raised or the message returned
         if not detailed:
@@ -233,8 +233,8 @@ class _Base(object):
             'error_type': error_type,
             'extension_type': extension,
             'element_type': child_obj.__class__.__name__,
-            'element_id': child_obj.identifier,
-            'element_name': child_obj.display_name,
+            'element_id': [child_obj.identifier],
+            'element_name': [child_obj.display_name],
             'message': message
         }
         # add parents to the error dictionary
@@ -248,7 +248,7 @@ class _Base(object):
                 'name': rel_obj.display_name
             }
             parents.append(par_dict)
-        error_dict['parents'] = parents
+        error_dict['parents'] = [parents]
         return error_dict
 
     @staticmethod

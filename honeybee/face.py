@@ -1524,10 +1524,14 @@ class Face(_BaseWithShade):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_sub_faces_overlapping(self, raise_exception=True, detailed=False):
+    def check_sub_faces_overlapping(
+            self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check that this Face's sub-faces do not overlap with one another.
 
         Args:
+            tolerance: The minimum distance that two sub-faces must overlap in order
+                for them to be considered overlapping and invalid. (Default: 0.01,
+                suitable for objects in meters).
             raise_exception: Boolean to note whether a ValueError should be raised
                 if a sub-faces overlap with one another.
             detailed: Boolean for whether the returned object is a detailed list of
@@ -1536,13 +1540,33 @@ class Face(_BaseWithShade):
         Returns:
             A string with the message or a list with dictionaries if detailed is True.
         """
-        sub_f_area = sum(sf.area for sf in self.sub_faces)
-        if sub_f_area > self.area:
-            msg = 'Face "{}" contains Apertures and/or ' \
+        sub_faces = self.sub_faces
+        if len(sub_faces) == 0:
+            return [] if detailed else ''
+        sf_groups = self._group_sub_faces_by_overlap(sub_faces, tolerance)
+        if not all(len(g) == 1 for g in sf_groups):
+            base_msg = 'Face "{}" contains Apertures and/or ' \
                 'Doors that overlap with each other.'.format(self.full_id)
-            return self._validation_message(
-                msg, raise_exception, detailed, '000105',
-                error_type='Overlapping Sub-Face Geometry')
+            if raise_exception:
+                raise ValueError(base_msg)
+            if not detailed:  # just give a message about the Face if not detailed
+                return base_msg
+            all_overlaps = []
+            for sf_group in sf_groups:
+                if len(sf_group) != 1:
+                    det_msg = 'The following sub-faces overlap with one another:' \
+                        '\n{}'.format('\n'.join([sf.full_id for sf in sf_group]))
+                    msg = '{}\n{}'.format(base_msg, det_msg)
+                    err_obj = self._validation_message_child(
+                        msg, sf_group[0], detailed, '000105',
+                        error_type='Overlapping Sub-Face Geometry')
+                    err_obj['element_type'] = 'SubFace'
+                    for ov_obj in sf_group[1:]:
+                        err_obj['element_id'].append(ov_obj.identifier)
+                        err_obj['element_name'].append(ov_obj.display_name)
+                        err_obj['parents'].append(err_obj['parents'][0])
+                    all_overlaps.append(err_obj)
+            return all_overlaps
         return [] if detailed else ''
 
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
@@ -1599,29 +1623,6 @@ class Face(_BaseWithShade):
             return self._validation_message(
                 msg, raise_exception, detailed, '000102',
                 error_type='Self-Intersecting Geometry')
-        return [] if detailed else ''
-
-    def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
-        """Check whether the area of the Face is above a certain "zero" tolerance.
-
-        Args:
-            tolerance: The minimum acceptable area of the object. Default is 0.0001,
-                which is equal to 1 cm2 when model units are meters. This is just
-                above the smallest size that OpenStudio will accept.
-            raise_exception: If True, a ValueError will be raised if the object
-                area is below the tolerance. Default: True.
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        if self.area < tolerance:
-            msg = 'Face "{}" geometry is too small. Area must be at least {}. ' \
-                'Got {}.'.format(self.full_id, tolerance, self.area)
-            return self._validation_message(
-                msg, raise_exception, detailed, '000103',
-                error_type='Zero-Area Geometry')
         return [] if detailed else ''
 
     def display_dict(self):
@@ -1712,6 +1713,31 @@ class Face(_BaseWithShade):
         Returns:
             A list of the input sub_faces with smaller overlapping geometries removed.
         """
+        # group the sub-faces according to the overlaps with one another
+        grouped_sfs = Face._group_sub_faces_by_overlap(sub_faces, tolerance)
+        # build a list of sub-faces without any overlaps
+        clean_sub_faces = []
+        for sf_group in grouped_sfs:
+            if len(sf_group) == 1:
+                clean_sub_faces.append(sf_group[0])
+            else:  # take the subface with the largest area
+                sf_group.sort(key=lambda x: x.area, reverse=True)
+                clean_sub_faces.append(sf_group[0])
+        return clean_sub_faces
+
+    @staticmethod
+    def _group_sub_faces_by_overlap(sub_faces, tolerance):
+        """Group a Apertures and/or Doors depending on whether they overlap one another.
+
+        Args:
+            sub_faces: A list of Apertures or Doors to be checked for overlapping.
+            tolerance: The minimum distance from the edge of a neighboring Face3D
+                at which a point is considered to overlap with that Face3D.
+
+        Returns:
+            A list of lists where each sub-list represents a group of Apertures and/or
+            Doors that overlap with one another.
+        """
         # sort the sub-faces by area
         sub_faces = list(sorted(sub_faces, key=lambda x: x.area, reverse=True))
         # create polygons for all of the faces
@@ -1734,15 +1760,7 @@ class Face(_BaseWithShade):
             if not group_found:  # the polygon does not overlap with any of the others
                 grouped_polys.append([poly])  # make a new group for the polygon
                 grouped_sfs.append([face])  # make a new group for the face
-        # build a list of sub-faces without any overlaps
-        clean_sub_faces = []
-        for sf_group in grouped_sfs:
-            if len(sf_group) == 1:
-                clean_sub_faces.append(sf_group[0])
-            else:  # take the subface with the largest area
-                sf_group.sort(key=lambda x: x.area, reverse=True)
-                clean_sub_faces.append(sf_group[0])
-        return clean_sub_faces
+        return grouped_sfs
 
     def __copy__(self):
         new_f = Face(self.identifier, self.geometry, self.type, self.boundary_condition)
