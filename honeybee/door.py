@@ -552,31 +552,6 @@ class Door(_BaseWithShade):
                 error_type='Self-Intersecting Geometry')
         return [] if detailed else ''
 
-    def check_non_zero(self, tolerance=0.0001, raise_exception=True, detailed=False):
-        """Check whether the area of the Door is above a certain "zero" tolerance.
-
-        Args:
-            tolerance: The minimum acceptable area of the object. Default is 0.0001,
-                which is equal to 1 cm2 when model units are meters. This is just
-                above the smallest size that OpenStudio will accept.
-            raise_exception: If True, a ValueError will be raised if the object
-                area is below the tolerance. Default: True.
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        if self.area < tolerance:
-            msg = 'Door "{}" geometry is too small. Area must be at least {}. ' \
-                'Got {}.'.format(self.full_id, tolerance, self.area)
-            if raise_exception:
-                raise ValueError(msg)
-            return self._validation_message(
-                msg, raise_exception, detailed, '000103',
-                error_type='Zero-Area Geometry')
-        return [] if detailed else ''
-
     def display_dict(self):
         """Get a list of DisplayFace3D dictionaries for visualizing the object."""
         base = [self._display_face(self.geometry, self.type_color)]

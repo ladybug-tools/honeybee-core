@@ -299,20 +299,6 @@ def test_check_self_intersecting():
         assert door_4.check_self_intersecting(0.01, True)
 
 
-def test_check_non_zero():
-    """Test the check_non_zero method."""
-    plane_1 = Plane(Vector3D(0, 0, 1))
-    pts_1 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 2))
-    pts_2 = (Point3D(0, 0), Point3D(2, 0), Point3D(2, 0))
-    door_1 = Door('Door1', Face3D(pts_1, plane_1))
-    door_2 = Door('Door2', Face3D(pts_2, plane_1))
-
-    assert door_1.check_non_zero(0.0001, False) == ''
-    assert door_2.check_non_zero(0.0001, False) != ''
-    with pytest.raises(Exception):
-        assert door_2.check_non_zero(0.0001, True)
-
-
 def test_to_dict():
     """Test the Door to_dict method."""
     vertices = [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]]
