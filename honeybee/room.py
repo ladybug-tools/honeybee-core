@@ -1212,9 +1212,14 @@ class Room(_BaseWithShade):
             'tolerance.\n  {} naked edges found\n  {} non-manifold edges found'.format(
                 self.full_id, tolerance, angle_tolerance,
                 len(self._geometry.naked_edges), len(self._geometry.non_manifold_edges))
-        return self._validation_message(
+        full_msg = self._validation_message(
             msg, raise_exception, detailed, '000106',
             error_type='Non-Solid Room Geometry')
+        if detailed:  # add the naked and non-manifold edges to helper_geometry
+            help_edges = [ln.to_dict() for ln in self.geometry.naked_edges]
+            help_edges.extend([ln.to_dict() for ln in self.geometry.non_manifold_edges])
+            full_msg[0]['helper_geometry'] = help_edges
+        return full_msg
 
     def check_sub_faces_valid(self, tolerance=0.01, angle_tolerance=1,
                               raise_exception=True, detailed=False):

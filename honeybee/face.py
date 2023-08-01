@@ -1588,9 +1588,15 @@ class Face(_BaseWithShade):
             self.geometry.check_planar(tolerance, raise_exception=True)
         except ValueError as e:
             msg = 'Face "{}" is not planar.\n{}'.format(self.full_id, e)
-            return self._validation_message(
+            full_msg = self._validation_message(
                 msg, raise_exception, detailed, '000101',
                 error_type='Non-Planar Geometry')
+            if detailed:  # add the out-of-plane points to helper_geometry
+                help_pts = [
+                    p.to_dict() for p in self.geometry.non_planar_vertices(tolerance)
+                ]
+                full_msg[0]['helper_geometry'] = help_pts
+            return full_msg
         return [] if detailed else ''
 
     def check_self_intersecting(self, tolerance=0.01, raise_exception=True,
@@ -1619,10 +1625,14 @@ class Face(_BaseWithShade):
                 if not new_geo.is_self_intersecting:
                     return [] if detailed else ''  # valid with removed dup vertex
             except AssertionError:
-                pass  # zero area face; treat it as self-intersecting
-            return self._validation_message(
+                pass  # degenerate face; treat it as self-intersecting
+            full_msg = self._validation_message(
                 msg, raise_exception, detailed, '000102',
                 error_type='Self-Intersecting Geometry')
+            if detailed:  # add the self-intersection points to helper_geometry
+                help_pts = [p.to_dict() for p in self.geometry.self_intersection_points]
+                full_msg[0]['helper_geometry'] = help_pts
+            return full_msg
         return [] if detailed else ''
 
     def display_dict(self):
