@@ -75,7 +75,12 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
         current_obj = obj_instance
         try:
             for attribute in attributes:
-                current_obj = getattr(current_obj, attribute)
+                if current_obj is None:
+                    raise AttributeError
+                elif isinstance(current_obj, dict):
+                    current_obj = current_obj.get(attribute, None)
+                else:
+                    current_obj = getattr(current_obj, attribute)
             if isinstance(current_obj, float) and decimal_count:
                 return round(current_obj, decimal_count)
             else:
