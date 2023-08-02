@@ -1822,7 +1822,6 @@ class Model(_Base):
         msgs.append(self.check_missing_adjacencies(False, detailed))
         msgs.append(self.check_matching_adjacent_areas(tol, False, detailed))
         msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
-        msgs.append(self.check_rooms_all_air_boundary(False, detailed))
 
         # check the extension attributes
         ext_msgs = self._properties._check_extension_attr(detailed)
@@ -2394,44 +2393,6 @@ class Model(_Base):
                       'to another Face.'.format(face.full_id)
                 msg = self._validation_message_child(
                     msg, face, detailed, '000206', error_type='Non-Adjacent AirBoundary')
-                msgs.append(msg)
-        if detailed:
-            return msgs
-        full_msg = '\n'.join(msgs)
-        if raise_exception and len(msgs) != 0:
-            raise ValueError(full_msg)
-        return full_msg
-
-    def check_rooms_all_air_boundary(self, raise_exception=True, detailed=False):
-        """Check that there are no Rooms composed entirely of AirBoundaries.
-
-        This is a requirement for energy simulation since EnergyPlus will throw
-        a "no surfaces" error if it encounters a Room composed entirely of
-        AirBoundaries.
-
-        Args:
-            raise_exception: Boolean to note whether a ValueError should be raised
-                if a Room composed entirely of AirBoundaries is found. (Default: True).
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        detailed = False if raise_exception else detailed
-        msgs = []
-        for room in self._rooms:
-            non_ab = [f for f in room._faces if not isinstance(f.type, AirBoundary)]
-            if all(len(f.apertures) > 0 for f in non_ab):
-                st_msg = 'is composed entirely of AirBoundary Faces' \
-                    if len(non_ab) == 0 else \
-                    'is almost entirely composed of AirBoundary Faces with the ' \
-                    'other {} Faces having Apertures'.format(len(non_ab))
-                msg = 'Room "{}" {}. It should be merged with adjacent rooms.'.format(
-                    room.full_id, st_msg)
-                msg = self._validation_message_child(
-                    msg, room, detailed, '000207',
-                    error_type='Room Composed Entirely of AirBoundaries')
                 msgs.append(msg)
         if detailed:
             return msgs
