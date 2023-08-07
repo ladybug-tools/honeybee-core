@@ -1397,7 +1397,8 @@ class Room(_BaseWithShade):
             msg, raise_exception, detailed, '000107',
             error_type='Degenerate Room Volume')
 
-    def merge_coplanar_faces(self, tolerance=0.01, angle_tolerance=1):
+    def merge_coplanar_faces(
+            self, tolerance=0.01, angle_tolerance=1, vertical_only=False):
         """Merge coplanar Faces of this Room.
 
         This is often useful before running Room.intersect_adjacency between
@@ -1418,6 +1419,10 @@ class Room(_BaseWithShade):
             angle_tolerance: The max angle in degrees that the plane normals can
                 differ from one another in order for them to be considered
                 coplanar. (Default: 1 degree).
+            vertical_only: A boolean to note whether only vertical coplanar faces
+                should be merged, leaving horizontal faces intact. Useful for
+                cases where alignment of walls with the Room.horizontal_boundary
+                is desired without disrupting the roof geometry. (Default: False).
         
         Returns:
             A list containing only the new Faces that were created as part of the
@@ -1430,13 +1435,27 @@ class Room(_BaseWithShade):
         # group the Faces of the Room by their co-planarity
         tol, a_tol = tolerance, math.radians(angle_tolerance)
         coplanar_dict = {self._faces[0].geometry.plane: [self._faces[0]]}
-        for face in self._faces[1:]:
-            for pln, f_list in coplanar_dict.items():
-                if face.geometry.plane.is_coplanar_tolerance(pln, tol, a_tol):
-                    f_list.append(face)
-                    break
-            else:  # the first face with this type of plane
-                coplanar_dict[face.geometry.plane] = [face]
+        if not vertical_only:
+            for face in self._faces[1:]:
+                for pln, f_list in coplanar_dict.items():
+                    if face.geometry.plane.is_coplanar_tolerance(pln, tol, a_tol):
+                        f_list.append(face)
+                        break
+                else:  # the first face with this type of plane
+                    coplanar_dict[face.geometry.plane] = [face]
+        else:
+            up_vec = Vector3D(0, 0, 1)
+            min_ang, max_ang = (math.pi / 2) - a_tol, (math.pi / 2) + a_tol
+            for face in self._faces[1:]:
+                if min_ang < up_vec.angle(face.normal) < max_ang:
+                    for pln, f_list in coplanar_dict.items():
+                        if face.geometry.plane.is_coplanar_tolerance(pln, tol, a_tol):
+                            f_list.append(face)
+                            break
+                    else:  # the first face with this type of plane
+                        coplanar_dict[face.geometry.plane] = [face]
+                else:
+                    coplanar_dict[face.geometry.plane] = [face]
 
         # merge any of the coplanar Faces together
         all_faces, new_faces = [], []
@@ -2282,12 +2301,23 @@ class Room(_BaseWithShade):
                 if len(og) == 1:
                     clean_geo.extend(og)
                 else:
+                    it_count, max_iter = 0, len(og) * 2
                     while len(og) > 1:
                         a_tol = math.radians(1)
                         union = Face3D.coplanar_union(og[0], og[1], tolerance, a_tol)
-                        og.pop(0)
-                        og[0] = union
-                    clean_geo.extend(og)
+                        if union is None:
+                            og.append(og.pop(1))
+                        else:
+                            og.pop(0)
+                            og[0] = union
+                        it_count += 1
+                        if it_count > max_iter:
+                            break
+                    if len(og) == 1:
+                        clean_geo.extend(og)
+                    else:
+                        sort_geo = sorted(clean_geo, key=lambda x: x.area, reverse=True)
+                        clean_geo.append(sort_geo[0])
             if len(clean_geo) == 1:
                 return clean_geo[0]
             return Face3D.join_coplanar_faces(clean_geo, tolerance)[0]
