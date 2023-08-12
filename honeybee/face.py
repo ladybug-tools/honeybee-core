@@ -606,7 +606,7 @@ class Face(_BaseWithShade):
 
     def rectangularize_apertures(
             self, subdivision_distance=None, max_separation=None,
-            tolerance=0.01, angle_tolerance=1.0):
+            merge_all=False, tolerance=0.01, angle_tolerance=1.0):
         """Convert all Apertures on this Face to be rectangular.
 
         This is useful when exporting to simulation engines that only accept
@@ -631,6 +631,10 @@ class Face(_BaseWithShade):
                 should be set to a value that is slightly larger than the window frame.
                 If None, no merging of Apertures will happen before they are
                 converted to rectangles. (Default: None).
+            merge_all: Boolean to note whether all apertures should be merged before
+                they are rectangularized. If False, only non-rectangular apertures
+                will be merged before rectangularization. Note that this argument
+                has no effect when the max_separation is None. (Default: False).
             tolerance: The maximum difference between point values for them to be
                 considered equivalent. (Default: 0.01, suitable for objects in meters).
             angle_tolerance: The max angle in degrees that the corners of the
@@ -651,8 +655,12 @@ class Face(_BaseWithShade):
                 clean_geo = aperture.geometry.remove_colinear_vertices(tol)
             except AssertionError:  # degenerate Aperture to be ignored
                 continue
-            if clean_geo.polygon2d.is_rectangle(ang_tol):
-                rect_aps.append(aperture)
+            if max_separation is None or not merge_all:
+                if clean_geo.polygon2d.is_rectangle(ang_tol):
+                    rect_aps.append(aperture)
+                else:
+                    non_rect_aps.append(aperture)
+                    non_rect_geos.append(clean_geo)
             else:
                 non_rect_aps.append(aperture)
                 non_rect_geos.append(clean_geo)
@@ -668,40 +676,41 @@ class Face(_BaseWithShade):
 
         # try to merge the non-rectangular apertures if a max_separation is specified
         ref_plane = self._reference_plane(ang_tol)
-        if max_separation is not None and len(non_rect_geos) > 1:
-            edits_occurred = True
-            if max_separation <= tol:  #  just join the Apertures at the tolerance
-                non_rect_geos = Face3D.join_coplanar_faces(non_rect_geos, tol)
-            else:  # join the Apertures using the max_separation
-                # get polygons for the faces that all lie within the same plane
-                face_polys = []
-                for fg in non_rect_geos:
-                    verts2d = tuple(ref_plane.xyz_to_xy(_v) for _v in fg.boundary)
-                    face_polys.append(Polygon2D(verts2d))
-                    if fg.has_holes:
-                        for hole in fg.holes:
-                            verts2d = tuple(ref_plane.xyz_to_xy(_v) for _v in hole)
-                            face_polys.append(Polygon2D(verts2d))
-                # get the joined boundaries around the Polygon2D
-                joined_bounds = Polygon2D.gap_crossing_boundary(
-                    face_polys, max_separation, tolerance)
-                # convert the boundary polygons back to Face3D
-                if len(joined_bounds) == 1:  # can be represented with a single Face3D
-                    verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in joined_bounds[0])
-                    non_rect_geos = [Face3D(verts3d, plane=ref_plane)]
-                else:  # need to separate holes from distinct Face3Ds
-                    bound_faces = []
-                    for poly in joined_bounds:
-                        verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in poly)
-                        bound_faces.append(Face3D(verts3d, plane=ref_plane))
-                    non_rect_geos = Face3D.merge_faces_to_holes(bound_faces, tolerance)
-            clean_aps = []
-            for ap_geo in non_rect_geos:
-                try:
-                    clean_aps.append(ap_geo.remove_colinear_vertices(tol))
-                except AssertionError:  # degenerate Aperture to be ignored
-                    continue
-            non_rect_geos = clean_aps
+        if max_separation is not None:
+            if merge_all or (not merge_all and len(non_rect_geos) > 1):
+                edits_occurred = True
+                if max_separation <= tol:  #  just join the Apertures at the tolerance
+                    non_rect_geos = Face3D.join_coplanar_faces(non_rect_geos, tol)
+                else:  # join the Apertures using the max_separation
+                    # get polygons for the faces that all lie within the same plane
+                    face_polys = []
+                    for fg in non_rect_geos:
+                        verts2d = tuple(ref_plane.xyz_to_xy(_v) for _v in fg.boundary)
+                        face_polys.append(Polygon2D(verts2d))
+                        if fg.has_holes:
+                            for hole in fg.holes:
+                                verts2d = tuple(ref_plane.xyz_to_xy(_v) for _v in hole)
+                                face_polys.append(Polygon2D(verts2d))
+                    # get the joined boundaries around the Polygon2D
+                    joined_bounds = Polygon2D.gap_crossing_boundary(
+                        face_polys, max_separation, tolerance)
+                    # convert the boundary polygons back to Face3D
+                    if len(joined_bounds) == 1:  # can be represented with a single Face3D
+                        verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in joined_bounds[0])
+                        non_rect_geos = [Face3D(verts3d, plane=ref_plane)]
+                    else:  # need to separate holes from distinct Face3Ds
+                        bound_faces = []
+                        for poly in joined_bounds:
+                            verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in poly)
+                            bound_faces.append(Face3D(verts3d, plane=ref_plane))
+                        non_rect_geos = Face3D.merge_faces_to_holes(bound_faces, tolerance)
+                clean_aps = []
+                for ap_geo in non_rect_geos:
+                    try:
+                        clean_aps.append(ap_geo.remove_colinear_vertices(tol))
+                    except AssertionError:  # degenerate Aperture to be ignored
+                        continue
+                non_rect_geos = clean_aps
 
         # convert the remaining Aperture geometries to rectangles
         if subdivision_distance is None:  # just take the bounding rectangle
@@ -735,7 +744,7 @@ class Face(_BaseWithShade):
                     new_ap = Aperture('{}_RectGlz{}'.format(self.identifier, i), ap_face)
                 else:
                     new_ap = Aperture(exist_ap.identifier, ap_face,
-                                      is_operable=exist_ap.is_operable)
+                                    is_operable=exist_ap.is_operable)
                     new_ap.display_name = '{}_{}'.format(exist_ap.display_name, i)
                 new_aps.append(new_ap)
         
@@ -763,23 +772,25 @@ class Face(_BaseWithShade):
             except AssertionError:  # Aperture smaller than resolution; ignore
                 continue
 
-            # group face by y value. All the rows will be merged together.
+            # group face by y value. All the rows will be merged together
             vertices = grid.vertices
             groups = {}
-            for face in grid.faces:
+            last_y = vertices[grid.faces[0][0]].y
+            for i, face in enumerate(grid.faces):
                 min_2d = vertices[face[0]]
-                for y in groups:
-                    if abs(min_2d.y - y) < 0.01:
-                        groups[y].append(face)
+                for xy in groups:
+                    if abs(min_2d.x - xy[0]) < tolerance and abs(min_2d.y - last_y) < tolerance:
+                        groups[(xy[0], start_y)].append(face)
                         break
                 else:
-                    groups[min_2d.y] = [face]
+                    start_y = min_2d.y
+                    groups[(min_2d.x, start_y)] = [face]
+                last_y = vertices[face[3]].y
 
-            # merge the rows if they have the same number of grids
+            # get the max and min of each group
             sorted_groups = []
             for group in groups.values():
                 # find min_2d and max_2d for each group
-                group.sort(key=lambda x: vertices[x[0]].x)
                 min_2d = vertices[group[0][0]]
                 max_2d = vertices[group[-1][2]]
                 sorted_groups.append({'min': min_2d, 'max': max_2d})
@@ -793,17 +804,17 @@ class Face(_BaseWithShade):
                 """
                 for count, group in enumerate(groups[start:]):
                     next_group = groups[count + start + 1]
-                    if abs(group['min'].x - next_group['min'].x) <= 0.01 \
-                        and abs(group['max'].x - next_group['max'].x) <= 0.01 \
-                            and abs(next_group['min'].y - group['max'].y) <= 0.01:
+                    if abs(group['min'].y - next_group['min'].y) <= tolerance \
+                        and abs(group['max'].y - next_group['max'].y) <= tolerance \
+                            and abs(next_group['min'].x - group['max'].x) <= tolerance:
                         continue
                     else:
                         return start + count
 
                 return start + count + 1
 
-            # sort based on y
-            sorted_groups.sort(key=lambda x: x['min'].y)
+            # merge the rows if they have the same number of grid cells
+            sorted_groups.sort(key=lambda x: x['min'].x)
             merged_groups = []
             start_row = 0
             last_row = -1
