@@ -1503,7 +1503,7 @@ class Model(_Base):
             self.solve_adjacency()
     
     def rectangularize_apertures(
-            self, subdivision_distance=None, max_separation=None,
+            self, subdivision_distance=None, max_separation=None, merge_all=False,
             resolve_adjacency=True, tolerance=None, angle_tolerance=None):
         """Convert all Apertures on this Room to be rectangular.
 
@@ -1529,6 +1529,10 @@ class Model(_Base):
                 should be set to a value that is slightly larger than the window frame.
                 If None, no merging of Apertures will happen before they are
                 converted to rectangles. (Default: None).
+            merge_all: Boolean to note whether all apertures should be merged before
+                they are rectangularized. If False, only non-rectangular apertures
+                will be merged before rectangularization. Note that this argument
+                has no effect when the max_separation is None. (Default: False).
             resolve_adjacency: Boolean to note whether Room adjacencies should be
                 re-solved after the Apertures have been rectangularized. Setting this
                 to True should ensure that and interior Apertures that are
@@ -1547,7 +1551,7 @@ class Model(_Base):
         a_tol = angle_tolerance if angle_tolerance else self.angle_tolerance
         for room in self._rooms:
             room.rectangularize_apertures(
-                subdivision_distance, max_separation, tol, a_tol)
+                subdivision_distance, max_separation, merge_all, tol, a_tol)
         if resolve_adjacency:
             self.solve_adjacency()
 

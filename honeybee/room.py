@@ -857,7 +857,7 @@ class Room(_BaseWithShade):
                 face.apertures_by_ratio(face.aperture_ratio, tolerance)
     
     def rectangularize_apertures(
-            self, subdivision_distance=None, max_separation=None,
+            self, subdivision_distance=None, max_separation=None, merge_all=False,
             tolerance=0.01, angle_tolerance=1.0):
         """Convert all Apertures on this Room to be rectangular.
 
@@ -883,6 +883,10 @@ class Room(_BaseWithShade):
                 should be set to a value that is slightly larger than the window frame.
                 If None, no merging of Apertures will happen before they are
                 converted to rectangles. (Default: None).
+            merge_all: Boolean to note whether all apertures should be merged before
+                they are rectangularized. If False, only non-rectangular apertures
+                will be merged before rectangularization. Note that this argument
+                has no effect when the max_separation is None. (Default: False).
             tolerance: The maximum difference between point values for them to be
                 considered equivalent. (Default: 0.01, suitable for objects in meters).
             angle_tolerance: The max angle in degrees that the corners of the
@@ -891,7 +895,9 @@ class Room(_BaseWithShade):
         """
         for face in self._faces:
             face.rectangularize_apertures(
-                subdivision_distance, max_separation, tolerance, angle_tolerance)
+                subdivision_distance, max_separation, merge_all,
+                tolerance, angle_tolerance
+            )
 
     def ground_by_custom_surface(self, ground_geometry, tolerance=0.01,
                                  angle_tolerance=1.0):
