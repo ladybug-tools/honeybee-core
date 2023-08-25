@@ -596,7 +596,9 @@ class Room(_BaseWithShade):
         flr_geo = [face.geometry for face in self.floors]
 
         # ensure that all geometries are horizontal with as few faces as possible
-        if len(flr_geo) == 1:
+        if len(flr_geo) == 0:  # degenerate face
+            return []
+        elif len(flr_geo) == 1:
             if flr_geo[0].is_horizontal(tolerance):
                 horiz_bound = flr_geo
             else:
