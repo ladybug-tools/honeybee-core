@@ -29,7 +29,7 @@ from ladybug_geometry.geometry2d.pointvector import Vector2D
 
 
 def angles_from_num_orient(num_subdivisions=4):
-    """Get a list of angles based on the number of compass subdividsions.
+    """Get a list of angles based on the number of compass subdivisions.
 
     Args:
         num_subdivisions: An integer for the number of times that the compass
