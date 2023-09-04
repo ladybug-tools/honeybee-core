@@ -65,3 +65,15 @@ def test_validate_mismatched_adjacency():
         assert not valid_report['valid']
         assert len(valid_report['errors']) == 1
         assert len(valid_report['errors'][0]['element_id']) == 2
+
+
+def test_colliding_room_volumes():
+    incorrect_input_model = './tests/json/colliding_room_volumes.hbjson'
+    if (sys.version_info >= (3, 7)):
+        runner = CliRunner()
+        result = runner.invoke(validate_model, [incorrect_input_model, '--json'])
+        outp = result.output
+        valid_report = json.loads(outp)
+        assert not valid_report['valid']
+        assert len(valid_report['errors']) == 1
+        assert len(valid_report['errors'][0]['element_id']) == 2

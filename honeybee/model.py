@@ -511,7 +511,7 @@ class Model(_Base):
         """Create a model with a rectangular floor plan.
 
         Note that the resulting Rooms in the model won't have any windows or solved
-        adjacencies. These can be added by using the Room.solve_adjacency method
+        adjacencies. These can be added by using the Model.solve_adjacency method
         and the various Face.apertures_by_XXX methods.
 
         Args:
@@ -563,7 +563,7 @@ class Model(_Base):
         """Create a model with an L-shaped floor plan.
 
         Note that the resulting Rooms in the model won't have any windows or solved
-        adjacencies. These can be added by using the Room.solve_adjacency method
+        adjacencies. These can be added by using the Model.solve_adjacency method
         and the various Face.apertures_by_XXX methods.
 
         Args:
@@ -1823,6 +1823,7 @@ class Model(_Base):
         msgs.append(self.check_rooms_solid(tol, ang_tol, False, detailed))
 
         # perform checks related to adjacency relationships
+        msgs.append(self.check_room_volume_collisions(tol, False, detailed))
         msgs.append(self.check_missing_adjacencies(False, detailed))
         msgs.append(self.check_matching_adjacent_areas(tol, False, detailed))
         msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
@@ -2128,6 +2129,42 @@ class Model(_Base):
         msgs = []
         for room in self._rooms:
             msg = room.check_solid(tolerance, angle_tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        if detailed:
+            return msgs
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_room_volume_collisions(
+            self, tolerance=None, raise_exception=True, detailed=False):
+        """Check whether the Model's rooms collide with one another beyond the tolerance.
+
+        Args:
+            tolerance: tolerance: The maximum difference between x, y, and z values
+                at which face vertices are considered equivalent. If None, the Model
+                tolerance will be used. (Default: None).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if the room geometry does not form a closed solid. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        # set default values
+        tolerance = self.tolerance if tolerance is None else tolerance
+        detailed = False if raise_exception else detailed
+        # group the rooms by their floor heights to enable collision checking
+        room_groups, _ = Room.group_by_floor_height(self.rooms, tolerance)
+        # loop trough the groups and detect collisions
+        msgs = []
+        for rg in room_groups:
+            msg = Room.check_room_volume_collisions(rg, tolerance, detailed)
             if detailed:
                 msgs.extend(msg)
             elif msg != '':
