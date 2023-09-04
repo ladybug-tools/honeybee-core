@@ -1962,6 +1962,84 @@ class Room(_BaseWithShade):
         return story_names
 
     @staticmethod
+    def check_room_volume_collisions(rooms, tolerance=0.01, detailed=False):
+        """Check whether the volumes of Rooms collide with one another beyond tolerance.
+
+        At the moment, this method only checks for the case where coplanar Floor
+        Faces of different Rooms overlap with one another, which clearly indicates
+        that there is definitely a collision between the Room volumes. In the
+        future, this method may be amended to sense more complex cases of
+        colliding Room volumes. For now, it is designed to only detect the most
+        common cases.
+
+        Args:
+            rooms: A list of rooms that will be checked for volumetric collisions.
+                For this method to run most efficiently, these input Rooms should
+                be at the same horizontal floor level. The Room.group_by_floor_height()
+                method can be used to group the Rooms of a model according to their
+                height before running this method.
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. (Default: 0.01,
+                suitable for objects in meters.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        # create Polygon2Ds from the floors of the rooms
+        polys = [
+            [(Polygon2D(Point2D(p.x, p.y) for p in flr.vertices), flr.geometry[0].z)
+             for flr in room.floors if flr.geometry.is_horizontal(tolerance)]
+            for room in rooms
+        ]
+
+        # find the number of overlaps across the Rooms
+        msgs = []
+        for i, (room_1, polys_1) in enumerate(zip(rooms, polys)):
+            overlap_rooms = []
+            if len(polys_1) == 0:
+                continue
+            try:
+                for room_2, polys_2 in zip(rooms[i + 1:], polys[i + 1:]):
+                    collision_found = False
+                    for ply_1, z1 in polys_1:
+                        if collision_found:
+                            break
+                        for ply_2, z2 in polys_2:
+                            if collision_found:
+                                break
+                            if abs(z1 - z2) < tolerance:
+                                if Polygon2D.overlapping_bounding_rect(
+                                        ply_1, ply_2, tolerance):
+                                    if ply_1.polygon_relationship(ply_2, tolerance) >= 0:
+                                        overlap_rooms.append(room_2)
+                                        collision_found = True
+                                        break
+            except IndexError:
+                pass  # we have reached the end of the list
+
+            # of colliding rooms were found, create error messages
+            if len(overlap_rooms) != 0:
+                for room_2 in overlap_rooms:
+                    msg = 'Room "{}" has a volume that collides with the volume ' \
+                        'of Room "{}" more than the tolerance ({}).'.format(
+                            room_1.display_name, room_2.display_name, tolerance)
+                    msg = Room._validation_message_child(
+                        msg, room_1, detailed, '000108',
+                        error_type='Colliding Room Volumes')
+                    if detailed:
+                        msg['element_id'].append(room_2.identifier)
+                        msg['element_name'].append(room_2.display_name)
+                        msg['parents'].append(msg['parents'][0])
+                    msgs.append(msg)
+        # report any errors
+        if detailed:
+            return msgs
+        full_msg = '\n '.join(msgs)
+        return full_msg
+
+    @staticmethod
     def grouped_horizontal_boundary(
             rooms, min_separation=0, tolerance=0.01, floors_only=True):
         """Get a list of Face3D for the horizontal boundary around several Rooms.
