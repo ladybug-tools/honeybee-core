@@ -61,7 +61,7 @@ def parse_distance_string(distance_string, destination_units='Meters'):
         A number for the distance in the destination_units.
     """
     # separate the distance string into a number and a unit abbreviation
-    distance_string = distance_string.strip()
+    distance_string = distance_string.strip().replace(',', '.')
     try:  # check if the distance string is just a number
         return float(distance_string)
     except ValueError:  # it must have some units attached to it
