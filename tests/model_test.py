@@ -341,6 +341,17 @@ def test_model_add_prefix():
         assert shd.identifier.startswith(prefix)
 
 
+def test_reset_room_ids():
+    """Test the reset_room_ids method."""
+    model_json = './tests/json/model_with_adiabatic.hbjson'
+    parsed_model = Model.from_hbjson(model_json)
+    
+    new_model = parsed_model.duplicate()
+    new_model.reset_room_ids()
+
+    assert new_model.rooms[0].identifier != parsed_model.rooms[0].identifier
+
+
 def test_move():
     """Test the Model move method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
