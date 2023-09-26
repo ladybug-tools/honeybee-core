@@ -268,6 +268,85 @@ def clean_and_id_ep_string(value, input_name=''):
     return val + '_' + str(uuid.uuid4())[:8]
 
 
+def clean_and_number_string(value, existing_dict, input_name=''):
+    """Clean a string and add an integer to it if it is found in the existing_dict.
+
+    The resulting string will be valid for both Radiance and EnergyPlus.
+
+    Args:
+        value: The text string to be cleaned and possibly given a unique integer.
+        existing_dict: A dictionary where the keys are text strings of existing items
+            and the values are the number of times that the item has appeared in
+            the model already.
+    """
+    try:
+        val = re.sub(r'[^.A-Za-z0-9_-]', '_', value)
+    except TypeError:
+        raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
+            input_name, type(value), value))
+    if len(val) > 95:
+        val = val[:95]
+    if val in existing_dict:
+        existing_dict[val] += 1
+        return val + '_' + str(existing_dict[val])
+    else:
+        existing_dict[val] = 1
+        return val
+
+
+def clean_and_number_rad_string(value, existing_dict, input_name=''):
+    """Clean a string for Radiance and add an integer if found in the existing_dict.
+
+    This includes stripping out illegal characters and white spaces.
+
+    Args:
+        value: The text string to be cleaned and possibly given a unique integer.
+        existing_dict: A dictionary where the keys are text strings of existing items
+            and the values are the number of times that the item has appeared in
+            the model already.
+    """
+    try:
+        val = re.sub(r'[^.A-Za-z0-9_-]', '_', value)
+    except TypeError:
+        raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
+            input_name, type(value), value))
+    if val in existing_dict:
+        existing_dict[val] += 1
+        return val + '_' + str(existing_dict[val])
+    else:
+        existing_dict[val] = 1
+        return val
+
+
+def clean_and_number_ep_string(value, existing_dict, input_name=''):
+    """Clean a string for EnergyPlus and add an integer if found in the existing_dict.
+
+    This includes stripping out all illegal characters and removing trailing white spaces.
+    Strings longer than 95 characters will be truncated before adding the integer.
+
+    Args:
+        value: The text string to be cleaned and possibly given a unique integer.
+        existing_dict: A dictionary where the keys are text strings of existing items
+            and the values are the number of times that the item has appeared in
+            the model already.
+    """
+    try:
+        val = ''.join(i for i in value if ord(i) < 128)  # strip out non-ascii
+        val = re.sub(r'[,;!\n\t]', '', val)  # strip out E+ special characters
+    except TypeError:
+        raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
+            input_name, type(value), value))
+    val = val.strip()
+    if len(val) > 95:
+        val = val[:95]
+    if val in existing_dict:
+        existing_dict[val] += 1
+        return val + ' ' + str(existing_dict[val])
+    else:
+        existing_dict[val] = 1
+        return val
+
+
 def truncate_and_id_string(value, truncate_len=32, uuid_len=0, input_name=''):
     """Truncate a string to a length with an option to add unique characters at the end.
 

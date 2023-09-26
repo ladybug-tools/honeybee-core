@@ -24,7 +24,8 @@ from .face import Face
 from .shade import Shade
 from .aperture import Aperture
 from .door import Door
-from .typing import float_positive, invalid_dict_error, clean_string
+from .typing import float_positive, invalid_dict_error, clean_string, \
+    clean_and_number_string
 from .config import folders
 from .boundarycondition import Outdoors, Surface
 from .facetype import AirBoundary, Wall, Floor, RoofCeiling, face_types
@@ -1202,6 +1203,19 @@ class Model(_Base):
             aperture.add_prefix(prefix)
         for door in self._orphaned_doors:
             door.add_prefix(prefix)
+
+    def reset_room_ids(self):
+        """Reset the identifiers of the Model Rooms to be derived from display_names.
+
+        In the event that duplicate Room identifiers are found in the Model, an
+        integer will be automatically appended to the new Room ID to make it
+        unique. This is similar to the routines that automatically assign unique
+        names to OpenStudio SDK objects.
+        """
+        room_dict = {}
+        for room in self.rooms:
+            room.identifier = clean_and_number_string(
+                room.display_name, room_dict, 'Room identifier')
 
     def solve_adjacency(
             self, merge_coplanar=False, intersect=False, overwrite=False,
