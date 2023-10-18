@@ -2174,6 +2174,8 @@ class Model(_Base):
         tolerance = self.tolerance if tolerance is None else tolerance
         detailed = False if raise_exception else detailed
         # group the rooms by their floor heights to enable collision checking
+        if len(self.rooms) == 0:
+            return [] if detailed else ''
         room_groups, _ = Room.group_by_floor_height(self.rooms, tolerance)
         # loop trough the groups and detect collisions
         msgs = []
