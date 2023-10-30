@@ -1526,6 +1526,7 @@ class Room(_BaseWithShade):
                         if i == 0:  # add all assigned shades to this face
                             nf.add_indoor_shades(in_shades)
                             nf.add_outdoor_shades(out_shades)
+                        nf._parent = self
                         all_faces.append(nf)
                         new_faces.append(nf)
                 else:  # faces don't overlap and were not merged
