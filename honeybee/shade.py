@@ -446,7 +446,7 @@ class Shade(_Base):
 
         Args:
             abridged: Boolean to note whether the extension properties of the
-                object (ie. materials, transmittance schedule) should be included in
+                object (ie. modifiers, transmittance schedule) should be included in
                 detail (False) or just referenced by identifier (True). Default: False.
             included_prop: List of properties to filter keys that must be included in
                 output dictionary. For example ['energy'] will include 'energy' key if

@@ -338,7 +338,7 @@ class _Properties(object):
 class ModelProperties(_Properties):
     """Honeybee Model Properties.
 
-    Model properties. This class will be extended by extensions.
+    This class will be extended by extensions.
 
     Usage:
 
@@ -432,7 +432,7 @@ class ModelProperties(_Properties):
 class RoomProperties(_Properties):
     """Honeybee Room Properties.
 
-    Room properties. This class will be extended by extensions.
+    This class will be extended by extensions.
 
     Usage:
 
@@ -488,7 +488,7 @@ class RoomProperties(_Properties):
 class FaceProperties(_Properties):
     """Honeybee Face Properties.
 
-    Face properties. This class will be extended by extensions.
+    This class will be extended by extensions.
 
     Usage:
 
@@ -540,66 +540,10 @@ class FaceProperties(_Properties):
         return 'FaceProperties: {}'.format(self.host.display_name)
 
 
-class ShadeProperties(_Properties):
-    """Honeybee Shade Properties.
-
-    Shade properties. This class will be extended by extensions.
-
-    Usage:
-
-    .. code-block:: python
-
-        shade = Shade('Deep Overhang', geometry)
-        shade.properties -> ShadeProperties
-        shade.properties.radiance -> ShadeRadianceProperties
-        shade.properties.energy -> ShadeEnergyProperties
-    """
-
-    def to_dict(self, abridged=False, include=None):
-        """Convert properties to dictionary.
-
-        Args:
-            abridged: Boolean to note whether the full dictionary describing the
-                object should be returned (False) or just an abridged version (True).
-                Default: False.
-            include: A list of keys to be included in dictionary.
-                If None all the available keys will be included.
-        """
-        base = {'type': 'ShadeProperties'} if not abridged else \
-            {'type': 'ShadePropertiesAbridged'}
-
-        base = self._add_extension_attr_to_dict(base, abridged, include)
-        return base
-
-    def add_prefix(self, prefix):
-        """Change the identifier extension attributes unique to this object by adding a prefix.
-
-        Notably, this method only adds the prefix to extension attributes that must
-        be unique to the Shade and does not add the prefix to attributes that are
-        shared across several Shades.
-
-        Args:
-            prefix: Text that will be inserted at the start of extension attribute identifiers.
-        """
-        self._add_prefix_extension_attr(prefix)
-
-    def reset_to_default(self):
-        """Reset the extension properties assigned at the level of this Shade to default.
-
-        This typically means erasing any Constructions or Modifiers assigned to this
-        Shade (having them instead assigned by ConstructionSets and ModifierSets).
-        """
-        self._reset_extension_attr_to_default()
-
-    def __repr__(self):
-        """Properties representation."""
-        return 'ShadeProperties: {}'.format(self.host.display_name)
-
-
 class ApertureProperties(_Properties):
     """Honeybee Aperture Properties.
 
-    Aperture properties. This class will be extended by extensions.
+    This class will be extended by extensions.
 
     Usage:
 
@@ -655,7 +599,7 @@ class ApertureProperties(_Properties):
 class DoorProperties(_Properties):
     """Honeybee Door Properties.
 
-    Door properties. This class will be extended by extensions.
+    This class will be extended by extensions.
 
     Usage:
 
@@ -706,3 +650,115 @@ class DoorProperties(_Properties):
     def __repr__(self):
         """Properties representation."""
         return 'DoorProperties: {}'.format(self.host.display_name)
+
+
+class ShadeProperties(_Properties):
+    """Honeybee Shade Properties.
+
+    This class will be extended by extensions.
+
+    Usage:
+
+    .. code-block:: python
+
+        shade = Shade('Deep Overhang', geometry)
+        shade.properties -> ShadeProperties
+        shade.properties.radiance -> ShadeRadianceProperties
+        shade.properties.energy -> ShadeEnergyProperties
+    """
+
+    def to_dict(self, abridged=False, include=None):
+        """Convert properties to dictionary.
+
+        Args:
+            abridged: Boolean to note whether the full dictionary describing the
+                object should be returned (False) or just an abridged version (True).
+                Default: False.
+            include: A list of keys to be included in dictionary.
+                If None all the available keys will be included.
+        """
+        base = {'type': 'ShadeProperties'} if not abridged else \
+            {'type': 'ShadePropertiesAbridged'}
+
+        base = self._add_extension_attr_to_dict(base, abridged, include)
+        return base
+
+    def add_prefix(self, prefix):
+        """Change the identifier extension attributes unique to this object by adding a prefix.
+
+        Notably, this method only adds the prefix to extension attributes that must
+        be unique to the Shade and does not add the prefix to attributes that are
+        shared across several Shades.
+
+        Args:
+            prefix: Text that will be inserted at the start of extension attribute identifiers.
+        """
+        self._add_prefix_extension_attr(prefix)
+
+    def reset_to_default(self):
+        """Reset the extension properties assigned at the level of this Shade to default.
+
+        This typically means erasing any Constructions or Modifiers assigned to this
+        Shade (having them instead assigned by ConstructionSets and ModifierSets).
+        """
+        self._reset_extension_attr_to_default()
+
+    def __repr__(self):
+        """Properties representation."""
+        return 'ShadeProperties: {}'.format(self.host.display_name)
+
+
+class ShadeMeshProperties(_Properties):
+    """Honeybee ShadeMesh Properties.
+
+    This class will be extended by extensions.
+
+    Usage:
+
+    .. code-block:: python
+
+        shade = ShadeMesh('Hilly Terrain', geometry)
+        shade.properties -> ShadeMeshProperties
+        shade.properties.radiance -> ShadeMeshRadianceProperties
+        shade.properties.energy -> ShadeMeshEnergyProperties
+    """
+
+    def to_dict(self, abridged=False, include=None):
+        """Convert properties to dictionary.
+
+        Args:
+            abridged: Boolean to note whether the full dictionary describing the
+                object should be returned (False) or just an abridged version (True).
+                Default: False.
+            include: A list of keys to be included in dictionary.
+                If None all the available keys will be included.
+        """
+        base = {'type': 'ShadeMeshProperties'} if not abridged else \
+            {'type': 'ShadeMeshPropertiesAbridged'}
+
+        base = self._add_extension_attr_to_dict(base, abridged, include)
+        return base
+
+    def add_prefix(self, prefix):
+        """Change the identifier extension attributes unique to this object by adding a prefix.
+
+        Notably, this method only adds the prefix to extension attributes that must
+        be unique to the ShadeMesh and does not add the prefix to attributes that are
+        shared across several ShadeMeshes (eg. modifier).
+
+        Args:
+            prefix: Text that will be inserted at the start of extension attribute identifiers.
+        """
+        self._add_prefix_extension_attr(prefix)
+
+    def reset_to_default(self):
+        """Reset the extension properties assigned to this ShadeMesh to default.
+
+        This typically means erasing any Constructions or Modifiers assigned to this
+        ShadeMesh.
+        """
+        self._reset_extension_attr_to_default()
+
+    def __repr__(self):
+        """Properties representation."""
+        return 'ShadeMeshProperties: {}'.format(self.host.display_name)

@@ -24,6 +24,7 @@ from .face import Face
 from .shade import Shade
 from .aperture import Aperture
 from .door import Door
+from .shademesh import ShadeMesh
 from .typing import float_positive, invalid_dict_error, clean_string, \
     clean_and_number_string
 from .config import folders
@@ -55,6 +56,7 @@ class Model(_Base):
         orphaned_doors: A list of the Door objects in the model that lack
             a parent Face. Note that orphaned Doors are not acceptable for
             Models that are to be exported for energy simulation.
+        shade_meshes: A list of the ShadeMesh objects in the model.
         units: Text for the units system in which the model geometry
             exists. Default: 'Meters'. Choose from the following:
 
@@ -85,6 +87,7 @@ class Model(_Base):
         * apertures
         * doors
         * shades
+        * shade_meshes
         * indoor_shades
         * outdoor_shades
         * orphaned_faces
@@ -105,14 +108,17 @@ class Model(_Base):
         * top_level_dict
         * user_data
     """
-    __slots__ = ('_rooms', '_orphaned_faces', '_orphaned_shades', '_orphaned_apertures',
-                 '_orphaned_doors', '_units', '_tolerance', '_angle_tolerance')
+    __slots__ = (
+        '_rooms', '_orphaned_faces', '_orphaned_apertures', '_orphaned_doors',
+        '_orphaned_shades', '_shade_meshes',
+        '_units', '_tolerance', '_angle_tolerance'
+    )
 
     UNITS = UNITS
     UNITS_TOLERANCES = UNITS_TOLERANCES
 
     def __init__(self, identifier, rooms=None, orphaned_faces=None, orphaned_shades=None,
-                 orphaned_apertures=None, orphaned_doors=None,
+                 orphaned_apertures=None, orphaned_doors=None, shade_meshes=None,
                  units='Meters', tolerance=None, angle_tolerance=1.0):
         """A collection of Rooms, Faces, Apertures, and Doors for an entire model."""
         _Base.__init__(self, identifier)  # process the identifier
@@ -123,24 +129,28 @@ class Model(_Base):
 
         self._rooms = []
         self._orphaned_faces = []
-        self._orphaned_shades = []
         self._orphaned_apertures = []
         self._orphaned_doors = []
+        self._orphaned_shades = []
+        self._shade_meshes = []
         if rooms is not None:
             for room in rooms:
                 self.add_room(room)
         if orphaned_faces is not None:
             for face in orphaned_faces:
                 self.add_face(face)
-        if orphaned_shades is not None:
-            for shade in orphaned_shades:
-                self.add_shade(shade)
         if orphaned_apertures is not None:
             for aperture in orphaned_apertures:
                 self.add_aperture(aperture)
         if orphaned_doors is not None:
             for door in orphaned_doors:
                 self.add_door(door)
+        if orphaned_shades is not None:
+            for shade in orphaned_shades:
+                self.add_shade(shade)
+        if shade_meshes is not None:
+            for shade_mesh in shade_meshes:
+                self.add_shade_mesh(shade_mesh)
 
         self._properties = ModelProperties(self)
 
@@ -180,14 +190,6 @@ class Model(_Base):
                     orphaned_faces.append(Face.from_dict(f))
                 except Exception as e:
                     invalid_dict_error(f, e)
-        orphaned_shades = None  # import orphaned shades
-        if 'orphaned_shades' in data and data['orphaned_shades'] is not None:
-            orphaned_shades = []
-            for s in data['orphaned_shades']:
-                try:
-                    orphaned_shades.append(Shade.from_dict(s))
-                except Exception as e:
-                    invalid_dict_error(s, e)
         orphaned_apertures = None  # import orphaned apertures
         if 'orphaned_apertures' in data and data['orphaned_apertures'] is not None:
             orphaned_apertures = []
@@ -204,10 +206,28 @@ class Model(_Base):
                     orphaned_doors.append(Door.from_dict(d))
                 except Exception as e:
                     invalid_dict_error(d, e)
+        orphaned_shades = None  # import orphaned shades
+        if 'orphaned_shades' in data and data['orphaned_shades'] is not None:
+            orphaned_shades = []
+            for s in data['orphaned_shades']:
+                try:
+                    orphaned_shades.append(Shade.from_dict(s))
+                except Exception as e:
+                    invalid_dict_error(s, e)
+        shade_meshes = None  # import shade meshes
+        if 'shade_meshes' in data and data['shade_meshes'] is not None:
+            shade_meshes = []
+            for sm in data['shade_meshes']:
+                try:
+                    shade_meshes.append(ShadeMesh.from_dict(sm))
+                except Exception as e:
+                    invalid_dict_error(sm, e)
 
         # build the model object
-        model = Model(data['identifier'], rooms, orphaned_faces, orphaned_shades,
-                      orphaned_apertures, orphaned_doors, units, tol, angle_tol)
+        model = Model(
+            data['identifier'], rooms, orphaned_faces, orphaned_shades,
+            orphaned_apertures, orphaned_doors, shade_meshes,
+            units, tol, angle_tol)
         if 'display_name' in data and data['display_name'] is not None:
             model.display_name = data['display_name']
         if 'user_data' in data and data['user_data'] is not None:
@@ -273,7 +293,7 @@ class Model(_Base):
             geometry_to_faces: A boolean to note whether the geometry in the STL
                 file should be imported as Faces (with Walls/Floors/RoofCeiling
                 set according to the normal). If False, all geometry will be
-                imported as Shades instead of Faces. (Default: False).
+                imported as ShadeMeshes instead of Faces. (Default: False).
             units: Text for the units system in which the model geometry
                 exists. Default: 'Meters'. Choose from the following:
 
@@ -297,15 +317,17 @@ class Model(_Base):
         stl_obj = STL.from_file(file_path)
         all_id = clean_string(stl_obj.name)
         all_geo = []
-        for verts, normal in zip(stl_obj.face_vertices, stl_obj.face_normals):
-            all_geo.append(Face3D(verts, plane=Plane(normal, verts[0])))
         if geometry_to_faces:
+            
+            for verts, normal in zip(stl_obj.face_vertices, stl_obj.face_normals):
+                all_geo.append(Face3D(verts, plane=Plane(normal, verts[0])))
             hb_objs = [Face(all_id + '_' + str(uuid.uuid4())[:8], go) for go in all_geo]
             return Model(all_id, orphaned_faces=hb_objs, units=units,
                          tolerance=tolerance, angle_tolerance=angle_tolerance)
         else:
-            hb_objs = [Shade(all_id + '_' + str(uuid.uuid4())[:8], go) for go in all_geo]
-            return Model(all_id, orphaned_shades=hb_objs, units=units,
+            mesh3d = Mesh3D.from_face_vertices(stl_obj.face_vertices)
+            hb_objs = [ShadeMesh(all_id, mesh3d)]
+            return Model(all_id, shade_meshes=hb_objs, units=units,
                          tolerance=tolerance, angle_tolerance=angle_tolerance)
 
     @classmethod
@@ -335,8 +357,14 @@ class Model(_Base):
         # set up dictionaries of objects and lists of changes
         exist_dict = base_model.top_level_dict
         other_dict = other_model.top_level_dict
-        add_dict = {'Room': [], 'Face': [], 'Aperture': [], 'Door': [], 'Shade': []}
-        del_dict = {'Room': [], 'Face': [], 'Aperture': [], 'Door': [], 'Shade': []}
+        add_dict = {
+            'Room': [], 'Face': [], 'Aperture': [], 'Door': [],
+            'Shade': [], 'ShadeMesh': []
+        }
+        del_dict = {
+            'Room': [], 'Face': [], 'Aperture': [], 'Door': [],
+            'Shade': [], 'ShadeMesh': []
+        }
         # loop through the changed objects and record changes
         if 'changed_objects' in sync_instructions:
             for change in sync_instructions['changed_objects']:
@@ -364,11 +392,13 @@ class Model(_Base):
         new_model.remove_apertures(del_dict['Aperture'])
         new_model.remove_doors(del_dict['Door'])
         new_model.remove_shades(del_dict['Shade'])
+        new_model.remove_shade_meshes(del_dict['ShadeMesh'])
         new_model.add_rooms(add_dict['Room'])
         new_model.add_faces(add_dict['Face'])
         new_model.add_apertures(add_dict['Aperture'])
         new_model.add_doors(add_dict['Door'])
         new_model.add_shades(add_dict['Shade'])
+        new_model.add_shade_meshes(add_dict['ShadeMesh'])
         return new_model
 
     @classmethod
@@ -412,7 +442,8 @@ class Model(_Base):
         Args:
             identifier: Text string for a unique Model ID. Must be < 100 characters and
                 not contain any spaces or special characters.
-            objects: A list of honeybee Rooms, Faces, Shades, Apertures and Doors.
+            objects: A list of honeybee Rooms, Faces, Shades, ShadeMEshes,
+                Apertures and Doors.
             units: Text for the units system in which the model geometry
                 exists. Default: 'Meters'. Choose from the following:
 
@@ -436,6 +467,7 @@ class Model(_Base):
         rooms = []
         faces = []
         shades = []
+        shade_meshes = []
         apertures = []
         doors = []
         for obj in objects:
@@ -445,6 +477,8 @@ class Model(_Base):
                 faces.append(obj)
             elif isinstance(obj, Shade):
                 shades.append(obj)
+            elif isinstance(obj, ShadeMesh):
+                shade_meshes.append(obj)
             elif isinstance(obj, Aperture):
                 apertures.append(obj)
             elif isinstance(obj, Door):
@@ -453,8 +487,8 @@ class Model(_Base):
                 raise TypeError('Expected Room, Face, Shade, Aperture or Door '
                                 'for Model. Got {}'.format(type(obj)))
 
-        return cls(identifier, rooms, faces, shades, apertures, doors, units,
-                   tolerance, angle_tolerance)
+        return cls(identifier, rooms, faces, shades, apertures, doors, shade_meshes,
+                   units, tolerance, angle_tolerance)
 
     @classmethod
     def from_shoe_box(
@@ -655,7 +689,7 @@ class Model(_Base):
 
     @property
     def rooms(self):
-        """Get a list of all Room objects in the model."""
+        """Get a tuple of all Room objects in the model."""
         return tuple(self._rooms)
 
     @property
@@ -763,23 +797,28 @@ class Model(_Base):
 
     @property
     def orphaned_faces(self):
-        """Get a list of all Face objects without parent Rooms in the model."""
+        """Get a tuple of all Face objects without parent Rooms in the model."""
         return tuple(self._orphaned_faces)
 
     @property
     def orphaned_apertures(self):
-        """Get a list of all Aperture objects without parent Faces in the model."""
+        """Get a tuple of all Aperture objects without parent Faces in the model."""
         return tuple(self._orphaned_apertures)
 
     @property
     def orphaned_doors(self):
-        """Get a list of all Door objects without parent Faces in the model."""
+        """Get a tuple of all Door objects without parent Faces in the model."""
         return tuple(self._orphaned_doors)
 
     @property
     def orphaned_shades(self):
-        """Get a list of all Shade objects without parent Rooms in the model."""
+        """Get a tuple of all Shade objects without parent Rooms in the model."""
         return tuple(self._orphaned_shades)
+
+    @property
+    def shade_meshes(self):
+        """Get a tuple of all ShadeMesh objects in the model."""
+        return tuple(self._shade_meshes)
 
     @property
     def stories(self):
@@ -893,6 +932,8 @@ class Model(_Base):
             base[d.identifier] = d
         for s in self._orphaned_shades:
             base[s.identifier] = s
+        for sm in self._shade_meshes:
+            base[sm.identifier] = sm
         return base
 
     def add_model(self, other_model):
@@ -907,6 +948,8 @@ class Model(_Base):
             self._orphaned_faces.append(face)
         for shade in other_model._orphaned_shades:
             self._orphaned_shades.append(shade)
+        for shade_mesh in other_model._shade_meshes:
+            self._shade_meshes.append(shade_mesh)
         for aperture in other_model._orphaned_apertures:
             self._orphaned_apertures.append(aperture)
         for door in other_model._orphaned_doors:
@@ -944,6 +987,11 @@ class Model(_Base):
         assert not obj.has_parent, 'Shade "{}"" has a parent object. Add the object to '\
             'the model instead of the Shade.'.format(obj.display_name)
         self._orphaned_shades.append(obj)
+
+    def add_shade_mesh(self, obj):
+        """Add a ShadeMesh object to the model."""
+        assert isinstance(obj, ShadeMesh), 'Expected ShadeMesh. Got {}.'.format(type(obj))
+        self._shade_meshes.append(obj)
 
     def remove_rooms(self, room_ids=None):
         """Remove Rooms from the model.
@@ -988,10 +1036,20 @@ class Model(_Base):
 
         Args:
             shade_ids: An optional list of Shade identifiers to only remove
+                certain shades from the model. If None, all Shades will be
+                removed. (Default: None).
+        """
+        self._orphaned_shades = self._remove_by_ids(self._orphaned_shades, shade_ids)
+
+    def remove_shade_meshes(self, shade_mesh_ids=None):
+        """Remove ShadeMeshes from the model.
+
+        Args:
+            shade_mesh_ids: An optional list of ShadeMesh identifiers to only remove
             certain shades from the model. If None, all Shades will be
             removed. (Default: None).
         """
-        self._orphaned_shades = self._remove_by_ids(self._orphaned_shades, shade_ids)
+        self._shade_meshes = self._remove_by_ids(self._shade_meshes, shade_mesh_ids)
 
     def remove_assigned_apertures(self):
         """Remove all Apertures assigned to the model's Faces.
@@ -1089,6 +1147,11 @@ class Model(_Base):
         for obj in objs:
             self.add_shade(obj)
 
+    def add_shade_meshes(self, objs):
+        """Add a list of ShadeMesh objects to the model."""
+        for obj in objs:
+            self.add_shade_mesh(obj)
+
     def rooms_by_identifier(self, identifiers):
         """Get a list of Room objects in the model given the Room identifiers."""
         rooms, missing_ids = [], []
@@ -1180,6 +1243,25 @@ class Model(_Base):
             )
         return shades
 
+    def shade_meshes_by_identifier(self, identifiers):
+        """Get a list of ShadeMesh objects in the model given the ShadeMesh identifiers.
+        """
+        shades, missing_ids = [], []
+        model_shades = self._shade_meshes
+        for obj_id in identifiers:
+            for sm in model_shades:
+                if sm.identifier == obj_id:
+                    shades.append(sm)
+                    break
+            else:
+                missing_ids.append(obj_id)
+        if len(missing_ids) != 0:
+            a_os = ' '.join(['"' + rid + '"' for rid in missing_ids])
+            raise ValueError(
+                'The following ShadeMeshes were not found in the model: {}'.format(a_os)
+            )
+        return shades
+
     def add_prefix(self, prefix):
         """Change the identifier of this object and child objects by inserting a prefix.
 
@@ -1197,12 +1279,14 @@ class Model(_Base):
             room.add_prefix(prefix)
         for face in self._orphaned_faces:
             face.add_prefix(prefix)
-        for shade in self._orphaned_shades:
-            shade.add_prefix(prefix)
         for aperture in self._orphaned_apertures:
             aperture.add_prefix(prefix)
         for door in self._orphaned_doors:
             door.add_prefix(prefix)
+        for shade in self._orphaned_shades:
+            shade.add_prefix(prefix)
+        for shade_mesh in self._shade_meshes:
+            shade_mesh.add_prefix(prefix)
 
     def reset_room_ids(self):
         """Reset the identifiers of the Model Rooms to be derived from display_names.
@@ -1292,12 +1376,14 @@ class Model(_Base):
             room.move(moving_vec)
         for face in self._orphaned_faces:
             face.move(moving_vec)
-        for shade in self._orphaned_shades:
-            shade.move(moving_vec)
         for aperture in self._orphaned_apertures:
             aperture.move(moving_vec)
         for door in self._orphaned_doors:
             door.move(moving_vec)
+        for shade in self._orphaned_shades:
+            shade.move(moving_vec)
+        for shade_mesh in self._shade_meshes:
+            shade_mesh.move(moving_vec)
         self.properties.move(moving_vec)
 
     def rotate(self, axis, angle, origin):
@@ -1313,12 +1399,14 @@ class Model(_Base):
             room.rotate(axis, angle, origin)
         for face in self._orphaned_faces:
             face.rotate(axis, angle, origin)
-        for shade in self._orphaned_shades:
-            shade.rotate(axis, angle, origin)
         for aperture in self._orphaned_apertures:
             aperture.rotate(axis, angle, origin)
         for door in self._orphaned_doors:
             door.rotate(axis, angle, origin)
+        for shade in self._orphaned_shades:
+            shade.rotate(axis, angle, origin)
+        for shade_mesh in self._shade_meshes:
+            shade_mesh.rotate(axis, angle, origin)
         self.properties.rotate(axis, angle, origin)
 
     def rotate_xy(self, angle, origin):
@@ -1333,12 +1421,14 @@ class Model(_Base):
             room.rotate_xy(angle, origin)
         for face in self._orphaned_faces:
             face.rotate_xy(angle, origin)
-        for shade in self._orphaned_shades:
-            shade.rotate_xy(angle, origin)
         for aperture in self._orphaned_apertures:
             aperture.rotate_xy(angle, origin)
         for door in self._orphaned_doors:
             door.rotate_xy(angle, origin)
+        for shade in self._orphaned_shades:
+            shade.rotate_xy(angle, origin)
+        for shade_mesh in self._shade_meshes:
+            shade_mesh.rotate_xy(angle, origin)
         self.properties.rotate_xy(angle, origin)
 
     def reflect(self, plane):
@@ -1352,12 +1442,14 @@ class Model(_Base):
             room.reflect(plane)
         for face in self._orphaned_faces:
             face.reflect(plane)
-        for shade in self._orphaned_shades:
-            shade.reflect(plane)
         for aperture in self._orphaned_apertures:
             aperture.reflect(plane)
         for door in self._orphaned_doors:
             door.reflect(plane)
+        for shade in self._orphaned_shades:
+            shade.reflect(plane)
+        for shade_mesh in self._shade_meshes:
+            shade_mesh.reflect(plane)
         self.properties.reflect(plane)
 
     def scale(self, factor, origin=None):
@@ -1376,12 +1468,14 @@ class Model(_Base):
             room.scale(factor, origin)
         for face in self._orphaned_faces:
             face.scale(factor, origin)
-        for shade in self._orphaned_shades:
-            shade.scale(factor, origin)
         for aperture in self._orphaned_apertures:
             aperture.scale(factor, origin)
         for door in self._orphaned_doors:
             door.scale(factor, origin)
+        for shade in self._orphaned_shades:
+            shade.scale(factor, origin)
+        for shade_mesh in self._shade_meshes:
+            shade_mesh.scale(factor, origin)
         self.properties.scale(factor, origin)
 
     def generate_exterior_face_grid(
@@ -1807,6 +1901,7 @@ class Model(_Base):
         msgs.append(self.check_duplicate_face_identifiers(False, detailed))
         msgs.append(self.check_duplicate_sub_face_identifiers(False, detailed))
         msgs.append(self.check_duplicate_shade_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_shade_mesh_identifiers(False, detailed))
 
         # perform several checks for the Honeybee schema geometry rules
         msgs.append(self.check_planar(tol, False, detailed))
@@ -1924,6 +2019,23 @@ class Model(_Base):
         return check_duplicate_identifiers_parent(
             self.shades, raise_exception, 'Shade', detailed, '000001', 'Core',
             'Duplicate Shade Identifier')
+
+    def check_duplicate_shade_mesh_identifiers(
+            self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate ShadeMesh identifiers in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        return check_duplicate_identifiers(
+            self._shade_meshes, raise_exception, 'ShadeMesh', detailed, '000001', 'Core',
+            'Duplicate ShadeMesh Identifier')
 
     def check_planar(self, tolerance=None, raise_exception=True, detailed=False):
         """Check that all of the Model's geometry components are planar.
@@ -2777,15 +2889,18 @@ class Model(_Base):
         if self._orphaned_faces != []:
             base['orphaned_faces'] = [f.to_dict(True, included_prop, include_plane)
                                       for f in self._orphaned_faces]
-        if self._orphaned_shades != []:
-            base['orphaned_shades'] = [shd.to_dict(True, included_prop, include_plane)
-                                       for shd in self._orphaned_shades]
         if self._orphaned_apertures != []:
             base['orphaned_apertures'] = [ap.to_dict(True, included_prop, include_plane)
                                           for ap in self._orphaned_apertures]
         if self._orphaned_doors != []:
             base['orphaned_doors'] = [dr.to_dict(True, included_prop, include_plane)
                                       for dr in self._orphaned_doors]
+        if self._orphaned_shades != []:
+            base['orphaned_shades'] = [shd.to_dict(True, included_prop, include_plane)
+                                       for shd in self._orphaned_shades]
+        if self._shade_meshes != []:
+            base['shade_meshes'] = [sm.to_dict(True, included_prop)
+                                    for sm in self._shade_meshes]
         if self.tolerance != 0:
             base['tolerance'] = self.tolerance
         if self.angle_tolerance != 0:
@@ -2954,6 +3069,12 @@ class Model(_Base):
                     _face_vertices.append(m_fac)
                     _face_normals.append(face_3d.normal)
 
+        # convert any shade meshes into STL vertices
+        for sm in self._shade_meshes:
+            for fvs, fns in zip(sm.geometry.face_vertices, sm.geometry.face_normals):
+                _face_vertices.append(fvs)
+                _face_normals.append(fns)
+
         # write the geometry into an STL file
         stl_obj = STL(_face_vertices, _face_normals, self.identifier)
         return stl_obj.to_file(folder, file_name)
@@ -2961,7 +3082,7 @@ class Model(_Base):
     def _all_objects(self):
         """Get a single list of all the Honeybee objects in a Model."""
         return self._rooms + self._orphaned_faces + self._orphaned_shades + \
-            self._orphaned_apertures + self._orphaned_doors
+            self._orphaned_apertures + self._orphaned_doors + self._shade_meshes
 
     @staticmethod
     def conversion_factor_to_meters(units):
@@ -3080,6 +3201,7 @@ class Model(_Base):
             [shade.duplicate() for shade in self._orphaned_shades],
             [aperture.duplicate() for aperture in self._orphaned_apertures],
             [door.duplicate() for door in self._orphaned_doors],
+            [shade_mesh.duplicate() for shade_mesh in self._shade_meshes],
             self.units, self.tolerance, self.angle_tolerance)
         new_model._display_name = self._display_name
         new_model._user_data = None if self.user_data is None else self.user_data.copy()
