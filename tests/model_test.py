@@ -3,15 +3,14 @@ from honeybee.model import Model
 from honeybee.room import Room
 from honeybee.face import Face
 from honeybee.shade import Shade
+from honeybee.shademesh import ShadeMesh
 from honeybee.aperture import Aperture
 from honeybee.door import Door
 from honeybee.boundarycondition import Surface
 from honeybee.facetype import face_types
 from honeybee.units import conversion_factor_to_meters
 
-from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
-from ladybug_geometry.geometry3d.plane import Plane
-from ladybug_geometry.geometry3d.face import Face3D
+from ladybug_geometry.geometry3d import Point3D, Vector3D, Plane, Face3D, Mesh3D
 
 import math
 import pytest
@@ -124,8 +123,13 @@ def test_model_init_orphaned_objects():
     tree_canopy_geo = Face3D.from_regular_polygon(6, 2, Plane(o=Point3D(5, -3, 4)))
     tree_canopy = Shade('TreeCanopy', tree_canopy_geo)
 
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning = ShadeMesh('Awning', mesh)
+
     model = Model('TinyHouse', [], [face_1, face_2, face_3, face_4, face_5, face_6],
-                  [table, tree_canopy], [aperture], [door])
+                  [table, tree_canopy], [aperture], [door], [awning])
 
     assert len(model.rooms) == 0
     assert len(model.faces) == 6
@@ -136,6 +140,8 @@ def test_model_init_orphaned_objects():
     assert isinstance(model.apertures[0], Aperture)
     assert len(model.doors) == 1
     assert isinstance(model.doors[0], Door)
+    assert len(model.shade_meshes) == 1
+    assert isinstance(model.shade_meshes[0], ShadeMesh)
     assert len(model.orphaned_faces) == 6
     assert len(model.orphaned_shades) == 2
     assert len(model.orphaned_apertures) == 1
@@ -210,10 +216,14 @@ def test_model_init_from_objects():
     table = Shade('Table', table_geo)
     tree_canopy_geo = Face3D.from_regular_polygon(6, 2, Plane(o=Point3D(5, -3, 4)))
     tree_canopy = Shade('TreeCanopy', tree_canopy_geo)
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning = ShadeMesh('Awning', mesh)
 
     model = Model.from_objects(
         'TinyHouse', [face_1, face_2, face_3, face_4, face_5, face_6,
-                      table, tree_canopy, aperture, door])
+                      table, tree_canopy, aperture, door, awning])
 
     assert len(model.rooms) == 0
     assert len(model.faces) == 6
@@ -319,6 +329,24 @@ def test_doors_by_identifier():
     model.remove_assigned_doors()
     with pytest.raises(ValueError):
         model.shades_by_identifier(['FrontDoor'])
+
+
+def test_shade_meshes_by_identifier():
+    """Test the shade_meshes_by_identifier method."""
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning = ShadeMesh('Awning_1', mesh)
+    model = Model('TinyHouse', [room], shade_meshes=[awning])
+
+    assert len(model.shade_meshes_by_identifier(['Awning_1'])) == 1
+    with pytest.raises(ValueError):
+        model.shade_meshes_by_identifier(['NotAShadeMesh'])
+
+    model.remove_shade_meshes()
+    with pytest.raises(ValueError):
+        model.shade_meshes_by_identifier(['Awning_1'])
 
 
 def test_model_add_prefix():
@@ -757,6 +785,23 @@ def test_check_duplicate_sub_face_identifiers():
         model.check_duplicate_sub_face_identifiers(True)
 
 
+def test_check_duplicate_shade_mesh_identifiers():
+    """Test the check_duplicate_shade_mesh_identifiers method."""
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning_1 = ShadeMesh('Awning_1', mesh)
+
+    model = Model('TestHouse', shade_meshes=[awning_1])
+    assert model.check_duplicate_shade_mesh_identifiers(False) == ''
+    pts2 = (Point3D(0, 0, 2), Point3D(0, 2, 2), Point3D(2, 2, 2))
+    mesh2 = Mesh3D(pts2, [(0, 1, 2)])
+    model.add_shade_mesh( ShadeMesh('Awning_1', mesh2))
+    assert model.check_duplicate_shade_mesh_identifiers(False) != ''
+    with pytest.raises(ValueError):
+        model.check_duplicate_shade_mesh_identifiers(True)
+
+
 def test_check_missing_adjacencies():
     """Test the check_missing_adjacencies method."""
     room_south = Room.from_box('SouthZone', 5, 5, 3, origin=Point3D(0, 0, 0))
@@ -925,7 +970,12 @@ def test_to_dict():
     north_face.add_door(door)
     aperture = Aperture('FrontAperture', Face3D(aperture_verts))
     north_face.add_aperture(aperture)
-    model = Model('TinyHouse', [room])
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning_1 = ShadeMesh('Awning_1', mesh)
+
+    model = Model('TinyHouse', [room], shade_meshes=[awning_1])
 
     model_dict = model.to_dict()
     assert model_dict['type'] == 'Model'
@@ -941,6 +991,8 @@ def test_to_dict():
     assert len(model_dict['rooms'][0]['faces'][1]['doors']) == 1
     assert 'outdoor_shades' in model_dict['rooms'][0]['faces'][3]['apertures'][0]
     assert len(model_dict['rooms'][0]['faces'][3]['apertures'][0]['outdoor_shades']) == 1
+    assert 'shade_meshes' in model_dict
+    assert len(model_dict['shade_meshes']) == 1
     assert 'properties' in model_dict
     assert model_dict['properties']['type'] == 'ModelProperties'
 
@@ -962,7 +1014,12 @@ def test_to_from_dict_methods():
     north_face.add_door(door)
     aperture = Aperture('FrontAperture', Face3D(aperture_verts))
     north_face.add_aperture(aperture)
-    model = Model('TinyHouse', [room])
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning_1 = ShadeMesh('Awning_1', mesh)
+
+    model = Model('TinyHouse', [room], shade_meshes=[awning_1])
 
     model_dict = model.to_dict()
     new_model = Model.from_dict(model_dict)
@@ -980,6 +1037,8 @@ def test_to_from_dict_methods():
     assert isinstance(new_model.apertures[0], Aperture)
     assert len(new_model.doors) == 1
     assert isinstance(new_model.doors[0], Door)
+    assert len(new_model.shade_meshes) == 1
+    assert isinstance(new_model.shade_meshes[0], ShadeMesh)
     assert len(new_model.orphaned_faces) == 0
     assert len(new_model.orphaned_shades) == 0
     assert len(new_model.orphaned_apertures) == 0
@@ -1150,8 +1209,9 @@ def test_from_stl():
 
     file_path = 'tests/stl/cube_ascii.stl'
     model = Model.from_stl(file_path, geometry_to_faces=False)
-    assert len(model.shades) == 12
-    assert all((len(f.geometry) == 3 for f in model.shades))
+    assert len(model.shade_meshes) == 1
+    assert len(model.shade_meshes[0].faces) == 12
+    assert all((len(f) == 3 for f in model.shade_meshes[0].faces))
 
 
 def test_writer():
