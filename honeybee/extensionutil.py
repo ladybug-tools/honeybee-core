@@ -24,7 +24,7 @@ def model_extension_dicts(data, extension_key, room_ext_dicts, face_ext_dicts,
             align with the serialized model.faces.
 
         -   shade_ext_dicts: A list of Shade extension property dictionaries that
-            align with the serialized model.shades.
+            align with the serialized model.shades plus the model.shade_meshes.
 
         -   aperture_ext_dicts: A list of Aperture extension property dictionaries that
             align with the serialized model.apertures.
@@ -52,6 +52,8 @@ def model_extension_dicts(data, extension_key, room_ext_dicts, face_ext_dicts,
                              shade_ext_dicts)
     if 'orphaned_shades' in data and data['orphaned_shades'] is not None:
         shade_extension_dicts(data['orphaned_shades'], extension_key, shade_ext_dicts)
+    if 'shade_meshes' in data and data['shade_meshes'] is not None:
+        shade_extension_dicts(data['shade_meshes'], extension_key, shade_ext_dicts)
 
     return room_ext_dicts, face_ext_dicts, shade_ext_dicts, \
         aperture_ext_dicts, door_ext_dicts
