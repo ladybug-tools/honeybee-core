@@ -3,7 +3,7 @@
 from __future__ import division
 import math
 
-from ladybug_geometry.geometry3d.mesh import Mesh3D
+from ladybug_geometry.geometry3d import Mesh3D, Face3D
 from ladybug.color import Color
 
 from ._base import _Base
@@ -217,6 +217,31 @@ class ShadeMesh(_Base):
         """
         self._geometry = self.geometry.scale(factor, origin)
         self.properties.scale(factor, origin)
+
+    def triangulate_and_remove_degenerate_faces(self, tolerance=0.01):
+        """Triangulate all faces in the mesh and remove all degenerate faces from the result.
+
+        This is helpful for certain geometry interfaces that require perfectly
+        planar geometry without duplicate or colinear vertices.
+
+        Args:
+            tolerance: The minimum distance between a vertex and the boundary segments
+                at which point the vertex is considered colinear. Default: 0.01,
+                suitable for objects in meters.
+        """
+        new_faces, verts = [], self.geometry.vertices
+        for shd in self.faces:
+            shades = (shd,) if len(shd) == 3 else \
+                ((shd[0], shd[1], shd[2]), (shd[2], shd[3], shd[0]))
+            for shade in enumerate(shades):
+                shd_verts = [verts[v] for v in shade]
+                shade_face = Face3D(shd_verts)
+                try:
+                    shade_face.remove_colinear_vertices(tolerance)
+                except AssertionError:
+                    continue  # degenerate face to remove
+                new_faces.append(shade)
+        self._geometry = Mesh3D(verts, new_faces)
 
     def is_geo_equivalent(self, shade_mesh, tolerance=0.01):
         """Get a boolean for whether this object is geometrically equivalent to another.
