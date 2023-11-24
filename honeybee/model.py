@@ -1931,6 +1931,7 @@ class Model(_Base):
         # perform geometry checks related to parent-child relationships
         msgs.append(self.check_sub_faces_valid(tol, ang_tol, False, detailed))
         msgs.append(self.check_sub_faces_overlapping(tol, False, detailed))
+        msgs.append(self.check_upside_down_faces(ang_tol, False, detailed))
         msgs.append(self.check_rooms_solid(tol, ang_tol, False, detailed))
 
         # perform checks related to adjacency relationships
@@ -2219,6 +2220,45 @@ class Model(_Base):
                 msgs.append(msg)
         for f in self._orphaned_faces:
             msg = f.check_sub_faces_overlapping(tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        if detailed:
+            return msgs
+        full_msg = '\n'.join(msgs)
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_upside_down_faces(
+            self, angle_tolerance=None, raise_exception=True, detailed=False):
+        """Check that the Model's Faces have the correct direction for the face type.
+
+        This method will only report Floors that are pointing upwards or RoofCeilings
+        that are pointed downwards. These cases are likely modeling errors and are in
+        danger of having their vertices flipped by EnergyPlus, causing them to
+        not see the sun.
+
+        Args:
+            angle_tolerance: The max angle in degrees that the Face normal can
+                differ from up or down before it is considered a case of a downward
+                pointing RoofCeiling or upward pointing Floor. If None, it
+                will be the model angle tolerance. (Default: None).
+            raise_exception: Boolean to note whether an ValueError should be
+                raised if the Face is an an upward pointing Floor or a downward
+                pointing RoofCeiling.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        a_tol = self.angle_tolerance if angle_tolerance is None else angle_tolerance
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for rm in self._rooms:
+            msg = rm.check_upside_down_faces(a_tol, False, detailed)
             if detailed:
                 msgs.extend(msg)
             elif msg != '':
