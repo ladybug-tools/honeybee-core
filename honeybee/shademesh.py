@@ -219,7 +219,7 @@ class ShadeMesh(_Base):
         self.properties.scale(factor, origin)
 
     def triangulate_and_remove_degenerate_faces(self, tolerance=0.01):
-        """Triangulate all faces in the mesh and remove all degenerate faces from the result.
+        """Triangulate non-planar faces in the mesh and remove all degenerate faces.
 
         This is helpful for certain geometry interfaces that require perfectly
         planar geometry without duplicate or colinear vertices.
@@ -231,16 +231,28 @@ class ShadeMesh(_Base):
         """
         new_faces, verts = [], self.geometry.vertices
         for shd in self.faces:
-            shades = (shd,) if len(shd) == 3 else \
-                ((shd[0], shd[1], shd[2]), (shd[2], shd[3], shd[0]))
-            for shade in enumerate(shades):
-                shd_verts = [verts[v] for v in shade]
-                shade_face = Face3D(shd_verts)
+            shd_verts = [verts[v] for v in shd]
+            shf = Face3D(shd_verts)
+            if not shf.check_planar(tolerance, raise_exception=False):
+                shades = ((shd[0], shd[1], shd[2]), (shd[2], shd[3], shd[0]))
+                for shade in shades:
+                    shd_verts = [verts[v] for v in shade]
+                    shade_face = Face3D(shd_verts)
+                    try:
+                        shade_face.remove_colinear_vertices(tolerance)
+                    except AssertionError:
+                        continue  # degenerate face to remove
+                    new_faces.append(shade)
+            else:
                 try:
-                    shade_face.remove_colinear_vertices(tolerance)
+                    new_face = shf.remove_colinear_vertices(tolerance)
                 except AssertionError:
                     continue  # degenerate face to remove
-                new_faces.append(shade)
+                if len(new_face.vertices) == len(shd):
+                    new_faces.append(shd)
+                else:  # quad face with duplicate or colinear verts
+                    new_sh = tuple(shd[shd_verts.index(v)] for v in new_face.vertices)
+                    new_faces.append(new_sh)
         self._geometry = Mesh3D(verts, new_faces)
 
     def is_geo_equivalent(self, shade_mesh, tolerance=0.01):
