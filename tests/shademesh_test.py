@@ -175,6 +175,53 @@ def test_reflect():
     assert test_2.geometry[2].z == pytest.approx(2, rel=1e-3)
 
 
+def test_triangulate_and_remove_degenerate_faces():
+    """Test the triangulate_and_remove_degenerate_faces method."""
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    shade = ShadeMesh('Awning_1', mesh)
+    shade.triangulate_and_remove_degenerate_faces(0.01)
+    assert len(shade.faces) == 2
+    assert len(shade.faces[0]) == 4
+    assert len(shade.faces[1]) == 3
+
+    pts = (Point3D(0, 0, 2), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    shade = ShadeMesh('Awning_1', mesh)
+    shade.triangulate_and_remove_degenerate_faces(0.01)
+    assert len(shade.faces) == 3
+    assert len(shade.faces[0]) == 3
+    assert len(shade.faces[1]) == 3
+
+    pts = (Point3D(0, 2, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    shade = ShadeMesh('Awning_1', mesh)
+    shade.triangulate_and_remove_degenerate_faces(0.01)
+    assert len(shade.faces) == 2
+    assert len(shade.faces[0]) == 3
+    assert len(shade.faces[1]) == 3
+
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(2, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    shade = ShadeMesh('Awning_1', mesh)
+    shade.triangulate_and_remove_degenerate_faces(0.01)
+    assert len(shade.faces) == 1
+    assert len(shade.faces[0]) == 4
+
+    pts = (Point3D(1, 1, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    shade = ShadeMesh('Awning_1', mesh)
+    shade.triangulate_and_remove_degenerate_faces(0.01)
+    assert len(shade.faces) == 2
+    assert len(shade.faces[0]) == 3
+    assert len(shade.faces[1]) == 3
+
+
 def test_to_dict():
     """Test the shade to_dict method."""
     pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
