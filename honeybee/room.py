@@ -1329,6 +1329,46 @@ class Room(_BaseWithShade):
             raise ValueError(full_msg)
         return full_msg
 
+    def check_upside_down_faces(
+            self, angle_tolerance=1, raise_exception=True, detailed=False):
+        """Check whether the Room's Faces have the correct direction for the face type.
+
+        This method will only report Floors that are pointing upwards or RoofCeilings
+        that are pointed downwards. These cases are likely modeling errors and are in
+        danger of having their vertices flipped by EnergyPlus, causing them to
+        not see the sun.
+
+        Args:
+            angle_tolerance: The max angle in degrees that the Face normal can
+                differ from up or down before it is considered a case of a downward
+                pointing RoofCeiling or upward pointing Floor. Default: 1 degree.
+            raise_exception: Boolean to note whether an ValueError should be
+                raised if the Face is an an upward pointing Floor or a downward
+                pointing RoofCeiling.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        detailed = False if raise_exception else detailed
+        msgs = []
+        for f in self._faces:
+            msg = f.check_upside_down(angle_tolerance, False, detailed)
+            if detailed:
+                msgs.extend(msg)
+            elif msg != '':
+                msgs.append(msg)
+        if len(msgs) == 0:
+            return [] if detailed else ''
+        elif detailed:
+            return msgs
+        full_msg = 'Room "{}" contains upside down Faces.' \
+            '\n  {}'.format(self.full_id, '\n  '.join(msgs))
+        if raise_exception and len(msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
         """Check that all of the Room's geometry components are planar.
 

@@ -10,7 +10,7 @@ from ladybug.color import Color
 from ._basewithshade import _BaseWithShade
 from .typing import clean_string, invalid_dict_error
 from .properties import FaceProperties
-from .facetype import face_types, get_type_from_normal, AirBoundary
+from .facetype import face_types, get_type_from_normal, AirBoundary, Floor, RoofCeiling
 from .boundarycondition import boundary_conditions, get_bc_from_position, \
     _BoundaryCondition, Outdoors, Surface, Ground
 from .shade import Shade
@@ -944,7 +944,7 @@ class Face(_BaseWithShade):
                 ratio is too large for the height, the ratio will take precedence
                 and the sill_height will be smaller than this value.
             horizontal_separation: A number for the target separation between
-                individual aperture centerlines.  If this number is larger than
+                individual aperture center lines.  If this number is larger than
                 the parent rectangle base, only one aperture will be produced.
             vertical_separation: An optional number to create a single vertical
                 separation between top and bottom apertures. The default is
@@ -1042,7 +1042,7 @@ class Face(_BaseWithShade):
                 is too large for the sill_height to fit within the rectangle,
                 the aperture_height will take precedence.
             horizontal_separation: A number for the target separation between
-                individual apertures centerlines.  If this number is larger than
+                individual apertures center lines.  If this number is larger than
                 the parent rectangle base, only one aperture will be produced.
             tolerance: The maximum difference between point values for them to be
                 considered a part of a rectangle. Default: 0.01, suitable for
@@ -1578,6 +1578,41 @@ class Face(_BaseWithShade):
                         err_obj['parents'].append(err_obj['parents'][0])
                     all_overlaps.append(err_obj)
             return all_overlaps
+        return [] if detailed else ''
+
+    def check_upside_down(self, angle_tolerance=1, raise_exception=True, detailed=False):
+        """Check whether the face is pointing in the correct direction for the face type.
+
+        This method will only report Floors that are pointing upwards or RoofCeilings
+        that are pointed downwards. These cases are likely modeling errors and are in
+        danger of having their vertices flipped by EnergyPlus, causing them to
+        not see the sun.
+
+        Args:
+            angle_tolerance: The max angle in degrees that the Face normal can
+                differ from up or down before it is considered a case of a downward
+                pointing RoofCeiling or upward pointing Floor. Default: 1 degree.
+            raise_exception: Boolean to note whether an ValueError should be
+                raised if the Face is an an upward pointing Floor or a downward
+                pointing RoofCeiling.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        msg = None
+        if isinstance(self.type, Floor) and self.altitude > 90 - angle_tolerance:
+            msg = 'Face "{}" is an upward-pointing Floor, which should be ' \
+                'changed to a RoofCeiling.'.format(self.full_id)
+        elif isinstance(self.type, RoofCeiling) and self.altitude < angle_tolerance - 90:
+            msg = 'Face "{}" is an downward-pointing RoofCeiling, which should be ' \
+                'changed to a Floor.'.format(self.full_id)
+        if msg:
+            full_msg = self._validation_message(
+                msg, raise_exception, detailed, '000109',
+                error_type='Upside Down Face')
+            return full_msg
         return [] if detailed else ''
 
     def check_planar(self, tolerance=0.01, raise_exception=True, detailed=False):
