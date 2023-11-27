@@ -46,16 +46,16 @@ class Model(_Base):
             not contain any spaces or special characters.
         rooms: A list of Room objects in the model.
         orphaned_faces: A list of the Face objects in the model that lack
-            a parent Room. Note that orphaned Faces are not acceptable for
-            Models that are to be exported for energy simulation.
+            a parent Room. Note that orphaned Faces are translated to sun-blocking
+            shade objects in energy simulation.
         orphaned_shades: A list of the Shade objects in the model that lack
             a parent.
         orphaned_apertures: A list of the Aperture objects in the model that lack
-            a parent Face. Note that orphaned Apertures are not acceptable for
-            Models that are to be exported for energy simulation.
+            a parent Face. Note that orphaned Apertures are translated to sun-blocking
+            shade objects in energy simulation.
         orphaned_doors: A list of the Door objects in the model that lack
-            a parent Face. Note that orphaned Doors are not acceptable for
-            Models that are to be exported for energy simulation.
+            a parent Face. Note that orphaned Doors are translated to sun-blocking
+            shade objects in energy simulation.
         shade_meshes: A list of the ShadeMesh objects in the model.
         units: Text for the units system in which the model geometry
             exists. Default: 'Meters'. Choose from the following:

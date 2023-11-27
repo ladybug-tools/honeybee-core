@@ -1154,22 +1154,8 @@ class Room(_BaseWithShade):
             if isinstance(face.boundary_condition, Surface):
                 try:
                     adj_face = adjacency_dict[face.identifier]
-                    if len(new_geo) > len(adj_face.geometry):
-                        # gradually increase tolerance until vertices match
-                        tol_incr, iter_c = tolerance / 10, 50
-                        test_tol = tolerance + tol_incr
-                        while iter_c > 0 and len(new_geo) > len(adj_face.geometry):
-                            new_geo = face.geometry.remove_colinear_vertices(test_tol)
-                            test_tol += tol_incr
-                            iter_c -= 1
-                    elif len(new_geo) < len(adj_face.geometry):
-                        # gradually decrease tolerance until vertices match
-                        tol_incr, iter_c = tolerance / 100, 50
-                        test_tol = tolerance - tol_incr
-                        while iter_c > 0 and len(new_geo) < len(adj_face.geometry):
-                            new_geo = face.geometry.remove_colinear_vertices(test_tol)
-                            test_tol -= tol_incr
-                            iter_c -= 1
+                    if len(new_geo) != len(adj_face.geometry):
+                        new_geo = adj_face.geometry.flip()
                 except KeyError:  # the adjacent object has not been found yet
                     pass
                 adj_dict[face.boundary_condition.boundary_condition_object] = face
