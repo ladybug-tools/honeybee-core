@@ -118,7 +118,15 @@ class _ColorObject(object):
         # produce a range of values from the collected attributes
         attr_dict = {i: val for i, val in enumerate(self._attributes_unique)}
         attr_dict_rev = {val: i for i, val in attr_dict.items()}
-        values = tuple(attr_dict_rev[r_attr] for r_attr in self._attributes)
+        try:
+            values = tuple(attr_dict_rev[r_attr] for r_attr in self._attributes)
+        except KeyError:  # possibly caused by float cast to -0.0
+            values = []
+            for r_attr in self._attributes:
+                if r_attr == '-0.0':
+                    values.append(attr_dict_rev['0.0'])
+                else:
+                    values.append(attr_dict_rev[r_attr])
 
         # produce legend parameters with an ordinal dict for the attributes
         l_par = self.legend_parameters.duplicate()
