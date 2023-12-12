@@ -2,6 +2,7 @@
 """Module for coloring geometry with attributes."""
 from __future__ import division
 
+from .shademesh import ShadeMesh
 from .shade import Shade
 from .door import Door
 from .aperture import Aperture
@@ -267,8 +268,8 @@ class ColorFace(_ColorObject):
     """Object for visualizing face and sub-face level attributes.
 
     Args:
-        faces: An array of honeybee Faces, Apertures, Doors, and/or shades which
-            will be colored with their attributes.
+        faces: An array of honeybee Faces, Apertures, Doors, Shades and/or ShadeMeshes
+            which will be colored with their attributes.
         attr_name: A text string of an attribute that the input faces should have.
             This can have '.' that separate the nested attributes from one another.
             For example, 'properties.energy.construction'.
@@ -315,9 +316,12 @@ class ColorFace(_ColorObject):
                 flat_f.extend(face.shades)
             elif isinstance(face, Shade):
                 flat_f.append(face)
+            elif isinstance(face, ShadeMesh):
+                flat_f.append(face)
             else:
-                raise ValueError('Expected honeybee Face, Aperture, Door or Shade '
-                                 'for ColorFaces. Got {}.'.format(type(face)))
+                raise ValueError(
+                    'Expected honeybee Face, Aperture, Door, Shade or ShadeMesh '
+                    'for ColorFaces. Got {}.'.format(type(face)))
         self._faces = faces
         self._flat_faces = tuple(flat_f)
         self._flat_geometry = tuple(face.geometry if not isinstance(face, Face)
