@@ -1754,6 +1754,22 @@ class Model(_Base):
             self.tolerance = self.tolerance * scale_fac
             self.units = units
 
+    def rooms_to_orphaned(self):
+        """Convert all Rooms in this Model to orphaned geometry objects.
+        
+        This is useful when the energy load balance of Rooms is not important
+        and they are only significant as context shading. Note that this method
+        will effectively discount any geometries with a Surface boundary condition
+        or with an AirBoundary face type.
+        """
+        for room in self._rooms:
+            for face in room._faces:
+                face._parent = None
+                if not isinstance(face.boundary_condition, Surface) and not \
+                        isinstance(face.type, AirBoundary):
+                    self._orphaned_faces.append(face)
+        self._rooms = []
+
     def remove_degenerate_geometry(self, tolerance=None):
         """Remove any degenerate geometry from the model.
 
