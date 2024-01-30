@@ -173,6 +173,7 @@ def clean_string(value, input_name=''):
     string is empty after stripping or has more than 100 characters.
     """
     try:
+        value = value.replace(' ', '_')  # spaces > underscores for readability
         val = re.sub(r'[^.A-Za-z0-9_-]', '', value)
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
@@ -191,6 +192,7 @@ def clean_rad_string(value, input_name=''):
     raising an error if no legal characters are found.
     """
     try:
+        value = value.replace(' ', '_')  # spaces > underscores for readability
         val = re.sub(r'[^.A-Za-z0-9_-]', '', value)
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
@@ -228,6 +230,7 @@ def clean_and_id_string(value, input_name=''):
     The resulting string will be valid for both Radiance and EnergyPlus.
     """
     try:
+        value = value.replace(' ', '_')  # spaces > underscores for readability
         val = re.sub(r'[^.A-Za-z0-9_-]', '', value)
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
@@ -243,6 +246,7 @@ def clean_and_id_rad_string(value, input_name=''):
     This includes stripping out illegal characters and white spaces.
     """
     try:
+        value = value.replace(' ', '_')  # spaces > underscores for readability
         val = re.sub(r'[^.A-Za-z0-9_-]', '', value)
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
@@ -280,6 +284,7 @@ def clean_and_number_string(value, existing_dict, input_name=''):
             the model already.
     """
     try:
+        value = value.replace(' ', '_')  # spaces > underscores for readability
         val = re.sub(r'[^.A-Za-z0-9_-]', '_', value)
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
@@ -306,6 +311,7 @@ def clean_and_number_rad_string(value, existing_dict, input_name=''):
             the model already.
     """
     try:
+        value = value.replace(' ', '_')  # spaces > underscores for readability
         val = re.sub(r'[^.A-Za-z0-9_-]', '_', value)
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
@@ -357,6 +363,7 @@ def truncate_and_id_string(value, truncate_len=32, uuid_len=0, input_name=''):
     with different types of character restrictions.
     """
     try:
+        value = value.replace(' ', '_')  # spaces > underscores for readability
         val = re.sub(r'[^.A-Za-z0-9_-]', '', value)
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(

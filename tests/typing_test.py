@@ -16,8 +16,8 @@ def test_clean_string():
     long_str = 'This is an exceptionally long text string that should never be used ' \
         'for the name of anything in EnergyPlus for whatever reason'
 
-    assert clean_string(correct_str) == '0.5in.GypsumWall'
-    assert clean_string(incorrect_str) == '0.5in.GypsumWall'
+    assert clean_string(correct_str) == '0.5_in._Gypsum_Wall'
+    assert clean_string(incorrect_str) == '0.5_in._Gypsum_Wall'
     with pytest.raises(AssertionError):
         clean_string(long_str)
 
@@ -29,8 +29,8 @@ def test_clean_rad_string():
     long_str = 'This is an exceptionally long text string that should never be used ' \
         'for the name of anything in EnergyPlus but is actually ok for Radiance'
 
-    assert clean_rad_string(correct_str) == '0.5in.GypsumWall'
-    assert clean_rad_string(incorrect_str) == '0.5in.GypsumWall'
+    assert clean_rad_string(correct_str) == '0.5_in._Gypsum_Wall'
+    assert clean_rad_string(incorrect_str) == '0.5_in._Gypsum_Wall'
     clean_rad_string(long_str)
 
 
@@ -54,8 +54,8 @@ def test_clean_and_id_string():
     long_str = 'This is an exceptionally long text string that should never be used ' \
         'for the name of anything in EnergyPlus for whatever reason'
 
-    assert clean_and_id_string(correct_str).startswith('0.5in.GypsumWall')
-    assert clean_and_id_string(incorrect_str).startswith('0.5in.GypsumWall')
+    assert clean_and_id_string(correct_str).startswith('0.5_in._Gypsum_Wall')
+    assert clean_and_id_string(incorrect_str).startswith('0.5_in._Gypsum_Wall')
     assert len(clean_and_id_string(long_str)) < 70
 
 
@@ -66,8 +66,8 @@ def test_clean_and_id_rad_string():
     long_str = 'This is an exceptionally long text string that should never be used ' \
         'for the name of anything in EnergyPlus but is actually ok for Radiance'
 
-    assert clean_and_id_rad_string(correct_str).startswith('0.5in.GypsumWall')
-    assert clean_and_id_rad_string(incorrect_str).startswith('0.5in.GypsumWall')
+    assert clean_and_id_rad_string(correct_str).startswith('0.5_in._Gypsum_Wall')
+    assert clean_and_id_rad_string(incorrect_str).startswith('0.5_in._Gypsum_Wall')
     assert len(clean_and_id_rad_string(long_str)) > 70
 
 
@@ -247,9 +247,9 @@ def test_truncate_and_id_string():
     """Test the truncate_and_id_string method."""
     test_str = 'This is a test string to be truncated and IDd'
     trunc_str = truncate_and_id_string(test_str, 32)
-    assert trunc_str == 'Thisisateststringtobetruncatedan'
+    assert trunc_str == 'This_is_a_test_string_to_be_trun'
     trunc_str = truncate_and_id_string(test_str, 32, 8)
-    assert trunc_str[:24] == 'Thisisateststringtobetru'
+    assert trunc_str[:24] == 'This_is_a_test_string_to'
 
 
 def test_invalid_dict_error():
