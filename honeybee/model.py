@@ -1288,13 +1288,37 @@ class Model(_Base):
         for shade_mesh in self._shade_meshes:
             shade_mesh.add_prefix(prefix)
 
+    def reset_ids(self, tru):
+        """Reset the identifiers of all Model objects to be derived from display_names.
+
+        In the event that duplicate identifiers are found, an
+        integer will be automatically appended to the new ID to make it
+        unique. This is similar to the routines that automatically assign unique
+        names to OpenStudio SDK objects.
+        """
+        self.reset_room_ids()
+        face_dict, ap_dict, dr_dict, shd_dict, sm_dict = {}, {}, {}, {}, {}
+        for face in self.faces:
+            face.identifier = clean_and_number_string(
+                face.display_name, face_dict, 'Face identifier')
+        for ap in self.apertures:
+            ap.identifier = clean_and_number_string(
+                ap.display_name, ap_dict, 'Aperture identifier')
+        for dr in self.doors:
+            dr.identifier = clean_and_number_string(
+                dr.display_name, dr_dict, 'Door identifier')
+        for shade in self.shades:
+            shade.identifier = clean_and_number_string(
+                shade.display_name, shd_dict, 'Shade identifier')
+        for shade_mesh in self.shade_meshes:
+            shade_mesh.identifier = clean_and_number_string(
+                shade_mesh.display_name, sm_dict, 'ShadeMesh identifier')
+
     def reset_room_ids(self):
         """Reset the identifiers of the Model Rooms to be derived from display_names.
 
-        In the event that duplicate Room identifiers are found in the Model, an
-        integer will be automatically appended to the new Room ID to make it
-        unique. This is similar to the routines that automatically assign unique
-        names to OpenStudio SDK objects.
+        In the event that duplicate Room identifiers are found, an integer will
+        be automatically appended to the new Room ID to make it unique.
         """
         room_dict = {}
         for room in self.rooms:
