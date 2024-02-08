@@ -81,7 +81,9 @@ class Room(_BaseWithShade):
         * average_floor_height
         * user_data
     """
-    __slots__ = ('_geometry', '_faces', '_multiplier', '_story', '_exclude_floor_area')
+    __slots__ = (
+        '_geometry', '_faces',
+        '_multiplier', '_story', '_exclude_floor_area', '_parent')
 
     def __init__(self, identifier, faces, tolerance=0, angle_tolerance=0):
         """Initialize Room."""
@@ -123,6 +125,7 @@ class Room(_BaseWithShade):
         self._multiplier = 1  # default value that can be overridden later
         self._story = None  # default value that can be overridden later
         self._exclude_floor_area = False  # default value that can be overridden later
+        self._parent = None  # completely hidden as it is only used by Dragonfly
         self._properties = RoomProperties(self)  # properties for extensions
 
     @classmethod
