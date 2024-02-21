@@ -549,14 +549,14 @@ class Room(_BaseWithShade):
 
     def horizontal_boundary(self, match_walls=False, tolerance=0.01):
         """Get a Face3D representing the horizontal boundary around the Room.
-        
+
         This will be generated from all downward-facing Faces of the Room (essentially
         the Floor faces but can also include overhanging slanted walls). So, for
         a valid closed-volume Honeybee Room, the result should always represent
         the Room in the XY plane.
 
         The Z height of the resulting Face3D will be at the minimum floor height.
-    
+
         Args:
             match_walls: Boolean to note whether vertices should be inserted into
                 the final Face3D that will help match the segments of the result
@@ -583,7 +583,7 @@ class Room(_BaseWithShade):
         floor area in the result.
 
         The Z height of the resulting Face3D will be at the minimum floor height.
-    
+
         Args:
             match_walls: Boolean to note whether vertices should be inserted into
                 the final Face3Ds that will help match the segments of the result
@@ -610,7 +610,7 @@ class Room(_BaseWithShade):
                 holes = None
                 if flr_geo[0].has_holes:
                     holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
-                            for hole in flr_geo[0].holes]
+                             for hole in flr_geo[0].holes]
                 horiz_bound = [Face3D(bound, holes=holes)]
         else:  # multiple geometries to be joined together
             floor_height = self.geometry.min.z
@@ -624,7 +624,7 @@ class Room(_BaseWithShade):
                     holes = None
                     if fg.has_holes:
                         holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
-                                for hole in fg.holes]
+                                 for hole in fg.holes]
                     horiz_geo.append(Face3D(bound, holes=holes))
             # join the coplanar horizontal faces together
             horiz_bound = Face3D.join_coplanar_faces(horiz_geo, tolerance)
@@ -886,7 +886,7 @@ class Room(_BaseWithShade):
                 if not isinstance(face.boundary_condition, Outdoors):
                     face.boundary_condition = boundary_conditions.outdoors
                 face.apertures_by_ratio(face.aperture_ratio, tolerance)
-    
+
     def rectangularize_apertures(
             self, subdivision_distance=None, max_separation=None, merge_all=False,
             tolerance=0.01, angle_tolerance=1.0):
@@ -1487,7 +1487,7 @@ class Room(_BaseWithShade):
                 intact. Useful for cases where alignment of walls with the
                 Room.horizontal_boundary is desired without disrupting the roof
                 geometry. (Default: False).
-        
+
         Returns:
             A list containing only the new Faces that were created as part of the
             merging process. These new Faces will have as many properties of the
@@ -2073,13 +2073,13 @@ class Room(_BaseWithShade):
     def grouped_horizontal_boundary(
             rooms, min_separation=0, tolerance=0.01, floors_only=True):
         """Get a list of Face3D for the horizontal boundary around several Rooms.
-        
-        This method will attempt to produce a boundary that follows along the 
+
+        This method will attempt to produce a boundary that follows along the
         outer parts of the Floors of the Rooms so it is not suitable for groups
         of Rooms that overlap one another in plan. This method may return an empty
         list if the min_separation is so large that a continuous boundary could not
         be determined.
-    
+
         Args:
             rooms: A list of Honeybee Rooms for which the horizontal boundary will
                 be computed.
@@ -2140,7 +2140,7 @@ class Room(_BaseWithShade):
         # if the min_separation is small, use the more reliable intersection method
         if min_separation <= tolerance:
             closed_polys = Polygon2D.joined_intersected_boundary(floor_polys, tolerance)
-        else: # otherwise, use the more intense and less reliable gap crossing method
+        else:  # otherwise, use the more intense and less reliable gap crossing method
             closed_polys = Polygon2D.gap_crossing_boundary(
                 floor_polys, min_separation, tolerance)
 
@@ -2161,7 +2161,7 @@ class Room(_BaseWithShade):
         else:  # need to separate holes from distinct Face3Ds
             bound_faces = []
             for poly in clean_polys:
-                pts3d = tuple(Point3D(pt.x, pt.y, z_min) for pt  in poly)
+                pts3d = tuple(Point3D(pt.x, pt.y, z_min) for pt in poly)
                 bound_faces.append(Face3D(pts3d))
             return Face3D.merge_faces_to_holes(bound_faces, tolerance)
 
@@ -2427,7 +2427,7 @@ class Room(_BaseWithShade):
                 holes = None
                 if flr_geo[0].has_holes:
                     holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
-                            for hole in flr_geo[0].holes]
+                             for hole in flr_geo[0].holes]
                 return Face3D(bound, holes=holes)
         else:  # multiple geometries to be joined together
             floor_height = self.geometry.min.z
@@ -2441,7 +2441,7 @@ class Room(_BaseWithShade):
                     holes = None
                     if fg.has_holes:
                         holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
-                                for hole in fg.holes]
+                                 for hole in fg.holes]
                     horiz_geo.append(Face3D(bound, holes=holes))
             # sense if there are overlapping geometries to be boolean unioned
             overlap_groups = Face3D.group_by_coplanar_overlap(horiz_geo, tolerance)
