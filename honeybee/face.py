@@ -679,7 +679,7 @@ class Face(_BaseWithShade):
         if max_separation is not None:
             if merge_all or (not merge_all and len(non_rect_geos) > 1):
                 edits_occurred = True
-                if max_separation <= tol:  #  just join the Apertures at the tolerance
+                if max_separation <= tol:  # just join the Apertures at the tolerance
                     non_rect_geos = Face3D.join_coplanar_faces(non_rect_geos, tol)
                 else:  # join the Apertures using the max_separation
                     # get polygons for the faces that all lie within the same plane
@@ -744,10 +744,10 @@ class Face(_BaseWithShade):
                     new_ap = Aperture('{}_RectGlz{}'.format(self.identifier, i), ap_face)
                 else:
                     new_ap = Aperture(exist_ap.identifier, ap_face,
-                                    is_operable=exist_ap.is_operable)
+                                      is_operable=exist_ap.is_operable)
                     new_ap.display_name = '{}_{}'.format(exist_ap.display_name, i)
                 new_aps.append(new_ap)
-        
+
         # we can just add the apertures if there's no subdivision going on
         if subdivision_distance is None:
             # remove any Apertures that are overlapping
@@ -775,11 +775,13 @@ class Face(_BaseWithShade):
             # group face by y value. All the rows will be merged together
             vertices = grid.vertices
             groups = {}
+            start_y = None
             last_y = vertices[grid.faces[0][0]].y
             for i, face in enumerate(grid.faces):
                 min_2d = vertices[face[0]]
                 for xy in groups:
-                    if abs(min_2d.x - xy[0]) < tolerance and abs(min_2d.y - last_y) < tolerance:
+                    if abs(min_2d.x - xy[0]) < tolerance and \
+                            abs(min_2d.y - last_y) < tolerance:
                         groups[(xy[0], start_y)].append(face)
                         break
                 else:
@@ -862,7 +864,7 @@ class Face(_BaseWithShade):
 
     def _reference_plane(self, angle_tolerance):
         """Get a Plane for this Face geometry derived from the Face3D plane.
-        
+
         This will be oriented with the plane Y-Axis either aligned with the
         World Z or World Y, which is helpful in rectangularization.
 

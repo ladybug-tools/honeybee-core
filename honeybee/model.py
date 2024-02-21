@@ -318,7 +318,6 @@ class Model(_Base):
         all_id = clean_string(stl_obj.name)
         all_geo = []
         if geometry_to_faces:
-            
             for verts, normal in zip(stl_obj.face_vertices, stl_obj.face_normals):
                 all_geo.append(Face3D(verts, plane=Plane(normal, verts[0])))
             hb_objs = [Face(all_id + '_' + str(uuid.uuid4())[:8], go) for go in all_geo]
@@ -1633,7 +1632,7 @@ class Model(_Base):
             room.simplify_apertures(tol)
         if resolve_adjacency:
             self.solve_adjacency()
-    
+
     def rectangularize_apertures(
             self, subdivision_distance=None, max_separation=None, merge_all=False,
             resolve_adjacency=True, tolerance=None, angle_tolerance=None):
@@ -1780,7 +1779,7 @@ class Model(_Base):
 
     def rooms_to_orphaned(self):
         """Convert all Rooms in this Model to orphaned geometry objects.
-        
+
         This is useful when the energy load balance of Rooms is not important
         and they are only significant as context shading. Note that this method
         will effectively discount any geometries with a Surface boundary condition
