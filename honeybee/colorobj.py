@@ -131,7 +131,8 @@ class _ColorObject(object):
 
         # produce legend parameters with an ordinal dict for the attributes
         l_par = self.legend_parameters.duplicate()
-        l_par.segment_count = len(self._attributes_unique)
+        if l_par.is_segment_count_default:
+            l_par.segment_count = len(self._attributes_unique)
         l_par.ordinal_dictionary = attr_dict
         if l_par.is_title_default:
             l_par.title = self.attr_name_end.replace('_', ' ').title()
