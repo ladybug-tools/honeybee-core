@@ -2319,8 +2319,7 @@ class Model(_Base):
                 tolerance will be used. (Default: None).
             angle_tolerance: The max angle difference in degrees that vertices are
                 allowed to differ from one another in order to consider them colinear.
-                Default: 1 degree. If None, the Model angle_tolerance will be
-                used. (Default: None).
+                If None, the Model angle_tolerance will be used. (Default: None).
             raise_exception: Boolean to note whether a ValueError should be raised
                 if the room geometry does not form a closed solid. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
