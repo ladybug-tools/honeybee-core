@@ -2040,12 +2040,10 @@ class Room(_BaseWithShade):
                             if collision_found:
                                 break
                             if abs(z1 - z2) < tolerance:
-                                if Polygon2D.overlapping_bounding_rect(
-                                        ply_1, ply_2, tolerance):
-                                    if ply_1.polygon_relationship(ply_2, tolerance) >= 0:
-                                        overlap_rooms.append(room_2)
-                                        collision_found = True
-                                        break
+                                if ply_1.polygon_relationship(ply_2, tolerance) >= 0:
+                                    overlap_rooms.append(room_2)
+                                    collision_found = True
+                                    break
             except IndexError:
                 pass  # we have reached the end of the list
 
@@ -2453,22 +2451,12 @@ class Room(_BaseWithShade):
                 if len(og) == 1:
                     clean_geo.extend(og)
                 else:
-                    it_count, max_iter = 0, len(og) * 2
-                    while len(og) > 1:
-                        a_tol = math.radians(1)
-                        union = Face3D.coplanar_union(og[0], og[1], tolerance, a_tol)
-                        if union is None:
-                            og.append(og.pop(1))
-                        else:
-                            og.pop(0)
-                            og[0] = union
-                        it_count += 1
-                        if it_count > max_iter:
-                            break
-                    if len(og) == 1:
-                        clean_geo.extend(og)
+                    a_tol = math.radians(1)
+                    union = Face3D.coplanar_union_all(og, tolerance, a_tol)
+                    if len(union) == 1:
+                        clean_geo.extend(union)
                     else:
-                        sort_geo = sorted(clean_geo, key=lambda x: x.area, reverse=True)
+                        sort_geo = sorted(union, key=lambda x: x.area, reverse=True)
                         clean_geo.append(sort_geo[0])
             if len(clean_geo) == 1:
                 return clean_geo[0]
