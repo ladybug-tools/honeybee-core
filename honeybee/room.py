@@ -557,6 +557,9 @@ class Room(_BaseWithShade):
 
         The Z height of the resulting Face3D will be at the minimum floor height.
 
+        Note that, if this Room is not solid, the computation of the horizontal
+        boundary may fail with an exception.
+
         Args:
             match_walls: Boolean to note whether vertices should be inserted into
                 the final Face3D that will help match the segments of the result
@@ -569,7 +572,12 @@ class Room(_BaseWithShade):
                 suitable for objects in Meters).
         """
         # get the starting horizontal boundary
-        horiz_bound = self._base_horiz_boundary(tolerance)
+        try:
+            horiz_bound = self._base_horiz_boundary(tolerance)
+        except Exception as e:
+            msg = 'Room "{}" is not solid and so a valid horizontal boundary for ' \
+                'the Room could not be established.\n{}'.format(self.full_id, e)
+            raise ValueError(msg)
         if match_walls:  # insert the wall vertices
             return self._match_walls_to_horizontal_faces([horiz_bound], tolerance)[0]
         return horiz_bound
