@@ -2539,8 +2539,11 @@ class Model(_Base):
                 full_msgs.append(f_msg)
                 reported_items.add((adj_f.identifier, base_f.identifier))
             else:  # check to ensure the shapes are the same when vertices are removed
-                base_f_geo = base_f.geometry.remove_colinear_vertices(tolerance)
-                adj_f_geo = adj_f.geometry.remove_colinear_vertices(tolerance)
+                try:
+                    base_f_geo = base_f.geometry.remove_colinear_vertices(tolerance)
+                    adj_f_geo = adj_f.geometry.remove_colinear_vertices(tolerance)
+                except AssertionError:  # degenerate Faces to ignore
+                    continue
                 if len(base_f_geo) != len(adj_f_geo):
                     f_msg = 'Face "{}" is a shape with {} distinct vertices and is ' \
                         'adjacent to Face "{}", which has {} distinct vertices' \
