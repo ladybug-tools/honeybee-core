@@ -380,6 +380,30 @@ def test_reset_room_ids():
     assert new_model.rooms[0].identifier != parsed_model.rooms[0].identifier
 
 
+def test_offset_aperture_edges():
+    """Test the Face offset_aperture_edges method."""
+    model_json = './tests/json/room_for_window_offset.hbjson'
+    parsed_model = Model.from_hbjson(model_json)
+    test_room = parsed_model.rooms[0]
+    test_face = test_room[1]
+
+    orig_area = test_face.aperture_area
+    test_face.offset_aperture_edges(-0.3, 0.01)
+    new_area = test_face.aperture_area
+    assert new_area < orig_area
+    assert len(test_face.apertures) == 3
+    
+    test_face.offset_aperture_edges(0.6, 0.01)
+    new_area = test_face.aperture_area
+    assert new_area > orig_area
+    assert len(test_face.apertures) == 3
+
+    test_face.fix_invalid_sub_faces(True, True)
+    fix_area = test_face.aperture_area
+    assert len(test_face.apertures) == 1
+    assert fix_area < new_area
+
+
 def test_move():
     """Test the Model move method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
