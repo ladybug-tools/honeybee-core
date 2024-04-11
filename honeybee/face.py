@@ -886,6 +886,166 @@ class Face(_BaseWithShade):
         ref_plane = Plane(rel_plane.n, parent_llc, proj_x)
         return ref_plane
 
+    def offset_aperture_edges(self, offset_distance, tolerance=0.01):
+        """Offset the edges of all apertures by a certain distance.
+
+        This is useful for translating between interfaces that expect the window
+        frame to be included within or excluded from the geometry of the Aperture.
+
+        Note that this operation can often create Apertures that collide with
+        one another or extend past the parent Face. So it may be desirable
+        to run the fix_invalid_sub_faces after using this method.
+
+        Args:
+            offset_distance: Distance with which the edges of each Aperture will
+                be offset from the original geometry. Positive values will
+                offset the geometry outwards and negative values will offset the
+                geometries inwards.
+            tolerance: The minimum difference between point values for them to be
+                considered the distinct. (Default: 0.01, suitable for objects
+                in meters).
+        """
+        # convert the apertures to polygons and offset them
+        new_apertures = []
+        prim_pl = self.geometry.plane
+        for ap in self.apertures:
+            try:
+                verts_2d = tuple(prim_pl.xyz_to_xy(pt) for pt in ap.geometry.boundary)
+                poly = Polygon2D(verts_2d).remove_colinear_vertices(tolerance)
+                off_poly = poly.offset(-offset_distance, True)
+                if off_poly is not None:
+                    verts_3d = tuple(prim_pl.xy_to_xyz(pt) for pt in off_poly)
+                    new_ap = ap.duplicate()
+                    new_ap._geometry = Face3D(verts_3d, prim_pl)
+                    new_apertures.append(new_ap)
+                else:
+                    new_apertures.append(ap)
+            except AssertionError:  # degenerate geometry to ignore
+                new_apertures.append(ap)
+        # assign the new apertures
+        self.remove_apertures()
+        self.add_apertures(new_apertures)
+
+    def fix_invalid_sub_faces(
+            self, trim_with_parent=True, union_overlaps=True,
+            offset_distance=0.05, tolerance=0.01):
+        """Fix invalid Apertures and Doors on this face by performing two operations.
+
+        First, sub-faces that extend past their parent Face are trimmed with the
+        parent and will have their edges offset towards the inside of the Face.
+        Second, any sub-faces that overlap or touch one another will be unioned
+        into a single Aperture or Door.
+
+        Args:
+            trim_with_parent: Boolean to note whether the fixing operation should
+                check all sub-faces that extend past their parent and trim
+                them, offsetting them towards the inside of the Face. (Default: True).
+            union_overlaps: Boolean to note whether the fixing operation should
+                check all sub-faces that overlap with one another and union any
+                sub-faces together that overlap. (Default: True).
+            offset_distance: Distance from the edge of the parent Face that the
+                sub-faces will be offset to in order to make them valid. This
+                should be larger than the tolerance. (Default: 0.05, suitable for
+                    objects in meters).
+            tolerance: The minimum difference between point values for them to be
+                considered the distinct. (Default: 0.01, suitable for objects
+                in meters).
+        """
+        # collect the sub-face geometries as polygons in the face plane
+        clean_polys, original_objs, original_area = [], [], 0
+        prim_pl = self.geometry.plane
+        for sub_f in self.sub_faces:
+            try:
+                verts_2d = tuple(prim_pl.xyz_to_xy(pt) for pt in sub_f.geometry.boundary)
+                poly = Polygon2D(verts_2d).remove_colinear_vertices(tolerance)
+                clean_polys.append(poly)
+                original_area += poly.area
+                original_objs.append(sub_f)
+            except AssertionError:  # degenerate geometry to ignore
+                pass
+        original_polys = clean_polys[:]
+
+        # trim objects with the parent polygon if they extend past it
+        if trim_with_parent:
+            face_3d = self.geometry
+            verts2d = tuple(prim_pl.xyz_to_xy(pt) for pt in face_3d.boundary)
+            parent_poly, parent_holes = Polygon2D(verts2d), None
+            if face_3d.has_holes:
+                parent_holes = tuple(
+                    Polygon2D(prim_pl.xyz_to_xy(pt) for pt in hole)
+                    for hole in face_3d.holes
+                )
+            # loop through the polygons and offset them if they are not correctly bounded
+            new_polygons = []
+            for polygon in clean_polys:
+                if not self._is_sub_polygon(polygon, parent_poly, parent_holes):
+                    # find the boolean intersection of the polygon with the room
+                    sub_face = Face3D([prim_pl.xy_to_xyz(pt) for pt in polygon])
+                    bool_int = Face3D.coplanar_intersection(
+                        face_3d, sub_face, tolerance, math.radians(1))
+                    if bool_int is None:  # sub-face completely outside parent
+                        continue
+                    # offset the result of the boolean intersection from the edge
+                    parent_edges = face_3d.boundary_segments if face_3d.holes is None \
+                        else face_3d.boundary_segments + \
+                        tuple(seg for hole in face_3d.hole_segments for seg in hole)
+                    for new_f in bool_int:
+                        new_pts_2d = []
+                        for pt in new_f.boundary:
+                            for edge in parent_edges:
+                                close_pt = edge.closest_point(pt)
+                                if pt.distance_to_point(close_pt) < offset_distance:
+                                    move_vec = edge.v.rotate(prim_pl.n, math.pi / 2)
+                                    move_vec = move_vec.normalize() * offset_distance
+                                    pt = pt.move(move_vec)
+                            new_pts_2d.append(prim_pl.xyz_to_xy(pt))
+                        new_polygons.append(Polygon2D(new_pts_2d))
+                else:
+                    new_polygons.append(polygon)
+            clean_polys = new_polygons
+
+        # union overlaps and merge sub-faces that are touching
+        if union_overlaps:
+            grouped_polys = Polygon2D.group_by_overlap(clean_polys, tolerance)
+            # union any of the polygons that overlap
+            if not all(len(g) == 1 for g in grouped_polys):
+                clean_polys = []
+                for p_group in grouped_polys:
+                    if len(p_group) == 1:
+                        clean_polys.append(p_group[0])
+                    else:
+                        union_poly = Polygon2D.boolean_union_all(p_group, tolerance)
+                        for new_poly in union_poly:
+                            clean_polys.append(
+                                new_poly.remove_colinear_vertices(tolerance))
+            # join the polygons that touch one another
+            clean_polys = Polygon2D.joined_intersected_boundary(clean_polys, tolerance)
+        
+        # assuming that the operations have edited the polygons, create new sub-faces
+        new_area = sum(p.area for p in clean_polys)
+        area_diff = abs(original_area - new_area)
+        if len(clean_polys) != len(original_polys) or area_diff > tolerance:
+            self.remove_sub_faces()
+            for i, n_poly in enumerate(clean_polys):
+                new_geo = Face3D([prim_pl.xy_to_xyz(pt) for pt in n_poly], prim_pl)
+                for o_poly, o_obj in zip(original_polys, original_objs):
+                    if n_poly.is_point_inside_bound_rect(o_poly.center):
+                        orig_obj = o_obj
+                        break
+                else:  # could not be matched with any original object
+                    orig_obj = None
+                if orig_obj is None:
+                    new_ap = Aperture('{}_{}'.format(self.identifier, i), new_geo)
+                    self.add_aperture(new_ap)
+                elif isinstance(orig_obj, Aperture):
+                    new_ap = orig_obj.duplicate()
+                    new_ap._geometry = new_geo
+                    self.add_aperture(new_ap)
+                elif isinstance(orig_obj, Door):
+                    new_door = orig_obj.duplicate()
+                    new_door._geometry = new_geo
+                    self.add_door(new_door)
+
     def apertures_by_ratio(self, ratio, tolerance=0.01):
         """Add apertures to this Face given a ratio of aperture area to face area.
 
@@ -1819,6 +1979,26 @@ class Face(_BaseWithShade):
                 grouped_polys.append([poly])  # make a new group for the polygon
                 grouped_sfs.append([face])  # make a new group for the face
         return grouped_sfs
+
+    @staticmethod
+    def _is_sub_polygon(sub_poly, parent_poly, parent_holes=None):
+        """Check if a sub-polygon is valid for a given assumed parent polygon.
+
+        Args:
+            sub_poly: A sub-Polygon2D for which sub-face equivalency will be tested.
+            parent_poly: A parent Polygon2D.
+            parent_holes: An optional list of Polygon2D for any holes that may
+                exist in the parent polygon. (Default: None).
+        """
+        if parent_holes is None:
+            return parent_poly.is_polygon_inside(sub_poly)
+        else:
+            if not parent_poly.is_polygon_inside(sub_poly):
+                return False
+            for hole_poly in parent_holes:
+                if not hole_poly.is_polygon_outside(sub_poly):
+                    return False
+            return True
 
     def __copy__(self):
         new_f = Face(self.identifier, self.geometry, self.type, self.boundary_condition)
