@@ -795,6 +795,34 @@ class Model(_Base):
         return child_shades + self._orphaned_shades
 
     @property
+    def shade_meshes(self):
+        """Get a tuple of all ShadeMesh objects in the model."""
+        return tuple(self._shade_meshes)
+
+    @property
+    def grouped_shades(self):
+        """Get a list of lists where each sub-list contains Shades and/or ShadeMeshes
+        with the same display_name.
+
+        Assigning a common display_name to Shades and ShadeMeshes is the officially
+        recommended way to group these objects for export to platforms that
+        support shade groups. In this case, it is customary to use the common
+        display_name as the name of the shade group.
+
+        Note that, if no display_names have been assigned to the Shades and
+        ShadeMeshes, the unique object identifier is used, meaning each sublist
+        returned here should have only one item in it.
+        """
+        all_shades = self.shades + self._shade_meshes
+        group_dict = {}
+        for shade in all_shades:
+            try:
+                group_dict[shade.display_name].append(shade)
+            except KeyError:
+                group_dict[shade.display_name] = [shade]
+        return list(group_dict.values())
+
+    @property
     def orphaned_faces(self):
         """Get a tuple of all Face objects without parent Rooms in the model."""
         return tuple(self._orphaned_faces)
@@ -813,11 +841,6 @@ class Model(_Base):
     def orphaned_shades(self):
         """Get a tuple of all Shade objects without parent Rooms in the model."""
         return tuple(self._orphaned_shades)
-
-    @property
-    def shade_meshes(self):
-        """Get a tuple of all ShadeMesh objects in the model."""
-        return tuple(self._shade_meshes)
 
     @property
     def stories(self):
