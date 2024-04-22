@@ -41,6 +41,7 @@ class Shade(_Base):
         * perimeter
         * min
         * max
+        * tilt
         * altitude
         * azimuth
         * type_color
@@ -225,6 +226,11 @@ class Shade(_Base):
     def max(self):
         """Get a Point3D for the maximum of the bounding box around the object."""
         return self._geometry.max
+
+    @property
+    def tilt(self):
+        """Get the tilt of the geometry between 0 (up) and 180 (down)."""
+        return math.degrees(self._geometry.tilt)
 
     @property
     def altitude(self):

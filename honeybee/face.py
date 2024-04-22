@@ -63,6 +63,7 @@ class Face(_BaseWithShade):
         * max
         * aperture_area
         * aperture_ratio
+        * tilt
         * altitude
         * azimuth
         * type_color
@@ -363,6 +364,11 @@ class Face(_BaseWithShade):
         """Get a number between 0 and 1 for the area ratio of the apertures to the face.
         """
         return self.aperture_area / self.area
+
+    @property
+    def tilt(self):
+        """Get the tilt of the geometry between 0 (up) and 180 (down)."""
+        return math.degrees(self._geometry.tilt)
 
     @property
     def altitude(self):
