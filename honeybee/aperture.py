@@ -48,6 +48,7 @@ class Aperture(_BaseWithShade):
         * perimeter
         * min
         * max
+        * tilt
         * altitude
         * azimuth
         * type_color
@@ -248,6 +249,11 @@ class Aperture(_BaseWithShade):
     def max(self):
         """Get a Point3D for the maximum of the bounding box around the object."""
         return self._max_with_shades(self._geometry)
+
+    @property
+    def tilt(self):
+        """Get the tilt of the geometry between 0 (up) and 180 (down)."""
+        return math.degrees(self._geometry.tilt)
 
     @property
     def altitude(self):

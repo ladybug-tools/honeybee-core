@@ -1310,13 +1310,12 @@ class Model(_Base):
         for shade_mesh in self._shade_meshes:
             shade_mesh.add_prefix(prefix)
 
-    def reset_ids(self, tru):
+    def reset_ids(self):
         """Reset the identifiers of all Model objects to be derived from display_names.
 
-        In the event that duplicate identifiers are found, an
-        integer will be automatically appended to the new ID to make it
-        unique. This is similar to the routines that automatically assign unique
-        names to OpenStudio SDK objects.
+        In the event that duplicate identifiers are found, an integer will be
+        automatically appended to the new ID to make it unique. This is similar
+        to the routines that automatically assign unique names to OpenStudio SDK objects.
         """
         self.reset_room_ids()
         face_dict, ap_dict, dr_dict, shd_dict, sm_dict = {}, {}, {}, {}, {}

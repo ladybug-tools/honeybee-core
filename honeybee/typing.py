@@ -388,6 +388,69 @@ def fixed_string_length(value, target_len=32):
     else:
         return value
 
+
+def readable_short_name(value, max_length=24):
+    """Convert a string into a shorter but readable version of itself.
+
+    This is useful when dealing with interfaces of file formats that have very
+    strict character limits on names or identifiers (like in DOE-2/eQuest).
+
+    When ths input is less than or equal to the max length, the string will be
+    left as-is. If not, then the lower-case vowels will be removed from the name,
+    making the result abbreviated but still readable/recognizable. If the result
+    is still not shorter than the max length, then spaces will be removed. Lastly,
+    if all else fails to meet the max length, the middle characters will be,
+    removed leaving the beginning and end as they are, which should typically
+    help preserve the uniqueness of the name.
+
+    Note that this method does not do any check for illegal characters and presumes
+    that the input is already composed of legal characters.
+    """
+    # perform an initial check to see if it passes
+    if len(value) <= max_length:
+        return value
+    # strip out lowercase vowels and special characters like dashes
+    try:
+        value = re.sub(r'[aeiouy_\-]', '', value)
+    except TypeError:
+        raise TypeError('Input must be a text string. Got {}: {}.'.format(
+            type(value), value))
+    if value <= max_length:
+        return value
+    # remove spaces from the string to see if it gets short enough
+    value = value.replace(' ', '')
+    if value <= max_length:
+        return value
+    # lastly, remove some characters from the middle to get it to fit
+    mid_ind = int(max_length * (2 / 3))
+    assert mid_ind > 3, \
+        'Max character length of {} is too restrictive.'.format(max_length)
+    end_length = max_length - mid_ind - 1
+    value = '{}_{}'.format(value[:mid_ind], value[-end_length:])
+    return value
+
+
+def clean_doe2_string(value, max_length=24):
+    """Clean and shorten a string for DOE-2 so that it can be a U-name.
+
+    This includes stripping out all illegal characters (including both non-ASCII
+    and DOE-2 specific characters), removing trailing spaces, and passing the
+    result through the readable_short_name function to hit the target max_length.
+    Note that white spaces can be in the result with the assumption that
+    the name will be enclosed in double quotes.
+
+    Note that this method does not do any check to ensure the string is unique.
+    """
+    try:
+        val = ''.join(i for i in value if ord(i) < 128)  # strip out non-ascii
+        val = re.sub(r'["\(\)\[\]\,\=\n\t]', '', val)  # remove DOE-2 special characters
+    except TypeError:
+        raise TypeError('Input must be a text string. Got {}: {}.'.format(
+            type(value), value))
+    val = val.strip()
+    return readable_short_name(val, max_length)
+
+
 def invalid_dict_error(invalid_dict, error):
     """Raise a ValueError for an invalid dictionary that failed to serialize.
 
