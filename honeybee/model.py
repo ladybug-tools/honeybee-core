@@ -1310,41 +1310,84 @@ class Model(_Base):
         for shade_mesh in self._shade_meshes:
             shade_mesh.add_prefix(prefix)
 
-    def reset_ids(self):
+    def reset_ids(self, repair_surface_bcs=True):
         """Reset the identifiers of all Model objects to be derived from display_names.
 
         In the event that duplicate identifiers are found, an integer will be
         automatically appended to the new ID to make it unique. This is similar
         to the routines that automatically assign unique names to OpenStudio SDK objects.
+
+        Args:
+            repair_surface_bcs: A Boolean to note whether all Surface boundary
+                conditions across the model should be updated with the new
+                identifiers that were generated from the display names. (Default: True).
         """
-        self.reset_room_ids()
+        # set up dictionaries to hold various pieces of information
+        room_map = self.reset_room_ids()
         face_dict, ap_dict, dr_dict, shd_dict, sm_dict = {}, {}, {}, {}, {}
+        face_map, ap_map, dr_map = {}, {}, {}
+        # loop through the objects and change their identifiers
         for face in self.faces:
-            face.identifier = clean_and_number_string(
+            new_id = clean_and_number_string(
                 face.display_name, face_dict, 'Face identifier')
+            face_map[face.identifier] = new_id
+            face.identifier = new_id
         for ap in self.apertures:
-            ap.identifier = clean_and_number_string(
+            new_id = clean_and_number_string(
                 ap.display_name, ap_dict, 'Aperture identifier')
+            ap_map[ap.identifier] = new_id
+            ap.identifier = new_id
         for dr in self.doors:
-            dr.identifier = clean_and_number_string(
+            new_id = clean_and_number_string(
                 dr.display_name, dr_dict, 'Door identifier')
+            dr_map[dr.identifier] = new_id
+            dr.identifier =new_id
         for shade in self.shades:
             shade.identifier = clean_and_number_string(
                 shade.display_name, shd_dict, 'Shade identifier')
         for shade_mesh in self.shade_meshes:
             shade_mesh.identifier = clean_and_number_string(
                 shade_mesh.display_name, sm_dict, 'ShadeMesh identifier')
+        # reset all of the Surface boundary conditions if requested
+        if repair_surface_bcs:
+            for room in self.rooms:
+                for face in room.faces:
+                    if isinstance(face.boundary_condition, Surface):
+                        old_objs = face.boundary_condition.boundary_condition_objects
+                        new_objs = (face_map[old_objs[0]], room_map[old_objs[1]])
+                        new_bc = Surface(new_objs)
+                        face.boundary_condition = new_bc
+                        for ap in face.apertures:
+                            old_objs = ap.boundary_condition.boundary_condition_objects
+                            new_objs = (ap_map[old_objs[0]], face_map[old_objs[1]],
+                                        room_map[old_objs[2]])
+                            new_bc = Surface(new_objs, True)
+                            ap.boundary_condition = new_bc
+                        for dr in face.doors:
+                            old_objs = dr.boundary_condition.boundary_condition_objects
+                            new_objs = (dr_map[old_objs[0]], face_map[old_objs[1]],
+                                        room_map[old_objs[2]])
+                            new_bc = Surface(new_objs, True)
+                            dr.boundary_condition = new_bc
 
     def reset_room_ids(self):
         """Reset the identifiers of the Model Rooms to be derived from display_names.
 
         In the event that duplicate Room identifiers are found, an integer will
         be automatically appended to the new Room ID to make it unique.
+
+        Returns:
+            A dictionary that relates the old identifiers (keys) to the new
+            identifiers (values). This can be used to map between old and new
+            objects and update things like Surface boundary conditions.
         """
-        room_dict = {}
+        room_dict, room_map = {}, {}
         for room in self.rooms:
-            room.identifier = clean_and_number_string(
+            new_id = clean_and_number_string(
                 room.display_name, room_dict, 'Room identifier')
+            room_map[room.identifier] = new_id
+            room.identifier = new_id
+        return room_map
 
     def solve_adjacency(
             self, merge_coplanar=False, intersect=False, overwrite=False,
