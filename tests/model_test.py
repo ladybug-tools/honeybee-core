@@ -380,6 +380,18 @@ def test_reset_room_ids():
     assert new_model.rooms[0].identifier != parsed_model.rooms[0].identifier
 
 
+def test_reset_ids():
+    """Test the reset_room_ids method."""
+    model_json = './tests/json/model_with_adiabatic.hbjson'
+    parsed_model = Model.from_hbjson(model_json)
+
+    new_model = parsed_model.duplicate()
+    new_model.reset_ids(True)
+
+    assert new_model.rooms[0].identifier != parsed_model.rooms[0].identifier
+    assert new_model.check_missing_adjacencies() == ''
+
+
 def test_offset_aperture_edges():
     """Test the Face offset_aperture_edges method."""
     model_json = './tests/json/room_for_window_offset.hbjson'
