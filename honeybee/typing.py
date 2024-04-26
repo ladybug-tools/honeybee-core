@@ -415,11 +415,11 @@ def readable_short_name(value, max_length=24):
     except TypeError:
         raise TypeError('Input must be a text string. Got {}: {}.'.format(
             type(value), value))
-    if value <= max_length:
+    if len(value) <= max_length:
         return value
     # remove spaces from the string to see if it gets short enough
     value = value.replace(' ', '')
-    if value <= max_length:
+    if len(value) <= max_length:
         return value
     # lastly, remove some characters from the middle to get it to fit
     mid_ind = int(max_length * (2 / 3))
@@ -444,6 +444,7 @@ def clean_doe2_string(value, max_length=24):
     try:
         val = ''.join(i for i in value if ord(i) < 128)  # strip out non-ascii
         val = re.sub(r'["\(\)\[\]\,\=\n\t]', '', val)  # remove DOE-2 special characters
+        val = val.replace('_', ' ')  # put back white spaces
     except TypeError:
         raise TypeError('Input must be a text string. Got {}: {}.'.format(
             type(value), value))
