@@ -422,7 +422,7 @@ def readable_short_name(value, max_length=24):
     if len(value) <= max_length:
         return value
     # lastly, remove some characters from the middle to get it to fit
-    mid_ind = int(max_length * (2 / 3))
+    mid_ind = int(max_length * 0.5)
     assert mid_ind > 3, \
         'Max character length of {} is too restrictive.'.format(max_length)
     end_length = max_length - mid_ind - 1
