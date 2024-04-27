@@ -747,7 +747,7 @@ class Face(_BaseWithShade):
                         exist_ap = old_ap
                         break
                 if exist_ap is None:  # could not be matched; just make a new aperture
-                    new_ap = Aperture('{}_RectGlz{}'.format(self.identifier, i), ap_face)
+                    new_ap = Aperture('{}_RG{}'.format(self.identifier, i), ap_face)
                 else:
                     new_ap = Aperture(exist_ap.identifier, ap_face,
                                       is_operable=exist_ap.is_operable)
