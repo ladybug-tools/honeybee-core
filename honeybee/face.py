@@ -932,6 +932,75 @@ class Face(_BaseWithShade):
         self.remove_apertures()
         self.add_apertures(new_apertures)
 
+    def merge_neighboring_sub_faces(self, merge_distance=0.05, tolerance=0.01):
+        """Merge neighboring Apertures and/or Doors on this Face together.
+
+        This method is particularly useful for simplifying Apertures in concave
+        Faces since trying to simplify such Apertures down to a ratio will
+        produce a triangulated result that is not particularly clean.
+
+        Args:
+            merge_distance: Distance between Apertures and/or Doors at which point they
+                will be merged into a single Aperture. When this value is less than
+                or equal to the tolerance, apertures will only be merged if they
+                touch one another. (Default: 0.05, suitable for objects in meters).
+            tolerance: The minimum difference between point values for them to be
+                considered the distinct. (Default: 0.01, suitable for objects
+                in meters).
+        """
+        # first, check that there are Apertures to e merged
+        sub_faces = self.sub_faces
+        if len(sub_faces) <= 1:  # no apertures to be merged
+            return
+
+        # collect the sub-face geometries as polygons in the face plane
+        clean_polys, original_objs, original_area = [], [], 0
+        prim_pl = self.geometry.plane
+        for sub_f in sub_faces:
+            try:
+                verts_2d = tuple(prim_pl.xyz_to_xy(pt) for pt in sub_f.geometry.boundary)
+                poly = Polygon2D(verts_2d).remove_colinear_vertices(tolerance)
+                clean_polys.append(poly)
+                original_area += poly.area
+                original_objs.append(sub_f)
+            except AssertionError:  # degenerate geometry to ignore
+                pass
+        original_polys = clean_polys[:]
+
+        # join the polygons together
+        if merge_distance <= tolerance:  # only join the polygons that touch one another
+            clean_polys = Polygon2D.joined_intersected_boundary(clean_polys, tolerance)
+        else:
+            clean_polys = Polygon2D.gap_crossing_boundary(
+                clean_polys, merge_distance, tolerance)
+
+        # assuming that the operations have edited the polygons, create new sub-faces
+        new_area = sum(p.area for p in clean_polys)
+        area_diff = abs(original_area - new_area)
+        if len(clean_polys) != len(original_polys) or area_diff > tolerance:
+            clean_polys = [poly.remove_colinear_vertices(tolerance)
+                           for poly in clean_polys]
+            self.remove_sub_faces()
+            for i, n_poly in enumerate(clean_polys):
+                new_geo = Face3D([prim_pl.xy_to_xyz(pt) for pt in n_poly], prim_pl)
+                for o_poly, o_obj in zip(original_polys, original_objs):
+                    if n_poly.is_point_inside_bound_rect(o_poly.center):
+                        orig_obj = o_obj
+                        break
+                else:  # could not be matched with any original object
+                    orig_obj = None
+                if orig_obj is None:
+                    new_ap = Aperture('{}_{}'.format(self.identifier, i), new_geo)
+                    self.add_aperture(new_ap)
+                elif isinstance(orig_obj, Aperture):
+                    new_ap = orig_obj.duplicate()
+                    new_ap._geometry = new_geo
+                    self.add_aperture(new_ap)
+                elif isinstance(orig_obj, Door):
+                    new_door = orig_obj.duplicate()
+                    new_door._geometry = new_geo
+                    self.add_door(new_door)
+
     def fix_invalid_sub_faces(
             self, trim_with_parent=True, union_overlaps=True,
             offset_distance=0.05, tolerance=0.01):
@@ -1026,7 +1095,7 @@ class Face(_BaseWithShade):
                                 new_poly.remove_colinear_vertices(tolerance))
             # join the polygons that touch one another
             clean_polys = Polygon2D.joined_intersected_boundary(clean_polys, tolerance)
-        
+
         # assuming that the operations have edited the polygons, create new sub-faces
         new_area = sum(p.area for p in clean_polys)
         area_diff = abs(original_area - new_area)
