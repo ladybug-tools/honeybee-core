@@ -1644,7 +1644,12 @@ class Room(_BaseWithShade):
                     for f_geo in geo_dict[face_1.identifier]:
                         f_split, _ = Face3D.coplanar_split(
                             f_geo, face_2, tolerance, ang_tol)
-                        new_geo.extend(f_split)
+                        for sp_g in f_split:
+                            try:
+                                sp_g = sp_g.remove_colinear_vertices(tolerance)
+                                new_geo.append(sp_g)
+                            except AssertionError:  # degenerate geometry to ignore
+                                pass
                     geo_dict[face_1.identifier] = new_geo
 
         # use the intersected geometry to remake this room's faces

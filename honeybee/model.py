@@ -1341,7 +1341,7 @@ class Model(_Base):
             new_id = clean_and_number_string(
                 dr.display_name, dr_dict, 'Door identifier')
             dr_map[dr.identifier] = new_id
-            dr.identifier =new_id
+            dr.identifier = new_id
         for shade in self.shades:
             shade.identifier = clean_and_number_string(
                 shade.display_name, shd_dict, 'Shade identifier')
