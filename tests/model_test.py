@@ -373,7 +373,7 @@ def test_reset_room_ids():
     """Test the reset_room_ids method."""
     model_json = './tests/json/model_with_adiabatic.hbjson'
     parsed_model = Model.from_hbjson(model_json)
-    
+
     new_model = parsed_model.duplicate()
     new_model.reset_room_ids()
 
@@ -381,7 +381,7 @@ def test_reset_room_ids():
 
 
 def test_reset_ids():
-    """Test the reset_room_ids method."""
+    """Test the reset_ids method."""
     model_json = './tests/json/model_with_adiabatic.hbjson'
     parsed_model = Model.from_hbjson(model_json)
 
@@ -404,7 +404,7 @@ def test_offset_aperture_edges():
     new_area = test_face.aperture_area
     assert new_area < orig_area
     assert len(test_face.apertures) == 3
-    
+
     test_face.offset_aperture_edges(0.6, 0.01)
     new_area = test_face.aperture_area
     assert new_area > orig_area
@@ -619,7 +619,8 @@ def test_rotate():
     assert room.center.x == pytest.approx(r_cent.x, rel=1e-3)
     assert room.center.y == pytest.approx(r_cent.y, rel=1e-3)
     assert room.center.z == pytest.approx(r_cent.z, rel=1e-3)
-    shd_cent = model.rooms[0][3].apertures[0].outdoor_shades[0].center.rotate(axis, math.radians(-90), origin)
+    shd_cent = model.rooms[0][3].apertures[0].outdoor_shades[0].center.rotate(
+        axis, math.radians(-90), origin)
     assert south_face.apertures[0].outdoor_shades[0].center.x == pytest.approx(shd_cent.x, rel=1e-3)
     assert south_face.apertures[0].outdoor_shades[0].center.y == pytest.approx(shd_cent.y, rel=1e-3)
     assert south_face.apertures[0].outdoor_shades[0].center.z == pytest.approx(shd_cent.z, rel=1e-3)
@@ -832,7 +833,7 @@ def test_check_duplicate_shade_mesh_identifiers():
     assert model.check_duplicate_shade_mesh_identifiers(False) == ''
     pts2 = (Point3D(0, 0, 2), Point3D(0, 2, 2), Point3D(2, 2, 2))
     mesh2 = Mesh3D(pts2, [(0, 1, 2)])
-    model.add_shade_mesh( ShadeMesh('Awning_1', mesh2))
+    model.add_shade_mesh(ShadeMesh('Awning_1', mesh2))
     assert model.check_duplicate_shade_mesh_identifiers(False) != ''
     with pytest.raises(ValueError):
         model.check_duplicate_shade_mesh_identifiers(True)

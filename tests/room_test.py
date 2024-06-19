@@ -13,7 +13,6 @@ from honeybee.boundarycondition import boundary_conditions, Surface, Outdoors, G
 from honeybee.facetype import face_types
 
 
-
 def test_init():
     """Test the initialization of a room and basic properties."""
     pts_1 = [Point3D(0, 0, 0), Point3D(0, 10, 0), Point3D(10, 10, 0), Point3D(10, 0, 0)]
@@ -575,7 +574,7 @@ def test_find_adjacency():
     assert len(adj_faces) == 1
     assert len(adj_faces[0]) == 2
 
-    adj_info = Room.solve_adjacency([room_south, room_north], 0.01)
+    Room.solve_adjacency([room_south, room_north], 0.01)
 
     # make sure it all still works after the Surface BC is already set
     adj_faces = Room.find_adjacency([room_south, room_north], 0.01)
@@ -684,7 +683,7 @@ def test_group_by_orientation():
     room_5 = Room.from_polyface3d('Zone5', pf_5)
 
     rooms = [room_1, room_2, room_3, room_4, room_5]
-    adj_info = Room.solve_adjacency(rooms, 0.01)
+    Room.solve_adjacency(rooms, 0.01)
     grouped_rooms, core_rooms, orientations = Room.group_by_orientation(rooms)
 
     assert len(grouped_rooms) == 4
@@ -705,6 +704,7 @@ def test_horizontal_boundary():
         hb = room.horizontal_boundary(0.01)
         assert isinstance(hb, Face3D)
         assert hb.area > 99
+
 
 def test_grouped_horizontal_boundary():
     """Test the grouped_horizontal_boundary method."""
