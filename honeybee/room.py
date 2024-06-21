@@ -2216,7 +2216,7 @@ class Room(_BaseWithShade):
                 footprint = []
                 base = Polygon2D.from_rectangle(Point2D(), Vector2D(0, 1), width, length)
                 sub_polys_perim, sub_polys_core = perimeter_core_subpolygons(
-                    polygon=base, distance=perimeter_offset, tol=tolerance)
+                    polygon=base, distance=perimeter_offset, tolerance=tolerance)
                 for s_poly in sub_polys_perim + sub_polys_core:
                     sub_face = Face3D([Point3D(pt.x, pt.y, 0) for pt in s_poly])
                     footprint.append(sub_face)
@@ -2280,7 +2280,7 @@ class Room(_BaseWithShade):
                 footprint = []
                 base = Polygon2D(tuple(Point2D(*pt) for pt in pts))
                 sub_polys_perim, sub_polys_core = perimeter_core_subpolygons(
-                    polygon=base, distance=perimeter_offset, tol=tolerance)
+                    polygon=base, distance=perimeter_offset, tolerance=tolerance)
                 for s_poly in sub_polys_perim + sub_polys_core:
                     sub_face = Face3D([Point3D(pt.x, pt.y, 0) for pt in s_poly])
                     footprint.append(sub_face)
