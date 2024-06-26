@@ -3,6 +3,7 @@
 from __future__ import division
 import os
 import sys
+import io
 import re
 import json
 import math
@@ -246,9 +247,10 @@ class Model(_Base):
         """
         # sense the file type from the first character to avoid maxing memory with JSON
         # this is needed since queenbee overwrites all file extensions
-        with open(hb_file) as inf:
+        with io.open(hb_file, encoding='utf-8') as inf:
             first_char = inf.read(1)
-        is_json = True if first_char == '{' else False
+            second_char = inf.read(1)
+        is_json = True if first_char == '{' or second_char == '{' else False
         # load the file using either HBJSON pathway or HBpkl
         if is_json:
             return cls.from_hbjson(hb_file)
@@ -262,12 +264,13 @@ class Model(_Base):
             hbjson_file: Path to HBJSON file.
         """
         assert os.path.isfile(hbjson_file), 'Failed to find %s' % hbjson_file
-        if sys.version_info < (3, 0):
-            with open(hbjson_file) as inf:
-                data = json.load(inf)
-        else:
-            with open(hbjson_file, encoding='utf-8') as inf:
-                data = json.load(inf)
+        with io.open(hbjson_file, encoding='utf-8') as inf:
+            inf.read(1)
+            second_char = inf.read(1)
+        with io.open(hbjson_file, encoding='utf-8') as inf:
+            if second_char == '{':
+                inf.read(1)
+            data = json.load(inf)
         return cls.from_dict(data)
 
     @classmethod
@@ -1354,19 +1357,33 @@ class Model(_Base):
                 for face in room.faces:
                     if isinstance(face.boundary_condition, Surface):
                         old_objs = face.boundary_condition.boundary_condition_objects
-                        new_objs = (face_map[old_objs[0]], room_map[old_objs[1]])
+                        try:
+                            new_objs = (face_map[old_objs[0]], room_map[old_objs[1]])
+                        except KeyError:  # missing adjacency
+                            try:  # see if maybe the room reference is still there
+                                new_objs = (old_objs[0], room_map[old_objs[1]])
+                            except KeyError:  # just let the invalid adjacency pass
+                                continue
                         new_bc = Surface(new_objs)
                         face.boundary_condition = new_bc
                         for ap in face.apertures:
                             old_objs = ap.boundary_condition.boundary_condition_objects
-                            new_objs = (ap_map[old_objs[0]], face_map[old_objs[1]],
-                                        room_map[old_objs[2]])
+                            try:
+                                new_objs = (ap_map[old_objs[0]], face_map[old_objs[1]],
+                                            room_map[old_objs[2]])
+                            except KeyError:  # missing adjacency
+                                new_objs = (old_objs[0], old_objs[1],
+                                            room_map[old_objs[2]])
                             new_bc = Surface(new_objs, True)
                             ap.boundary_condition = new_bc
                         for dr in face.doors:
                             old_objs = dr.boundary_condition.boundary_condition_objects
-                            new_objs = (dr_map[old_objs[0]], face_map[old_objs[1]],
-                                        room_map[old_objs[2]])
+                            try:
+                                new_objs = (dr_map[old_objs[0]], face_map[old_objs[1]],
+                                            room_map[old_objs[2]])
+                            except KeyError:  # missing adjacency
+                                new_objs = (old_objs[0], old_objs[1],
+                                            room_map[old_objs[2]])
                             new_bc = Surface(new_objs, True)
                             dr.boundary_condition = new_bc
 

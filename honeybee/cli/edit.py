@@ -8,9 +8,8 @@ from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 
 from honeybee.model import Model
-from honeybee.room import Room
 from honeybee.units import parse_distance_string
-from honeybee.facetype import face_types, Wall
+from honeybee.facetype import Wall
 from honeybee.boundarycondition import Outdoors
 from honeybee.boundarycondition import boundary_conditions as bcs
 try:
