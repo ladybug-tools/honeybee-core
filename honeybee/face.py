@@ -1121,7 +1121,7 @@ class Face(_BaseWithShade):
                     new_door._geometry = new_geo
                     self.add_door(new_door)
 
-    def apertures_by_ratio(self, ratio, tolerance=0.01):
+    def apertures_by_ratio(self, ratio, tolerance=0.01, rect_split=True):
         """Add apertures to this Face given a ratio of aperture area to face area.
 
         Note that this method removes any existing apertures and doors on the Face.
@@ -1135,6 +1135,14 @@ class Face(_BaseWithShade):
                 concave and an attempt to subdivide the face into a rectangle is
                 made. It does not affect the ability to produce apertures for
                 convex Faces. Default: 0.01, suitable for objects in meters.
+            rect_split: Boolean to not whether rectangular portions of base Face
+                should be extracted before scaling them to create apertures. For
+                gabled geometries, the resulting apertures will consist of one
+                rectangle and one triangle, which can often look more realistic
+                and is a better input for engines like EnergyPlus that cannot
+                model windows with more than 4 vertices. However, if a single
+                pentagonal window is desired for a gabled shape, this input can
+                be set to False to produce such a result.
 
         Usage:
 
@@ -1152,7 +1160,10 @@ class Face(_BaseWithShade):
             geo = self._geometry.remove_colinear_vertices(tolerance)
         except AssertionError:  # degenerate face that should not have apertures
             return
-        ap_faces = geo.sub_faces_by_ratio_rectangle(ratio, tolerance)
+        if rect_split:
+            ap_faces = geo.sub_faces_by_ratio_rectangle(ratio, tolerance)
+        else:
+            ap_faces = geo.sub_faces_by_ratio(ratio)
         for i, ap_face in enumerate(ap_faces):
             aperture = Aperture('{}_Glz{}'.format(self.identifier, i), ap_face)
             self.add_aperture(aperture)
