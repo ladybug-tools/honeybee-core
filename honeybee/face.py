@@ -573,9 +573,13 @@ class Face(_BaseWithShade):
         adj_info = {'adjacent_apertures': [], 'adjacent_doors': []}
 
         # set the apertures to be adjacent to one another
-        assert len(self._apertures) == len(other_face._apertures), \
-            'Number of apertures does not match between {} and {}.'.format(
+        if len(self._apertures) != len(other_face._apertures):
+            msg = 'Number of apertures does not match between {} and {}.'.format(
                 self.display_name, other_face.display_name)
+            if self.has_parent and other_face.has_parent:
+                msg = '{} Relevant rooms: {}, {}'.format(
+                    msg, self.parent.display_name, other_face.parent.display_name)
+            raise AssertionError(msg)
         if len(self._apertures) > 0:
             found_adjacencies = 0
             for aper_1 in self._apertures:
@@ -585,10 +589,13 @@ class Face(_BaseWithShade):
                         adj_info['adjacent_apertures'].append((aper_1, aper_2))
                         found_adjacencies += 1
                         break
-            assert len(self._apertures) == found_adjacencies, \
-                'Not all apertures of {} were found to be adjacent to apertures in {}.' \
-                '\nTry increasing the tolerance.'.format(
-                    self.display_name, other_face.display_name)
+            if len(self._apertures) != found_adjacencies:
+                msg = 'Not all apertures of {} were found to be adjacent to ' \
+                    'apertures in {}.'.format(self.display_name, other_face.display_name)
+                if self.has_parent and other_face.has_parent:
+                    msg = '{} Relevant rooms: {}, {}'.format(
+                        msg, self.parent.display_name, other_face.parent.display_name)
+                raise AssertionError(msg)
 
         # set the doors to be adjacent to one another
         assert len(self._doors) == len(other_face._doors), \
@@ -603,10 +610,13 @@ class Face(_BaseWithShade):
                         adj_info['adjacent_doors'].append((door_1, door_2))
                         found_adjacencies += 1
                         break
-            assert len(self._doors) == found_adjacencies, \
-                'Not all doors of {} were found to be adjacent to doors in {}.' \
-                '\nTry increasing the tolerance.'.format(
-                    self.display_name, other_face.display_name)
+            if len(self._doors) != found_adjacencies:
+                msg = 'Not all doors of {} were found to be adjacent to ' \
+                    'doors in {}.'.format(self.display_name, other_face.display_name)
+                if self.has_parent and other_face.has_parent:
+                    msg = '{} Relevant rooms: {}, {}'.format(
+                        msg, self.parent.display_name, other_face.parent.display_name)
+                raise AssertionError(msg)
 
         return adj_info
 
@@ -1135,7 +1145,7 @@ class Face(_BaseWithShade):
                 concave and an attempt to subdivide the face into a rectangle is
                 made. It does not affect the ability to produce apertures for
                 convex Faces. Default: 0.01, suitable for objects in meters.
-            rect_split: Boolean to not whether rectangular portions of base Face
+            rect_split: Boolean to note whether rectangular portions of base Face
                 should be extracted before scaling them to create apertures. For
                 gabled geometries, the resulting apertures will consist of one
                 rectangle and one triangle, which can often look more realistic
