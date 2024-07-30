@@ -3282,8 +3282,10 @@ class Model(_Base):
         msgs = []
         # first ensure that the object is not referencing itself
         if hb_obj.identifier == bc_obj:
-            msg = '{} "{}" cannot reference itself in its Surface boundary ' \
-                'condition.'.format(obj_type, hb_obj.full_id)
+            parent_msg = 'with parent "{}" '.format(hb_obj._top_parent().full_id) \
+                if hb_obj.has_parent else ''
+            msg = '{} "{}" {}cannot reference itself in its Surface boundary ' \
+                'condition.'.format(obj_type, hb_obj.full_id, parent_msg)
             msg = self._validation_message_child(
                 msg, hb_obj, detailed, '000201',
                 error_type='Self-Referential Adjacency')
@@ -3299,8 +3301,12 @@ class Model(_Base):
                 msgs.append(msg)
         # lastly make sure the adjacent object doesn't already have an adjacency
         if bc_obj in bc_set:
-            msg = '{} "{}" is adjacent to object "{}", which has another adjacent ' \
-                'object in the Model.'.format(obj_type, hb_obj.full_id, bc_obj)
+            parent_msg1 = 'with parent "{}" '.format(hb_obj._top_parent().full_id) \
+                if hb_obj.has_parent else ''
+            parent_msg2 = ' with parent "{}" '.format(bc_room) if len(bc_objs) > 1 else ''
+            msg = '{} "{}" {}is adjacent to object "{}"{}, which has another adjacent ' \
+                'object in the Model.'.format(
+                    obj_type, hb_obj.full_id, parent_msg1, bc_obj, parent_msg2)
             msg = self._validation_message_child(
                 msg, hb_obj, detailed, '000203',
                 error_type='Object with Multiple Adjacencies')
@@ -3311,8 +3317,10 @@ class Model(_Base):
 
     def _missing_adj_msg(self, messages, hb_obj, bc_obj,
                          obj_type='Face', bc_obj_type='Face', detailed=False):
-        msg = '{} "{}" has an adjacent {} that is missing from the model: ' \
-            '{}'.format(obj_type, hb_obj.full_id, bc_obj_type, bc_obj)
+        parent_msg = 'with parent "{}" '.format(hb_obj._top_parent().full_id) \
+                if hb_obj.has_parent else ''
+        msg = '{} "{}" {}has an adjacent {} that is missing from the model: ' \
+            '{}'.format(obj_type, hb_obj.full_id, parent_msg, bc_obj_type, bc_obj)
         msg = self._validation_message_child(
             msg, hb_obj, detailed, '000204', error_type='Missing Adjacency')
         if detailed:
