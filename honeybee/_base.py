@@ -202,6 +202,14 @@ class _Base(object):
             error_dict['parents'] = [parents]
         return [error_dict]
 
+    def _top_parent(self):
+        """Get the highest parent object that this object is a part of."""
+        if getattr(self, '_parent', None) is not None:
+            rel_obj = self
+            while getattr(rel_obj, '_parent', None) is not None:
+                rel_obj = getattr(rel_obj, '_parent')
+            return rel_obj
+
     @staticmethod
     def _validation_message_child(
             message, child_obj, detailed=False, code='000000', extension='Core',
