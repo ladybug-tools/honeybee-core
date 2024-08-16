@@ -2595,11 +2595,15 @@ class Model(_Base):
         for base_f, adj_f in zip(base_faces, adj_faces):
             if (base_f.identifier, adj_f.identifier) in reported_items:
                 continue
-            tol_area = math.sqrt(base_f.area) * tolerance
+            two_tol = 2 * tolerance
+            tol_area = math.sqrt(base_f.area) * two_tol
+            tol_area = 2 * two_tol if tol_area < 2 * two_tol else tol_area
             if abs(base_f.area - adj_f.area) > tol_area:
                 f_msg = 'Face "{}" with area {} is adjacent to Face "{}" with area {}.' \
-                    ' This difference is greater than the tolerance of {}.'.format(
-                        base_f.full_id, base_f.area, adj_f.full_id, adj_f.area, tolerance
+                    ' This difference is greater than what is permitted by {} ' \
+                    'tolerance ({}).'.format(
+                        base_f.full_id, base_f.area, adj_f.full_id, adj_f.area,
+                        tolerance, tol_area
                     )
                 f_msg = self._validation_message_child(
                     f_msg, base_f, detailed, '000205',
@@ -2670,13 +2674,15 @@ class Model(_Base):
                         missing_sfs = True
                 if not missing_sfs:
                     for base_sf, adj_sf in zip(base_subs, adj_subs):
-                        tol_area = math.sqrt(base_sf.area) * tolerance
+                        two_tol = 2 * tolerance
+                        tol_area = math.sqrt(base_sf.area) * two_tol
+                        tol_area = 2 * two_tol if tol_area < 2 * two_tol else tol_area
                         if abs(base_sf.area - adj_sf.area) > tol_area:
                             f_msg = 'SubFace "{}" with area {} is adjacent to ' \
                                 'SubFace "{}" with area {}. This difference is greater ' \
-                                'than the tolerance of {}.'.format(
+                                'than what is permitted at {} tolerance ({}).'.format(
                                     base_sf.full_id, base_sf.area,
-                                    adj_sf.full_id, adj_sf.area, tolerance
+                                    adj_sf.full_id, adj_sf.area, tolerance, tol_area
                                 )
                             f_msg = self._validation_message_child(
                                 f_msg, base_sf, detailed, '000205',
