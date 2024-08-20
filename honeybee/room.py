@@ -15,6 +15,7 @@ from .typing import float_in_range, int_in_range, clean_string, \
     invalid_dict_error
 from .properties import RoomProperties
 from .face import Face
+from .aperture import Aperture
 from .facetype import AirBoundary, Wall, Floor, RoofCeiling, get_type_from_normal
 from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, \
     boundary_conditions
@@ -505,6 +506,39 @@ class Room(_BaseWithShade):
     def has_parent(self):
         """Always False as Rooms cannot have parents."""
         return False
+
+    def is_extrusion(self, tolerance=0.01, angle_tolerance=1.0):
+        """Test if this Room is an extruded floor plate with a flat roof.
+
+        Args:
+            tolerance: The absolute tolerance with which the Room geometry will
+                be evaluated. (Default: 0.01, suitable for objects in meters).
+            angle_tolerance: The angle tolerance at which the geometry will
+                be evaluated in degrees. (Default: 1 degree).
+
+        Returns:
+            True if the 3D Room is a pure extrusion. False if not.
+        """
+        # set up the parameters for evaluating vertical or horizontal
+        vert_vec = Vector3D(0, 0, 1)
+        min_v_ang = math.radians(angle_tolerance)
+        max_v_ang = math.pi - min_v_ang
+        min_h_ang = (math.pi / 2) - min_v_ang
+        max_h_ang = (math.pi / 2) + min_v_ang
+
+        # loop through the 3D Room faces and test them
+        for face in self._faces:
+            try:  # first make sure that the geometry is not degenerate
+                clean_geo = face.geometry.remove_colinear_vertices(tolerance)
+                v_ang = clean_geo.normal.angle(vert_vec)
+                if v_ang <= min_v_ang or v_ang >= max_v_ang:
+                    continue
+                elif min_h_ang <= v_ang <= max_h_ang:
+                    continue
+                return False
+            except AssertionError:  # degenerate face to ignore
+                pass
+        return True
 
     def average_orientation(self, north_vector=Vector2D(0, 1)):
         """Get a number between 0 and 360 for the average orientation of exposed walls.
@@ -2380,6 +2414,165 @@ class Room(_BaseWithShade):
             room.to.radiance(room) -> Radiance string.
         """
         return writer
+
+    def to_extrusion(self, tolerance=0.01, angle_tolerance=1.0):
+        """Get a version of this Room that is an extruded floor plate with a flat roof.
+
+        All boundary conditions and windows applied to vertical walls will be
+        preserved and the resulting Room should have a volume that matches the
+        current Room. If adding back apertures to the room extrusion results in
+        these apertures going past the parent wall Face, the windows of the Face
+        will be reduced to a simple window ratio. Any Surface boundary conditions
+        will be converted to Adiabatic (if honeybee-energy is installed) or
+        Outdoors (if not).
+
+        The multiplier and all extension properties will also be preserved.
+
+        This method is useful for exporting to platforms that cannot model Room
+        geometry beyond simple extrusions. The fact that the resulting room has
+        window areas and volumes that match the original detailed geometry
+        should help ensure the results in these platforms are close to what they
+        would be had the detailed geometry been modeled.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which point they are considered co-located. (Default: 0.01,
+                suitable for objects in meters).
+            angle_tolerance: The angle tolerance at which the geometry will
+                be evaluated in degrees. (Default: 1 degree).
+
+        Returns:
+            A Room that is an extruded floor plate with a flat roof. Note that,
+            if the Room is already an extrusion, the current Room instance will
+            be returned.
+        """
+        # first, check whether the room is already an extrusion
+        if self.is_extrusion(tolerance, angle_tolerance):
+            return self
+
+        # get the floor_geometry for the Room2D using the horizontal boundary
+        flr_geo = self.horizontal_boundary(match_walls=True, tolerance=tolerance)
+        flr_geo = flr_geo if flr_geo.normal.z >= 0 else flr_geo.flip()
+
+        # match the segments of the floor geometry to walls of the Room
+        segs = flr_geo.boundary_segments if flr_geo.holes is None else \
+            flr_geo.boundary_segments + \
+            tuple(seg for hole in flr_geo.hole_segments for seg in hole)
+        wall_bcs = [boundary_conditions.outdoors] * len(segs)
+        sub_faces = [None] * len(segs)
+        for i, seg in enumerate(segs):
+            wall_f = self._segment_wall_face(seg, tolerance)
+            if wall_f is not None:
+                wall_bcs[i] = wall_f.boundary_condition
+                if len(wall_f._apertures) != 0 or len(wall_f._doors) != 0:
+                    sf_objs = [h.duplicate() for h in wall_f._apertures + wall_f._doors]
+                    if abs(wall_f.normal.z) <= 0.01:  # vertical wall
+                        sub_faces[i] = sf_objs
+                    else:  # angled wall; scale the Y to covert to vertical
+                        w_geos = [sf.geometry for sf in sf_objs]
+                        w_p = Plane(Vector3D(seg.v.y, -seg.v.x, 0), seg.p, seg.v)
+                        w3d = [Face3D([p.project(w_p.n, w_p.o) for p in geo.boundary])
+                               for geo in w_geos]
+                        proj_sf_objs = []
+                        for proj_geo, sf_obj in zip(w3d, sf_objs):
+                            sf_obj._geometry = proj_geo
+                            proj_sf_objs.append(sf_obj)
+                        sub_faces[i] = proj_sf_objs
+
+        # determine the ceiling height, and top/bottom boundary conditions
+        floor_to_ceiling_height = self.volume / flr_geo.area
+        is_ground_contact = all([isinstance(f.boundary_condition, Ground)
+                                 for f in self.faces if isinstance(f.type, Floor)])
+        is_top_exposed = all([isinstance(f.boundary_condition, Outdoors)
+                              for f in self.faces if isinstance(f.type, RoofCeiling)])
+
+        # create the new extruded Room object
+        ext_p_face = Polyface3D.from_offset_face(flr_geo, floor_to_ceiling_height)
+        ext_room = Room.from_polyface3d(
+            self.identifier, ext_p_face, ground_depth=float('-inf'))
+
+        # assign BCs and replace any Surface conditions to be set on the story level
+        for i, bc in enumerate(self._boundary_conditions):
+            if not isinstance(bc, Surface):
+                ext_room[i + 1]._boundary_condition = bc
+            elif ad_bc is not None:
+                ext_room[i + 1]._boundary_condition = ad_bc
+
+        # assign windows and doors to walls
+        for i, sub_objs in enumerate(sub_faces):
+            if sub_objs is not None:
+                ext_f = ext_room[i + 1]
+                if isinstance(ext_f.boundary_condition, Outdoors):
+                    ext_f.add_sub_faces(sub_objs)
+                    subs_valid = ext_f.check_sub_faces_valid(
+                        tolerance, angle_tolerance, False) == ''
+                    if not subs_valid:  # convert them to a simple ratio
+                        wwr = ext_f.aperture_ratio
+                        wwr = 0.99 if wwr > 0.99 else wwr
+                        ext_f.apertures_by_ratio(wwr, tolerance)
+                        base_ap = sub_objs[0] \
+                            if isinstance(sub_objs[0], Aperture) else None
+                        if base_ap is not None:
+                            for ap in ext_f.apertures:
+                                ap._is_operable = base_ap._is_operable
+                                ap._display_name = base_ap._display_name
+                                ap._properties._duplicate_extension_attr(
+                                    base_ap._properties)
+
+        # assign boundary conditions for the roof and floor
+        if is_ground_contact:
+            ext_room[0].boundary_condition = boundary_conditions.ground
+        elif ad_bc is not None:
+            ext_room[0].boundary_condition = ad_bc
+        if not is_top_exposed:
+            if ad_bc is not None:
+                ext_room[-1].boundary_condition = ad_bc
+        else:  # check if there are any skylights to be added
+            rf_ht = flr_geo[0].z + floor_to_ceiling_height
+            skylights = []
+            for f in self.faces:
+                if isinstance(f.type, RoofCeiling):
+                    sf_objs = f._apertures + f._doors
+                    for sf in sf_objs:
+                        new_sf = sf.duplicate()
+                        pts = [Point3D(pt.x, pt.y, rf_ht) for pt in sf.geometry.boundary]
+                        new_sf._geometry = Face3D(pts)
+                        new_sf.remove_shades()
+                        skylights.append(new_sf)
+            if len(skylights) != 0:
+                ext_room[-1].add_sub_faces(skylights)
+
+        # add the extra room attributes
+        ext_room._display_name = self._display_name
+        ext_room._user_data = None if self.user_data is None else self.user_data.copy()
+        ext_room._multiplier = self.multiplier
+        ext_room._story = self.story
+        ext_room._exclude_floor_area = self.exclude_floor_area
+        ext_room._properties._duplicate_extension_attr(self._properties)
+        return ext_room
+
+    def _segment_wall_face(self, segment, tolerance):
+        """Get a Wall Face that corresponds with a certain wall segment.
+
+        Args:
+            segment: A LineSegment3D along one of the walls of the room.
+            tolerance: The maximum difference between values at which point vertices
+                are considered to be the same.
+        """
+        for face in self.faces:
+            if isinstance(face.type, (Wall, AirBoundary)):
+                fg = face.geometry
+                try:
+                    verts = fg._remove_colinear(
+                        fg._boundary, fg.boundary_polygon2d, tolerance)
+                except AssertionError:
+                    return None
+                for v1 in verts:
+                    if segment.p1.is_equivalent(v1, tolerance):
+                        p2 = segment.p2
+                        for v2 in verts:
+                            if p2.is_equivalent(v2, tolerance):
+                                return face
 
     def to_dict(self, abridged=False, included_prop=None, include_plane=True):
         """Return Room as a dictionary.

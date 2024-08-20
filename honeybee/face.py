@@ -528,6 +528,14 @@ class Face(_BaseWithShade):
         for door in doors:
             self.add_door(door)
 
+    def add_sub_faces(self, sub_faces):
+        """Add a list of Apertures and/or Doors to this face."""
+        for sub_f in sub_faces:
+            if isinstance(sub_f, Aperture):
+                self.add_aperture(sub_f)
+            else:
+                self.add_door(sub_f)
+
     def replace_apertures(self, apertures):
         """Replace all sub-faces assigned to this Face with a new list of Apertures."""
         self.remove_sub_faces()
