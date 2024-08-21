@@ -1835,6 +1835,40 @@ class Model(_Base):
                 room.story = None
         return Room.stories_by_floor_height(self._rooms, min_difference)
 
+    def rooms_to_extrusions(self, tolerance=None, angle_tolerance=None):
+        """Convert all Rooms in the model to extruded floor plates with flat roofs.
+
+        Rooms that already extrusions will be left as they are. For non-extrusion
+        rooms, all boundary conditions and windows applied to vertical walls will
+        be preserved and the resulting Room should have a volume that matches the
+        original Room. If adding back apertures to the room extrusion results in
+        these apertures going past the parent wall Face, the windows of the Face
+        will be reduced to a simple window ratio. Any Surface boundary conditions
+        will be converted to Adiabatic (if honeybee-energy is installed) or
+        Outdoors (if not).
+
+        This method is useful for exporting to platforms that cannot model Room
+        geometry beyond simple extrusions. The fact that the resulting room has
+        window areas and volumes that match the original detailed geometry
+        should help ensure the results in these platforms are close to what they
+        would be had the detailed geometry been modeled.
+
+        Args:
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. If None, the Model tolerance will be
+                used. (Default: None).
+            angle_tolerance: The max angle in degrees that the corners of the
+                rectangle can differ from a right angle before it is not
+                considered a rectangle. If None, the Model angle_tolerance will be
+                used. (Default: None).
+        """
+        tol = tolerance if tolerance else self.tolerance
+        a_tol = angle_tolerance if angle_tolerance else self.angle_tolerance
+        extrusion_rooms = []
+        for room in self._rooms:
+            extrusion_rooms.append(room.to_extrusion(tol, a_tol))
+        self._rooms = extrusion_rooms
+
     def convert_to_units(self, units='Meters'):
         """Convert all of the geometry in this model to certain units.
 

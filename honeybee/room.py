@@ -2492,7 +2492,7 @@ class Room(_BaseWithShade):
             self.identifier, ext_p_face, ground_depth=float('-inf'))
 
         # assign BCs and replace any Surface conditions to be set on the story level
-        for i, bc in enumerate(self._boundary_conditions):
+        for i, bc in enumerate(wall_bcs):
             if not isinstance(bc, Surface):
                 ext_room[i + 1]._boundary_condition = bc
             elif ad_bc is not None:
