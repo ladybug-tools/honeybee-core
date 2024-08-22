@@ -16,8 +16,10 @@ your own.
 
 Here are a number of frequently used extensions for Honeybee:
 
-- [honeybee-energy](https://github.com/ladybug-tools/honeybee-energy): Adds Energy simulation to Honeybee.
 - [honeybee-radiance](https://github.com/ladybug-tools/honeybee-radiance): Adds daylight simulation to Honeybee.
+- [honeybee-energy](https://github.com/ladybug-tools/honeybee-energy): Adds Energy simulation to Honeybee.
+- [honeybee-display](https://github.com/ladybug-tools/honeybee-display): Adds VTK visualization to Honeybee.
+
 
 # Installation
 
