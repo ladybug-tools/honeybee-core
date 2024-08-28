@@ -233,7 +233,8 @@ class ShadeMesh(_Base):
         for shd in self.faces:
             shd_verts = [verts[v] for v in shd]
             shf = Face3D(shd_verts)
-            if not shf.check_planar(tolerance, raise_exception=False):
+            if len(shd_verts) == 4 and not \
+                    shf.check_planar(tolerance, raise_exception=False):
                 shades = ((shd[0], shd[1], shd[2]), (shd[2], shd[3], shd[0]))
                 for shade in shades:
                     shd_verts = [verts[v] for v in shade]
