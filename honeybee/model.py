@@ -1934,8 +1934,15 @@ class Model(_Base):
         self._remove_degenerate_faces(self._orphaned_apertures, tolerance)
         self._remove_degenerate_faces(self._orphaned_doors, tolerance)
         self._remove_degenerate_faces(self._orphaned_shades, tolerance)
-        for sm in self._shade_meshes:
-            sm.triangulate_and_remove_degenerate_faces(tolerance)
+        sm_to_remove = []
+        for i, sm in enumerate(self._shade_meshes):
+            try:
+                sm.triangulate_and_remove_degenerate_faces(tolerance)
+            except AssertionError:  # completely degenerate Shade Mesh
+                sm_to_remove.append(i)
+        if len(sm_to_remove) != 0:
+            for ri in reversed(sm_to_remove):
+                self._shade_meshes.pop(ri)
 
     def triangulate_non_planar_quads(self, tolerance=None):
         """Triangulate any non-planar orphaned geometry in the model.

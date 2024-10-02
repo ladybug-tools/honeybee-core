@@ -557,6 +557,31 @@ def test_convert_to_units():
     assert model.units == 'Meters'
 
 
+def test_remove_degenerate_geometry():
+    """Test the Model remove_degenerate_geometry method."""
+    first_floor = Room.from_box('First_Floor', 10, 10, 3, origin=Point3D(10, 10, 0))
+    second_floor = Room.from_box('Second_Floor', 10, 10, 3, origin=Point3D(10, 10, 3))
+    for face in first_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    for face in second_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    Room.solve_adjacency([first_floor, second_floor], 0.01)
+    pts1 = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+            Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh1 = Mesh3D(pts1, [(0, 1, 2, 3), (2, 3, 4)])
+    shade1 = ShadeMesh('Awning_1', mesh1)
+    pts2 = (Point3D(0, 0, 4), Point3D(0.0001, 0, 4), Point3D(2, 2, 4))
+    mesh2 = Mesh3D(pts2, [(0, 1, 2)])
+    shade2 = ShadeMesh('Awning_2', mesh2)
+
+    model = Model('MultiZoneSingleFamilyHouse',
+                  [first_floor, second_floor], shade_meshes=[shade1, shade2])
+
+    assert len(model.shade_meshes) == 2
+    model.remove_degenerate_geometry()
+    assert len(model.shade_meshes) == 1
+
+
 def test_assign_stories_by_floor_height():
     """Test the Model assign_stories_by_floor_height method."""
     first_floor = Room.from_box('First_Floor', 10, 10, 3, origin=Point3D(0, 0, 0))
