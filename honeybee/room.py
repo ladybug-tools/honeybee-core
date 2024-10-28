@@ -1199,8 +1199,7 @@ class Room(_BaseWithShade):
             if isinstance(face.boundary_condition, Surface):
                 try:
                     adj_face = adjacency_dict[face.identifier]
-                    if len(new_geo) != len(adj_face.geometry):
-                        new_geo = adj_face.geometry.flip()
+                    new_geo = adj_face.geometry.flip()
                 except KeyError:  # the adjacent object has not been found yet
                     pass
                 adj_dict[face.boundary_condition.boundary_condition_object] = face

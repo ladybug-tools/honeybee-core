@@ -1324,6 +1324,20 @@ class Model(_Base):
             repair_surface_bcs: A Boolean to note whether all Surface boundary
                 conditions across the model should be updated with the new
                 identifiers that were generated from the display names. (Default: True).
+
+        Returns:
+            A dictionary that relates the old identifiers (keys) to the new
+            identifiers (values). This can be used to map between old and new
+            objects. This dictionary has the following keys that house
+            sub-dictionaries that map between old and new IDs.
+
+            -   rooms: dict with old Room IDs as keys and new IDs as values.
+
+            -   faces: dict with old Face IDs as keys and new IDs as values.
+
+            -   apertures: dict with old Aperture IDs as keys and new IDs as values.
+
+            -   doors: dict with old Door IDs as keys and new IDs as values.
         """
         # set up dictionaries to hold various pieces of information
         room_map = self.reset_room_ids()
@@ -1386,6 +1400,13 @@ class Model(_Base):
                                             room_map[old_objs[2]])
                             new_bc = Surface(new_objs, True)
                             dr.boundary_condition = new_bc
+        # return a dictionary that maps between old and new IDs
+        return {
+            'rooms': room_map,
+            'faces': face_map,
+            'apertures': ap_map,
+            'doors': dr_map
+        }
 
     def reset_room_ids(self):
         """Reset the identifiers of the Model Rooms to be derived from display_names.
