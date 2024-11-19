@@ -51,6 +51,7 @@ class Door(_BaseWithShade):
         * tilt
         * altitude
         * azimuth
+        * is_exterior
         * type_color
         * bc_color
         * user_data
@@ -270,6 +271,12 @@ class Door(_BaseWithShade):
         This will be zero if the Face3D is perfectly horizontal.
         """
         return math.degrees(self._geometry.azimuth)
+
+    @property
+    def is_exterior(self):
+        """Get a boolean for whether this object has an Outdoors boundary condition.
+        """
+        return isinstance(self.boundary_condition, Outdoors)
 
     @property
     def type_color(self):
