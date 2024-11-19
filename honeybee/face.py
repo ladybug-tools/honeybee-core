@@ -66,6 +66,7 @@ class Face(_BaseWithShade):
         * tilt
         * altitude
         * azimuth
+        * is_exterior
         * type_color
         * bc_color
         * user_data
@@ -383,6 +384,12 @@ class Face(_BaseWithShade):
         This will be zero if the Face3D is perfectly horizontal.
         """
         return math.degrees(self._geometry.azimuth)
+
+    @property
+    def is_exterior(self):
+        """Get a boolean for whether this object has an Outdoors boundary condition.
+        """
+        return isinstance(self.boundary_condition, Outdoors)
 
     @property
     def type_color(self):
@@ -1427,10 +1434,65 @@ class Face(_BaseWithShade):
         return self.louvers_by_count(1, depth, angle=angle, indoor=indoor,
                                      tolerance=tolerance, base_name=base_name)
 
+    def louvers(self, depth, louver_count=None, distance=None, offset=0, angle=0,
+                contour_vector=Vector2D(0, 1), flip_start_side=False,
+                indoor=False, tolerance=0.01, base_name=None):
+        """Add a series of louvered Shade objects over this Face.
+
+        If both louver_count and distance are None, this method will add a
+        single louver shade following the other criteria.
+
+        Args:
+            depth: A number for the depth to extrude the louvers.
+            louver_count: A positive integer for the number of louvers to generate.
+                If None, louvers will be generated to fill the Face at the
+                specified distance. (Default: None).
+            distance: A number for the approximate distance between each louver.
+                If None, louvers will be generated to fill the Face at the
+                specified louver_count. (Default: None).
+            offset: A number for the distance to louvers from this Face.
+                Default is 0 for no offset.
+            angle: A number for the for an angle to rotate the louvers in degrees.
+                Positive numbers indicate a downward rotation while negative numbers
+                indicate an upward rotation. Default is 0 for no rotation.
+            contour_vector: A Vector2D for the direction along which contours
+                are generated. This 2D vector will be interpreted into a 3D vector
+                within the plane of this Face. (0, 1) will usually generate
+                horizontal contours in 3D space, (1, 0) will generate vertical
+                contours, and (1, 1) will generate diagonal contours. Default: (0, 1).
+            flip_start_side: Boolean to note whether the side the louvers start from
+                should be flipped. Default is False to have louvers on top or right.
+                Setting to True will start contours on the bottom or left.
+            indoor: Boolean for whether louvers should be generated facing the
+                opposite direction of the Face normal (typically meaning
+                indoor geometry). Default: False.
+            tolerance: An optional value to remove any louvers with a length less
+                than the tolerance. Default: 0.01, suitable for objects in meters.
+            base_name: Optional base identifier for the shade objects. If None,
+                the default is InShd or OutShd depending on whether indoor is True.
+
+        Returns:
+            A list of the new Shade objects that have been generated.
+        """
+        if depth == 0 or louver_count == 0:
+            return []
+        elif louver_count is None and distance is None:
+            return self.louvers_by_count(
+                1, depth, offset, angle, contour_vector, flip_start_side, indoor,
+                tolerance=tolerance, base_name=base_name)
+        elif distance is None:
+            return self.louvers_by_count(
+                louver_count, depth, offset, angle, contour_vector,
+                flip_start_side, indoor, tolerance=tolerance, base_name=base_name)
+        else:
+            return self.louvers_by_distance_between(
+                distance, depth, offset, angle, contour_vector, flip_start_side, indoor,
+                tolerance=tolerance, max_count=louver_count, base_name=base_name)
+
     def louvers_by_count(self, louver_count, depth, offset=0, angle=0,
                          contour_vector=Vector2D(0, 1), flip_start_side=False,
                          indoor=False, tolerance=0.01, base_name=None):
-        """Add a series of louvered Shade objects over this Face.
+        """Add louvered Shade objects over this Face to hit a target louver_count.
 
         Args:
             louver_count: A positive integer for the number of louvers to generate.
@@ -1482,7 +1544,7 @@ class Face(_BaseWithShade):
             self, distance, depth, offset=0, angle=0, contour_vector=Vector2D(0, 1),
             flip_start_side=False, indoor=False, tolerance=0.01, max_count=None,
             base_name=None):
-        """Add a series of louvered Shade objects over this Face.
+        """Add louvered Shade objects over this Face to hit a target distance between.
 
         Args:
             distance: A number for the approximate distance between each louver.
