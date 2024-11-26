@@ -2050,6 +2050,73 @@ class Model(_Base):
             compare_dict['deleted_objects'] = deleted
         return compare_dict
 
+    def check_for_extension(self, extension_name='All',
+                            raise_exception=True, detailed=False):
+        """Check that the Model is valid for a specific Honeybee extension.
+
+        This process will typically include both honeybee-core checks as well
+        as checks that apply only to the extension. However, any checks that
+        are not relevant for the specified extension will be ignored.
+
+        Note that the specified Honeybee extension must be installed in order
+        for this method to run successfully.
+
+        Args:
+            extension_name: Text for the name of the extension to be checked.
+                The value input here is case-insensitive such that "radiance"
+                and "Radiance" will both result in the model being checked for
+                validity with honeybee-radiance. This value can also be set to
+                "All" in order to run checks for all installed extensions. Some
+                common honeybee extension names that can be input here if they
+                are installed include:
+
+                * Radiance
+                * EnergyPlus
+                * OpenStudio
+                * DesignBuilder
+                * DOE2
+                * IES
+                * IDAICE
+
+                Note that EnergyPlus, OpenStudio, and DesignBuilder are all set
+                to run the same checks with honeybee-energy.
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if any errors are found. If False, this method will simply
+                return a text string with all errors that were found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A text string with all errors that were found or a list if detailed is True.
+            This string (or list) will be empty if no errors were found.
+        """
+        # set up defaults to ensure the method runs correctly
+        detailed = False if raise_exception else detailed
+        extension_name = extension_name.lower()
+        if extension_name == 'all':
+            return self.check_all(raise_exception, detailed)
+        energy_extensions = ('energyplus', 'openstudio', 'designbuilder')
+        if extension_name in energy_extensions:
+            extension_name = 'energy'
+
+        # check the extension attributes
+        assert self.tolerance != 0, \
+            'Model must have a non-zero tolerance in order to perform geometry checks.'
+        assert self.angle_tolerance != 0, \
+            'Model must have a non-zero angle_tolerance to perform geometry checks.'
+        msgs = self._properties._check_for_extension(extension_name, detailed)
+        if detailed:
+            msgs = [m for m in msgs if isinstance(m, list)]
+
+        # output a final report of errors or raise an exception
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return [m for msg in full_msgs for m in msg]
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
     def check_all(self, raise_exception=True, detailed=False):
         """Check all of the aspects of the Model for possible errors.
 
@@ -2082,35 +2149,13 @@ class Model(_Base):
         ang_tol = self.angle_tolerance
 
         # perform checks for duplicate identifiers, which might mess with other checks
-        msgs.append(self.check_duplicate_room_identifiers(False, detailed))
-        msgs.append(self.check_duplicate_face_identifiers(False, detailed))
-        msgs.append(self.check_duplicate_sub_face_identifiers(False, detailed))
-        msgs.append(self.check_duplicate_shade_identifiers(False, detailed))
-        msgs.append(self.check_duplicate_shade_mesh_identifiers(False, detailed))
+        msgs.append(self.check_all_duplicate_identifiers(False, detailed))
 
         # perform several checks for the Honeybee schema geometry rules
         msgs.append(self.check_planar(tol, False, detailed))
         msgs.append(self.check_self_intersecting(tol, False, detailed))
-        # perform checks for degenerate rooms with a test that removes colinear vertices
-        for room in self.rooms:
-            try:
-                new_room = room.duplicate()  # duplicate to avoid editing the original
-                new_room.remove_colinear_vertices_envelope(tol)
-            except ValueError as e:
-                deg_msg = str(e)
-                if detailed:
-                    deg_msg = [{
-                        'type': 'ValidationError',
-                        'code': '000107',
-                        'error_type': 'Degenerate Room Volume',
-                        'extension_type': 'Core',
-                        'element_type': 'Room',
-                        'element_id': [room.identifier],
-                        'element_name': [room.display_name],
-                        'message': deg_msg
-                    }]
-                msgs.append(deg_msg)
         msgs.append(self.check_degenerate_rooms(tol, False, detailed))
+
         # perform geometry checks related to parent-child relationships
         msgs.append(self.check_sub_faces_valid(tol, ang_tol, False, detailed))
         msgs.append(self.check_sub_faces_overlapping(tol, False, detailed))
@@ -2124,11 +2169,45 @@ class Model(_Base):
         msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
 
         # check the extension attributes
-        ext_msgs = self._properties._check_extension_attr(detailed)
+        ext_msgs = self._properties._check_all_extension_attr(detailed)
         if detailed:
             ext_msgs = [m for m in ext_msgs if isinstance(m, list)]
         msgs.extend(ext_msgs)
 
+        # output a final report of errors or raise an exception
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return [m for msg in full_msgs for m in msg]
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_all_duplicate_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate identifiers for any geometry objects.
+
+        This includes Rooms, Faces, Apertures, Doors, Shades, and ShadeMeshes.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if any Model errors are found. If False, this method will simply
+                return a text string with all errors that were found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A text string with all errors that were found or a list if detailed is True.
+            This string (or list) will be empty if no errors were found.
+        """
+        # set up defaults to ensure the method runs correctly
+        detailed = False if raise_exception else detailed
+        msgs = []
+        # perform checks for duplicate identifiers
+        msgs.append(self.check_duplicate_room_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_face_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_sub_face_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_shade_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_shade_mesh_identifiers(False, detailed))
         # output a final report of errors or raise an exception
         full_msgs = [msg for msg in msgs if msg]
         if detailed:

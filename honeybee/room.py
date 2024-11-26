@@ -1493,8 +1493,29 @@ class Room(_BaseWithShade):
         Returns:
             A string with the message or a list with a dictionary if detailed is True.
         """
+        # if the room has the correct number of faces, test the envelope geometry
         if len(self._faces) >= 4 and self.volume > tolerance:
+            try:
+                test_room = self.duplicate()  # duplicate to avoid editing the original
+                test_room.remove_colinear_vertices_envelope(tolerance)
+            except ValueError as e:
+                deg_msg = str(e)
+                if raise_exception:
+                    raise ValueError(e)
+                if detailed:
+                    deg_msg = [{
+                        'type': 'ValidationError',
+                        'code': '000107',
+                        'error_type': 'Degenerate Room Volume',
+                        'extension_type': 'Core',
+                        'element_type': 'Room',
+                        'element_id': [self.identifier],
+                        'element_name': [self.display_name],
+                        'message': deg_msg
+                    }]
+                return deg_msg
             return [] if detailed else ''
+        #  otherwise, report the room as invalid
         msg = 'Room "{}" is degenerate with zero volume. It should be deleted'.format(
                 self.full_id)
         return self._validation_message(
