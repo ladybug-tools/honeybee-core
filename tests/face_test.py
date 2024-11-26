@@ -396,7 +396,6 @@ def test_apertures_by_ratio_gridded():
     assert sum([ap.area for ap in face.apertures]) == pytest.approx(face.area * 0.4, rel=1e-3)
 
 
-
 def test_apertures_by_width_height_rectangle():
     """Test the adding of apertures by width/height."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(10, 0, 3), Point3D(10, 0, 0))
