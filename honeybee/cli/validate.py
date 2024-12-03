@@ -1,11 +1,10 @@
 """honeybee validation commands."""
 import sys
+import os
 import logging
-import json as py_json
 import click
 
 from honeybee.model import Model
-from honeybee.config import folders
 
 _logger = logging.getLogger(__name__)
 
@@ -19,9 +18,13 @@ def validate():
 @click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
-    '--check-all/--room-overlaps', ' /-ro', help='Flag to note whether the output '
-    'validation report should validate all possible issues with the model or only '
-    'the Room collisions should be checked.', default=True, show_default=True)
+    '--extension', '-e', help='Text for the name of the extension to be checked. '
+    'The value input is case-insensitive such that "radiance" and "Radiance" will '
+    'both result in the model being checked for validity with honeybee-radiance. '
+    'This value can also be set to "All" in order to run checks for all installed '
+    'extensions. Some common honeybee extension names that can be input here include: '
+    'Radiance, EnergyPlus, DOE2, IES, IDAICE',
+    type=str, default='All', show_default=True)
 @click.option(
     '--plain-text/--json', ' /-j', help='Flag to note whether the output validation '
     'report should be formatted as a JSON object instead of plain text. If set to JSON, '
@@ -37,7 +40,7 @@ def validate():
     '--output-file', '-f', help='Optional file to output the full report '
     'of the validation. By default it will be printed out to stdout',
     type=click.File('w'), default='-')
-def validate_model_cli(model_file, check_all, plain_text, output_file):
+def validate_model_cli(model_file, extension, plain_text, output_file):
     """Validate all properties of a Model file against Honeybee schema.
 
     This includes checking basic compliance with the 5 rules of honeybee geometry
@@ -62,8 +65,7 @@ def validate_model_cli(model_file, check_all, plain_text, output_file):
     """
     try:
         json = not plain_text
-        room_overlaps = not check_all
-        validate_model(model_file, room_overlaps, json, output_file)
+        validate_model(model_file, extension, json, output_file)
     except Exception as e:
         _logger.exception('Model validation failed.\n{}'.format(e))
         sys.exit(1)
@@ -71,8 +73,8 @@ def validate_model_cli(model_file, check_all, plain_text, output_file):
         sys.exit(0)
 
 
-def validate_model(model_file, room_overlaps=False, json=False, output_file=None,
-                   check_all=True, plain_text=True):
+def validate_model(model_file, extension='All', json=False, output_file=None,
+                   plain_text=True):
     """Validate all properties of a Model file against the Honeybee schema.
 
     This includes checking basic compliance with the 5 rules of honeybee geometry
@@ -80,86 +82,61 @@ def validate_model(model_file, room_overlaps=False, json=False, output_file=None
 
     Args:
         model_file: Full path to a Honeybee Model file.
-        room_overlaps: Boolean to note whether the output validation report
-            should only validate the Room collisions (True) or all possible
-            issues with the model should be checked (False). (Default: False).
+        extension_name: Text for the name of the extension to be checked.
+            The value input here is case-insensitive such that "radiance"
+            and "Radiance" will both result in the model being checked for
+            validity with honeybee-radiance. This value can also be set to
+            "All" in order to run checks for all installed extensions. Some
+            common honeybee extension names that can be input here if they
+            are installed include:
+
+            * Radiance
+            * EnergyPlus
+            * DOE2
+            * IES
+            * IDAICE
+
         json: Boolean to note whether the output validation report should be
-            formatted as a JSON object instead of plain text.
-        output_file: Optional file to output the string of the visualization
-            file contents. If None, the string will simply be returned from
-            this method.
-        """
-    if not json:
-        # re-serialize the Model to make sure no errors are found
-        c_ver = folders.honeybee_core_version_str
-        s_ver = folders.honeybee_schema_version_str
-        ver_msg = 'Validating Model using honeybee-core=={} and ' \
-            'honeybee-schema=={}'.format(c_ver, s_ver)
-        print(ver_msg)
-        parsed_model = Model.from_file(model_file)
-        print('Re-serialization passed.')
-        # perform several other checks for geometry rules and others
-        if not room_overlaps:
-            report = parsed_model.check_all(raise_exception=False, detailed=False)
-        else:
-            report = parsed_model.check_room_volume_collisions(raise_exception=False)
-        print('Model checks completed.')
-        # check the report and write the summary of errors
-        if report == '':
-            full_msg = ver_msg + '\nCongratulations! Your Model is valid!'
-        else:
-            full_msg = ver_msg + \
-                '\nYour Model is invalid for the following reasons:\n' + report
-        if output_file is None:
-            return full_msg
-        else:
-            output_file.write(full_msg)
-    else:
-        out_dict = {
-            'type': 'ValidationReport',
-            'app_name': 'Honeybee',
-            'app_version': folders.honeybee_core_version_str,
-            'schema_version': folders.honeybee_schema_version_str
-        }
-        try:
-            parsed_model = Model.from_file(model_file)
-            out_dict['fatal_error'] = ''
-            if not room_overlaps:
-                errors = parsed_model.check_all(raise_exception=False, detailed=True)
-            else:
-                errors = parsed_model.check_room_volume_collisions(
-                    raise_exception=False, detailed=True)
-            out_dict['errors'] = errors
-            out_dict['valid'] = True if len(out_dict['errors']) == 0 else False
-        except Exception as e:
-            out_dict['fatal_error'] = str(e)
-            out_dict['errors'] = []
-            out_dict['valid'] = False
-        if output_file is None:
-            return py_json.dumps(out_dict, indent=4)
-        else:
-            output_file.write(py_json.dumps(out_dict, indent=4))
+            formatted as a JSON object instead of plain text. (Default: False).
+        output_file: Optional file to output the full report of the validation.
+            If None, the string will simply be returned from this method.
+    """
+    report = Model.validate(model_file, 'check_for_extension', [extension], json)
+    return _process_report_output(report, output_file)
 
 
-@validate.command('room-volumes')
+@validate.command('rooms-solid')
 @click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
-    '--output-file', '-f', help='Optional file to output the JSON strings of '
-    'ladybug_geometry LineSegment3Ds that represent naked and non-manifold edges. '
-    'By default it will be printed out to stdout', type=click.File('w'), default='-')
-def validate_room_volumes_cli(model_file, output_file):
-    """Get a list of all naked and non-manifold edges preventing closed room volumes.
+    '--plain-text/--json', ' /-j', help='Flag to note whether the output validation '
+    'report should be formatted as a JSON object instead of plain text. If set to JSON, '
+    'the output object will contain several attributes. An attribute called '
+    '"fatal_error" is a text string containing an exception if the Model failed to '
+    'serialize and will be an empty string if serialization was successful. An '
+    'attribute called "errors" will contain a list of JSON objects for each '
+    'invalid issue. A boolean attribute called "valid" will note whether the Model '
+    'is valid or not.',
+    default=True, show_default=True)
+@click.option(
+    '--output-file', '-f', help='Optional file to output the full report '
+    'of the validation. By default it will be printed out to stdout.',
+    type=click.File('w'), default='-')
+def validate_rooms_solid_cli(model_file, plain_text, output_file):
+    """Validate whether all Room volumes in a model are solid.
 
-    This is helpful for visually identifying issues in geometry that are preventing
-    the room volume from reading as closed.
+    The returned result can include a list of all naked and non-manifold edges
+    preventing closed room volumes when --json is used. This is helpful for visually
+    identifying issues in geometry that are preventing the room volume from
+    validating as closed.
 
     \b
     Args:
         model_file: Full path to a Honeybee Model file.
     """
     try:
-        validate_room_volumes(model_file, output_file)
+        json = not plain_text
+        validate_rooms_solid(model_file, json, output_file)
     except Exception as e:
         _logger.exception('Model room volume validation failed.\n{}'.format(e))
         sys.exit(1)
@@ -167,7 +144,7 @@ def validate_room_volumes_cli(model_file, output_file):
         sys.exit(0)
 
 
-def validate_room_volumes(model_file, output_file=None):
+def validate_rooms_solid(model_file, json=False, output_file=None, plain_text=True):
     """Get a list of all naked and non-manifold edges preventing closed room volumes.
 
     This is helpful for visually identifying issues in geometry that are preventing
@@ -175,20 +152,81 @@ def validate_room_volumes(model_file, output_file=None):
 
     Args:
         model_file: Full path to a Honeybee Model file.
-        output_file: Optional file to output the string of the visualization
-            file contents. If None, the string will simply be returned from
-            this method.
+        json: Boolean to note whether the output validation report should be
+            formatted as a JSON object instead of plain text. (Default: False).
+        output_file: Optional file to output the full report of the validation.
+            If None, the string will simply be returned from this method.
     """
-    # re-serialize the Model and collect all naked and non-manifold edges
-    parsed_model = Model.from_file(model_file)
-    problem_edges = []
-    for room in parsed_model.rooms:
-        if not room.geometry.is_solid:
-            problem_edges.extend(room.geometry.naked_edges)
-            problem_edges.extend(room.geometry.non_manifold_edges)
-    # write the new model out to the file or stdout
-    prob_array = [lin.to_dict() for lin in problem_edges]
-    if output_file is None:
-        return py_json.dumps(prob_array)
+    report = Model.validate(model_file, 'check_rooms_solid', json_output=json)
+    return _process_report_output(report, output_file)
+
+
+@validate.command('room-collisions')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--plain-text/--json', ' /-j', help='Flag to note whether the output validation '
+    'report should be formatted as a JSON object instead of plain text. If set to JSON, '
+    'the output object will contain several attributes. An attribute called '
+    '"fatal_error" is a text string containing an exception if the Model failed to '
+    'serialize and will be an empty string if serialization was successful. An '
+    'attribute called "errors" will contain a list of JSON objects for each '
+    'invalid issue. A boolean attribute called "valid" will note whether the Model '
+    'is valid or not.', default=True, show_default=True)
+@click.option(
+    '--output-file', '-f', help='Optional file to output the full report '
+    'of the validation. By default it will be printed out to stdout.',
+    type=click.File('w'), default='-')
+def validate_room_collisions_cli(model_file, plain_text, output_file):
+    """Validate whether all Room volumes in a model are solid.
+
+    The returned result can include a list of all naked and non-manifold edges
+    preventing closed room volumes when --json is used. This is helpful for visually
+    identifying issues in geometry that are preventing the room volume from
+    validating as closed.
+
+    \b
+    Args:
+        model_file: Full path to a Honeybee Model file.
+    """
+    try:
+        json = not plain_text
+        validate_room_collisions(model_file, json, output_file)
+    except Exception as e:
+        _logger.exception('Model room volume validation failed.\n{}'.format(e))
+        sys.exit(1)
     else:
-        output_file.write(py_json.dumps(prob_array))
+        sys.exit(0)
+
+
+def validate_room_collisions(model_file, json=False, output_file=None, plain_text=True):
+    """Get a list of all naked and non-manifold edges preventing closed room volumes.
+
+    This is helpful for visually identifying issues in geometry that are preventing
+    the room volume from reading as closed.
+
+    Args:
+        model_file: Full path to a Honeybee Model file.
+        json: Boolean to note whether the output validation report should be
+            formatted as a JSON object instead of plain text. (Default: False).
+        output_file: Optional file to output the full report of the validation.
+            If None, the string will simply be returned from this method.
+    """
+    report = Model.validate(model_file, 'check_room_volume_collisions', json_output=json)
+    return _process_report_output(report, output_file)
+
+
+def _process_report_output(report, output_file):
+    """Process a validation report for various types of output_files."""
+    if output_file is None:
+        return report
+    elif isinstance(output_file, str):
+        if not os.path.isdir(os.path.dirname(output_file)):
+            os.makedirs(os.path.dirname(output_file))
+        with open(output_file, 'w') as of:
+            of.write(report)
+    else:
+        if 'stdout' not in str(output_file):
+            if not os.path.isdir(os.path.dirname(output_file.name)):
+                os.makedirs(os.path.dirname(output_file.name))
+        output_file.write(report)

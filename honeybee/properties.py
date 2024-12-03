@@ -410,29 +410,30 @@ class ModelProperties(_Properties):
         """
         msgs = []
         for atr in self._extension_attributes:
-            check_msg = None
-            try:
-                var = getattr(self, atr)
-            except AttributeError as e:
-                raise ImportError(
-                    'Extension for {} is not installed or has not been set up '
-                    'for model validation.\n{}'.format(var, e))
-            if not hasattr(var, 'check_for_extension'):
-                raise NotImplementedError(
-                    'Extension for {} does not have validation routines.'.format(var))
-            try:
-                check_msg = var.check_for_extension(
-                    raise_exception=False, detailed=detailed)
-                if detailed and check_msg is not None:
-                    msgs.append(check_msg)
-                elif check_msg != '':
-                    f_msg = 'Attributes for {} are invalid.\n{}'.format(atr, check_msg)
-                    msgs.append(f_msg)
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                raise Exception('Failed to check_for_extension '
-                                'for {}: {}'.format(var, e))
+            if extension_name == atr:
+                check_msg = None
+                try:
+                    var = getattr(self, atr)
+                except AttributeError as e:
+                    raise ImportError(
+                        'Extension for {} is not installed or has not been set up '
+                        'for model validation.\n{}'.format(var, e))
+                if not hasattr(var, 'check_for_extension'):
+                    raise NotImplementedError(
+                        'Extension for {} does not have validation routines.'.format(var))
+                try:
+                    check_msg = var.check_for_extension(
+                        raise_exception=False, detailed=detailed)
+                    if detailed and check_msg is not None:
+                        msgs.append(check_msg)
+                    elif check_msg != '':
+                        f_msg = 'Attributes for {} are invalid.\n{}'.format(atr, check_msg)
+                        msgs.append(f_msg)
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    raise Exception('Failed to check_for_extension '
+                                    'for {}: {}'.format(var, e))
         return msgs
 
     def _check_all_extension_attr(self, detailed=False):
