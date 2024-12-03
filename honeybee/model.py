@@ -3397,6 +3397,88 @@ class Model(_Base):
             self._orphaned_apertures + self._orphaned_doors + self._shade_meshes
 
     @staticmethod
+    def validate(model, check_function='check_for_extension', check_args=None,
+                 json_output=False):
+        """Get a string of a validation report given a specific check_function.
+
+        Args:
+            model: A Honeybee Model object for which validation will be performed.
+                This can also be the file path to a HBJSON or a JSON string
+                representation of a Honeybee Model. These latter two options may
+                be useful if the type of validation issue with the Model is
+                one that prevents serialization.
+            check_function: Text for the name of a check function on this Model
+                that will be used to generate the validation report. For example,
+                check_all or check_rooms_solid. (Default: check_for_extension),
+            check_args: An optional list of arguments to be passed to the
+                check_function. If None, all default values for the arguments
+                will be used. (Default: None).
+            json_output: Boolean to note whether the output validation report
+                should be formatted as a JSON object instead of plain text.
+        """
+        # first get the function to call on this class
+        check_func = getattr(Model, check_function, None)
+        assert check_func is not None, \
+            'Honeybee Model class has no method {}'.format(check_function)
+
+        # process the input model if it's not already serialized
+        report = ''
+        if isinstance(model, str):
+            try:
+                if model.startswith('{'):
+                    model = Model.from_dict(json.loads(model))
+                elif os.path.isfile(model):
+                    model = Model.from_file(model)
+                else:
+                    report = 'Input Model for validation is not a Model object, ' \
+                        'file path to a Model or a Model HBJSON string.'
+            except Exception as e:
+                report = str(e)
+        elif not isinstance(model, Model):
+            report = 'Input Model for validation is not a Model object, ' \
+                'file path to a Model or a Model HBJSON string.'
+        # process the arguments and options
+        args = [model] if check_args is None else [model] + list(check_args)
+        kwargs = {'raise_exception': False}
+
+        # create the report
+        if not json_output:  # create a plain text report
+            # add the versions of things into the validation message
+            c_ver = folders.honeybee_core_version_str
+            s_ver = folders.honeybee_schema_version_str
+            ver_msg = 'Validating Model using honeybee-core=={} and ' \
+                'honeybee-schema=={}'.format(c_ver, s_ver)
+            # run the check function
+            if isinstance(args[0], Model):
+                kwargs['detailed'] = False
+                report = check_func(*args, **kwargs)
+            # format the results of the check
+            if report == '':
+                full_msg = ver_msg + '\nCongratulations! Your Model is valid!'
+            else:
+                full_msg = ver_msg + \
+                    '\nYour Model is invalid for the following reasons:\n' + report
+            return full_msg
+        else:
+            # add the versions of things into the validation message
+            out_dict = {
+                'type': 'ValidationReport',
+                'app_name': 'Honeybee',
+                'app_version': folders.honeybee_core_version_str,
+                'schema_version': folders.honeybee_schema_version_str,
+                'fatal_error': report
+            }
+            if report == '':
+                kwargs['detailed'] = True
+                errors = check_func(*args, **kwargs)
+                out_dict['errors'] = errors
+                out_dict['valid'] = True if len(out_dict['errors']) == 0 else False
+            else:
+                out_dict['errors'] = []
+                out_dict['valid'] = False
+            return json.dumps(out_dict, indent=4)
+
+    @staticmethod
     def conversion_factor_to_meters(units):
         """Get the conversion factor to meters based on input units.
 
