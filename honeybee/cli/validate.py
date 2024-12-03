@@ -37,10 +37,14 @@ def validate():
     'boolean attribute called "valid" will note whether the Model is valid or not.',
     default=True, show_default=True)
 @click.option(
+    '--room-overlaps', 'room_overlaps', flag_value='True',
+    help='Deprecated flag used to check room collisions. '
+    'Use `honeybee validate room-collisions` instead.')
+@click.option(
     '--output-file', '-f', help='Optional file to output the full report '
     'of the validation. By default it will be printed out to stdout',
     type=click.File('w'), default='-')
-def validate_model_cli(model_file, extension, plain_text, output_file):
+def validate_model_cli(model_file, extension, plain_text, room_overlaps, output_file):
     """Validate all properties of a Model file against Honeybee schema.
 
     This includes checking basic compliance with the 5 rules of honeybee geometry
@@ -65,7 +69,12 @@ def validate_model_cli(model_file, extension, plain_text, output_file):
     """
     try:
         json = not plain_text
-        validate_model(model_file, extension, json, output_file)
+        if room_overlaps == 'True':
+            print('--room-overlaps option is deprecated. '
+                  'Use `honeybee validate room-collisions` instead.')
+            validate_room_collisions(model_file, json, output_file)
+        else:
+            validate_model(model_file, extension, json, output_file)
     except Exception as e:
         _logger.exception('Model validation failed.\n{}'.format(e))
         sys.exit(1)
