@@ -766,6 +766,17 @@ def test_rectangularize_apertures():
     parsed_model.check_sub_faces_valid()
 
 
+def test_split_through_holes():
+    """Test the split_through_holes method."""
+    model_json = './tests/json/model_with_holes.hbjson'
+    model = Model.from_hbjson(model_json)
+
+    assert len(model.faces) == 30
+    new_faces = model.split_rooms_through_holes()
+    assert len(new_faces) == 12
+    assert len(model.faces) == 36
+
+
 def test_check_duplicate_room_identifiers():
     """Test the check_duplicate_room_identifiers method."""
     room_south = Room.from_box('Zone1', 5, 5, 3, origin=Point3D(0, 0, 0))
