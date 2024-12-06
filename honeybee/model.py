@@ -1856,6 +1856,38 @@ class Model(_Base):
                 room.story = None
         return Room.stories_by_floor_height(self._rooms, min_difference)
 
+    def split_rooms_through_holes(self, tolerance=None, angle_tolerance=None):
+        """Split any Faces with holes such that they no longer have holes.
+
+        This method is useful for destination engines that cannot support holes
+        either through dedicated hole loops that are separate from the boundary
+        loop or as a single collapsed list of vertices that winds inward to cut
+        out the holes.
+
+        Args:
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. If None, the Model tolerance will be
+                used. (Default: None).
+            angle_tolerance: The max angle in degrees that the corners of the
+                rectangle can differ from a right angle before it is not
+                considered a rectangle. If None, the Model angle_tolerance will be
+                used. (Default: None).
+
+        Returns:
+            A list containing only the new Faces that were created as part of the
+            splitting process. These new Faces will have as many properties of the
+            original Face assigned to them as possible but they will not have a
+            Surface boundary condition if the original Face had one. Having just
+            the new Faces here can be used in operations like setting new Surface
+            boundary conditions.
+        """
+        tol = tolerance if tolerance else self.tolerance
+        a_tol = angle_tolerance if angle_tolerance else self.angle_tolerance
+        new_faces = []
+        for room in self._rooms:
+            new_faces.extend(room.split_through_holes(tol, a_tol))
+        return new_faces
+
     def rooms_to_extrusions(self, tolerance=None, angle_tolerance=None):
         """Convert all Rooms in the model to extruded floor plates with flat roofs.
 
