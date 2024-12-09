@@ -1,0 +1,6 @@
+lib
+===
+
+.. click:: honeybee.cli.lib:lib
+   :prog: honeybee lib
+   :show-nested:
