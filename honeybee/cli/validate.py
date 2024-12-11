@@ -1,9 +1,9 @@
 """honeybee validation commands."""
 import sys
-import os
 import logging
 import click
 
+from ladybug.commandutil import process_content_to_output
 from honeybee.model import Model
 
 _logger = logging.getLogger(__name__)
@@ -111,7 +111,7 @@ def validate_model(model_file, extension='All', json=False, output_file=None,
             If None, the string will simply be returned from this method.
     """
     report = Model.validate(model_file, 'check_for_extension', [extension], json)
-    return _process_report_output(report, output_file)
+    return process_content_to_output(report, output_file)
 
 
 @validate.command('rooms-solid')
@@ -167,7 +167,7 @@ def validate_rooms_solid(model_file, json=False, output_file=None, plain_text=Tr
             If None, the string will simply be returned from this method.
     """
     report = Model.validate(model_file, 'check_rooms_solid', json_output=json)
-    return _process_report_output(report, output_file)
+    return process_content_to_output(report, output_file)
 
 
 @validate.command('room-collisions')
@@ -222,20 +222,4 @@ def validate_room_collisions(model_file, json=False, output_file=None, plain_tex
             If None, the string will simply be returned from this method.
     """
     report = Model.validate(model_file, 'check_room_volume_collisions', json_output=json)
-    return _process_report_output(report, output_file)
-
-
-def _process_report_output(report, output_file):
-    """Process a validation report for various types of output_files."""
-    if output_file is None:
-        return report
-    elif isinstance(output_file, str):
-        if not os.path.isdir(os.path.dirname(output_file)):
-            os.makedirs(os.path.dirname(output_file))
-        with open(output_file, 'w') as of:
-            of.write(report)
-    else:
-        if 'stdout' not in str(output_file):
-            if not os.path.isdir(os.path.dirname(output_file.name)):
-                os.makedirs(os.path.dirname(output_file.name))
-        output_file.write(report)
+    return process_content_to_output(report, output_file)
