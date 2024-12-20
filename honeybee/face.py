@@ -525,6 +525,13 @@ class Face(_BaseWithShade):
         self._doors.append(door)
         self._punched_geometry = None  # reset so that it can be re-computed
 
+    def add_sub_face(self, sub_face):
+        """Add an Apertures or Doors to this face."""
+        if isinstance(sub_face, Aperture):
+            self.add_aperture(sub_face)
+        else:
+            self.add_door(sub_face)
+
     def add_apertures(self, apertures):
         """Add a list of Apertures to this face."""
         for aperture in apertures:
@@ -538,10 +545,7 @@ class Face(_BaseWithShade):
     def add_sub_faces(self, sub_faces):
         """Add a list of Apertures and/or Doors to this face."""
         for sub_f in sub_faces:
-            if isinstance(sub_f, Aperture):
-                self.add_aperture(sub_f)
-            else:
-                self.add_door(sub_f)
+            self.add_sub_face(sub_f)
 
     def replace_apertures(self, apertures):
         """Replace all sub-faces assigned to this Face with a new list of Apertures."""
@@ -1025,6 +1029,32 @@ class Face(_BaseWithShade):
                     new_door = orig_obj.duplicate()
                     new_door._geometry = new_geo
                     self.add_door(new_door)
+
+    def project_and_add_sub_face(self, sub_face, angle_tolerance=None):
+        """Project an Aperture or Door into this Face and add it to the Face.
+
+        Args:
+            sub_face: An Aperture or Door to be projected into this Face and added
+                to it.
+            angle_tolerance: An optional angle tolerance in degrees to be
+                used to check whether the plane of the sub-face is parallel
+                with this Face before merging.If None, no check will be
+                performed. (Default: None).
+        """
+        parallel = True
+        if angle_tolerance is not None:
+            a_tol_min = math.radians(angle_tolerance)
+            a_tol_max = math.pi - a_tol_min
+            if a_tol_min < sub_face.normal.angle(self.normal) < a_tol_max:
+                parallel = False
+        if parallel:
+            pl = self.geometry.plane
+            geo = sub_face.geometry
+            bound = [pl.project_point(pt) for pt in geo.boundary]
+            holes = [[pl.project_point(pt) for pt in h] for h in geo.holes] \
+                if geo.has_holes else None
+            sub_face._geometry = Face3D(bound, pl, holes)
+            self.add_sub_face(sub_face)
 
     def fix_invalid_sub_faces(
             self, trim_with_parent=True, union_overlaps=True,
