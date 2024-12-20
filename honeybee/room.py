@@ -56,6 +56,7 @@ class Room(_BaseWithShade):
         * display_name
         * faces
         * multiplier
+        * zone
         * story
         * exclude_floor_area
         * indoor_furniture
@@ -83,8 +84,9 @@ class Room(_BaseWithShade):
         * user_data
     """
     __slots__ = (
-        '_geometry', '_faces',
-        '_multiplier', '_story', '_exclude_floor_area', '_parent')
+        '_geometry', '_faces', '_multiplier', '_zone', '_story',
+        '_exclude_floor_area',
+        '_parent')
 
     def __init__(self, identifier, faces, tolerance=0, angle_tolerance=0):
         """Initialize Room."""
@@ -124,6 +126,7 @@ class Room(_BaseWithShade):
             self._geometry = room_polyface
 
         self._multiplier = 1  # default value that can be overridden later
+        self._zone = None  # default value that can be overridden later
         self._story = None  # default value that can be overridden later
         self._exclude_floor_area = False  # default value that can be overridden later
         self._parent = None  # completely hidden as it is only used by Dragonfly
@@ -164,6 +167,8 @@ class Room(_BaseWithShade):
                 room.user_data = data['user_data']
             if 'multiplier' in data and data['multiplier'] is not None:
                 room.multiplier = data['multiplier']
+            if 'zone' in data and data['zone'] is not None:
+                room.zone = data['zone']
             if 'story' in data and data['story'] is not None:
                 room.story = data['story']
             if 'exclude_floor_area' in data and data['exclude_floor_area'] is not None:
@@ -275,6 +280,31 @@ class Room(_BaseWithShade):
     @multiplier.setter
     def multiplier(self, value):
         self._multiplier = int_in_range(value, 1, input_name='room multiplier')
+
+    @property
+    def zone(self):
+        """Get or set text for the zone identifier to which this Room belongs.
+
+        Rooms sharing the same zone identifier are considered part of the same
+        zone in a Model. If the zone identifier has not been specified, it
+        will be the same as the Room identifier.
+
+        Note that the zone identifier has no character restrictions much
+        like display_name.
+        """
+        if self._zone is None:
+            return self._identifier
+        return self._zone
+
+    @zone.setter
+    def zone(self, value):
+        if value is not None:
+            try:
+                self._zone = str(value)
+            except UnicodeEncodeError:  # Python 2 machine lacking the character set
+                self._zone = value  # keep it as unicode
+        else:
+            self._zone = value
 
     @property
     def story(self):
@@ -1330,8 +1360,10 @@ class Room(_BaseWithShade):
         Returns:
             True if geometrically equivalent. False if not geometrically equivalent.
         """
-        met_1 = (self.display_name, self.multiplier, self.story, self.exclude_floor_area)
-        met_2 = (room.display_name, room.multiplier, room.story, room.exclude_floor_area)
+        met_1 = (self.display_name, self.multiplier, self.zone, self.story,
+                 self.exclude_floor_area)
+        met_2 = (room.display_name, room.multiplier, room.zone, room.story,
+                 room.exclude_floor_area)
         if met_1 != met_2:
             return False
         if len(self._faces) != len(room._faces):
@@ -2666,7 +2698,8 @@ class Room(_BaseWithShade):
         ext_room._display_name = self._display_name
         ext_room._user_data = None if self.user_data is None else self.user_data.copy()
         ext_room._multiplier = self.multiplier
-        ext_room._story = self.story
+        ext_room._zone = self._zone
+        ext_room._story = self._story
         ext_room._exclude_floor_area = self.exclude_floor_area
         ext_room._properties._duplicate_extension_attr(self._properties)
         return ext_room
@@ -2719,6 +2752,8 @@ class Room(_BaseWithShade):
         self._add_shades_to_dict(base, abridged, included_prop, include_plane)
         if self.multiplier != 1:
             base['multiplier'] = self.multiplier
+        if self._zone is not None:
+            base['zone'] = self.zone
         if self.story is not None:
             base['story'] = self.story
         if self.exclude_floor_area:
@@ -2905,7 +2940,8 @@ class Room(_BaseWithShade):
         new_r._display_name = self._display_name
         new_r._user_data = None if self.user_data is None else self.user_data.copy()
         new_r._multiplier = self.multiplier
-        new_r._story = self.story
+        new_r._zone = self._zone
+        new_r._story = self._story
         new_r._exclude_floor_area = self.exclude_floor_area
         self._duplicate_child_shades(new_r)
         new_r._geometry = self._geometry
