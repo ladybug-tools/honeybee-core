@@ -92,6 +92,7 @@ def test_model_properties_setability():
     assert model.angle_tolerance == 0.01
     model.tolerance = None
     assert model.tolerance == 0.01
+    assert not model.has_zones
 
 
 def test_model_init_orphaned_objects():
@@ -146,15 +147,17 @@ def test_model_init_orphaned_objects():
     assert len(model.orphaned_shades) == 2
     assert len(model.orphaned_apertures) == 1
     assert len(model.orphaned_doors) == 1
+    assert not model.has_zones
 
 
 def test_adjacent_zone_model():
     """Test the solve adjacency method with an interior aperture."""
     room_south = Room.from_box('SouthZone', 5, 5, 3, origin=Point3D(0, 0, 0))
     room_north = Room.from_box('NorthZone', 5, 5, 3, origin=Point3D(0, 5, 0))
+    room_south.zone = 'FullHouse'
+    room_north.zone = 'FullHouse'
     room_south[1].apertures_by_ratio(0.4, 0.01)
     room_north[3].apertures_by_ratio(0.4, 0.01)
-
     room_south[3].apertures_by_ratio(0.4, 0.01)
     room_south[3].apertures[0].overhang(0.5, indoor=False)
     room_south[3].apertures[0].overhang(0.5, indoor=True)
@@ -176,6 +179,8 @@ def test_adjacent_zone_model():
     assert len(model.shades) == 2
     assert len(model.apertures) == 4
     assert len(model.doors) == 1
+    assert model.has_zones
+    assert len(model.zone_dict) == 1
 
     model_dict = model.to_dict()
     new_model = Model.from_dict(model_dict)
@@ -186,6 +191,8 @@ def test_adjacent_zone_model():
         new_model.rooms[1][3].apertures[0].identifier
     assert new_model.rooms[1][3].apertures[0].boundary_condition.boundary_condition_object == \
         new_model.rooms[0][1].apertures[0].identifier
+    assert model.has_zones
+    assert len(model.zone_dict) == 1
 
 
 def test_model_init_from_objects():

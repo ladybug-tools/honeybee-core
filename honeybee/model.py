@@ -961,6 +961,25 @@ class Model(_Base):
             base[sm.identifier] = sm
         return base
 
+    @property
+    def has_zones(self):
+        """Get a boolean for whether any Rooms in the model have zones assigned."""
+        return any(room._zone is not None for room in self._rooms)
+
+    @property
+    def zone_dict(self):
+        """Get dictionary of Rooms with zone identifiers as the keys.
+
+        This is useful for grouping rooms by their Zone for export.
+        """
+        zones = {}
+        for room in self.rooms:
+            try:
+                zones[room.zone].append(room)
+            except KeyError:  # first room to be found in the zone
+                zones[room.zone] = [room]
+        return zones
+
     def add_model(self, other_model):
         """Add another Model object to this model."""
         assert isinstance(other_model, Model), \
