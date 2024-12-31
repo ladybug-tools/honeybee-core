@@ -2149,6 +2149,8 @@ class Model(_Base):
         energy_extensions = ('energyplus', 'openstudio', 'designbuilder')
         if extension_name in energy_extensions:
             extension_name = 'energy'
+        elif extension_name == 'iesve':  # TODO: remove when honeybee-iesve is published
+            extension_name = 'ies'
 
         # check the extension attributes
         assert self.tolerance != 0, \
