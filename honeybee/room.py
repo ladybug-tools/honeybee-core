@@ -2225,6 +2225,64 @@ class Room(_BaseWithShade):
         return story_names
 
     @staticmethod
+    def automatically_zone(rooms, orient_count=None, north_vector=Vector2D(0, 1),
+                           attr_name=None):
+        """Automatically group zones with a similar properties into zones.
+
+        Relevant properties that are used to group rooms into zones include story,
+        orientation, and additional attributes (like programs). Note that, if the
+        Rooms are not already assigned a story, then rooms across different floor
+        heights may be part of the same zone. So it may be desirable to run the
+        Room.stories_by_floor_height method before using this one.
+
+        Args:
+            orient_count: An optional positive integer to set the number of orientation
+                groups to use for zoning. For example, setting this to 4 will result
+                in zones being established based on the four orientations (North,
+                East, South, West). If None, the maximum number of unique groups
+                will be used.
+            north_vector: A ladybug_geometry Vector2D for the north direction.
+                Default is the Y-axis (0, 1).
+            attr_name: A string of an attribute that the input rooms should have.
+                This can have '.' that separate the nested attributes from one another.
+                For example, 'properties.energy.program_type'.
+        """
+        # group the rooms by story
+        story_dict = {}
+        for room in rooms:
+            try:
+                story_dict[room.story].append(room)
+            except KeyError:
+                story_dict[room.story] = [room]
+
+        for story_id, story_rooms in story_dict.items():
+            # group the rooms by orientation
+            perim_rooms, core_rooms, orientations, = \
+                Room.group_by_orientation(story_rooms, orient_count, north_vector)
+            if orient_count == 4:
+                orientations = ['N', 'E', 'S', 'W']
+            elif orient_count == 8:
+                orientations = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+            else:
+                orientations = ['{}deg'.format(orient) for orient in orientations]
+            orientations.append('Core')
+            orient_rooms = perim_rooms + [core_rooms]
+
+            # assign the zone name to each group
+            for orient_id, orient_rooms in zip(orientations, orient_rooms):
+                if attr_name is not None:  # group the rooms by attribute
+                    attr_rooms, attr_vals = Room.group_by_attribute(orient_rooms, attr_name)
+                    for atr_val, zone_rooms in zip(attr_vals, attr_rooms):
+                        atr_val = atr_val.split('::')[-1]
+                        zone_id = '{} - {} - {}'.format(story_id, orient_id, atr_val)
+                        for room in zone_rooms:
+                            room.zone = zone_id
+                else:
+                    zone_id = '{} - {}'.format(story_id, orient_id)
+                    for room in orient_rooms:
+                        room.zone = zone_id
+
+    @staticmethod
     def check_room_volume_collisions(rooms, tolerance=0.01, detailed=False):
         """Check whether the volumes of Rooms collide with one another beyond tolerance.
 
