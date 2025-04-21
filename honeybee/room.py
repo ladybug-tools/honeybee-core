@@ -20,6 +20,7 @@ from .facetype import AirBoundary, Wall, Floor, RoofCeiling, get_type_from_norma
 from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, \
     boundary_conditions
 from .orientation import angles_from_num_orient, orient_index
+from .search import get_attr_nested
 try:
     ad_bc = boundary_conditions.adiabatic
 except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
@@ -1818,7 +1819,7 @@ class Room(_BaseWithShade):
                 continue  # no overlap in bounding box; intersection impossible
             s_geos = s_geo.faces if isinstance(s_geo, Polyface3D) else [s_geo]
             for face_1 in self.faces:
-                for face_2 in s_geos: 
+                for face_2 in s_geos:
                     if not face_1.geometry.plane.is_coplanar_tolerance(
                             face_2.plane, tolerance, ang_tol):
                         continue  # not coplanar; intersection impossible
@@ -2052,6 +2053,39 @@ class Room(_BaseWithShade):
         return Room._adjacency_grouping(rooms, Room._find_adjacent_air_boundary_rooms)
 
     @staticmethod
+    def group_by_attribute(rooms, attr_name):
+        """Group rooms with the same value for a given attribute.
+
+        Args:
+            attr_name: A string of an attribute that the input rooms should have.
+                This can have '.' that separate the nested attributes from one another.
+                For example, 'properties.energy.program_type'.
+
+        Returns:
+            A tuple with two items.
+
+            -   grouped_rooms - A list of lists of honeybee rooms with each sub-list
+                representing a different value for the attribute.
+
+            -   values - A list of text strings for the value associated with each
+                sub-list of the output grouped_rooms.
+        """
+        # loop through each of the rooms and get the orientation
+        attr_dict = {}
+        for room in rooms:
+            val = get_attr_nested(room, attr_name)
+            try:
+                attr_dict[val].append(room)
+            except KeyError:
+                attr_dict[val] = [room]
+
+        # sort the rooms by values
+        room_mtx = sorted(attr_dict.items(), key=lambda d: d[0])
+        values = [r_tup[0] for r_tup in room_mtx]
+        grouped_rooms = [r_tup[1] for r_tup in room_mtx]
+        return grouped_rooms, values
+
+    @staticmethod
     def group_by_orientation(rooms, group_count=None, north_vector=Vector2D(0, 1)):
         """Group Rooms with the same average outdoor wall orientation.
 
@@ -2073,7 +2107,7 @@ class Room(_BaseWithShade):
             -   core_rooms - A list of honeybee rooms with no identifiable orientation.
 
             -   orientations - A list of numbers between 0 and 360 with one orientation
-                for each branch of the output grouped_rooms. This will be a list of
+                for each sub-list of the output grouped_rooms. This will be a list of
                 angle ranges if a value is input for group_count.
         """
         # loop through each of the rooms and get the orientation
@@ -2084,11 +2118,11 @@ class Room(_BaseWithShade):
             if ori is None:
                 core_rooms.append(room)
             else:
+                ori = round(ori)
                 try:
                     orient_dict[ori].append(room)
                 except KeyError:
-                    orient_dict[ori] = []
-                    orient_dict[ori].append(room)
+                    orient_dict[ori] = [room]
 
         # sort the rooms by orientation values
         room_mtx = sorted(orient_dict.items(), key=lambda d: float(d[0]))
