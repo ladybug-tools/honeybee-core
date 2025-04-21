@@ -2227,7 +2227,7 @@ class Room(_BaseWithShade):
     @staticmethod
     def automatically_zone(rooms, orient_count=None, north_vector=Vector2D(0, 1),
                            attr_name=None):
-        """Automatically group zones with a similar properties into zones.
+        """Automatically group Rooms with a similar properties into zones.
 
         Relevant properties that are used to group rooms into zones include story,
         orientation, and additional attributes (like programs). Note that, if the
@@ -2264,7 +2264,7 @@ class Room(_BaseWithShade):
             elif orient_count == 8:
                 orientations = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
             else:
-                orientations = ['{}deg'.format(orient) for orient in orientations]
+                orientations = ['{} deg'.format(orient) for orient in orientations]
             orientations.append('Core')
             orient_rooms = perim_rooms + [core_rooms]
 
