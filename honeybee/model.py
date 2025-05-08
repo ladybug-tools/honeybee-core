@@ -2790,7 +2790,9 @@ class Model(_Base):
             if (base_f.identifier, adj_f.identifier) in reported_items:
                 continue
             two_tol = 2 * tolerance
-            tol_area = math.sqrt(base_f.area) * two_tol
+            base_p = base_f.geometry.boundary_polygon2d
+            max_dim = max((base_p.max.x - base_p.min.x, base_p.max.y - base_p.min.y))
+            tol_area = max_dim * two_tol
             tol_area = 2 * two_tol if tol_area < 2 * two_tol else tol_area
             if abs(base_f.area - adj_f.area) > tol_area:
                 f_msg = 'Face "{}" with area {} is adjacent to Face "{}" with area {}.' \
