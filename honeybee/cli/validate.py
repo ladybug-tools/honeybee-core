@@ -187,12 +187,7 @@ def validate_rooms_solid(model_file, json=False, output_file=None, plain_text=Tr
     'of the validation. By default it will be printed out to stdout.',
     type=click.File('w'), default='-')
 def validate_room_collisions_cli(model_file, plain_text, output_file):
-    """Validate whether all Room volumes in a model are solid.
-
-    The returned result can include a list of all naked and non-manifold edges
-    preventing closed room volumes when --json is used. This is helpful for visually
-    identifying issues in geometry that are preventing the room volume from
-    validating as closed.
+    """Validate whether Room collide with one another beyond the model tolerance.
 
     \b
     Args:
@@ -209,10 +204,7 @@ def validate_room_collisions_cli(model_file, plain_text, output_file):
 
 
 def validate_room_collisions(model_file, json=False, output_file=None, plain_text=True):
-    """Get a list of all naked and non-manifold edges preventing closed room volumes.
-
-    This is helpful for visually identifying issues in geometry that are preventing
-    the room volume from reading as closed.
+    """Validate whether Room collide with one another beyond the model tolerance.
 
     Args:
         model_file: Full path to a Honeybee Model file.
