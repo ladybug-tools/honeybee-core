@@ -130,6 +130,13 @@ class Face(_BaseWithShade):
             assert data['type'] == 'Face', 'Expected Face dictionary. ' \
                 'Got {}.'.format(data['type'])
 
+            # remove any invalid holes from the geometry
+            geo_dict = data['geometry']
+            if 'holes' in geo_dict and geo_dict['holes'] is not None:
+                for i, hole_list in enumerate(geo_dict['holes']):
+                    if len(hole_list) < 3:
+                        geo_dict['holes'].pop(i)
+
             # first serialize it with an outdoor boundary condition
             face_type = face_types.by_name(data['face_type'])
             face = cls(data['identifier'], Face3D.from_dict(data['geometry']),
@@ -2037,6 +2044,38 @@ class Face(_BaseWithShade):
                 help_pts = [p.to_dict() for p in self.geometry.self_intersection_points]
                 full_msg[0]['helper_geometry'] = help_pts
             return full_msg
+        return [] if detailed else ''
+
+    def check_degenerate(self, tolerance=0.01, raise_exception=True, detailed=False):
+        """Check whether the Face is degenerate with effectively zero area.
+
+        Note that, while the Face may have an area larger than the tolerance,
+        removing colinear vertices within the tolerance would create a geometry
+        smaller than the tolerance.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
+            raise_exception: If True, a ValueError will be raised if the object
+                intersects with itself. Default: True.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        msg = 'Face "{}" is degenerate and should be deleted.'.format(self.full_id)
+        try:  # see if it is self-intersecting because of a duplicate vertex
+            new_geo = self.geometry.remove_colinear_vertices(tolerance)
+            if new_geo.area > tolerance:
+                return [] if detailed else ''  # valid
+        except AssertionError:
+            pass  # degenerate face; treat it as degenerate
+        full_msg = self._validation_message(
+            msg, raise_exception, detailed, '000103',
+            error_type='Zero-Area Geometry')
+        return full_msg
         return [] if detailed else ''
 
     def display_dict(self):

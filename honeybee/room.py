@@ -1155,7 +1155,7 @@ class Room(_BaseWithShade):
         """Remove colinear and duplicate vertices from this object's Faces and Sub-faces.
 
         If degenerate geometry is found in the process of removing colinear vertices,
-        an exception will be raised. Note that this does not affect the assigned Shades.
+        an exception will be raised unless delete_degenerate is True.
 
         Args:
             tolerance: The minimum distance between a vertex and the boundary segments
@@ -1628,13 +1628,19 @@ class Room(_BaseWithShade):
         """
         # if the room has the correct number of faces, test the envelope geometry
         if len(self._faces) >= 4 and self.volume > tolerance:
-            try:
-                test_room = self.duplicate()  # duplicate to avoid editing the original
-                test_room.remove_colinear_vertices_envelope(tolerance)
-            except ValueError as e:
-                deg_msg = str(e)
-                if raise_exception:
-                    raise ValueError(e)
+            msgs, final_faces = [], []
+            for face in self._faces:
+                face_msg = face.check_degenerate(tolerance, False, detailed)
+                if not face_msg:
+                    final_faces.append(face)
+                msgs.append(face_msg)
+                for ap in face._apertures:
+                    msgs.append(ap.check_degenerate(tolerance, False, detailed))
+                for dr in face._doors:
+                    msgs.append(dr.check_degenerate(tolerance, False, detailed))
+            if len(final_faces) < 4:
+                deg_msg = 'Room "{}" is degenerate with zero volume. ' \
+                    'It should be deleted'.format(self.full_id)
                 if detailed:
                     deg_msg = [{
                         'type': 'ValidationError',
@@ -1646,9 +1652,19 @@ class Room(_BaseWithShade):
                         'element_name': [self.display_name],
                         'message': deg_msg
                     }]
-                return deg_msg
-            return [] if detailed else ''
-        #  otherwise, report the room as invalid
+                msgs.append(deg_msg)
+            full_msgs = [msg for msg in msgs if msg]
+            if len(full_msgs) == 0:
+                return [] if detailed else ''
+            elif detailed:
+                return [m for megs in full_msgs for m in megs]
+            full_msg = 'Room "{}" contains degenerate geometry.' \
+                '\n  {}'.format(self.full_id, '\n  '.join(full_msgs))
+            if raise_exception and len(full_msgs) != 0:
+                raise ValueError(full_msg)
+            return full_msg
+
+        # otherwise, report the room as invalid
         msg = 'Room "{}" is degenerate with zero volume. It should be deleted'.format(
                 self.full_id)
         return self._validation_message(
