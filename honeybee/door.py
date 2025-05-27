@@ -575,6 +575,39 @@ class Door(_BaseWithShade):
             return full_msg
         return [] if detailed else ''
 
+    def check_degenerate(self, tolerance=0.01, raise_exception=True, detailed=False):
+        """Check whether the Door is degenerate with effectively zero area.
+
+        Note that, while the Door may have an area larger than the tolerance,
+        removing colinear vertices within the tolerance would create a geometry
+        smaller than the tolerance.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                vertices at which they can be considered equivalent. Default: 0.01,
+                suitable for objects in meters.
+            raise_exception: If True, a ValueError will be raised if the object
+                intersects with itself. Default: True.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        msg = 'Door "{}" is degenerate and should be deleted.'.format(
+            self.full_id)
+        try:  # see if it is self-intersecting because of a duplicate vertex
+            new_geo = self.geometry.remove_colinear_vertices(tolerance)
+            if new_geo.area > tolerance:
+                return [] if detailed else ''  # valid
+        except AssertionError:
+            pass  # degenerate subface; treat it as degenerate
+        full_msg = self._validation_message(
+            msg, raise_exception, detailed, '000103',
+            error_type='Zero-Area Geometry')
+        return full_msg
+        return [] if detailed else ''
+
     def display_dict(self):
         """Get a list of DisplayFace3D dictionaries for visualizing the object."""
         base = [self._display_face(self.geometry, self.type_color)]
