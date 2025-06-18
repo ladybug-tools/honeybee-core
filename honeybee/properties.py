@@ -436,7 +436,7 @@ class ModelProperties(_Properties):
                                     'for {}: {}'.format(var, e))
         return msgs
 
-    def _check_all_extension_attr(self, detailed=False):
+    def _check_all_extension_attr(self, detailed=False, all_ext_checks=False):
         """Check the attributes of all extensions.
 
         This method should be called within the check_all method of the Model object
@@ -449,24 +449,41 @@ class ModelProperties(_Properties):
         """
         msgs = []
         for atr in self._extension_attributes:
+            # get the extension attributes
             check_msg = None
             var = getattr(self, atr)
-            if not hasattr(var, 'check_all'):
-                continue
-            try:
+            # use the check_generic function if it is available
+            if not all_ext_checks and hasattr(var, 'check_generic'):
                 try:
-                    check_msg = var.check_all(raise_exception=False, detailed=detailed)
-                except TypeError:  # no option available for detailed error message
-                    check_msg = var.check_all(raise_exception=False)
-                if detailed and check_msg is not None:
-                    msgs.append(check_msg)
-                elif check_msg != '':
-                    f_msg = 'Attributes for {} are invalid.\n{}'.format(atr, check_msg)
-                    msgs.append(f_msg)
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                raise Exception('Failed to check_all for {}: {}'.format(var, e))
+                    check_msg = var.check_generic(
+                        raise_exception=False, detailed=detailed)
+                    if detailed and check_msg is not None:
+                        msgs.append(check_msg)
+                    elif check_msg != '':
+                        f_msg = \
+                            'Attributes for {} are invalid.\n{}'.format(atr, check_msg)
+                        msgs.append(f_msg)
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    raise Exception('Failed to check_generic for {}: {}'.format(var, e))
+            elif hasattr(var, 'check_all'):  # use the check_all function
+                try:
+                    try:
+                        check_msg = var.check_all(
+                            raise_exception=False, detailed=detailed)
+                    except TypeError:  # no option available for detailed error message
+                        check_msg = var.check_all(raise_exception=False)
+                    if detailed and check_msg is not None:
+                        msgs.append(check_msg)
+                    elif check_msg != '':
+                        f_msg = \
+                            'Attributes for {} are invalid.\n{}'.format(atr, check_msg)
+                        msgs.append(f_msg)
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    raise Exception('Failed to check_all for {}: {}'.format(var, e))
         return msgs
 
     def __repr__(self):

@@ -21,10 +21,13 @@ def validate():
     '--extension', '-e', help='Text for the name of the extension to be checked. '
     'The value input is case-insensitive such that "radiance" and "Radiance" will '
     'both result in the model being checked for validity with honeybee-radiance. '
-    'This value can also be set to "All" in order to run checks for all installed '
-    'extensions. Some common honeybee extension names that can be input here include: '
-    'Radiance, EnergyPlus, DOE2, IES, IDAICE',
-    type=str, default='All', show_default=True)
+    'This value can also be set to "Generic" in order to run checks for all installed '
+    'extensions. Using "Generic" will run all except the most limiting of checks '
+    '(eg. the DOE2 lack of support for courtyards) with the goal of producing a model '
+    'that can be exported to multiple engines (albeit with a little extra '
+    'postprocessing for particularly limited engines). Some common honeybee extension '
+    'names that can be input here include: Radiance, EnergyPlus, DOE2, IES, IDAICE',
+    type=str, default='Generic', show_default=True)
 @click.option(
     '--plain-text/--json', ' /-j', help='Flag to note whether the output validation '
     'report should be formatted as a JSON object instead of plain text. If set to JSON, '
@@ -82,7 +85,7 @@ def validate_model_cli(model_file, extension, plain_text, room_overlaps, output_
         sys.exit(0)
 
 
-def validate_model(model_file, extension='All', json=False, output_file=None,
+def validate_model(model_file, extension='Generic', json=False, output_file=None,
                    plain_text=True):
     """Validate all properties of a Model file against the Honeybee schema.
 
@@ -95,8 +98,12 @@ def validate_model(model_file, extension='All', json=False, output_file=None,
             The value input here is case-insensitive such that "radiance"
             and "Radiance" will both result in the model being checked for
             validity with honeybee-radiance. This value can also be set to
-            "All" in order to run checks for all installed extensions. Some
-            common honeybee extension names that can be input here if they
+            "Generic" in order to run checks for all installed extensions.
+            Using "Generic" will run all except the most limiting of checks
+            (eg. DOE2's lack of support for courtyards) with the goal of
+            producing a model that is export-able to multiple engines (albeit
+            with a little extra postprocessing for particularly limited engines).
+            Some common dragonfly extension names that can be input here if they
             are installed include:
 
             * Radiance

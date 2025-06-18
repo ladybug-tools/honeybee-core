@@ -2102,7 +2102,7 @@ class Model(_Base):
             compare_dict['deleted_objects'] = deleted
         return compare_dict
 
-    def check_for_extension(self, extension_name='All',
+    def check_for_extension(self, extension_name='Generic',
                             raise_exception=True, detailed=False):
         """Check that the Model is valid for a specific Honeybee extension.
 
@@ -2118,9 +2118,13 @@ class Model(_Base):
                 The value input here is case-insensitive such that "radiance"
                 and "Radiance" will both result in the model being checked for
                 validity with honeybee-radiance. This value can also be set to
-                "All" in order to run checks for all installed extensions. Some
-                common honeybee extension names that can be input here if they
-                are installed include:
+                "Generic" in order to run checks for all installed extensions.
+                Using "Generic" will run all except the most limiting of
+                checks (eg. DOE2's lack of support for courtyards) with the
+                goal of producing a model that is export-able to multiple
+                engines (albeit with a little extra postprocessing for
+                particularly limited engines). Some common honeybee extension
+                names that can be input here if they are installed include:
 
                 * Radiance
                 * EnergyPlus
@@ -2145,8 +2149,9 @@ class Model(_Base):
         # set up defaults to ensure the method runs correctly
         detailed = False if raise_exception else detailed
         extension_name = extension_name.lower()
-        if extension_name == 'all':
-            return self.check_all(raise_exception, detailed)
+        if extension_name in ('all', 'generic'):
+            all_ext_checks = extension_name == 'all'
+            return self.check_all(raise_exception, detailed, all_ext_checks)
         energy_extensions = ('energyplus', 'openstudio', 'designbuilder')
         if extension_name in energy_extensions:
             extension_name = 'energy'
@@ -2171,8 +2176,8 @@ class Model(_Base):
             raise ValueError(full_msg)
         return full_msg
 
-    def check_all(self, raise_exception=True, detailed=False):
-        """Check all of the aspects of the Model for possible errors.
+    def check_all(self, raise_exception=True, detailed=False, all_ext_checks=False):
+        """Check all of the aspects of the Model for validation errors.
 
         This includes basic properties like adjacency checks and all geometry checks.
         Furthermore, all extension attributes will be checked assuming the extension
@@ -2186,6 +2191,12 @@ class Model(_Base):
                 return a text string with all errors that were found. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
                 dicts with error info or a string with a message. (Default: False).
+            all_ext_checks: Boolean to note whether every single check that is
+                available for all installed extensions should be run (True) or only
+                generic checks that cover all except the most limiting of
+                cases should be run (False). Examples of checks that are skipped
+                include DOE2's lack of support for courtyards and floor plates
+                with holes. (Default: False).
 
         Returns:
             A text string with all errors that were found or a list if detailed is True.
@@ -2224,7 +2235,7 @@ class Model(_Base):
         msgs.append(self.check_all_air_boundaries_adjacent(False, detailed))
 
         # check the extension attributes
-        ext_msgs = self._properties._check_all_extension_attr(detailed)
+        ext_msgs = self._properties._check_all_extension_attr(detailed, all_ext_checks)
         if detailed:
             ext_msgs = [m for m in ext_msgs if isinstance(m, list)]
         msgs.extend(ext_msgs)
