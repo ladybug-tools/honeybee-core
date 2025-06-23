@@ -1749,16 +1749,24 @@ class Face(_BaseWithShade):
                 at which point the vertex is considered colinear. Default: 0.01,
                 suitable for objects in meters.
         """
+        # set up lists to track sub-faces to remove
+        del_ap_i, del_dr_i = [], []
+        # remove degenerate apertures
         for i, ap in enumerate(self._apertures):
             try:
                 ap.remove_colinear_vertices(tolerance)
             except ValueError:
-                self._apertures.pop(i)
+                del_ap_i.append(i)
+        for del_i in reversed(del_ap_i):
+            self._apertures.pop(del_i)
+        # remove degenerate doors
         for i, dr in enumerate(self._doors):
             try:
                 dr.remove_colinear_vertices(tolerance)
             except ValueError:
-                self._apertures.pop(i)
+                del_dr_i.append(i)
+        for del_i in reversed(del_dr_i):
+            self._doors.pop(del_i)
 
     def is_geo_equivalent(self, face, tolerance=0.01):
         """Get a boolean for whether this object is geometrically equivalent to another.
