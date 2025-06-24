@@ -2325,29 +2325,55 @@ class Room(_BaseWithShade):
             A string with the message or a list with a dictionary if detailed is True.
         """
         # create Polygon2Ds from the floors of the rooms
-        polys = [
-            [(Polygon2D(Point2D(p.x, p.y) for p in flr.vertices), flr.geometry[0].z)
-             for flr in room.floors if flr.geometry.is_horizontal(tolerance)]
-            for room in rooms
-        ]
+        b_polys, h_polys = [], []
+        for room in rooms:
+            rb_polys, rh_polys = [], []
+            for flr in room.floors:
+                flr_geo = flr.geometry
+                if flr_geo.is_horizontal(tolerance):
+                    b_poly = Polygon2D(Point2D(p.x, p.y) for p in flr_geo.boundary)
+                    rb_polys.append((b_poly, flr_geo[0].z))
+                    if flr_geo.has_holes:
+                        h_poly = [Polygon2D(Point2D(p.x, p.y) for p in hole)
+                                  for hole in flr_geo.holes]
+                        rh_polys.append(h_poly)
+                    else:
+                        rh_polys.append(None)
+            b_polys.append(rb_polys)
+            h_polys.append(rh_polys)
 
         # find the number of overlaps across the Rooms
         msgs = []
-        for i, (room_1, polys_1) in enumerate(zip(rooms, polys)):
+        for i, (room_1, polys_1, hp1) in enumerate(zip(rooms, b_polys, h_polys)):
             overlap_rooms = []
             if len(polys_1) == 0:
                 continue
             try:
-                for room_2, polys_2 in zip(rooms[i + 1:], polys[i + 1:]):
+                zip_obj = zip(rooms[i + 1:], b_polys[i + 1:], h_polys[i + 1:])
+                for room_2, polys_2, hp2 in zip_obj:
                     collision_found = False
-                    for ply_1, z1 in polys_1:
+                    for j, (ply_1, z1) in enumerate(polys_1):
                         if collision_found:
                             break
-                        for ply_2, z2 in polys_2:
+                        for k, (ply_2, z2) in enumerate(polys_2):
                             if collision_found:
                                 break
-                            if abs(z1 - z2) < tolerance:
-                                if ply_1.polygon_relationship(ply_2, tolerance) >= 0:
+                            if abs(z1 - z2) < tolerance and \
+                                    ply_1.polygon_relationship(ply_2, tolerance) >= 0:
+                                # check that one room is not inside the hole of another
+                                inside_hole = False
+                                if hp1[j] is not None:
+                                    for h in hp1[j]:
+                                        if h.polygon_relationship(ply_2, tolerance) == 1:
+                                            inside_hole = True
+                                            break
+                                if not inside_hole and hp2[k] is not None:
+                                    for h in hp2[k]:
+                                        if h.polygon_relationship(ply_1, tolerance) == 1:
+                                            inside_hole = True
+                                            break
+                                # if the room is not in a hole, then they overlap
+                                if not inside_hole:
                                     overlap_rooms.append(room_2)
                                     collision_found = True
                                     break
