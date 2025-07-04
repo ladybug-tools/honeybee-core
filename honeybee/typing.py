@@ -3,6 +3,7 @@ import re
 import os
 import math
 import uuid
+import hashlib
 
 try:
     INFPOS = math.inf
@@ -170,7 +171,8 @@ def clean_string(value, input_name=''):
     """Clean a string so that it is valid for both Radiance and EnergyPlus.
 
     This will strip out spaces and special characters and raise an error if the
-    string is empty after stripping or has more than 100 characters.
+    string is has more than 100 characters. If the input has no valid characters
+    after stripping out illegal ones, a randomly-generated UUID will be returned.
     """
     try:
         value = value.replace(' ', '_')  # spaces > underscores for readability
@@ -178,8 +180,10 @@ def clean_string(value, input_name=''):
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
             input_name, type(value), value))
-    assert len(val) > 0, 'Input {} "{}" contains no valid characters.'.format(
-        input_name, value)
+    if len(val) == 0:  # generate a unique but consistent ID from the input
+        sha256_hash = hashlib.sha256(value.encode('utf-8'))
+        hash_str = str(sha256_hash.hexdigest())
+        return hash_str[:8] if len(hash_str) > 8 else hash_str
     assert len(val) <= 100, 'Input {} "{}" must be less than 100 characters.'.format(
         input_name, value)
     return val
@@ -188,8 +192,9 @@ def clean_string(value, input_name=''):
 def clean_rad_string(value, input_name=''):
     """Clean a string for Radiance that can be used for rad material names.
 
-    This includes stripping out illegal characters and white spaces as well as
-    raising an error if no legal characters are found.
+    This includes stripping out illegal characters and white spaces. If the input
+    has no valid characters after stripping out illegal ones, a randomly-generated
+    UUID will be returned.
     """
     try:
         value = value.replace(' ', '_')  # spaces > underscores for readability
@@ -197,8 +202,10 @@ def clean_rad_string(value, input_name=''):
     except TypeError:
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
             input_name, type(value), value))
-    assert len(val) > 0, 'Input {} "{}" contains no valid characters.'.format(
-        input_name, value)
+    if len(val) == 0:  # generate a unique but consistent ID from the input
+        sha256_hash = hashlib.sha256(value.encode('utf-8'))
+        hash_str = str(sha256_hash.hexdigest())
+        return hash_str[:8] if len(hash_str) > 8 else hash_str
     return val
 
 
@@ -206,8 +213,9 @@ def clean_ep_string(value, input_name=''):
     """Clean a string for EnergyPlus that can be used for energy material names.
 
     This includes stripping out all illegal characters, removing trailing spaces,
-    and rasing an error if the name is not longer than 100 characters or no legal
-    characters found.
+    and rasing an error if the name is not longer than 100 characters. If the input
+    has no valid characters after stripping out illegal ones, a randomly-generated
+    UUID will be returned.
     """
     try:
         val = ''.join(i for i in value if ord(i) < 128)  # strip out non-ascii
@@ -216,8 +224,10 @@ def clean_ep_string(value, input_name=''):
         raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
             input_name, type(value), value))
     val = val.strip()
-    assert len(val) > 0, 'Input {} "{}" contains no valid characters.'.format(
-        input_name, value)
+    if len(val) == 0:  # generate a unique but consistent ID from the input
+        sha256_hash = hashlib.sha256(value.encode('utf-8'))
+        hash_str = str(sha256_hash.hexdigest())
+        return hash_str[:8] if len(hash_str) > 8 else hash_str
     assert len(val) <= 100, 'Input {} "{}" must be less than 100 characters.'.format(
         input_name, value)
     return val
@@ -449,6 +459,10 @@ def clean_doe2_string(value, max_length=24):
         raise TypeError('Input must be a text string. Got {}: {}.'.format(
             type(value), value))
     val = val.strip()
+    if len(val) == 0:  # generate a unique but consistent ID from the input
+        sha256_hash = hashlib.sha256(value.encode('utf-8'))
+        hash_str = str(sha256_hash.hexdigest())
+        return hash_str[:8] if len(hash_str) > 8 else hash_str
     return readable_short_name(val, max_length)
 
 
