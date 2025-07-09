@@ -1759,10 +1759,18 @@ class Room(_BaseWithShade):
                         nf = Face(fid, new_geo, prop_f.type, fbc)
                         for ap in apertures:
                             if nf.geometry.is_sub_face(ap.geometry, tol, a_tol):
-                                nf.add_aperture(ap)
+                                try:
+                                    nf.add_aperture(ap)
+                                except AssertionError:  # probably adiabatic
+                                    nf.boundary_condition = boundary_conditions.outdoors
+                                    nf.add_aperture(ap)
                         for dr in doors:
                             if nf.geometry.is_sub_face(dr.geometry, tol, a_tol):
-                                nf.add_door(dr)
+                                try:
+                                    nf.add_door(dr)
+                                except AssertionError:  # probably adiabatic
+                                    nf.boundary_condition = boundary_conditions.outdoors
+                                    nf.add_door(dr)
                         if i == 0:  # add all assigned shades to this face
                             nf.add_indoor_shades(in_shades)
                             nf.add_outdoor_shades(out_shades)
@@ -1943,7 +1951,7 @@ class Room(_BaseWithShade):
             room.coplanar_split(other_rooms, tolerance, angle_tolerance)
 
     @staticmethod
-    def solve_adjacency(rooms, tolerance=0.01):
+    def solve_adjacency(rooms, tolerance=0.01, remove_mismatched_sub_faces=False):
         """Solve for adjacencies between a list of rooms.
 
         Note that this method will mutate the input rooms by setting Surface
@@ -1956,6 +1964,10 @@ class Room(_BaseWithShade):
             tolerance: The minimum difference between the coordinate values of two
                 faces at which they can be considered centered adjacent. Default: 0.01,
                 suitable for objects in meters.
+            remove_mismatched_sub_faces: Boolean to note whether any mis-matches
+                in sub-faces between adjacent rooms should simply result in
+                the sub-faces being removed rather than raising an
+                exception. (Default: False).
 
         Returns:
             A dictionary of information about the objects that had their adjacency set.
@@ -1989,7 +2001,15 @@ class Room(_BaseWithShade):
                             if not isinstance(face_2.boundary_condition, Surface):
                                 if face_1.geometry.is_centered_adjacent(
                                         face_2.geometry, tolerance):
-                                    face_info = face_1.set_adjacency(face_2)
+                                    if not remove_mismatched_sub_faces:
+                                        face_info = face_1.set_adjacency(face_2)
+                                    else:
+                                        try:
+                                            face_info = face_1.set_adjacency(face_2)
+                                        except AssertionError:
+                                            face_1[0].remove_sub_faces()
+                                            face_2.remove_sub_faces()
+                                            face_info = face_1.set_adjacency(face_2)
                                     adj_info['adjacent_faces'].append((face_1, face_2))
                                     adj_info['adjacent_apertures'].extend(
                                         face_info['adjacent_apertures'])

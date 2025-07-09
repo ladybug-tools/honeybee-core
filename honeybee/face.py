@@ -740,6 +740,8 @@ class Face(_BaseWithShade):
                     if len(joined_bounds) == 1:  # can be represented with a single Face3D
                         verts3d = tuple(ref_plane.xy_to_xyz(_v) for _v in joined_bounds[0])
                         non_rect_geos = [Face3D(verts3d, plane=ref_plane)]
+                    elif len(joined_bounds) == 0:  # everything was invalid
+                        non_rect_geos = []
                     else:  # need to separate holes from distinct Face3Ds
                         bound_faces = []
                         for poly in joined_bounds:

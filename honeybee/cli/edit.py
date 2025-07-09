@@ -104,7 +104,8 @@ def solve_adjacency(model_file, no_merge, no_intersect, no_overwrite,
         air_boundary = not wall
         adiabatic = not surface
         parsed_model.solve_adjacency(
-            merge_coplanar, intersect, overwrite, air_boundary, adiabatic)
+            merge_coplanar, intersect, overwrite,
+            air_boundary=air_boundary, adiabatic=adiabatic)
 
         # write the new model out to the file or stdout
         output_file.write(json.dumps(parsed_model.to_dict()))
