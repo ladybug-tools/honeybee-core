@@ -1449,7 +1449,7 @@ class Model(_Base):
 
     def solve_adjacency(
             self, merge_coplanar=False, intersect=False, overwrite=False,
-            air_boundary=False, adiabatic=False,
+            remove_mismatched_sub_faces=True, air_boundary=False, adiabatic=False,
             tolerance=None, angle_tolerance=None):
         """Solve adjacency between Rooms of the Model.
 
@@ -1465,6 +1465,10 @@ class Model(_Base):
                 solved. (Default: False).
             overwrite: Boolean to note whether existing Surface boundary
                 conditions should be overwritten. (Default: False).
+            remove_mismatched_sub_faces: Boolean to note whether any mis-matches
+                in sub-faces between adjacent rooms should simply result in
+                the sub-faces being removed rather than raising an
+                exception. (Default: True).
             air_boundary: Boolean to note whether the wall adjacencies should be
                 of the air boundary face type. (Default: False).
             adiabatic: Boolean to note whether the adjacencies should be
@@ -1491,11 +1495,20 @@ class Model(_Base):
 
         # solve adjacency
         if not overwrite:  # only assign new adjacencies
-            adj_info = Room.solve_adjacency(self.rooms, tol)
+            adj_info = Room.solve_adjacency(self.rooms, tol, remove_mismatched_sub_faces)
         else:  # overwrite existing Surface BC
             adj_faces = Room.find_adjacency(self.rooms, tol)
-            for face_pair in adj_faces:
-                face_pair[0].set_adjacency(face_pair[1])
+            if remove_mismatched_sub_faces:
+                for face_pair in adj_faces:
+                    try:
+                        face_pair[0].set_adjacency(face_pair[1])
+                    except AssertionError:
+                        face_pair[0].remove_sub_faces()
+                        face_pair[1].remove_sub_faces()
+                        face_pair[0].set_adjacency(face_pair[1])
+            else:
+                for face_pair in adj_faces:
+                    face_pair[0].set_adjacency(face_pair[1])
             adj_info = {'adjacent_faces': adj_faces}
 
         # try to assign the air boundary face type
