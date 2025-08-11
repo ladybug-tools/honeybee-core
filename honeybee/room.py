@@ -47,10 +47,7 @@ class Room(_BaseWithShade):
             used in determining whether the faces form a closed volume. Default
             is 0, which makes no attempt to evaluate whether the Room volume
             is closed.
-        angle_tolerance: The max angle difference in degrees that vertices are
-            allowed to differ from one another in order to consider them colinear.
-            Default is 0, which makes no attempt to evaluate whether the Room
-            volume is closed.
+        angle_tolerance: Deprecated input that is no longer used.
 
     Properties:
         * identifier
@@ -89,7 +86,7 @@ class Room(_BaseWithShade):
         '_exclude_floor_area',
         '_parent')
 
-    def __init__(self, identifier, faces, tolerance=0, angle_tolerance=0):
+    def __init__(self, identifier, faces, tolerance=0, angle_tolerance=None):
         """Initialize Room."""
         _BaseWithShade.__init__(self, identifier)  # process the identifier
 
@@ -108,9 +105,8 @@ class Room(_BaseWithShade):
             # try to get a closed volume between the faces
             room_polyface = Polyface3D.from_faces(
                 tuple(face.geometry for face in faces), tolerance)
-            if not room_polyface.is_solid and angle_tolerance != 0:
-                ang_tol = math.radians(angle_tolerance)
-                room_polyface = room_polyface.merge_overlapping_edges(tolerance, ang_tol)
+            if not room_polyface.is_solid:
+                room_polyface = room_polyface.merge_overlapping_edges(tolerance)
             # replace honeybee face geometry with versions that are facing outwards
             if room_polyface.is_solid:
                 for i, correct_face3d in enumerate(room_polyface.faces):
@@ -134,7 +130,7 @@ class Room(_BaseWithShade):
         self._properties = RoomProperties(self)  # properties for extensions
 
     @classmethod
-    def from_dict(cls, data, tolerance=0, angle_tolerance=0):
+    def from_dict(cls, data, tolerance=0, angle_tolerance=None):
         """Initialize an Room from a dictionary.
 
         Args:
@@ -144,10 +140,7 @@ class Room(_BaseWithShade):
                 used in determining whether the faces form a closed volume. Default
                 is 0, which makes no attempt to evaluate whether the Room volume
                 is closed.
-            angle_tolerance: The max angle difference in degrees that vertices are
-                allowed to differ from one another in order to consider them colinear.
-                Default is 0, which makes no attempt to evaluate whether the Room
-                volume is closed.
+            angle_tolerance: Deprecated input that is no longer used.
         """
         try:
             # check the type of dictionary
@@ -161,7 +154,7 @@ class Room(_BaseWithShade):
                     faces.append(Face.from_dict(f_dict))
                 except Exception as e:
                     invalid_dict_error(f_dict, e)
-            room = cls(data['identifier'], faces, tolerance, angle_tolerance)
+            room = cls(data['identifier'], faces, tolerance)
             if 'display_name' in data and data['display_name'] is not None:
                 room.display_name = data['display_name']
             if 'user_data' in data and data['user_data'] is not None:
@@ -1265,7 +1258,8 @@ class Room(_BaseWithShade):
                 suitable for objects in meters.
             angle_tolerance: The max angle in degrees that the plane normals can
                 differ from one another in order for them to be considered
-                coplanar. (Default: 1 degree).
+                coplanar. This is used to reassign sub-faces to split room
+                geometry. (Default: 1 degree).
 
         Returns:
             A list containing only the new Faces that were created as part of the
@@ -1329,7 +1323,7 @@ class Room(_BaseWithShade):
         room_polyface = Polyface3D.from_faces(
             tuple(face.geometry for face in all_faces), tolerance)
         if not room_polyface.is_solid:
-            room_polyface = room_polyface.merge_overlapping_edges(tolerance, ang_tol)
+            room_polyface = room_polyface.merge_overlapping_edges(tolerance)
         # replace honeybee face geometry with versions that are facing outwards
         if room_polyface.is_solid:
             for i, correct_face3d in enumerate(room_polyface.faces):
@@ -1376,7 +1370,7 @@ class Room(_BaseWithShade):
             return False
         return True
 
-    def check_solid(self, tolerance=0.01, angle_tolerance=1, raise_exception=True,
+    def check_solid(self, tolerance=0.01, angle_tolerance=None, raise_exception=True,
                     detailed=False):
         """Check whether the Room is a closed solid to within the input tolerances.
 
@@ -1384,9 +1378,7 @@ class Room(_BaseWithShade):
             tolerance: tolerance: The maximum difference between x, y, and z values
                 at which face vertices are considered equivalent. Default: 0.01,
                 suitable for objects in meters.
-            angle_tolerance: The max angle difference in degrees that vertices are
-                allowed to differ from one another in order to consider them colinear.
-                Default: 1 degree.
+            angle_tolerance: Deprecated input that is no longer used.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if the room geometry does not form a closed solid.
             detailed: Boolean for whether the returned object is a detailed list of
@@ -1401,13 +1393,12 @@ class Room(_BaseWithShade):
         self._geometry = Polyface3D.from_faces(face_geometries, tolerance)
         if self.geometry.is_solid:
             return [] if detailed else ''
-        ang_tol = math.radians(angle_tolerance)
-        self._geometry = self.geometry.merge_overlapping_edges(tolerance, ang_tol)
+        self._geometry = self.geometry.merge_overlapping_edges(tolerance)
         if self.geometry.is_solid:
             return [] if detailed else ''
-        msg = 'Room "{}" is not closed to within {} tolerance and {} angle ' \
-            'tolerance.\n  {} naked edges found\n  {} non-manifold edges found'.format(
-                self.full_id, tolerance, angle_tolerance,
+        msg = 'Room "{}" is not closed to within {} tolerance.' \
+            '\n  {} naked edges found\n  {} non-manifold edges found'.format(
+                self.full_id, tolerance,
                 len(self._geometry.naked_edges), len(self._geometry.non_manifold_edges))
         full_msg = self._validation_message(
             msg, raise_exception, detailed, '000106',
@@ -1786,7 +1777,7 @@ class Room(_BaseWithShade):
         room_polyface = Polyface3D.from_faces(
             tuple(face.geometry for face in all_faces), tolerance)
         if not room_polyface.is_solid:
-            room_polyface = room_polyface.merge_overlapping_edges(tolerance, a_tol)
+            room_polyface = room_polyface.merge_overlapping_edges(tolerance)
         # replace honeybee face geometry with versions that are facing outwards
         if room_polyface.is_solid:
             for i, correct_face3d in enumerate(room_polyface.faces):
@@ -1821,7 +1812,8 @@ class Room(_BaseWithShade):
                 suitable for objects in meters.
             angle_tolerance: The max angle in degrees that the plane normals can
                 differ from one another in order for them to be considered
-                coplanar. (Default: 1 degree).
+                coplanar. This is used to reassign sub-faces after the room
+                geometry is split. (Default: 1 degree).
 
         Returns:
             A list containing only the new Faces that were created as part of the
@@ -1900,7 +1892,7 @@ class Room(_BaseWithShade):
         room_polyface = Polyface3D.from_faces(
             tuple(face.geometry for face in all_faces), tolerance)
         if not room_polyface.is_solid:
-            room_polyface = room_polyface.merge_overlapping_edges(tolerance, ang_tol)
+            room_polyface = room_polyface.merge_overlapping_edges(tolerance)
         # replace honeybee face geometry with versions that are facing outwards
         if room_polyface.is_solid:
             for i, correct_face3d in enumerate(room_polyface.faces):

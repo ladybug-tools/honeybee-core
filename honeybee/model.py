@@ -181,7 +181,7 @@ class Model(_Base):
             rooms = []
             for r in data['rooms']:
                 try:
-                    rooms.append(Room.from_dict(r, tol, angle_tol))
+                    rooms.append(Room.from_dict(r, tol))
                 except Exception as e:
                     invalid_dict_error(r, e)
         orphaned_faces = None  # import orphaned faces
@@ -2239,7 +2239,7 @@ class Model(_Base):
         msgs.append(self.check_sub_faces_valid(tol, ang_tol, False, detailed))
         msgs.append(self.check_sub_faces_overlapping(tol, False, detailed))
         msgs.append(self.check_upside_down_faces(ang_tol, False, detailed))
-        msgs.append(self.check_rooms_solid(tol, ang_tol, False, detailed))
+        msgs.append(self.check_rooms_solid(tol, raise_exception=False, detailed=detailed))
 
         # perform checks related to adjacency relationships
         msgs.append(self.check_room_volume_collisions(tol, False, detailed))
@@ -2619,9 +2619,7 @@ class Model(_Base):
             tolerance: tolerance: The maximum difference between x, y, and z values
                 at which face vertices are considered equivalent. If None, the Model
                 tolerance will be used. (Default: None).
-            angle_tolerance: The max angle difference in degrees that vertices are
-                allowed to differ from one another in order to consider them colinear.
-                If None, the Model angle_tolerance will be used. (Default: None).
+            angle_tolerance: Deprecated input that is no longer used.
             raise_exception: Boolean to note whether a ValueError should be raised
                 if the room geometry does not form a closed solid. (Default: True).
             detailed: Boolean for whether the returned object is a detailed list of
@@ -2631,12 +2629,10 @@ class Model(_Base):
             A string with the message or a list with a dictionary if detailed is True.
         """
         tolerance = self.tolerance if tolerance is None else tolerance
-        angle_tolerance = self.angle_tolerance \
-            if angle_tolerance is None else angle_tolerance
         detailed = False if raise_exception else detailed
         msgs = []
         for room in self._rooms:
-            msg = room.check_solid(tolerance, angle_tolerance, False, detailed)
+            msg = room.check_solid(tolerance, raise_exception=False, detailed=detailed)
             if detailed:
                 msgs.extend(msg)
             elif msg != '':
