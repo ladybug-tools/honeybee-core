@@ -1662,6 +1662,44 @@ class Room(_BaseWithShade):
             msg, raise_exception, detailed, '000107',
             error_type='Degenerate Room Volume')
 
+    def remove_duplicate_faces(self, tolerance=0.01):
+        """Remove duplicate face geometries from the Room.
+
+        Such duplicate faces can sometimes happen as a result of performing many
+        coplanar splits.
+
+        Args:
+            tolerance: The minimum difference between the coordinate values of two
+                faces at which they can be considered adjacent. Default: 0.01,
+                suitable for objects in meters.
+
+        Returns:
+            A list containing only the duplicate Faces that were removed.
+        """
+        # first make a list of faces without any duplicate geometries
+        new_faces, removed_faces = [self._faces[0]], []
+        for face in self._faces[1:]:
+            for e_face in new_faces:
+                if face.geometry.is_centered_adjacent(e_face.geometry, tolerance):
+                    tol_area = math.sqrt(face.geometry.area) * tolerance
+                    if abs(face.geometry.area - e_face.area) < tol_area:
+                        removed_faces.append(face)
+                        break  # duplicate face found
+            else:  # the first face with this type of plane
+                new_faces.append(face)
+        if len(removed_faces) == 0:
+            return removed_faces  # nothing has been removed
+
+        # make a new polyface from the updated faces
+        room_polyface = Polyface3D.from_faces(
+            tuple(face.geometry for face in new_faces), tolerance)
+        if not room_polyface.is_solid:
+            room_polyface = room_polyface.merge_overlapping_edges(tolerance)
+        # reset the faces and geometry of the room with the new faces
+        self._faces = tuple(new_faces)
+        self._geometry = room_polyface
+        return removed_faces
+
     def merge_coplanar_faces(
             self, tolerance=0.01, angle_tolerance=1, orthogonal_only=False):
         """Merge coplanar Faces of this Room.
@@ -1941,6 +1979,7 @@ class Room(_BaseWithShade):
         for i, room in enumerate(rooms):
             other_rooms = room_geos[:i] + room_geos[i + 1:]
             room.coplanar_split(other_rooms, tolerance, angle_tolerance)
+            room.remove_duplicate_faces(tolerance)
 
     @staticmethod
     def solve_adjacency(rooms, tolerance=0.01, remove_mismatched_sub_faces=False):
