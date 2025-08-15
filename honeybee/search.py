@@ -82,7 +82,10 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
                 else:
                     current_obj = getattr(current_obj, attribute)
             if isinstance(current_obj, float) and decimal_count:
-                return round(current_obj, decimal_count)
+                val = round(current_obj, decimal_count)
+                return str(val) if cast_to_str else val
+            elif callable(current_obj):
+                return str(current_obj()) if cast_to_str else current_obj()
             else:
                 return str(current_obj) if cast_to_str else current_obj
         except AttributeError as e:
@@ -94,7 +97,10 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
         try:
             current_obj = getattr(obj_instance, attr_name)
             if isinstance(current_obj, float) and decimal_count:
-                return round(current_obj, decimal_count)
+                val = round(current_obj, decimal_count)
+                return str(val) if cast_to_str else val
+            elif callable(current_obj):
+                return str(current_obj()) if cast_to_str else current_obj()
             else:
                 return str(current_obj) if cast_to_str else current_obj
         except AttributeError:

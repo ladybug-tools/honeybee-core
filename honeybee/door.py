@@ -2,14 +2,15 @@
 """Honeybee Door."""
 from __future__ import division
 import math
+import re
 
-from ladybug_geometry.geometry2d.pointvector import Vector2D
-from ladybug_geometry.geometry3d.pointvector import Point3D
-from ladybug_geometry.geometry3d.face import Face3D
+from ladybug_geometry.geometry2d import Vector2D
+from ladybug_geometry.geometry3d import Point3D, Face3D
 from ladybug.color import Color
 
 from ._basewithshade import _BaseWithShade
 from .typing import clean_string
+from .search import get_attr_nested
 from .properties import DoorProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
 from .shade import Shade
@@ -279,6 +280,16 @@ class Door(_BaseWithShade):
         return isinstance(self.boundary_condition, Outdoors)
 
     @property
+    def gbxml_type(self):
+        """Get text for the type of object this is in gbXML schema."""
+        return 'NonSlidingDoor'
+
+    @property
+    def energyplus_type(self):
+        """Get text for the type of object this is in IDF schema."""
+        return 'GlassDoor' if self.is_glass else 'Door'
+
+    @property
     def type_color(self):
         """Get a Color to be used in visualizations by type."""
         return self.TYPE_COLORS[self.is_glass]
@@ -300,19 +311,51 @@ class Door(_BaseWithShade):
         return math.degrees(
             north_vector.angle_clockwise(Vector2D(self.normal.x, self.normal.y)))
 
-    def cardinal_direction(self, north_vector=Vector2D(0, 1)):
+    def cardinal_direction(self, north_vector=Vector2D(0, 1), angle_tolerance=1):
         """Get text description for the cardinal direction that the door is pointing.
 
         Will be one of the following: ('North', 'NorthEast', 'East', 'SouthEast',
-        'South', 'SouthWest', 'West', 'NorthWest').
+        'South', 'SouthWest', 'West', 'NorthWest', 'Up', 'Down').
 
         Args:
             north_vector: A ladybug_geometry Vector2D for the north direction.
                 Default is the Y-axis (0, 1).
+            angle_tolerance: The angle tolerance in degrees used to determine if
+                the geometry is perfectly Up or Down. (Default: 1).
         """
+        tilt = self.tilt
+        if tilt < angle_tolerance:
+            return 'Up'
+        elif tilt > 180 - angle_tolerance:
+            return 'Down'
         orient = self.horizontal_orientation(north_vector)
         orient_text = ('North', 'NorthEast', 'East', 'SouthEast', 'South',
                        'SouthWest', 'West', 'NorthWest')
+        angles = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
+        for i, ang in enumerate(angles):
+            if orient < ang:
+                return orient_text[i]
+        return orient_text[0]
+
+    def cardinal_abbrev(self, north_vector=Vector2D(0, 1), angle_tolerance=1):
+        """Get text abbreviation for the cardinal direction that the door is pointing.
+
+        Will be one of the following: ('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW',
+        'Up', 'Down').
+
+        Args:
+            north_vector: A ladybug_geometry Vector2D for the north direction.
+                Default is the Y-axis (0, 1).
+            angle_tolerance: The angle tolerance in degrees used to determine if
+                the door is perfectly Up or Down. (Default: 1).
+        """
+        tilt = self.tilt
+        if tilt < angle_tolerance:
+            return 'Up'
+        elif tilt > 180 - angle_tolerance:
+            return 'Down'
+        orient = self.horizontal_orientation(north_vector)
+        orient_text = ('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW')
         angles = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
         for i, ang in enumerate(angles):
             if orient < ang:
@@ -341,6 +384,28 @@ class Door(_BaseWithShade):
             new_bc_objs = (clean_string('{}_{}'.format(prefix, adj_name)) for adj_name
                            in self._boundary_condition._boundary_condition_objects)
             self._boundary_condition = Surface(new_bc_objs, True)
+
+    def rename_by_attribute(
+        self,
+        format_str='{parent.parent.display_name} - {energyplus_type} - {cardinal_direction}'
+    ):
+        """Set the display name of this Door using a format string with attributes.
+
+        Args:
+            format_str: Text string for the pattern with which the Door will be
+                renamed. Any property on this class may be used (eg. energyplus_type)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.construction.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments.
+        """
+        matches = re.findall(r'{([^}]*)}', format_str)
+        attributes = [get_attr_nested(self, m, decimal_count=2) for m in matches]
+        for attr_name, attr_val in zip(matches, attributes):
+            format_str = format_str.replace('{{{}}}'.format(attr_name), attr_val)
+        self.display_name = format_str
+        return format_str
 
     def set_adjacency(self, other_door):
         """Set this door to be adjacent to another (and vice versa).

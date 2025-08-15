@@ -2,6 +2,7 @@
 """Honeybee Room."""
 from __future__ import division
 import math
+import re
 import uuid
 
 from ladybug_geometry.geometry2d import Point2D, Vector2D, Polygon2D
@@ -11,8 +12,7 @@ from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
 import honeybee.writer.room as writer
 from ._basewithshade import _BaseWithShade
-from .typing import float_in_range, int_in_range, clean_string, \
-    invalid_dict_error
+from .typing import float_in_range, int_in_range, clean_string, invalid_dict_error
 from .properties import RoomProperties
 from .face import Face
 from .aperture import Aperture
@@ -604,6 +604,81 @@ class Room(_BaseWithShade):
         for face in self._faces:
             face.add_prefix(prefix)
         self._add_prefix_shades(prefix)
+
+    def rename_by_attribute(
+        self, format_str='{story} - {display_name}'
+    ):
+        """Set the display name of this Room using a format string with Room attributes.
+
+        Args:
+            format_str: Text string for the pattern with which the Room will be
+                renamed. Any property on this class may be used (eg. story)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.program_type.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments.
+        """
+        matches = re.findall(r'{([^}]*)}', format_str)
+        attributes = [get_attr_nested(self, m) for m in matches]
+        for attr_name, attr_val in zip(matches, attributes):
+            format_str = format_str.replace('{{{}}}'.format(attr_name), attr_val)
+        self.display_name = format_str
+        return format_str
+
+    def rename_faces_by_attribute(
+        self,
+        format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}'
+    ):
+        """Set the display name for all of this Room's faces using a format string.
+
+        Args:
+            format_str: Text string for the pattern with which the faces will be
+                renamed. Any property of the Face class may be used (eg. gbxml_str)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.construction.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments.
+        """
+        for face in self.faces:
+            face.rename_by_attribute(format_str)
+
+    def rename_apertures_by_attribute(
+        self,
+        format_str='{parent.parent.display_name} - {gbxml_type} - {cardinal_direction}'
+    ):
+        """Set the display name for all of this Room's apertures using a format string.
+
+        Args:
+            format_str: Text string for the pattern with which the apertures will be
+                renamed. Any property on the Aperture class may be used (eg. gbxml_str)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.construction.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments.
+        """
+        for ap in self.apertures:
+            ap.rename_by_attribute(format_str)
+
+    def rename_doors_by_attribute(
+        self,
+        format_str='{parent.parent.display_name} - {energyplus_type} - {cardinal_direction}'
+    ):
+        """Set the display name for all of this Room's doors using a format string.
+
+        Args:
+            format_str: Text string for the pattern with which the doors will be
+                renamed. Any property on the Door class may be used (eg. gbxml_str)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.construction.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments.
+        """
+        for dr in self.doors:
+            dr.rename_by_attribute(format_str)
 
     def horizontal_boundary(self, match_walls=False, tolerance=0.01):
         """Get a Face3D representing the horizontal boundary around the Room.
