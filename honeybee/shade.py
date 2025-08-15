@@ -2,6 +2,7 @@
 """Honeybee Shade."""
 from __future__ import division
 import math
+import re
 
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.face import Face3D
@@ -9,6 +10,7 @@ from ladybug.color import Color
 
 from ._base import _Base
 from .typing import clean_string
+from .search import get_attr_nested
 from .properties import ShadeProperties
 import honeybee.writer.shade as writer
 
@@ -254,6 +256,11 @@ class Shade(_Base):
         return math.degrees(self._geometry.azimuth)
 
     @property
+    def gbxml_type(self):
+        """Get text for the type of object this is in gbXML schema."""
+        return 'Shade'
+
+    @property
     def type_color(self):
         """Get a Color to be used in visualizations by type."""
         return self.TYPE_COLORS[(self.is_indoor, self.is_detached)]
@@ -279,6 +286,27 @@ class Shade(_Base):
         self._identifier = clean_string('{}_{}'.format(prefix, self.identifier))
         self.display_name = '{}_{}'.format(prefix, self.display_name)
         self.properties.add_prefix(prefix)
+
+    def rename_by_attribute(
+        self, format_str='{display_name} - {gbxml_type}'
+    ):
+        """Set the display name of this Shade using a format string with attributes.
+
+        Args:
+            format_str: Text string for the pattern with which the Shade will be
+                renamed. Any property on this class may be used (eg. energyplus_type)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.construction.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments.
+        """
+        matches = re.findall(r'{([^}]*)}', format_str)
+        attributes = [get_attr_nested(self, m, decimal_count=2) for m in matches]
+        for attr_name, attr_val in zip(matches, attributes):
+            format_str = format_str.replace('{{{}}}'.format(attr_name), attr_val)
+        self.display_name = format_str
+        return format_str
 
     def move(self, moving_vec):
         """Move this Shade along a vector.

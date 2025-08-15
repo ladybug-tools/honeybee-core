@@ -208,6 +208,29 @@ def test_room_add_prefix():
         assert shd.identifier.startswith(prefix)
 
 
+def test_rename_by_attribute():
+    """Test the room rename_by_attribute methods."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.5, 0.01)
+    table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
+    room.add_indoor_shade(Shade('Table', table_geo))
+
+    face_str = '{parent.display_name} - {gbxml_type} - {cardinal_direction}'
+    room.rename_faces_by_attribute(face_str)
+    assert room.faces[0].display_name == 'ShoeBoxZone - SlabOnGrade - Down'
+    assert room.faces[1].display_name == 'ShoeBoxZone - ExteriorWall - North'
+    assert room.faces[2].display_name == 'ShoeBoxZone - ExteriorWall - East'
+    assert room.faces[3].display_name == 'ShoeBoxZone - ExteriorWall - South'
+    assert room.faces[4].display_name == 'ShoeBoxZone - ExteriorWall - West'
+    assert room.faces[5].display_name == 'ShoeBoxZone - Roof - Up'
+
+    win_str = '{parent.parent.display_name} - {gbxml_type} - ' \
+        '{cardinal_direction} - {area} m2'
+    room.rename_apertures_by_attribute(win_str)
+    assert room.apertures[0].display_name == 'ShoeBoxZone - FixedWindow - South - 7.5 m2'
+
+
 def test_room_multiplier():
     """Test the room multiplier."""
     room = Room.from_box('ShoeBoxZone', 5, 10, 3)
