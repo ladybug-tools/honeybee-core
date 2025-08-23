@@ -116,6 +116,28 @@ class Model(_Base):
         '_units', '_tolerance', '_angle_tolerance'
     )
 
+    # dictionary mapping validation error codes to a corresponding check function
+    ERROR_MAP = {
+        '000001': 'check_duplicate_shade_identifiers',
+        '000002': 'check_duplicate_sub_face_identifiers',
+        '000003': 'check_duplicate_face_identifiers',
+        '000004': 'check_duplicate_room_identifiers',
+        '000101': 'check_planar',
+        '000102': 'check_self_intersecting',
+        '000103': 'check_degenerate_rooms',
+        '000104': 'check_sub_faces_valid',
+        '000105': 'check_sub_faces_overlapping',
+        '000106': 'check_rooms_solid',
+        '000107': 'check_degenerate_rooms',
+        '000108': 'check_room_volume_collisions',
+        '000109': 'check_upside_down_faces',
+        '000201': 'check_missing_adjacencies',
+        '000202': 'check_missing_adjacencies',
+        '000203': 'check_missing_adjacencies',
+        '000204': 'check_missing_adjacencies',
+        '000205': 'check_matching_adjacent_areas',
+        '000206': 'check_all_air_boundaries_adjacent'
+    }
     UNITS = UNITS
     UNITS_TOLERANCES = UNITS_TOLERANCES
 
@@ -2188,6 +2210,49 @@ class Model(_Base):
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
+
+    def check_for_error(self, error_code, raise_exception=True, detailed=False):
+        """Check that the Model is valid for a specific validation error code.
+
+        Note that, in order for error codes from a given honeybee extension to
+        run correctly with this method, the specified honeybee extension related
+        to the error code must be installed.
+
+        Args:
+            error_code: Text for the error code for which the check will be performed.
+                This can be the value under the "code" key in the dictionary of
+                the validation error whenever the detailed option is used.
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if any errors are found. If False, this method will simply
+                return a text string with all errors that were found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A text string with all errors that were found or a list if detailed is True.
+            This string (or list) will be empty if no errors were found.
+        """
+        # set up defaults to ensure the method runs correctly
+        detailed = False if raise_exception else detailed
+        assert self.tolerance != 0, \
+            'Model must have a non-zero tolerance in order to perform geometry checks.'
+        assert self.angle_tolerance != 0, \
+            'Model must have a non-zero angle_tolerance to perform geometry checks.'
+        error_code = str(error_code)  # catch the case someone passed an int
+
+        # get the check function to be run from the error code
+        try:  # fist see if the check function exists on the cor object
+            check_func = self.ERROR_MAP[error_code]
+            check_func = getattr(self, check_func)
+        except KeyError:  # next, see if the check function exists in an extension
+            check_func = self._properties._check_func_from_code(error_code)
+            if check_func is None:
+                err_msg = 'No check function was found matching the error ' \
+                    'code "{}".'.format(error_code)
+                raise ValueError(err_msg)
+
+        # run the check function
+        return check_func(raise_exception=raise_exception, detailed=detailed)
 
     def check_all(self, raise_exception=True, detailed=False, all_ext_checks=False):
         """Check all of the aspects of the Model for validation errors.
