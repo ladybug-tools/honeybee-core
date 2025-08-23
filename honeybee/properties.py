@@ -486,6 +486,25 @@ class ModelProperties(_Properties):
                     raise Exception('Failed to check_all for {}: {}'.format(var, e))
         return msgs
 
+    def _check_func_from_code(self, error_code):
+        """Get a check function for a specific error code that exists in an extension.
+
+        Args:
+            error_code: Text for the error code for which the check will be performed.
+                This can be the value under the "code" key in the dictionary of
+                the validation error whenever the detailed option is used.
+        """
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if hasattr(var, 'ERROR_MAP'):
+                err_map = getattr(var, 'ERROR_MAP')
+                try:
+                    check_func = err_map[error_code]
+                    check_func = getattr(var, check_func)
+                    return check_func
+                except KeyError:  # not the correct extension for the code
+                    pass
+
     def __repr__(self):
         """Properties representation."""
         return 'ModelProperties: {}'.format(self.host.display_name)
