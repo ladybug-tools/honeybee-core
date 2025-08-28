@@ -13,7 +13,7 @@ try:  # check if we are in IronPython
 except ImportError:  # wea are in cPython
     import pickle
 
-from ladybug_geometry.geometry3d import Plane, Face3D, Mesh3D
+from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, Face3D, Mesh3D
 from ladybug_geometry.interop.stl import STL
 
 from ._base import _Base
@@ -2000,6 +2000,38 @@ class Model(_Base):
             self.scale(scale_fac)
             self.tolerance = self.tolerance * scale_fac
             self.units = units
+
+    def reset_coordinate_system(self, new_origin=None):
+        """Set the origin of the coordinate system in which the model exists.
+
+        This is useful for resolving cases where the model geometry lies so
+        far from the origin in its current coordinate system that it creates
+        problems. For example, the model geometry might be so high above the
+        origin that EnergyPlus models it in the conditions of the stratosphere.
+        Another possibility is that the float values of the coordinates are so
+        high that floating point tolerance interferes with the proper
+        representation of the model's details.
+
+        In addition to moving the model such that the new_origin sets the
+        coordinate values of the geometry, this method will also set the
+        reference_vector of this object such that any models added into this
+        one from the original source coordinate system respect the new system.
+
+        Args:
+            new_origin: A Point3D in the model's current coordinate system that
+                will become the origin of the new coordinate system. If unspecified,
+                the minimum of the bounding box around the model geometry will
+                be used and the average_height_above_ground will be used to
+                set the Z coordinate. (Default: None).
+        """
+        # compute the new_origin from the bounding box around the geometry
+        if new_origin is None:
+            min_2d = self.min
+            z_val = self.average_height - self.average_height_above_ground
+            new_origin = Point3D(min_2d.x, min_2d.y, z_val)
+        # move the geometry using a vector that is the inverse of the origin
+        ref_vec = Vector3D(-new_origin.x, -new_origin.y, -new_origin.z)
+        self.move(ref_vec)
 
     def rooms_to_orphaned(self):
         """Convert all Rooms in this Model to orphaned geometry objects.
