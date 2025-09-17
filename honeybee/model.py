@@ -3607,22 +3607,21 @@ class Model(_Base):
             report = 'Input Model for validation is not a Model object, ' \
                 'file path to a Model or a Model HBJSON string.'
 
-        # get the function to call to do checks
-        if '.' in check_function:  # nested attribute
-            attributes = check_function.split('.')  # get all the sub-attributes
-            check_func = model
-            for attribute in attributes:
-                if check_func is None:
-                    continue
-                check_func = getattr(check_func, attribute, None)
-        else:
-            check_func = getattr(model, check_function, None)
-        assert check_func is not None, \
-            'Honeybee Model class has no method {}'.format(check_function)
-
-        # process the arguments and options
-        args = [] if check_args is None else [] + list(check_args)
-        kwargs = {'raise_exception': False}
+        if report == '':  # get the function to call to do checks
+            if '.' in check_function:  # nested attribute
+                attributes = check_function.split('.')  # get all the sub-attributes
+                check_func = model
+                for attribute in attributes:
+                    if check_func is None:
+                        continue
+                    check_func = getattr(check_func, attribute, None)
+            else:
+                check_func = getattr(model, check_function, None)
+            assert check_func is not None, \
+                'Honeybee Model class has no method {}'.format(check_function)
+            # process the arguments and options
+            args = [] if check_args is None else [] + list(check_args)
+            kwargs = {'raise_exception': False}
 
         # create the report
         if not json_output:  # create a plain text report
@@ -3632,8 +3631,9 @@ class Model(_Base):
             ver_msg = 'Validating Model using honeybee-core=={} and ' \
                 'honeybee-schema=={}'.format(c_ver, s_ver)
             # run the check function
-            kwargs['detailed'] = False
-            report = check_func(*args, **kwargs)
+            if report == '':
+                kwargs['detailed'] = False
+                report = check_func(*args, **kwargs)
             # format the results of the check
             if report == '':
                 full_msg = ver_msg + '\nCongratulations! Your Model is valid!'

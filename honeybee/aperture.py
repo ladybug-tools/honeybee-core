@@ -94,6 +94,13 @@ class Aperture(_BaseWithShade):
             assert data['type'] == 'Aperture', 'Expected Aperture dictionary. ' \
                 'Got {}.'.format(data['type'])
 
+            # remove any invalid holes from the geometry
+            geo_dict = data['geometry']
+            if 'holes' in geo_dict and geo_dict['holes'] is not None:
+                for i, hole_list in enumerate(geo_dict['holes']):
+                    if len(hole_list) < 3:
+                        geo_dict['holes'].pop(i)
+
             # serialize the aperture
             is_operable = data['is_operable'] if 'is_operable' in data else False
             if data['boundary_condition']['type'] == 'Outdoors':
