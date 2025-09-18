@@ -1866,14 +1866,22 @@ class Room(_BaseWithShade):
                                 try:
                                     nf.add_aperture(ap)
                                 except AssertionError:  # probably adiabatic
-                                    nf.boundary_condition = boundary_conditions.outdoors
+                                    if not isinstance(nf.boundary_condition, Outdoors):
+                                        nf.boundary_condition = \
+                                            boundary_conditions.outdoors
+                                    if isinstance(nf.type, AirBoundary):
+                                        nf.type = get_type_from_normal(nf.normal)
                                     nf.add_aperture(ap)
                         for dr in doors:
                             if nf.geometry.is_sub_face(dr.geometry, tol, a_tol):
                                 try:
                                     nf.add_door(dr)
                                 except AssertionError:  # probably adiabatic
-                                    nf.boundary_condition = boundary_conditions.outdoors
+                                    if not isinstance(nf.boundary_condition, Outdoors):
+                                        nf.boundary_condition = \
+                                            boundary_conditions.outdoors
+                                    if isinstance(nf.type, AirBoundary):
+                                        nf.type = get_type_from_normal(nf.normal)
                                     nf.add_door(dr)
                         if i == 0:  # add all assigned shades to this face
                             nf.add_indoor_shades(in_shades)
