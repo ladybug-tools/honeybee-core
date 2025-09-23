@@ -2340,6 +2340,49 @@ class Room(_BaseWithShade):
         return grouped_rooms, floor_heights
 
     @staticmethod
+    def group_by_story(rooms):
+        """Group Rooms according to their story property.
+
+        The returned room groups will be sorted from the lowest average floor
+        to the highest average floor height.
+
+        Args:
+            rooms: A list of honeybee rooms to be grouped by story.
+
+        Returns:
+            A tuple with three items.
+
+            -   grouped_rooms - A list of lists of honeybee rooms with each sub-list
+                representing a different story.
+
+            -   story_names - A list of story names with one value for each
+                sub-list of the output grouped_rooms.
+
+            -   floor_heights - A list of floor heights with one floor height
+                for each sub-list of the output grouped_rooms.
+        """
+        # group the rooms by story
+        story_dict = {}
+        for room in rooms:
+            try:
+                story_dict[room.story].append(room)
+            except KeyError:
+                story_dict[room.story] = [room]
+        # sort the stories by average floor height
+        grouped_rooms, story_names, floor_heights = [], [], []
+        for s_name, g_rooms in story_dict.items():
+            grouped_rooms.append(g_rooms)
+            story_names.append(s_name)
+            weighted_sum = sum(r.average_floor_height * r.floor_area for r in g_rooms)
+            total_area = sum(r.floor_area for r in g_rooms)
+            avg_flr = weighted_sum / total_area
+            floor_heights.append(avg_flr)
+        zip_obj = zip(floor_heights, grouped_rooms, story_names)
+        floor_heights, grouped_rooms, story_names = \
+            (list(t) for t in zip(*sorted(zip_obj, key=lambda x: x[0])))
+        return grouped_rooms, story_names, floor_heights
+
+    @staticmethod
     def stories_by_floor_height(rooms, min_difference=2.0):
         """Assign story properties to a set of Rooms using their floor heights.
 

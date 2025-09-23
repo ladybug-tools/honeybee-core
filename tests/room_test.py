@@ -714,6 +714,41 @@ def test_group_by_orientation():
     assert orientations == [0.0, 90.0, 180.0, 270.0]
 
 
+def test_group_by_story():
+    """Test the group_by_story method."""
+    pts_1 = (Point3D(0, 0), Point3D(15, 0), Point3D(10, 5), Point3D(5, 5))
+    pts_2 = (Point3D(15, 0), Point3D(15, 15), Point3D(10, 10), Point3D(10, 5))
+    pts_3 = (Point3D(0, 15), Point3D(5, 10), Point3D(10, 10), Point3D(15, 15))
+    pts_4 = (Point3D(0, 0), Point3D(5, 5), Point3D(5, 10), Point3D(0, 15))
+    pts_5 = (Point3D(5, 5), Point3D(10, 5), Point3D(10, 10), Point3D(5, 10))
+    pf_1 = Polyface3D.from_offset_face(Face3D(pts_1), 3)
+    pf_2 = Polyface3D.from_offset_face(Face3D(pts_2), 3)
+    pf_3 = Polyface3D.from_offset_face(Face3D(pts_3), 3)
+    pf_4 = Polyface3D.from_offset_face(Face3D(pts_4), 3)
+    pf_5 = Polyface3D.from_offset_face(Face3D(pts_5), 3)
+    room_1 = Room.from_polyface3d('Zone1', pf_1)
+    room_2 = Room.from_polyface3d('Zone2', pf_2)
+    room_3 = Room.from_polyface3d('Zone3', pf_3)
+    room_4 = Room.from_polyface3d('Zone4', pf_4)
+    room_5 = Room.from_polyface3d('Zone5', pf_5)
+    rooms = [room_1, room_2, room_3, room_4, room_5]
+    for rm in rooms:
+        rm.story = 'Ground Floor'
+
+    rooms_basement = [rm.duplicate() for rm in rooms]
+    for rm in rooms_basement:
+        rm.move(Vector3D(0, 0, -3))
+        rm.add_prefix('Basement')
+        rm.story = 'Basement'
+    Room.solve_adjacency(rooms, 0.01)
+    all_rooms = rooms + rooms_basement
+
+    grouped_rooms, story_names, floor_heights = Room.group_by_story(all_rooms)
+    assert floor_heights == [-3.0, 0.0]
+    assert story_names == ['Basement', 'Ground Floor']
+    assert len(grouped_rooms[0]) == 5
+
+
 def test_horizontal_boundary():
     """Test the horizontal_boundary method for a variety of shapes."""
     geo_file = './tests/json/complex_polyfaces.json'
