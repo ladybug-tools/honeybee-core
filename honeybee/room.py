@@ -2032,6 +2032,80 @@ class Room(_BaseWithShade):
         return new_faces
 
     @staticmethod
+    def join_adjacent_rooms(rooms, tolerance=0.01):
+        """Get Rooms merged across their adjacent Surface boundary conditions.
+
+        When the input rooms form a continuous volume across their adjacencies,
+        a list with only a single joined Room will be returned. Otherwise, there
+        will be more than one Room in the result for each contiguous volume
+        across the adjacencies.
+
+        In all cases, the Room with the highest volume in the contiguous group
+        will set the properties of the joined Room, including multiplier, zone,
+        story, exclude_floor_area, and all extension attributes
+
+        Args:
+            rooms: A list of Rooms which will be merged into one (or more) Rooms
+                across their adjacent Faces.
+            tolerance: The minimum difference between the coordinate values of two
+                faces at which they can be considered adjacent. (Default: 0.01,
+                suitable for objects in meters).
+        """
+        # group the rooms according to their adjacency
+        adj_groups = Room.group_by_adjacency(rooms)
+        joined_rooms = []
+
+        # create the joined Rooms from each group
+        for adj_group in adj_groups:
+            # first check to see if the group has any adjacencies at all
+            if len(adj_group) == 1:
+                joined_rooms.append(adj_group[0])
+                continue
+            # determine the primary room that will set the properties of the new Room
+            volumes = [r.volume for r in adj_group]
+            sort_inds = [i for _, i in sorted(zip(volumes, range(len(volumes))))]
+            primary_room = adj_group[sort_inds[-1]]
+            # gather all of the adjacent faces to be eliminated in the new Room
+            all_adjacencies, remove_faces = {}, set()
+            for room in adj_group:
+                for face in room.faces:
+                    if isinstance(face.boundary_condition, Surface):
+                        bc_obj = face.boundary_condition.boundary_condition_object
+                        all_adjacencies[bc_obj] = face.identifier
+                        if face.identifier in all_adjacencies:
+                            remove_faces.add(face.identifier)
+                            remove_faces.add(all_adjacencies[face.identifier])
+            # gather the faces forming a contiguous volume and make the new room
+            new_faces, new_indoor_shades, new_outdoor_shades = [], [], []
+            for room in adj_group:
+                new_indoor_shades.extend((s.duplicate() for s in room.indoor_shades))
+                new_outdoor_shades.extend((s.duplicate() for s in room.outdoor_shades))
+                for face in room.faces:
+                    if face.identifier not in remove_faces:
+                        new_faces.append(face.duplicate())
+            # create the new room and assign any shades
+            new_r = Room(primary_room.identifier, new_faces, tolerance)
+            new_r._outdoor_shades = new_outdoor_shades
+            new_r._indoor_shades = new_indoor_shades
+            for oshd in new_outdoor_shades:
+                oshd._parent = new_r
+            for ishd in new_indoor_shades:
+                ishd._parent = new_r
+                ishd._is_indoor = True
+            # transfer the primary room properties to the new room
+            new_r._display_name = primary_room._display_name
+            new_r._user_data = None if primary_room.user_data is None \
+                else primary_room.user_data.copy()
+            new_r._multiplier = primary_room.multiplier
+            new_r._zone = primary_room._zone
+            new_r._story = primary_room._story
+            new_r._exclude_floor_area = primary_room.exclude_floor_area
+            new_r._properties._duplicate_extension_attr(primary_room._properties)
+            joined_rooms.append(new_r)
+
+        return joined_rooms
+
+    @staticmethod
     def intersect_adjacency(rooms, tolerance=0.01, angle_tolerance=1):
         """Intersect the Faces of an array of Rooms to ensure matching adjacencies.
 
@@ -3201,7 +3275,7 @@ class Room(_BaseWithShade):
         # loop through the rooms and find air boundary adjacencies
         for room in all_rooms:
             adj_ids = adj_finding_function(room)
-            if len(adj_ids) == 0:  # a room that is its own solar enclosure
+            if len(adj_ids) == 0:  # a room with no adjacencies
                 adj_network.append([room])
             else:  # there are other adjacent rooms to find
                 local_network = [room]
