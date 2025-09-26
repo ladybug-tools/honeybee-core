@@ -151,30 +151,12 @@ class Model(_Base):
         self.tolerance = tolerance
         self.angle_tolerance = angle_tolerance
 
-        self._rooms = []
-        self._orphaned_faces = []
-        self._orphaned_apertures = []
-        self._orphaned_doors = []
-        self._orphaned_shades = []
-        self._shade_meshes = []
-        if rooms is not None:
-            for room in rooms:
-                self.add_room(room)
-        if orphaned_faces is not None:
-            for face in orphaned_faces:
-                self.add_face(face)
-        if orphaned_apertures is not None:
-            for aperture in orphaned_apertures:
-                self.add_aperture(aperture)
-        if orphaned_doors is not None:
-            for door in orphaned_doors:
-                self.add_door(door)
-        if orphaned_shades is not None:
-            for shade in orphaned_shades:
-                self.add_shade(shade)
-        if shade_meshes is not None:
-            for shade_mesh in shade_meshes:
-                self.add_shade_mesh(shade_mesh)
+        self.rooms = rooms
+        self.orphaned_faces = orphaned_faces
+        self.orphaned_apertures = orphaned_apertures
+        self.orphaned_doors = orphaned_doors
+        self.orphaned_shades = orphaned_shades
+        self.shade_meshes = shade_meshes
 
         self._properties = ModelProperties(self)
 
@@ -717,6 +699,13 @@ class Model(_Base):
         """Get a tuple of all Room objects in the model."""
         return tuple(self._rooms)
 
+    @rooms.setter
+    def rooms(self, value):
+        self._rooms = []
+        if value is not None:
+            for room in value:
+                self.add_room(room)
+
     @property
     def faces(self):
         """Get a list of all Face objects in the model."""
@@ -822,8 +811,15 @@ class Model(_Base):
 
     @property
     def shade_meshes(self):
-        """Get a tuple of all ShadeMesh objects in the model."""
+        """Get or set a tuple of all ShadeMesh objects in the model."""
         return tuple(self._shade_meshes)
+
+    @shade_meshes.setter
+    def shade_meshes(self, value):
+        self._shade_meshes = []
+        if value is not None:
+            for shd_m in value:
+                self.add_shade_mesh(shd_m)
 
     @property
     def grouped_shades(self):
@@ -850,23 +846,52 @@ class Model(_Base):
 
     @property
     def orphaned_faces(self):
-        """Get a tuple of all Face objects without parent Rooms in the model."""
+        """Get or set a tuple of all Face objects without parent Rooms in the model."""
         return tuple(self._orphaned_faces)
+
+    @orphaned_faces.setter
+    def orphaned_faces(self, value):
+        self._orphaned_faces = []
+        if value is not None:
+            for face in value:
+                self.add_face(face)
 
     @property
     def orphaned_apertures(self):
-        """Get a tuple of all Aperture objects without parent Faces in the model."""
+        """Get or set a tuple of all Aperture objects without parent Faces in the model.
+        """
         return tuple(self._orphaned_apertures)
+
+    @orphaned_apertures.setter
+    def orphaned_apertures(self, value):
+        self._orphaned_apertures = []
+        if value is not None:
+            for ap in value:
+                self.add_aperture(ap)
 
     @property
     def orphaned_doors(self):
-        """Get a tuple of all Door objects without parent Faces in the model."""
+        """Get or set a tuple of all Door objects without parent Faces in the model."""
         return tuple(self._orphaned_doors)
+
+    @orphaned_doors.setter
+    def orphaned_doors(self, value):
+        self._orphaned_doors = []
+        if value is not None:
+            for dr in value:
+                self.add_door(dr)
 
     @property
     def orphaned_shades(self):
-        """Get a tuple of all Shade objects without parent Rooms in the model."""
+        """Get or set a tuple of all Shade objects without parent Rooms in the model."""
         return tuple(self._orphaned_shades)
+
+    @orphaned_shades.setter
+    def orphaned_shades(self, value):
+        self._orphaned_shades = []
+        if value is not None:
+            for shd in value:
+                self.add_shade(shd)
 
     @property
     def stories(self):
