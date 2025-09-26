@@ -3282,7 +3282,12 @@ class Room(_BaseWithShade):
                 local_ids, first_id = set(adj_ids), room.identifier
                 while len(adj_ids) != 0:
                     # add the current rooms to the local network
-                    adj_objs = [room_lookup[rm_id] for rm_id in adj_ids]
+                    adj_objs = []
+                    for rm_id in adj_ids:
+                        try:
+                            adj_objs.append(room_lookup[rm_id])
+                        except KeyError:  # missing adjacency among the room groups
+                            pass
                     local_network.extend(adj_objs)
                     adj_ids = []  # reset the list of new adjacencies
                     # find any rooms that are adjacent to the adjacent rooms
