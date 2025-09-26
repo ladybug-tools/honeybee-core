@@ -1,0 +1,7 @@
+honeybee.facetype module
+========================
+
+.. automodule:: honeybee.facetype
+   :members:
+   :undoc-members:
+   :show-inheritance:
