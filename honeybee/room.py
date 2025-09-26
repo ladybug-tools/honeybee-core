@@ -2059,7 +2059,7 @@ class Room(_BaseWithShade):
         for adj_group in adj_groups:
             # first check to see if the group has any adjacencies at all
             if len(adj_group) == 1:
-                joined_rooms.append(adj_group[0])
+                joined_rooms.append(adj_group[0].duplicate())
                 continue
             # determine the primary room that will set the properties of the new Room
             volumes = [r.volume for r in adj_group]
