@@ -3299,7 +3299,12 @@ class Room(_BaseWithShade):
                             local_ids.add(rm_id)
                         adj_ids.extend(new_ids)
                 # after the local network is understood, clean up duplicated rooms
-                adj_network.append(local_network)
+                clean_local_network, exist_ids = [], set()
+                for room in local_network:
+                    if room.identifier not in exist_ids:
+                        clean_local_network.append(room)
+                        exist_ids.add(room.identifier)
+                adj_network.append(clean_local_network)
                 i_to_remove = [i for i, room_obj in enumerate(all_rooms)
                                if room_obj.identifier in local_ids]
                 for i in reversed(i_to_remove):
