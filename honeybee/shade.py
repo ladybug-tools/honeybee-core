@@ -86,16 +86,9 @@ class Shade(_Base):
             assert data['type'] == 'Shade', 'Expected Shade dictionary. ' \
                 'Got {}.'.format(data['type'])
 
-            # remove any invalid holes from the geometry
-            geo_dict = data['geometry']
-            if 'holes' in geo_dict and geo_dict['holes'] is not None:
-                for i, hole_list in enumerate(geo_dict['holes']):
-                    if len(hole_list) < 3:
-                        geo_dict['holes'].pop(i)
-
             # serialize the dictionary to an object
-            is_detached = data['is_detached'] if 'is_detached' in data else False
-            shade = cls(data['identifier'], Face3D.from_dict(geo_dict), is_detached)
+            is_det = data['is_detached'] if 'is_detached' in data else False
+            shade = cls(data['identifier'], Face3D.from_dict(data['geometry']), is_det)
             if 'display_name' in data and data['display_name'] is not None:
                 shade.display_name = data['display_name']
             if 'user_data' in data and data['user_data'] is not None:

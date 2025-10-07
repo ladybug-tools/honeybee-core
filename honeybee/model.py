@@ -161,11 +161,16 @@ class Model(_Base):
         self._properties = ModelProperties(self)
 
     @classmethod
-    def from_dict(cls, data):
+    def from_dict(cls, data, cleanup_irrational=False):
         """Initialize a Model from a dictionary.
 
         Args:
             data: A dictionary representation of a Model object.
+            cleanup_irrational: Boolean to note whether common types of irrational
+                objects should be cleaned or removed from the dictionary before
+                serializing the model to Python. Typical cases that are removed
+                this way include Face3Ds with fewer than 3 vertices, Rooms that
+                have no Face geometry, etc. (Default: False).
         """
         # check the type of dictionary
         assert data['type'] == 'Model', 'Expected Model dictionary. ' \
@@ -178,6 +183,10 @@ class Model(_Base):
             data['tolerance'] is None else data['tolerance']
         angle_tol = 1.0 if 'angle_tolerance' not in data or \
             data['angle_tolerance'] is None else data['angle_tolerance']
+
+        # clean the irrational objects out if requested
+        if cleanup_irrational:
+            cls.clean_irrational_geometry(data)
 
         # import all of the geometry
         rooms = None  # import rooms
@@ -244,11 +253,16 @@ class Model(_Base):
         return model
 
     @classmethod
-    def from_file(cls, hb_file):
+    def from_file(cls, hb_file, cleanup_irrational=False):
         """Initialize a Model from a HBJSON or HBpkl file, auto-sensing the type.
 
         Args:
             hb_file: Path to either a HBJSON or HBpkl file.
+            cleanup_irrational: Boolean to note whether common types of irrational
+                objects should be cleaned or removed from the dictionary before
+                serializing the model to Python. Typical cases that are removed
+                this way include Face3Ds with fewer than 3 vertices, Rooms that
+                have no Face geometry, etc. (Default: False).
         """
         # sense the file type from the first character to avoid maxing memory with JSON
         # this is needed since queenbee overwrites all file extensions
@@ -258,15 +272,20 @@ class Model(_Base):
         is_json = True if first_char == '{' or second_char == '{' else False
         # load the file using either HBJSON pathway or HBpkl
         if is_json:
-            return cls.from_hbjson(hb_file)
-        return cls.from_hbpkl(hb_file)
+            return cls.from_hbjson(hb_file, cleanup_irrational)
+        return cls.from_hbpkl(hb_file, cleanup_irrational)
 
     @classmethod
-    def from_hbjson(cls, hbjson_file):
+    def from_hbjson(cls, hbjson_file, cleanup_irrational=False):
         """Initialize a Model from a HBJSON file.
 
         Args:
             hbjson_file: Path to HBJSON file.
+            cleanup_irrational: Boolean to note whether common types of irrational
+                objects should be cleaned or removed from the dictionary before
+                serializing the model to Python. Typical cases that are removed
+                this way include Face3Ds with fewer than 3 vertices, Rooms that
+                have no Face geometry, etc. (Default: False).
         """
         assert os.path.isfile(hbjson_file), 'Failed to find %s' % hbjson_file
         with io.open(hbjson_file, encoding='utf-8') as inf:
@@ -276,19 +295,24 @@ class Model(_Base):
             if second_char == '{':
                 inf.read(1)
             data = json.load(inf)
-        return cls.from_dict(data)
+        return cls.from_dict(data, cleanup_irrational)
 
     @classmethod
-    def from_hbpkl(cls, hbpkl_file):
+    def from_hbpkl(cls, hbpkl_file, cleanup_irrational=False):
         """Initialize a Model from a HBpkl file.
 
         Args:
             hbpkl_file: Path to HBpkl file.
+            cleanup_irrational: Boolean to note whether common types of irrational
+                objects should be cleaned or removed from the dictionary before
+                serializing the model to Python. Typical cases that are removed
+                this way include Face3Ds with fewer than 3 vertices, Rooms that
+                have no Face geometry, etc. (Default: False).
         """
         assert os.path.isfile(hbpkl_file), 'Failed to find %s' % hbpkl_file
         with open(hbpkl_file, 'rb') as inf:
             data = pickle.load(inf)
-        return cls.from_dict(data)
+        return cls.from_dict(data, cleanup_irrational)
 
     @classmethod
     def from_stl(cls, file_path, geometry_to_faces=False, units='Meters',
@@ -3684,6 +3708,97 @@ class Model(_Base):
                 out_dict['errors'] = []
                 out_dict['valid'] = False
             return json.dumps(out_dict, indent=4)
+
+    @staticmethod
+    def clean_irrational_geometry(model_dict):
+        """Remove irrational geometry objects from a honeybee Model dictionary.
+
+        This can be useful to run prior to serializing the Model object from a
+        dictionary if it was produced from a source other than the Python
+        core libraries, in which case the dictionary is necessarily rational
+        and serializable. This is because not all honeybee-schema bindings
+        enforce fundamental definitions of geometry types upon initialization
+        of the geometry objects, leading to exceptions when an attempt is made
+        to serialize them to Python. Furthermore, it is possible that the honeybee
+        Model dictionary did not originate from any schema bindings at all, in
+        which case it is highly recommended that this method be run.
+
+        Typical irrational geometry cases that are removed by this method include.
+
+            * Apertures/Doors with less than 3 vertices or holes less than 3 vertices.
+            * Faces with less than 3 vertices or holes with less than 3 vertices.
+            * Rooms that have no Face geometry.
+            * Shade Face3Ds with less than 3 vertices or holes with less than 3 vertices.
+            * ShadeMesh Mesh3Ds with no faces or faces with less than 3 vertices.
+        """
+        # clean all of the Room geometry in the model dictionary
+        if 'rooms' in model_dict and model_dict['rooms'] is not None:
+            for ri in range(len(model_dict['rooms']) - 1, -1, -1):
+                r_dict = model_dict['rooms'][ri]
+                # clean all of the Face geometry
+                Model._clean_irrational_geo_with_shade(r_dict['faces'])
+                for f_dict in r_dict['faces']:
+                    # clean all of the Aperture/Door geometry
+                    if 'apertures' in f_dict and f_dict['apertures'] is not None:
+                        Model._clean_irrational_geo_with_shade(f_dict['apertures'])
+                    if 'doors' in f_dict and f_dict['doors'] is not None:
+                        Model._clean_irrational_geo_with_shade(f_dict['doors'])
+                # clean the assigned shade geometry
+                if 'outdoor_shades' in r_dict and r_dict['outdoor_shades'] is not None:
+                    Model._clean_irrational_face3ds(r_dict['outdoor_shades'])
+                if 'indoor_shades' in r_dict and r_dict['indoor_shades'] is not None:
+                    Model._clean_irrational_face3ds(r_dict['indoor_shades'])
+                if len(r_dict['faces']) == 0:  # the entire Room is irrational
+                    model_dict['rooms'].pop(ri)
+        # clean all of the orphaned geometry in the model dictionary
+        if 'orphaned_faces' in model_dict and model_dict['orphaned_faces'] is not None:
+            Model._clean_irrational_geo_with_shade(model_dict['orphaned_faces'])
+        if 'orphaned_apertures' in model_dict and \
+                model_dict['orphaned_apertures'] is not None:
+            Model._clean_irrational_geo_with_shade(model_dict['orphaned_apertures'])
+        if 'orphaned_doors' in model_dict and model_dict['orphaned_doors'] is not None:
+            Model._clean_irrational_geo_with_shade(model_dict['orphaned_doors'])
+        if 'orphaned_shades' in model_dict and model_dict['orphaned_shades'] is not None:
+            Model._clean_irrational_face3ds(model_dict['orphaned_shades'])
+        # clean all of the shade mesh geometry in the model dictionary
+        if 'shade_meshes' in model_dict and model_dict['shade_meshes'] is not None:
+            for smi in range(len(model_dict['shade_meshes']) - 1, -1, -1):
+                sm_dict = model_dict['shade_meshes'][smi]['geometry']
+                for mfi in range(len(sm_dict['faces']) - 1, -1, -1):
+                    mf = sm_dict['faces'][mfi]
+                    if len(mf) not in (3, 4):
+                        sm_dict['faces'].pop(mfi)
+                    else:
+                        for ind in mf:
+                            try:
+                                sm_dict['vertices'][ind]
+                            except IndexError:
+                                sm_dict['faces'].pop(mfi)
+                                break
+                if len(sm_dict['faces']) == 0:
+                    model_dict['shade_meshes'].pop(smi)
+
+    @staticmethod
+    def _clean_irrational_geo_with_shade(geo_obj_dicts):
+        """Clean irrational Face3Ds out of a list of honeybee geometry objects."""
+        Model._clean_irrational_face3ds(geo_obj_dicts)
+        for f_dict in geo_obj_dicts:
+            if 'outdoor_shades' in f_dict and f_dict['outdoor_shades'] is not None:
+                Model._clean_irrational_face3ds(f_dict['outdoor_shades'])
+            if 'indoor_shades' in f_dict and f_dict['indoor_shades'] is not None:
+                Model._clean_irrational_face3ds(f_dict['indoor_shades'])
+
+    @staticmethod
+    def _clean_irrational_face3ds(geo_obj_dicts):
+        """Clean irrational Face3Ds out of a list of honeybee geometry objects."""
+        for fi in range(len(geo_obj_dicts) - 1, -1, -1):
+            f_dict = geo_obj_dicts[fi]
+            face_3d = f_dict['geometry']
+            if len(face_3d['boundary']) < 3:
+                geo_obj_dicts.pop(fi)
+                continue
+            elif 'holes' in face_3d:
+                face_3d['holes'] = [h for h in face_3d['holes'] if len(h) >= 3]
 
     @staticmethod
     def conversion_factor_to_meters(units):
