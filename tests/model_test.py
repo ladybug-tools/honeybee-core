@@ -379,7 +379,7 @@ def test_model_add_prefix():
 def test_reset_room_ids():
     """Test the reset_room_ids method."""
     model_json = './tests/json/model_with_adiabatic.hbjson'
-    parsed_model = Model.from_hbjson(model_json)
+    parsed_model = Model.from_hbjson(model_json, cleanup_irrational=True)
 
     new_model = parsed_model.duplicate()
     new_model.reset_room_ids()
@@ -390,7 +390,7 @@ def test_reset_room_ids():
 def test_reset_ids():
     """Test the reset_ids method."""
     model_json = './tests/json/model_with_adiabatic.hbjson'
-    parsed_model = Model.from_hbjson(model_json)
+    parsed_model = Model.from_hbjson(model_json, cleanup_irrational=True)
 
     new_model = parsed_model.duplicate()
     new_model.reset_ids(True)
@@ -402,7 +402,7 @@ def test_reset_ids():
 def test_offset_aperture_edges():
     """Test the Face offset_aperture_edges method."""
     model_json = './tests/json/room_for_window_offset.hbjson'
-    parsed_model = Model.from_hbjson(model_json)
+    parsed_model = Model.from_hbjson(model_json, cleanup_irrational=True)
     test_room = parsed_model.rooms[0]
     test_face = test_room[1]
 
@@ -1162,6 +1162,75 @@ def test_from_dict_method_extensions():
     parsed_model = Model.from_dict(data)
 
     assert isinstance(parsed_model, Model)
+
+
+def test_cleanup_irrational():
+    """Test the cleanup_irrational method during serialization."""
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.apertures[0].move_shades(Vector3D(0, 0, -0.5))
+    north_face = room[1]
+    door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
+                  Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+    aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
+                      Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+    door = Door('FrontDoor', Face3D(door_verts))
+    north_face.add_door(door)
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
+    north_face.add_aperture(aperture)
+
+    model = Model('TinyHouse', [room])
+    model_dict = model.to_dict()
+
+    irrational_dict = {
+        'type': 'Model',
+        'identifier': 'irrational_model',
+        'units': 'Meters',
+        'tolerance': 0.001,
+        'angle_tolerance': 1.0,
+        'properties': model_dict['properties'],
+        'rooms': [
+            model_dict['rooms'][0],
+            {
+                'type': 'Room',
+                'identifier': 'irrational_room',
+                'faces': [
+                    {
+                        'type': 'Face',
+                        'identifier': 'irrational_face',
+                        'face_type': 'Wall',
+                        'geometry': {
+                            'type': 'Face3D',
+                            'boundary': [
+                                (0, 0, 0), (0, 0, 1)
+                            ]
+                        },
+                        'apertures': [
+                            {
+                                'type': 'Aperture',
+                                'identifier': 'irrational_aperture',
+                                'geometry': {
+                                    'type': 'Face3D',
+                                    'boundary': [
+                                        (0, 0, 0.2), (0, 0, 0.8)
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                ]
+            }
+        ]
+    }
+
+    with pytest.raises(ValueError):
+        Model.from_dict(irrational_dict, cleanup_irrational=False)
+
+    clean_model = Model.from_dict(irrational_dict, cleanup_irrational=True)
+    assert len(clean_model.rooms) == 1
 
 
 def test_comparison_report():

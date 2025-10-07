@@ -133,13 +133,6 @@ class Face(_BaseWithShade):
             assert data['type'] == 'Face', 'Expected Face dictionary. ' \
                 'Got {}.'.format(data['type'])
 
-            # remove any invalid holes from the geometry
-            geo_dict = data['geometry']
-            if 'holes' in geo_dict and geo_dict['holes'] is not None:
-                for i, hole_list in enumerate(geo_dict['holes']):
-                    if len(hole_list) < 3:
-                        geo_dict['holes'].pop(i)
-
             # first serialize it with an outdoor boundary condition
             face_type = face_types.by_name(data['face_type'])
             face = cls(data['identifier'], Face3D.from_dict(data['geometry']),
