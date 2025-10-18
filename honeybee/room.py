@@ -8,6 +8,7 @@ import uuid
 from ladybug_geometry.geometry2d import Point2D, Vector2D, Polygon2D
 from ladybug_geometry.geometry3d import Point3D, Vector3D, Ray3D, Plane, Face3D, \
     Mesh3D, Polyface3D
+from ladybug_geometry.bounding import overlapping_bounding_boxes
 from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
 import honeybee.writer.room as writer
@@ -71,6 +72,8 @@ class Room(_BaseWithShade):
         * center
         * min
         * max
+        * exterior_aperture_edges
+        * exterior_door_edges
         * volume
         * floor_area
         * exposed_area
@@ -431,6 +434,24 @@ class Room(_BaseWithShade):
         return self._calculate_max(all_geo)
 
     @property
+    def exterior_aperture_edges(self):
+        """Get a list of LineSegment3D for the borders around exterior apertures."""
+        edges = []
+        for ap in self.apertures:
+            if isinstance(ap.boundary_condition, Outdoors):
+                edges.extend(ap.geometry.segments)
+        return edges
+
+    @property
+    def exterior_door_edges(self):
+        """Get a list of LineSegment3D for the borders around exterior doors."""
+        edges = []
+        for dr in self.doors:
+            if isinstance(dr.boundary_condition, Outdoors):
+                edges.extend(dr.geometry.segments)
+        return edges
+
+    @property
     def volume(self):
         """Get the volume of the room.
 
@@ -584,6 +605,187 @@ class Room(_BaseWithShade):
                 areas += face.area
         return orientations / areas if areas != 0 else None
 
+    def classified_edges(self, tolerance=0.01, angle_tolerance=None):
+        """Get classified edges of this Room's Polyface3D based on Faces they adjoin.
+
+        Args:
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. (Default: 0.01, suitable for objects in meters).
+            angle_tolerance: An optional value in degrees, which can be used to
+                exclude edges falling between coplanar Faces. If None, edges falling
+                between coplanar Faces will be included. (Default: None).
+
+        Returns:
+            A tuple with eight items where each item is a list containing
+            LineSegment3D adjoining different types of Faces.
+
+            -   roof_to_exterior - Roofs meet exterior walls or floors.
+
+            -   slab_to_exterior - Ground floor slabs meet exterior walls or roofs.
+
+            -   exposed_floor_to_exterior_wall - Exposed floors meet exterior walls.
+
+            -   exterior_wall_to_wall - Exterior walls meet.
+
+            -   roof_ridge - Exterior roofs meet.
+
+            -   exposed_floor_to_floor - Exposed floors meet.
+
+            -   underground - Underground faces meet.
+
+            -   interior - Interior faces meet.
+        """
+        # set up lists to be populated
+        roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall = [], [], []
+        exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor = [], [], []
+        underground, interior = [], []
+
+        # get all of the edges and map them to room faces
+        edges = self.geometry.internal_edges
+        edge_faces = [[] for _ in edges]
+        for i, edge in enumerate(edges):
+            for face in self.faces:
+                if overlapping_bounding_boxes(face.geometry, edge, tolerance):
+                    for f_edge in face.geometry.segments:
+                        if edge.distance_to_point(f_edge.p1) < tolerance and \
+                                edge.distance_to_point(f_edge.p2) < tolerance:
+                            edge_faces[i].append(face)
+                            break
+
+        # classify the edges by analyzing the faces they adjoin
+        for edge, faces in zip(edges, edge_faces):
+            # first check for cases where the edge should be excluded
+            if len(edge_faces) <= 1:  # not an edge between two faces
+                continue
+            if angle_tolerance is not None:
+                ang_tol = math.radians(angle_tolerance)
+                base_normal = faces[0].normal
+                if all(f.normal.angle(base_normal) < ang_tol for f in faces[1:]):
+                    continue
+
+            # then check for which category the edge should go into
+            ext_faces = [f for f in faces if isinstance(f.boundary_condition, Outdoors)
+                         and not isinstance(f.type, AirBoundary)]
+            if len(ext_faces) >= 2:  # some type of exterior edge
+                if all(isinstance(f.type, Wall) for f in ext_faces):
+                    exterior_wall_to_wall.append(edge)
+                elif all(isinstance(f.type, RoofCeiling) for f in ext_faces):
+                    roof_ridge.append(edge)
+                elif all(isinstance(f.type, Floor) for f in ext_faces):
+                    exposed_floor_to_floor.append(edge)
+                elif any(isinstance(f.type, RoofCeiling) for f in ext_faces):
+                    roof_to_exterior.append(edge)
+                elif any(isinstance(f.type, Floor) for f in ext_faces):
+                    exposed_floor_to_exterior_wall.append(edge)
+            else:
+                gnd_faces = [f for f in faces if isinstance(f.boundary_condition, Ground)
+                             and not isinstance(f.type, AirBoundary)]
+                if len(ext_faces) >= 1 and len(gnd_faces) >= 1:
+                    slab_to_exterior.append(edge)
+                elif len(gnd_faces) >= 2:  # some type of underground edge
+                    underground.append(edge)
+                else:  # some type of interior edge
+                    interior.append(edge)
+
+        # return the classified edges
+        return roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall, \
+            exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor, \
+            underground, interior
+
+    def horizontal_boundary(self, match_walls=False, tolerance=0.01):
+        """Get a Face3D representing the horizontal boundary around the Room.
+
+        This will be generated from all downward-facing Faces of the Room (essentially
+        the Floor faces but can also include overhanging slanted walls). So, for
+        a valid closed-volume Honeybee Room, the result should always represent
+        the Room in the XY plane.
+
+        The Z height of the resulting Face3D will be at the minimum floor height.
+
+        Note that, if this Room is not solid, the computation of the horizontal
+        boundary may fail with an exception.
+
+        Args:
+            match_walls: Boolean to note whether vertices should be inserted into
+                the final Face3D that will help match the segments of the result
+                back to the walls that are adjacent to the floors. If False, the
+                result may lack some colinear vertices that relate the Face3D
+                to the Walls, though setting this to True does not guarantee that
+                all walls will relate to a segment in the result. (Default: False).
+            tolerance: The minimum difference between x, y, and z coordinate values
+                at which points are considered distinct. (Default: 0.01,
+                suitable for objects in Meters).
+        """
+        # get the starting horizontal boundary
+        try:
+            horiz_bound = self._base_horiz_boundary(tolerance)
+        except Exception as e:
+            msg = 'Room "{}" is not solid and so a valid horizontal boundary for ' \
+                'the Room could not be established.\n{}'.format(self.full_id, e)
+            raise ValueError(msg)
+        if match_walls:  # insert the wall vertices
+            return self._match_walls_to_horizontal_faces([horiz_bound], tolerance)[0]
+        return horiz_bound
+
+    def horizontal_floor_boundaries(self, match_walls=False, tolerance=0.01):
+        """Get a list of horizontal Face3D for the boundaries around the Room's Floors.
+
+        Unlike the horizontal_boundary method, which uses all downward-pointing
+        geometries, this method will derive horizontal boundaries using only the
+        Floors. This is useful when the resulting geometry is used to specify the
+        floor area in the result.
+
+        The Z height of the resulting Face3D will be at the minimum floor height.
+
+        Args:
+            match_walls: Boolean to note whether vertices should be inserted into
+                the final Face3Ds that will help match the segments of the result
+                back to the walls that are adjacent to the floors. If False, the
+                result may lack some colinear vertices that relate the Face3Ds
+                to the Walls, though setting this to True does not guarantee that
+                all walls will relate to a segment in the result. (Default: False).
+            tolerance: The minimum difference between x, y, and z coordinate values
+                at which points are considered distinct. (Default: 0.01,
+                suitable for objects in Meters).
+        """
+        # gather all of the floor geometries
+        flr_geo = [face.geometry for face in self.floors]
+
+        # ensure that all geometries are horizontal with as few faces as possible
+        if len(flr_geo) == 0:  # degenerate face
+            return []
+        elif len(flr_geo) == 1:
+            if flr_geo[0].is_horizontal(tolerance):
+                horiz_bound = flr_geo
+            else:
+                floor_height = self.geometry.min.z
+                bound = [Point3D(p.x, p.y, floor_height) for p in flr_geo[0].boundary]
+                holes = None
+                if flr_geo[0].has_holes:
+                    holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
+                             for hole in flr_geo[0].holes]
+                horiz_bound = [Face3D(bound, holes=holes)]
+        else:  # multiple geometries to be joined together
+            floor_height = self.geometry.min.z
+            horiz_geo = []
+            for fg in flr_geo:
+                if fg.is_horizontal(tolerance) and \
+                        abs(floor_height - fg.min.z) <= tolerance:
+                    horiz_geo.append(fg)
+                else:  # project the face geometry into the XY plane
+                    bound = [Point3D(p.x, p.y, floor_height) for p in fg.boundary]
+                    holes = None
+                    if fg.has_holes:
+                        holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
+                                 for hole in fg.holes]
+                    horiz_geo.append(Face3D(bound, holes=holes))
+            # join the coplanar horizontal faces together
+            horiz_bound = Face3D.join_coplanar_faces(horiz_geo, tolerance)
+
+        if match_walls:  # insert the wall vertices
+            return self._match_walls_to_horizontal_faces(horiz_bound, tolerance)
+        return horiz_bound
+
     def add_prefix(self, prefix):
         """Change the identifier of this object and child objects by inserting a prefix.
 
@@ -679,100 +881,6 @@ class Room(_BaseWithShade):
         """
         for dr in self.doors:
             dr.rename_by_attribute(format_str)
-
-    def horizontal_boundary(self, match_walls=False, tolerance=0.01):
-        """Get a Face3D representing the horizontal boundary around the Room.
-
-        This will be generated from all downward-facing Faces of the Room (essentially
-        the Floor faces but can also include overhanging slanted walls). So, for
-        a valid closed-volume Honeybee Room, the result should always represent
-        the Room in the XY plane.
-
-        The Z height of the resulting Face3D will be at the minimum floor height.
-
-        Note that, if this Room is not solid, the computation of the horizontal
-        boundary may fail with an exception.
-
-        Args:
-            match_walls: Boolean to note whether vertices should be inserted into
-                the final Face3D that will help match the segments of the result
-                back to the walls that are adjacent to the floors. If False, the
-                result may lack some colinear vertices that relate the Face3D
-                to the Walls, though setting this to True does not guarantee that
-                all walls will relate to a segment in the result. (Default: False).
-            tolerance: The minimum difference between x, y, and z coordinate values
-                at which points are considered distinct. (Default: 0.01,
-                suitable for objects in Meters).
-        """
-        # get the starting horizontal boundary
-        try:
-            horiz_bound = self._base_horiz_boundary(tolerance)
-        except Exception as e:
-            msg = 'Room "{}" is not solid and so a valid horizontal boundary for ' \
-                'the Room could not be established.\n{}'.format(self.full_id, e)
-            raise ValueError(msg)
-        if match_walls:  # insert the wall vertices
-            return self._match_walls_to_horizontal_faces([horiz_bound], tolerance)[0]
-        return horiz_bound
-
-    def horizontal_floor_boundaries(self, match_walls=False, tolerance=0.01):
-        """Get a list of horizontal Face3D for the boundaries around the Room's Floors.
-
-        Unlike the horizontal_boundary method, which uses all downward-pointing
-        geometries, this method will derive horizontal boundaries using only the
-        Floors. This is useful when the resulting geometry is used to specify the
-        floor area in the result.
-
-        The Z height of the resulting Face3D will be at the minimum floor height.
-
-        Args:
-            match_walls: Boolean to note whether vertices should be inserted into
-                the final Face3Ds that will help match the segments of the result
-                back to the walls that are adjacent to the floors. If False, the
-                result may lack some colinear vertices that relate the Face3Ds
-                to the Walls, though setting this to True does not guarantee that
-                all walls will relate to a segment in the result. (Default: False).
-            tolerance: The minimum difference between x, y, and z coordinate values
-                at which points are considered distinct. (Default: 0.01,
-                suitable for objects in Meters).
-        """
-        # gather all of the floor geometries
-        flr_geo = [face.geometry for face in self.floors]
-
-        # ensure that all geometries are horizontal with as few faces as possible
-        if len(flr_geo) == 0:  # degenerate face
-            return []
-        elif len(flr_geo) == 1:
-            if flr_geo[0].is_horizontal(tolerance):
-                horiz_bound = flr_geo
-            else:
-                floor_height = self.geometry.min.z
-                bound = [Point3D(p.x, p.y, floor_height) for p in flr_geo[0].boundary]
-                holes = None
-                if flr_geo[0].has_holes:
-                    holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
-                             for hole in flr_geo[0].holes]
-                horiz_bound = [Face3D(bound, holes=holes)]
-        else:  # multiple geometries to be joined together
-            floor_height = self.geometry.min.z
-            horiz_geo = []
-            for fg in flr_geo:
-                if fg.is_horizontal(tolerance) and \
-                        abs(floor_height - fg.min.z) <= tolerance:
-                    horiz_geo.append(fg)
-                else:  # project the face geometry into the XY plane
-                    bound = [Point3D(p.x, p.y, floor_height) for p in fg.boundary]
-                    holes = None
-                    if fg.has_holes:
-                        holes = [[Point3D(p.x, p.y, floor_height) for p in hole]
-                                 for hole in fg.holes]
-                    horiz_geo.append(Face3D(bound, holes=holes))
-            # join the coplanar horizontal faces together
-            horiz_bound = Face3D.join_coplanar_faces(horiz_geo, tolerance)
-
-        if match_walls:  # insert the wall vertices
-            return self._match_walls_to_horizontal_faces(horiz_bound, tolerance)
-        return horiz_bound
 
     def remove_indoor_furniture(self):
         """Remove all indoor furniture assigned to this Room.

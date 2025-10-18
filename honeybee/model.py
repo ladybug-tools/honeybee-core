@@ -107,6 +107,18 @@ class Model(_Base):
         * exterior_skylight_aperture_area
         * min
         * max
+        * roof_to_exterior_edges
+        * slab_to_exterior_edges
+        * exposed_floor_to_exterior_wall_edges
+        * exterior_wall_to_wall_edges
+        * roof_ridge_edges
+        * exposed_floor_to_floor_edges
+        * underground_edges
+        * interior_edges
+        * exterior_aperture_edges
+        * exterior_door_edges
+        * exterior_aperture_edges
+        * exterior_door_edges
         * top_level_dict
         * user_data
     """
@@ -1015,6 +1027,92 @@ class Model(_Base):
         return self._calculate_max(self._all_objects())
 
     @property
+    def roof_to_exterior_edges(self):
+        """Get LineSegment3Ds where roofs meet exterior walls (or floors).
+
+        Note that both the roof Face and the wall/floor Face must be next to one
+        another in the model's outer envelope and have outdoor boundary conditions for
+        the edge to show up in this list.
+        """
+        return self.classified_envelope_edges()[0]
+
+    @property
+    def slab_to_exterior_edges(self):
+        """Get LineSegment3Ds where ground floor slabs meet exterior walls or roofs.
+
+        Note that the floor Face must have a ground boundary condition and the wall or
+        roof Face must have an outdoor boundary condition for the edge between the
+        two Faces to show up in this list.
+        """
+        return self.classified_envelope_edges()[1]
+
+    @property
+    def exposed_floor_to_exterior_wall_edges(self):
+        """Get LineSegment3Ds where exposed floors meet exterior walls.
+
+        Note that both the wall Face and the floor Face must be next to one
+        another in the model's outer envelope and have outdoor boundary conditions for
+        the edge to show up in this list.
+        """
+        return self.classified_envelope_edges()[2]
+
+    @property
+    def exterior_wall_to_wall_edges(self):
+        """Get LineSegment3Ds where exterior walls meet one another.
+
+        Note that both wall Faces must be next to one another in the model's
+        outer envelope and have outdoor boundary conditions for the edge to
+        show up in this list.
+        """
+        return self.classified_envelope_edges()[3]
+
+    @property
+    def roof_ridge_edges(self):
+        """Get a list of LineSegment3D where exterior roofs meet one another.
+
+        Note that both roof Faces must be next to one another in the model's
+        outer envelope and have outdoor boundary conditions for the edge to
+        show up in this list.
+        """
+        return self.classified_envelope_edges()[4]
+
+    @property
+    def exposed_floor_to_floor_edges(self):
+        """Get LineSegment3Ds where exposed floors meet one another.
+
+        Note that both floor Faces must be next to one another in the model's
+        outer envelope and have outdoor boundary conditions for the edge to
+        show up in this list.
+        """
+        return self.classified_envelope_edges()[5]
+
+    @property
+    def underground_edges(self):
+        """Get a list of LineSegment3D where underground Faces meet one another.
+
+        Note that both Faces must be next to one another in the model's outer envelope
+        and have ground boundary conditions for the edge to show up in this list.
+        """
+        return self.classified_envelope_edges()[6]
+
+    @property
+    def exterior_aperture_edges(self):
+        """Get a list of LineSegment3D for the borders around room exterior apertures.
+        """
+        edges = []
+        for room in self.rooms:
+            edges.extend(room.exterior_aperture_edges)
+        return edges
+
+    @property
+    def exterior_door_edges(self):
+        """Get a list of LineSegment3D for the borders around room exterior doors."""
+        edges = []
+        for room in self.rooms:
+            edges.extend(room.exterior_door_edges)
+        return edges
+
+    @property
     def top_level_dict(self):
         """Get dictionary of top-level model objects with identifiers as the keys.
 
@@ -1377,6 +1475,63 @@ class Model(_Base):
                 'The following ShadeMeshes were not found in the model: {}'.format(a_os)
             )
         return shades
+
+    def classified_envelope_edges(self, tolerance=None, exclude_coplanar=False):
+        """Get classified edges of this Model's envelope based on Faces they adjoin.
+
+        The edges returned by this method will only exist along the exterior
+        envelope of the Model's Rooms as defined by the contiguous volume across
+        all Room interior adjacencies.
+
+        Args:
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. If None, the Model's tolerance will be used.
+            exclude_coplanar: Boolean to note whether edges falling between two
+                coplanar Faces in the building envelope should be included
+                in the result (False) or excluded from it (True). (Default: False).
+
+        Returns:
+            A tuple with eight items where each item is a list containing
+            LineSegment3D adjoining different types of Faces.
+
+            -   roof_to_exterior - Roofs meet exterior walls or floors.
+
+            -   slab_to_exterior - Ground floor slabs meet exterior walls or roofs.
+
+            -   exposed_floor_to_exterior_wall - Exposed floors meet exterior walls.
+
+            -   exterior_wall_to_wall - Exterior walls meet.
+
+            -   roof_ridge - Exterior roofs meet.
+
+            -   exposed_floor_to_floor - Exposed floors meet.
+
+            -   underground - Underground faces meet.
+        """
+        # set up lists to be populated
+        roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall = [], [], []
+        exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor = [], [], []
+        underground, interior = [], []
+        tol = tolerance if tolerance else self.tolerance
+        ang_tol = self.angle_tolerance if exclude_coplanar else None
+
+        # join all of the rooms in the model across their adjacencies
+        merged_rooms = Room.join_adjacent_rooms(self.rooms, tol)
+        for room in merged_rooms:
+            rf_to_ext, slb_to_ext, ex_flr_to_ext, ext_wl_to_wl, rf_ridge, \
+                ex_flr_to_flr, under_gnd, inter = room.classified_edges(tol, ang_tol)
+            roof_to_exterior.extend(rf_to_ext)
+            slab_to_exterior.extend(slb_to_ext)
+            exposed_floor_to_exterior_wall.extend(ex_flr_to_ext)
+            exterior_wall_to_wall.extend(ext_wl_to_wl)
+            roof_ridge.extend(rf_ridge)
+            exposed_floor_to_floor.extend(ex_flr_to_flr)
+            underground.extend(under_gnd)
+            interior.extend(inter)
+
+        # return the classified edges
+        return roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall, \
+            exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor, underground
 
     def add_prefix(self, prefix):
         """Change the identifier of this object and child objects by inserting a prefix.
