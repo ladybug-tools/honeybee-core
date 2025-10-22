@@ -399,6 +399,18 @@ def test_reset_ids():
     assert new_model.check_missing_adjacencies() == ''
 
 
+def test_reset_ids_to_integers():
+    """Test the reset_ids_to_integers method."""
+    model_json = './tests/json/model_with_adiabatic.hbjson'
+    parsed_model = Model.from_hbjson(model_json, cleanup_irrational=True)
+
+    new_model = parsed_model.duplicate()
+    new_model.reset_ids_to_integers(True)
+
+    assert new_model.rooms[0].identifier != parsed_model.rooms[0].identifier
+    assert new_model.check_missing_adjacencies() == ''
+
+
 def test_offset_aperture_edges():
     """Test the Face offset_aperture_edges method."""
     model_json = './tests/json/room_for_window_offset.hbjson'
@@ -587,6 +599,12 @@ def test_remove_degenerate_geometry():
     assert len(model.shade_meshes) == 2
     model.remove_degenerate_geometry()
     assert len(model.shade_meshes) == 1
+
+    model = Model('MultiZoneSingleFamilyHouse',
+                  [first_floor, second_floor], shade_meshes=[shade1, shade2])
+    model.shade_meshes_to_shades()
+    assert len(model.shade_meshes) == 0
+    assert len(model.orphaned_shades) == 2
 
 
 def test_assign_stories_by_floor_height():

@@ -324,6 +324,23 @@ class ShadeMesh(_Base):
             base['user_data'] = self.user_data
         return base
 
+    def to_shades(self):
+        """Return a list of Honeybee Shade objects derived from this ShadeMesh.
+
+        Note that the resulting Shades may be degenerate or non-planar so it
+        may be useful to call triangulate_and_remove_degenerate_faces on this
+        object before converting to Shades.
+        """
+        from honeybee.shade import Shade  # imported here to avoid circular import
+        shades = []
+        for i, shade_geo in enumerate(self.geometry.face_vertices):
+            shade_id = '{}_{}'.format(self.identifier, i)
+            shade = Shade(shade_id, Face3D(shade_geo), self.is_detached)
+            if self._display_name is not None:
+                shade.display_name = '{} {}'.format(self.display_name, i)
+            shades.append(shade)
+        return shades
+
     @staticmethod
     def _display_mesh(mesh3d, color):
         """Create a DisplayMesh3D dictionary from a Mesh3D and color."""

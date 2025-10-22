@@ -1559,6 +1559,25 @@ class Model(_Base):
         for shade_mesh in self._shade_meshes:
             shade_mesh.add_prefix(prefix)
 
+    def reset_room_ids(self):
+        """Reset the identifiers of the Model Rooms to be derived from display_names.
+
+        In the event that duplicate Room identifiers are found, an integer will
+        be automatically appended to the new Room ID to make it unique.
+
+        Returns:
+            A dictionary that relates the old identifiers (keys) to the new
+            identifiers (values). This can be used to map between old and new
+            objects and update things like Surface boundary conditions.
+        """
+        room_dict, room_map = {}, {}
+        for room in self.rooms:
+            new_id = clean_and_number_string(
+                room.display_name, room_dict, 'Room identifier')
+            room_map[room.identifier] = new_id
+            room.identifier = new_id
+        return room_map
+
     def reset_ids(self, repair_surface_bcs=True):
         """Reset the identifiers of all Model objects to be derived from display_names.
 
@@ -1613,39 +1632,7 @@ class Model(_Base):
                 shade_mesh.display_name, sm_dict, 'ShadeMesh identifier')
         # reset all of the Surface boundary conditions if requested
         if repair_surface_bcs:
-            for room in self.rooms:
-                for face in room.faces:
-                    if isinstance(face.boundary_condition, Surface):
-                        old_objs = face.boundary_condition.boundary_condition_objects
-                        try:
-                            new_objs = (face_map[old_objs[0]], room_map[old_objs[1]])
-                        except KeyError:  # missing adjacency
-                            try:  # see if maybe the room reference is still there
-                                new_objs = (old_objs[0], room_map[old_objs[1]])
-                            except KeyError:  # just let the invalid adjacency pass
-                                continue
-                        new_bc = Surface(new_objs)
-                        face.boundary_condition = new_bc
-                        for ap in face.apertures:
-                            old_objs = ap.boundary_condition.boundary_condition_objects
-                            try:
-                                new_objs = (ap_map[old_objs[0]], face_map[old_objs[1]],
-                                            room_map[old_objs[2]])
-                            except KeyError:  # missing adjacency
-                                new_objs = (old_objs[0], old_objs[1],
-                                            room_map[old_objs[2]])
-                            new_bc = Surface(new_objs, True)
-                            ap.boundary_condition = new_bc
-                        for dr in face.doors:
-                            old_objs = dr.boundary_condition.boundary_condition_objects
-                            try:
-                                new_objs = (dr_map[old_objs[0]], face_map[old_objs[1]],
-                                            room_map[old_objs[2]])
-                            except KeyError:  # missing adjacency
-                                new_objs = (old_objs[0], old_objs[1],
-                                            room_map[old_objs[2]])
-                            new_bc = Surface(new_objs, True)
-                            dr.boundary_condition = new_bc
+            self._repair_surface_bcs(room_map, face_map, ap_map, dr_map)
         # return a dictionary that maps between old and new IDs
         return {
             'rooms': room_map,
@@ -1654,24 +1641,90 @@ class Model(_Base):
             'doors': dr_map
         }
 
-    def reset_room_ids(self):
-        """Reset the identifiers of the Model Rooms to be derived from display_names.
+    def reset_ids_to_integers(self, start_integer=0, repair_surface_bcs=True):
+        """Reset the identifiers of all Model geometry objects to be a unique integer.
 
-        In the event that duplicate Room identifiers are found, an integer will
-        be automatically appended to the new Room ID to make it unique.
+        Integers are simply incremented from the start_integer, assigning integers
+        first to Rooms, then to Faces, then to Apertures/Doors and lastly to
+        Shades/ShadeMeshes.
+
+        Args:
+            start_integer: The starting integer that will be used to set a lower
+                limit on the 
+            repair_surface_bcs: A Boolean to note whether all Surface boundary
+                conditions across the model should be updated with the new
+                identifiers that were generated from the display names. (Default: True).
 
         Returns:
-            A dictionary that relates the old identifiers (keys) to the new
-            identifiers (values). This can be used to map between old and new
-            objects and update things like Surface boundary conditions.
+            An integer for the last value assigned to the model geometry objects.
+            This can be used to ensure that any future IDs assigned after running
+            this method do not have IDs that collide with the model objects.
         """
-        room_dict, room_map = {}, {}
+        # set up dictionaries to hold various pieces of information
+        room_map, face_map, ap_map, dr_map = {}, {}, {}, {}
+        # loop through the objects and change their identifiers
         for room in self.rooms:
-            new_id = clean_and_number_string(
-                room.display_name, room_dict, 'Room identifier')
-            room_map[room.identifier] = new_id
-            room.identifier = new_id
-        return room_map
+            room_map[room.identifier] = str(start_integer)
+            room.identifier = str(start_integer)
+            start_integer += 1
+        for face in self.faces:
+            face_map[face.identifier] = str(start_integer)
+            face.identifier = str(start_integer)
+            start_integer += 1
+        for ap in self.apertures:
+            ap_map[ap.identifier] = str(start_integer)
+            ap.identifier = str(start_integer)
+            start_integer += 1
+        for dr in self.doors:
+            dr_map[dr.identifier] = str(start_integer)
+            dr.identifier = str(start_integer)
+            start_integer += 1
+        for shade in self.shades:
+            shade.identifier = str(start_integer)
+            start_integer += 1
+        for shade_mesh in self.shade_meshes:
+            shade_mesh.identifier = str(start_integer)
+            start_integer += 1
+        # reset all of the Surface boundary conditions if requested
+        if repair_surface_bcs:
+            self._repair_surface_bcs(room_map, face_map, ap_map, dr_map)
+        return start_integer
+
+    def _repair_surface_bcs(self, room_map, face_map, ap_map, dr_map):
+        """Repair Surface boundary conditions across the model using dict maps."""
+        for room in self.rooms:
+            for face in room.faces:
+                if isinstance(face.boundary_condition, Surface):
+                    old_objs = face.boundary_condition.boundary_condition_objects
+                    try:
+                        new_objs = (face_map[old_objs[0]], room_map[old_objs[1]])
+                    except KeyError:  # missing adjacency
+                        try:  # see if maybe the room reference is still there
+                            new_objs = (old_objs[0], room_map[old_objs[1]])
+                        except KeyError:  # just let the invalid adjacency pass
+                            continue
+                    new_bc = Surface(new_objs)
+                    face.boundary_condition = new_bc
+                    for ap in face.apertures:
+                        old_objs = ap.boundary_condition.boundary_condition_objects
+                        try:
+                            new_objs = (ap_map[old_objs[0]], face_map[old_objs[1]],
+                                        room_map[old_objs[2]])
+                        except KeyError:  # missing adjacency
+                            new_objs = (old_objs[0], old_objs[1],
+                                        room_map[old_objs[2]])
+                        new_bc = Surface(new_objs, True)
+                        ap.boundary_condition = new_bc
+                    for dr in face.doors:
+                        old_objs = dr.boundary_condition.boundary_condition_objects
+                        try:
+                            new_objs = (dr_map[old_objs[0]], face_map[old_objs[1]],
+                                        room_map[old_objs[2]])
+                        except KeyError:  # missing adjacency
+                            new_objs = (old_objs[0], old_objs[1],
+                                        room_map[old_objs[2]])
+                        new_bc = Surface(new_objs, True)
+                        dr.boundary_condition = new_bc
 
     def solve_adjacency(
             self, merge_coplanar=False, intersect=False, overwrite=False,
@@ -2180,6 +2233,18 @@ class Model(_Base):
         for room in self._rooms:
             extrusion_rooms.append(room.to_extrusion(tol, a_tol))
         self._rooms = extrusion_rooms
+
+    def shade_meshes_to_shades(self):
+        """Convert all ShadeMesh objects on the Model to planar Shades."""
+        new_shades = []
+        for shade_mesh in self.shade_meshes:
+            try:
+                shade_mesh.triangulate_and_remove_degenerate_faces(self.tolerance)
+                new_shades.extend(shade_mesh.to_shades())
+            except AssertionError:
+                pass  # completely degenerate ShadeMesh to ignore
+        self._orphaned_shades.extend(new_shades)
+        self._shade_meshes = []
 
     def convert_to_units(self, units='Meters'):
         """Convert all of the geometry in this model to certain units.
