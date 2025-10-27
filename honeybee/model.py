@@ -13,7 +13,9 @@ try:  # check if we are in IronPython
 except ImportError:  # wea are in cPython
     import pickle
 
-from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, Face3D, Mesh3D
+from ladybug_geometry.geometry2d import Polygon2D
+from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, Face3D, \
+    Mesh3D, Polyface3D
 from ladybug_geometry.interop.stl import STL
 
 from ._base import _Base
@@ -1533,6 +1535,71 @@ class Model(_Base):
         return roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall, \
             exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor, underground
 
+    def classified_sub_face_edges(
+        self, mullion_thickness=None, tolerance=None, angle_tolerance=None
+    ):
+        """Get classified edges around this Model's Apertures and Doors.
+
+        The edges returned by this method will only exist along the exterior
+        sub-faces.
+
+        Args:
+            mullion_thickness: The maximum difference that apertures can be from
+                one another for the edges to be considered a mullion rather than
+                a frame. If None, the Model's tolerance will be used.
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. If None, the Model's tolerance will be used.
+            angle_tolerance: The max angle difference in degrees where sub-face
+                normals are no longer considered coplanar. If None, the Model
+                angle_tolerance will be used. (Default: None).
+
+        Returns:
+            A tuple with three items where each item is a list containing
+            LineSegment3D surrounding different sub-face conditions.
+
+            -   window_frames - Apertures meet their parent exterior wall or roof.
+
+            -   window_mullions - Apertures meet one another.
+
+            -   door_frames - Doors meet their parent exterior wall or roof.
+        """
+        # set up lists to be populated
+        window_frames, window_mullions = [], []
+        tol = tolerance if tolerance is not None else self.tolerance
+        a_tol = math.radians(angle_tolerance) if angle_tolerance is not None else \
+            math.radians(self.angle_tolerance)
+        mul_thick = tol if mullion_thickness is None else mullion_thickness
+
+        # group the apertures by the plane in which they exist
+        apertures = self.apertures
+        coplanar_dict = {apertures[0].geometry.plane: [apertures[0]]}
+        for ap in apertures[1:]:
+            if isinstance(ap.boundary_condition, Outdoors):
+                for pln, f_list in coplanar_dict.items():
+                    if ap.geometry.plane.is_coplanar_tolerance(pln, tol, a_tol):
+                        f_list.append(ap)
+                        break
+                else:  # the first face with this type of plane
+                    coplanar_dict[ap.geometry.plane] = [ap]
+
+        # for each group, intersect their edges and extract edges from a Polyface3D
+        for plane, aps in coplanar_dict.items():
+            # intersect edges that are close enough to one another within thickness
+            polygons = []
+            for ap in aps:
+                pts_2d = [plane.xyz_to_xy(pt) for pt in ap.geometry.boundary]
+                polygons.append(Polygon2D(pts_2d))
+            polygons = Polygon2D.intersect_polygon_segments(polygons, mul_thick)
+            faces = []
+            for poly in polygons:
+                faces.append(Face3D([plane.xy_to_xyz(pt) for pt in poly]))
+            # create a joined Polyface3D and classify the edges
+            ap_polyface = Polyface3D.from_faces(faces, mul_thick)
+            window_frames.extend(ap_polyface.naked_edges)
+            window_mullions.extend(ap_polyface.internal_edges)
+
+        return window_frames, window_mullions, self.exterior_door_edges
+
     def add_prefix(self, prefix):
         """Change the identifier of this object and child objects by inserting a prefix.
 
@@ -1650,7 +1717,7 @@ class Model(_Base):
 
         Args:
             start_integer: The starting integer that will be used to set a lower
-                limit on the 
+                limit on the integers assigned to the geometry elements.
             repair_surface_bcs: A Boolean to note whether all Surface boundary
                 conditions across the model should be updated with the new
                 identifiers that were generated from the display names. (Default: True).
