@@ -1478,7 +1478,7 @@ class Model(_Base):
             )
         return shades
 
-    def classified_envelope_edges(self, tolerance=None, exclude_coplanar=False):
+    def classified_envelope_edges(self, tolerance=None, exclude_coplanar=True):
         """Get classified edges of this Model's envelope based on Faces they adjoin.
 
         The edges returned by this method will only exist along the exterior
@@ -1490,7 +1490,7 @@ class Model(_Base):
                 considered equivalent. If None, the Model's tolerance will be used.
             exclude_coplanar: Boolean to note whether edges falling between two
                 coplanar Faces in the building envelope should be included
-                in the result (False) or excluded from it (True). (Default: False).
+                in the result (False) or excluded from it (True). (Default: True).
 
         Returns:
             A tuple with eight items where each item is a list containing
@@ -1562,43 +1562,61 @@ class Model(_Base):
             -   window_mullions - Apertures meet one another.
 
             -   door_frames - Doors meet their parent exterior wall or roof.
+
+            -   door_mullions - Doors meet one another.
         """
-        # set up lists to be populated
-        window_frames, window_mullions = [], []
+        # set up variables to be used for all sub_faces
         tol = tolerance if tolerance is not None else self.tolerance
         a_tol = math.radians(angle_tolerance) if angle_tolerance is not None else \
             math.radians(self.angle_tolerance)
         mul_thick = tol if mullion_thickness is None else mullion_thickness
 
+        # get the edges of the sub_faces
+        window_frames, window_mullions = \
+            self._classify_mullions(self.apertures, mul_thick, tol, a_tol)
+        door_frames, door_mullions = \
+            self._classify_mullions(self.doors, mul_thick, tol, a_tol)
+        return window_frames, window_mullions, door_frames, door_mullions
+
+    @staticmethod
+    def _classify_mullions(sub_faces, mul_thick, tol, a_tol):
+        """Organize subface edges depending on whether they are frames or mullions."""
+        sub_face_frames, sub_face_mullions = [], []
         # group the apertures by the plane in which they exist
-        apertures = self.apertures
-        coplanar_dict = {apertures[0].geometry.plane: [apertures[0]]}
-        for ap in apertures[1:]:
-            if isinstance(ap.boundary_condition, Outdoors):
+        coplanar_dict = {}
+        sub_faces = [sf for sf in sub_faces
+                     if isinstance(sf.boundary_condition, Outdoors)]
+        if len(sub_faces) != 0:
+            coplanar_dict = {sub_faces[0].geometry.plane: [sub_faces[0]]}
+            for sf in sub_faces[1:]:
                 for pln, f_list in coplanar_dict.items():
-                    if ap.geometry.plane.is_coplanar_tolerance(pln, tol, a_tol):
-                        f_list.append(ap)
+                    if sf.geometry.plane.is_coplanar_tolerance(pln, tol, a_tol):
+                        f_list.append(sf)
                         break
                 else:  # the first face with this type of plane
-                    coplanar_dict[ap.geometry.plane] = [ap]
+                    coplanar_dict[sf.geometry.plane] = [sf]
 
         # for each group, intersect their edges and extract edges from a Polyface3D
-        for plane, aps in coplanar_dict.items():
+        for plane, sfs in coplanar_dict.items():
             # intersect edges that are close enough to one another within thickness
             polygons = []
-            for ap in aps:
-                pts_2d = [plane.xyz_to_xy(pt) for pt in ap.geometry.boundary]
-                polygons.append(Polygon2D(pts_2d))
+            for sf in sfs:
+                pts_2d = [plane.xyz_to_xy(pt) for pt in sf.geometry.boundary]
+                try:
+                    poly = Polygon2D(pts_2d).remove_colinear_vertices(mul_thick)
+                    polygons.append(poly)
+                except AssertionError:
+                    pass  # too small of a geometry
             polygons = Polygon2D.intersect_polygon_segments(polygons, mul_thick)
             faces = []
             for poly in polygons:
-                faces.append(Face3D([plane.xy_to_xyz(pt) for pt in poly]))
+                faces.append(Face3D([plane.xy_to_xyz(pt) for pt in poly], plane))
             # create a joined Polyface3D and classify the edges
             ap_polyface = Polyface3D.from_faces(faces, mul_thick)
-            window_frames.extend(ap_polyface.naked_edges)
-            window_mullions.extend(ap_polyface.internal_edges)
+            sub_face_frames.extend(ap_polyface.naked_edges)
+            sub_face_mullions.extend(ap_polyface.internal_edges)
 
-        return window_frames, window_mullions, self.exterior_door_edges
+        return sub_face_frames, sub_face_mullions
 
     def add_prefix(self, prefix):
         """Change the identifier of this object and child objects by inserting a prefix.
