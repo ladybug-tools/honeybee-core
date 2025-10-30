@@ -1,0 +1,7 @@
+honeybee.units module
+=====================
+
+.. automodule:: honeybee.units
+   :members:
+   :undoc-members:
+   :show-inheritance:
