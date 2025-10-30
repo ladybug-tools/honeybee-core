@@ -6,8 +6,8 @@ import re
 import uuid
 
 from ladybug_geometry.geometry2d import Point2D, Vector2D, Polygon2D
-from ladybug_geometry.geometry3d import Point3D, Vector3D, Ray3D, Plane, Face3D, \
-    Mesh3D, Polyface3D
+from ladybug_geometry.geometry3d import Point3D, Vector3D, Ray3D, LineSegment3D, \
+    Plane, Face3D, Mesh3D, Polyface3D
 from ladybug_geometry.bounding import overlapping_bounding_boxes
 from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 
@@ -640,22 +640,37 @@ class Room(_BaseWithShade):
         exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor = [], [], []
         underground, interior = [], []
 
-        # get all of the edges and map them to room faces
-        edges = self.geometry.internal_edges
+        # get all of the edges in a way that colinear edges are broken down
+        base_edges = list(self.geometry.internal_edges)
+        base_vertices = self.geometry.vertices
+        edges = []
+        for i, edge in enumerate(base_edges):
+            for pt in base_vertices:
+                if edge.distance_to_point(pt) < tolerance and \
+                        not edge.p1.distance_to_point(pt) < tolerance and \
+                        not edge.p2.distance_to_point(pt) < tolerance:
+                    # split the edge in two at the point
+                    base_edges.append(LineSegment3D.from_end_points(edge.p1, pt))
+                    base_edges.append(LineSegment3D.from_end_points(pt, edge.p2))
+                    break
+            else:  # no further subdivision needed
+                edges.append(edge)
+
+        # map the edges to room faces
         edge_faces = [[] for _ in edges]
         for i, edge in enumerate(edges):
             for face in self.faces:
                 if overlapping_bounding_boxes(face.geometry, edge, tolerance):
                     for f_edge in face.geometry.segments:
-                        if edge.distance_to_point(f_edge.p1) < tolerance and \
-                                edge.distance_to_point(f_edge.p2) < tolerance:
+                        if f_edge.distance_to_point(edge.p1) < tolerance and \
+                                f_edge.distance_to_point(edge.p2) < tolerance:
                             edge_faces[i].append(face)
                             break
 
         # classify the edges by analyzing the faces they adjoin
         for edge, faces in zip(edges, edge_faces):
             # first check for cases where the edge should be excluded
-            if len(edge_faces) <= 1:  # not an edge between two faces
+            if len(faces) <= 1:  # not an edge between two faces
                 continue
             if angle_tolerance is not None:
                 ang_tol = math.radians(angle_tolerance)
