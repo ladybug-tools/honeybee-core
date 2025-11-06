@@ -65,6 +65,7 @@ class Room(_BaseWithShade):
         * floors
         * roof_ceilings
         * air_boundaries
+        * sub_faces
         * doors
         * apertures
         * exterior_apertures
@@ -366,6 +367,11 @@ class Room(_BaseWithShade):
     def air_boundaries(self):
         """Get a tuple of all of the AirBoundary Faces of the Room."""
         return tuple(face for face in self._faces if isinstance(face.type, AirBoundary))
+
+    @property
+    def sub_faces(self):
+        """Get a tuple of all Apertures and Doors of the Room."""
+        return self.apertures + self.doors
 
     @property
     def doors(self):
