@@ -16,6 +16,7 @@ except ImportError:  # wea are in cPython
 from ladybug_geometry.geometry2d import Polygon2D
 from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, Face3D, \
     Mesh3D, Polyface3D
+from ladybug_geometry.bounding import overlapping_bounding_boxes
 from ladybug_geometry.interop.stl import STL
 
 from ._base import _Base
@@ -1617,6 +1618,46 @@ class Model(_Base):
             sub_face_mullions.extend(ap_polyface.internal_edges)
 
         return sub_face_frames, sub_face_mullions
+
+    def rooms_relevant_to_edge(self, edge, mullion_thickness=None, tolerance=None):
+        """Get a list of Rooms in the model that are relevant to a given edge.
+
+        This is useful for grouping instances of different edges obtained from
+        the classified edge methods.
+
+        Args:
+            edge: A ladybug-geometry LineSegment3D or Polyline3D for an edge to
+                be evaluated against the Model rooms.
+            mullion_thickness: The maximum difference that apertures can be from
+                the input edge for it to be associated with a given model room.
+                If None, the input edge will only be checked against the model's
+                room Faces and not the Apertures or Doors.
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. If None, the Model's tolerance will be used.
+
+        Returns:
+            A list of Honeybee Rooms in the model that are relevant to the input
+            edge, either touching a room Face edge within the tolerance or
+            touching an Aperture or Door edge within the mullion_thickness.
+        """
+        tol = tolerance if tolerance is not None else self.tolerance
+        # loop through the rooms and evaluate the edge in terms of it
+        rel_rooms = {}
+        for room in self.rooms:
+            if overlapping_bounding_boxes(room.geometry, edge, tol):
+                for pt in room.geometry.vertices:
+                    if edge.distance_to_point(pt) < tol:
+                        rel_rooms[room.identifier] = room
+                        break
+                else:  # if a mullion thickness is specified
+                    if mullion_thickness is not None:
+                        for sf in room.sub_faces:
+                            if overlapping_bounding_boxes(sf.geometry, edge, tol):
+                                for sf_pt in sf.geometry.vertices:
+                                    if edge.distance_to_point(sf_pt) < tol:
+                                        rel_rooms[room.identifier] = room
+                                        break
+        return list(rel_rooms.values())
 
     def add_prefix(self, prefix):
         """Change the identifier of this object and child objects by inserting a prefix.
