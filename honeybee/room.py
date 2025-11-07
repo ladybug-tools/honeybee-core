@@ -647,7 +647,7 @@ class Room(_BaseWithShade):
         underground, interior = [], []
 
         # get all of the edges in a way that colinear edges are broken down
-        base_edges = list(self.geometry.internal_edges)
+        base_edges = list(self.geometry.edges)
         base_vertices = self.geometry.vertices
         edges = []
         for i, edge in enumerate(base_edges):

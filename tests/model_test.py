@@ -260,6 +260,25 @@ def test_model_init_from_objects():
     assert len(model.faces) == 0
 
 
+def test_classified_envelope_edges():
+    """Test the classified_envelope_edges method."""
+    model_json = './tests/json/room_for_envelope_edges.hbjson'
+    model = Model.from_hbjson(model_json, cleanup_irrational=True)
+    model.rooms[0].check_solid(model.tolerance, model.angle_tolerance)
+
+    roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall, \
+        exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor, underground = \
+        model.classified_envelope_edges()
+
+    assert len(roof_to_exterior) == 8
+    assert len(slab_to_exterior) == 0
+    assert len(exposed_floor_to_exterior_wall) == 7
+    assert len(exterior_wall_to_wall) == 6
+    assert len(roof_ridge) == 0
+    assert len(exposed_floor_to_floor) == 0
+    assert len(underground) == 0
+
+
 def test_rooms_by_identifier():
     """Test the rooms_by_identifier method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
