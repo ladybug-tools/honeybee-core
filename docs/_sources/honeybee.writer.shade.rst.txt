@@ -1,0 +1,7 @@
+honeybee.writer.shade module
+============================
+
+.. automodule:: honeybee.writer.shade
+   :members:
+   :undoc-members:
+   :show-inheritance:
