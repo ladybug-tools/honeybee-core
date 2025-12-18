@@ -14,8 +14,7 @@ except ImportError:  # wea are in cPython
     import pickle
 
 from ladybug_geometry.geometry2d import Polygon2D
-from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, Face3D, \
-    Mesh3D, Polyface3D
+from ladybug_geometry.geometry3d import Vector3D, Plane, Face3D, Mesh3D, Polyface3D
 from ladybug_geometry.bounding import overlapping_bounding_boxes
 from ladybug_geometry.interop.stl import STL
 
@@ -2407,23 +2406,14 @@ class Model(_Base):
         high that floating point tolerance interferes with the proper
         representation of the model's details.
 
-        In addition to moving the model such that the new_origin sets the
-        coordinate values of the geometry, this method will also set the
-        reference_vector of this object such that any models added into this
-        one from the original source coordinate system respect the new system.
-
         Args:
             new_origin: A Point3D in the model's current coordinate system that
                 will become the origin of the new coordinate system. If unspecified,
                 the minimum of the bounding box around the model geometry will
-                be used and the average_height_above_ground will be used to
-                set the Z coordinate. (Default: None).
+                be used. (Default: None).
         """
-        # compute the new_origin from the bounding box around the geometry
         if new_origin is None:
-            min_2d = self.min
-            z_val = self.average_height - self.average_height_above_ground
-            new_origin = Point3D(min_2d.x, min_2d.y, z_val)
+            new_origin = self.min
         # move the geometry using a vector that is the inverse of the origin
         ref_vec = Vector3D(-new_origin.x, -new_origin.y, -new_origin.z)
         self.move(ref_vec)
