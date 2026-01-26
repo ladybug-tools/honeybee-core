@@ -184,8 +184,8 @@ def clean_string(value, input_name=''):
         sha256_hash = hashlib.sha256(value.encode('utf-8'))
         hash_str = str(sha256_hash.hexdigest())
         return hash_str[:8] if len(hash_str) > 8 else hash_str
-    assert len(val) <= 100, 'Input {} "{}" must be less than 100 characters.'.format(
-        input_name, value)
+    if len(val) > 100:
+        val = val[:100]
     return val
 
 
@@ -228,8 +228,8 @@ def clean_ep_string(value, input_name=''):
         sha256_hash = hashlib.sha256(value.encode('utf-8'))
         hash_str = str(sha256_hash.hexdigest())
         return hash_str[:8] if len(hash_str) > 8 else hash_str
-    assert len(val) <= 100, 'Input {} "{}" must be less than 100 characters.'.format(
-        input_name, value)
+    if len(val) > 100:
+        val = val[:100]
     return val
 
 

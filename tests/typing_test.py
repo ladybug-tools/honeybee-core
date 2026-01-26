@@ -18,8 +18,7 @@ def test_clean_string():
 
     assert clean_string(correct_str) == '0.5_in._Gypsum_Wall'
     assert clean_string(incorrect_str) == '0.5_in._Gypsum_Wall'
-    with pytest.raises(AssertionError):
-        clean_string(long_str)
+    assert len(clean_string(long_str)) <= 100
 
 
 def test_clean_rad_string():
@@ -43,8 +42,7 @@ def test_clean_ep_string():
 
     assert clean_ep_string(correct_str) == correct_str
     assert clean_ep_string(incorrect_str) == correct_str
-    with pytest.raises(AssertionError):
-        clean_ep_string(long_str)
+    assert len(clean_ep_string(long_str)) <= 100
 
 
 def test_clean_and_id_string():
