@@ -1,0 +1,7 @@
+honeybee.writer.face module
+===========================
+
+.. automodule:: honeybee.writer.face
+   :members:
+   :undoc-members:
+   :show-inheritance:

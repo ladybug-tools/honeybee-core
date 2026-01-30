@@ -1,0 +1,7 @@
+honeybee.door module
+====================
+
+.. automodule:: honeybee.door
+   :members:
+   :undoc-members:
+   :show-inheritance:

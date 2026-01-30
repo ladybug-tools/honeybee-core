@@ -1,0 +1,7 @@
+honeybee.writer.model module
+============================
+
+.. automodule:: honeybee.writer.model
+   :members:
+   :undoc-members:
+   :show-inheritance:

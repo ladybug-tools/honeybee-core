@@ -1,0 +1,7 @@
+honeybee.logutil module
+=======================
+
+.. automodule:: honeybee.logutil
+   :members:
+   :undoc-members:
+   :show-inheritance:

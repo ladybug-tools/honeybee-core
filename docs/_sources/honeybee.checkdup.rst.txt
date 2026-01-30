@@ -1,0 +1,7 @@
+honeybee.checkdup module
+========================
+
+.. automodule:: honeybee.checkdup
+   :members:
+   :undoc-members:
+   :show-inheritance:
