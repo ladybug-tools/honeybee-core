@@ -1481,7 +1481,7 @@ class Room(_BaseWithShade):
         for face_1 in self.faces:
             if face_1.geometry.has_holes:
                 new_geo = []
-                f_split = face_1.geometry.split_through_holes()
+                f_split = face_1.geometry.split_through_hole_center_lines(tolerance)
                 for sp_g in f_split:
                     try:
                         sp_g = sp_g.remove_colinear_vertices(tolerance)
