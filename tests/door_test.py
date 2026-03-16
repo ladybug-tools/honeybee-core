@@ -336,3 +336,24 @@ def test_writer():
     writers = [mod for mod in dir(door.to) if not mod.startswith('_')]
     for writer in writers:
         assert callable(getattr(door.to, writer))
+
+
+def test_group_by_coplanarity():
+    """Test the group_by_coplanarity method."""
+    bound_pts1 = [Point3D(0, 0), Point3D(4, 0), Point3D(4, 4), Point3D(0, 4)]
+    bound_pts2 = [Point3D(2, 2), Point3D(6, 2), Point3D(6, 6), Point3D(2, 6)]
+    bound_pts3 = [Point3D(6, 6, 0.4), Point3D(7, 6, 0.4), Point3D(7, 7, 0.4), Point3D(6, 7, 0.4)]
+    face1 = Door('Door1', Face3D(bound_pts1))
+    face2 = Door('Door2', Face3D(bound_pts2))
+    face3 = Door('Door3', Face3D(bound_pts3))
+
+    all_faces = [face1, face2, face3]
+
+    grouped_faces, planes = Door.group_by_coplanarity(all_faces, 0.01)
+    assert len(grouped_faces) == 2
+    assert len(grouped_faces[0]) in (2, 1)
+    assert len(grouped_faces[1]) in (2, 1)
+
+    grouped_faces, planes = Door.group_by_coplanarity(all_faces, 0.75)
+    assert len(grouped_faces) == 1
+    assert len(grouped_faces[0]) == 3

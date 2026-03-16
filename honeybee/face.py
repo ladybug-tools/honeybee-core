@@ -2251,6 +2251,42 @@ class Face(_BaseWithShade):
             base['user_data'] = self.user_data
         return base
 
+    @staticmethod
+    def group_by_coplanarity(faces, tolerance=0.01):
+        """Group Faces depending on whether they are coplanar with one another.
+
+        Args:
+            faces: A list of Faces to be grouped by their coplanarity.
+            tolerance: The minimum difference between the coordinate values of two
+                planes at which they can be considered coplanar.
+
+        Returns:
+            A tuple with two items.
+
+            -   grouped_faces - A list of lists of honeybee faces with
+                each sub-list representing a set of coplanar faces.
+
+            -   planes - A list of ladybug-geometry Planes for the value
+                associated with each sub-list of the grouped_faces.
+        """
+        if len(faces) <= 1:
+            return [faces]
+        grouped_faces, planes = [[faces[0]]], [faces[0].geometry.plane]
+        for face in faces[1:]:
+            group_found = False
+            for face_group in grouped_faces:
+                for oth_face in face_group:
+                    if face.geometry.is_coplanar(oth_face.geometry, tolerance):
+                        face_group.append(face)
+                        group_found = True
+                        break
+                if group_found:
+                    break
+            if not group_found:  # the face is not coplanar with any of the others
+                grouped_faces.append([face])  # make a new group for the face
+                planes.append(face.geometry.plane)
+        return grouped_faces, planes
+
     def _acceptable_sub_face_check(self, sub_face_type=Aperture):
         """Check whether the Face can accept sub-faces and raise an exception if not."""
         assert isinstance(self.boundary_condition, Outdoors), \

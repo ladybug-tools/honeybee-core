@@ -728,6 +728,42 @@ class Door(_BaseWithShade):
             base['user_data'] = self.user_data
         return base
 
+    @staticmethod
+    def group_by_coplanarity(doors, tolerance=0.01):
+        """Group Doors depending on whether they are coplanar with one another.
+
+        Args:
+            doors: A list of Doors to be grouped by their coplanarity.
+            tolerance: The minimum difference between the coordinate values of two
+                planes at which they can be considered coplanar.
+
+        Returns:
+            A tuple with two items.
+
+            -   grouped_doors - A list of lists of honeybee doors with
+                each sub-list representing a set of coplanar doors.
+
+            -   planes - A list of ladybug-geometry Planes for the value
+                associated with each sub-list of the grouped_doors.
+        """
+        if len(doors) <= 1:
+            return [doors]
+        grouped_doors, planes = [[doors[0]]], [doors[0].geometry.plane]
+        for dr in doors[1:]:
+            group_found = False
+            for dr_group in grouped_doors:
+                for oth_dr in dr_group:
+                    if dr.geometry.is_coplanar(oth_dr.geometry, tolerance):
+                        dr_group.append(dr)
+                        group_found = True
+                        break
+                if group_found:
+                    break
+            if not group_found:  # the face is not coplanar with any of the others
+                grouped_doors.append([dr])  # make a new group for the face
+                planes.append(dr.geometry.plane)
+        return grouped_doors, planes
+
     def _reset_parent_geometry(self):
         """Reset parent punched_geometry in the case that the object is transformed."""
         if self.has_parent:
