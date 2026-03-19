@@ -355,6 +355,23 @@ def test_sub_faces_invalid_face_type():
         face.add_door(door)
 
 
+def test_check_overlapping():
+    """Test the check_overlapping method."""
+    bound_pts1 = [Point3D(0, 0), Point3D(4, 0), Point3D(4, 4), Point3D(0, 4)]
+    bound_pts2 = [Point3D(2, 2), Point3D(6, 2), Point3D(6, 6), Point3D(2, 6)]
+    bound_pts3 = [Point3D(6, 6), Point3D(7, 6), Point3D(7, 7), Point3D(6, 7)]
+    ap1 = Aperture('Aperture1', Face3D(bound_pts1))
+    ap2 = Aperture('Aperture2', Face3D(bound_pts2))
+    ap3 = Aperture('Aperture3', Face3D(bound_pts3))
+    all_apertures = [ap1, ap2, ap3]
+
+    with pytest.raises(ValueError):
+        grouped_faces = Face.check_overlapping(all_apertures, 0.01)
+
+    grouped_faces = Face.check_overlapping(all_apertures, 0.01, False, True)
+    assert len(grouped_faces) == 1
+
+
 def test_apertures_by_ratio():
     """Test the adding of apertures by ratio."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0))
