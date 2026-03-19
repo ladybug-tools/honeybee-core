@@ -2015,7 +2015,7 @@ class Face(_BaseWithShade):
                 for them to be considered overlapping and invalid. (Default: 0.01,
                 suitable for objects in meters).
             raise_exception: Boolean to note whether a ValueError should be raised
-                if a sub-faces overlap with one another.
+                if sub-faces overlap with one another.
             detailed: Boolean for whether the returned object is a detailed list of
                 dicts with error info or a string with a message. (Default: False).
 
@@ -2286,6 +2286,49 @@ class Face(_BaseWithShade):
                 grouped_faces.append([face])  # make a new group for the face
                 planes.append(face.geometry.plane)
         return grouped_faces, planes
+
+    @staticmethod
+    def check_overlapping(hb_objs, tolerance=0.01, raise_exception=True, detailed=False):
+        """Check whether an array of honeybee objects overlap with one another.
+
+        Args:
+            hb_objs: An array of planar honeybee objects (Faces, Apertures, Doors)
+                for which coplanar overlaps will be checked.
+            tolerance: The minimum distance that two objects must overlap in order
+                for them to be considered overlapping and invalid. (Default: 0.01,
+                suitable for objects in meters).
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if objects overlap with one another.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with dictionaries if detailed is True.
+        """
+        if len(hb_objs) == 0:
+            return [] if detailed else ''
+        ov_groups = Face._group_sub_faces_by_overlap(hb_objs, tolerance)
+        if not all(len(g) == 1 for g in ov_groups):
+            msgs = []
+            for ov_group in ov_groups:
+                if len(ov_group) != 1:
+                    msg = 'The following objects overlap with one another:' \
+                        '\n{}'.format('\n'.join([sf.full_id for sf in ov_group]))
+                    err_obj = Face._validation_message_child(
+                        msg, ov_group[0], detailed, '000105',
+                        error_type='Overlapping Sub-Face Geometry')
+                    if detailed:
+                        err_obj['element_type'] = 'SubFace'
+                        for ov_obj in ov_group[1:]:
+                            err_obj['element_id'].append(ov_obj.identifier)
+                            err_obj['element_name'].append(ov_obj.display_name)
+                            err_obj['parents'].append(err_obj['parents'][0])
+                    msgs.append(err_obj)
+            full_msg = msgs if detailed else '\n'.join(msgs)
+            if raise_exception and len(msgs) != 0:
+                raise ValueError(full_msg)
+            return full_msg
+        return [] if detailed else ''
 
     def _acceptable_sub_face_check(self, sub_face_type=Aperture):
         """Check whether the Face can accept sub-faces and raise an exception if not."""
