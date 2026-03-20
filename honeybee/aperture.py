@@ -998,7 +998,7 @@ class Aperture(_BaseWithShade):
                 associated with each sub-list of the grouped_apertures.
         """
         if len(apertures) <= 1:
-            return [apertures]
+            return [apertures, [ap.geometry.plane for ap in apertures]]
         grouped_apertures, planes = [[apertures[0]]], [apertures[0].geometry.plane]
         for ap in apertures[1:]:
             group_found = False
