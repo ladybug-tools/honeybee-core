@@ -2270,7 +2270,7 @@ class Face(_BaseWithShade):
                 associated with each sub-list of the grouped_faces.
         """
         if len(faces) <= 1:
-            return [faces, [f.geometry.plane for f in faces]]
+            return ([faces], [f.geometry.plane for f in faces])
         grouped_faces, planes = [[faces[0]]], [faces[0].geometry.plane]
         for face in faces[1:]:
             group_found = False

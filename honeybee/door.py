@@ -747,7 +747,7 @@ class Door(_BaseWithShade):
                 associated with each sub-list of the grouped_doors.
         """
         if len(doors) <= 1:
-            return [doors, [dr.geometry.plane for dr in doors]]
+            return ([doors], [dr.geometry.plane for dr in doors])
         grouped_doors, planes = [[doors[0]]], [doors[0].geometry.plane]
         for dr in doors[1:]:
             group_found = False
