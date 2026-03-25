@@ -357,3 +357,7 @@ def test_group_by_coplanarity():
     grouped_faces, planes = Door.group_by_coplanarity(all_faces, 0.75)
     assert len(grouped_faces) == 1
     assert len(grouped_faces[0]) == 3
+
+    grouped_faces, planes = Door.group_by_coplanarity([face1], 0.01)
+    assert len(grouped_faces) == 1
+    assert len(grouped_faces[0]) == 1
