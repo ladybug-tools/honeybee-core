@@ -2252,13 +2252,18 @@ class Face(_BaseWithShade):
         return base
 
     @staticmethod
-    def group_by_coplanarity(faces, tolerance=0.01):
+    def group_by_coplanarity(faces, tolerance=0.01, angle_tolerance=None):
         """Group Faces depending on whether they are coplanar with one another.
 
         Args:
             faces: A list of Faces to be grouped by their coplanarity.
             tolerance: The minimum difference between the coordinate values of two
                 planes at which they can be considered coplanar.
+            angle_tolerance: An optional angle_tolerance in degrees for the minimum
+                angle difference at which point two geometries are considered
+                to be within different planes. If None, only the tolerance will
+                be used to determine co-planarity, which is usually sufficient
+                at tolerances smaller than any Face3D geometry.
 
         Returns:
             A tuple with two items.
@@ -2269,23 +2274,7 @@ class Face(_BaseWithShade):
             -   planes - A list of ladybug-geometry Planes for the value
                 associated with each sub-list of the grouped_faces.
         """
-        if len(faces) <= 1:
-            return ([faces], [f.geometry.plane for f in faces])
-        grouped_faces, planes = [[faces[0]]], [faces[0].geometry.plane]
-        for face in faces[1:]:
-            group_found = False
-            for face_group in grouped_faces:
-                for oth_face in face_group:
-                    if face.geometry.is_coplanar(oth_face.geometry, tolerance):
-                        face_group.append(face)
-                        group_found = True
-                        break
-                if group_found:
-                    break
-            if not group_found:  # the face is not coplanar with any of the others
-                grouped_faces.append([face])  # make a new group for the face
-                planes.append(face.geometry.plane)
-        return grouped_faces, planes
+        return Face._group_by_coplanarity(faces, tolerance, angle_tolerance)
 
     @staticmethod
     def check_overlapping(hb_objs, tolerance=0.01, raise_exception=True, detailed=False):

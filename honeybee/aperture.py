@@ -980,13 +980,18 @@ class Aperture(_BaseWithShade):
         return base
 
     @staticmethod
-    def group_by_coplanarity(apertures, tolerance=0.01):
+    def group_by_coplanarity(apertures, tolerance=0.01, angle_tolerance=None):
         """Group Apertures depending on whether they are coplanar with one another.
 
         Args:
             apertures: A list of Apertures to be grouped by their coplanarity.
             tolerance: The minimum difference between the coordinate values of two
                 planes at which they can be considered coplanar.
+            angle_tolerance: An optional angle_tolerance in degrees for the minimum
+                angle difference at which point two geometries are considered
+                to be within different planes. If None, only the tolerance will
+                be used to determine co-planarity, which is usually sufficient
+                at tolerances smaller than any Face3D geometry.
 
         Returns:
             A tuple with two items.
@@ -997,23 +1002,7 @@ class Aperture(_BaseWithShade):
             -   planes - A list of ladybug-geometry Planes for the value
                 associated with each sub-list of the grouped_apertures.
         """
-        if len(apertures) <= 1:
-            return ([apertures], [ap.geometry.plane for ap in apertures])
-        grouped_apertures, planes = [[apertures[0]]], [apertures[0].geometry.plane]
-        for ap in apertures[1:]:
-            group_found = False
-            for ap_group in grouped_apertures:
-                for oth_ap in ap_group:
-                    if ap.geometry.is_coplanar(oth_ap.geometry, tolerance):
-                        ap_group.append(ap)
-                        group_found = True
-                        break
-                if group_found:
-                    break
-            if not group_found:  # the face is not coplanar with any of the others
-                grouped_apertures.append([ap])  # make a new group for the face
-                planes.append(ap.geometry.plane)
-        return grouped_apertures, planes
+        return Aperture._group_by_coplanarity(apertures, tolerance, angle_tolerance)
 
     def _reset_parent_geometry(self):
         """Reset parent punched_geometry in the case that the object is transformed."""

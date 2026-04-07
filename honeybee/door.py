@@ -729,13 +729,18 @@ class Door(_BaseWithShade):
         return base
 
     @staticmethod
-    def group_by_coplanarity(doors, tolerance=0.01):
+    def group_by_coplanarity(doors, tolerance=0.01, angle_tolerance=None):
         """Group Doors depending on whether they are coplanar with one another.
 
         Args:
             doors: A list of Doors to be grouped by their coplanarity.
             tolerance: The minimum difference between the coordinate values of two
                 planes at which they can be considered coplanar.
+            angle_tolerance: An optional angle_tolerance in degrees for the minimum
+                angle difference at which point two geometries are considered
+                to be within different planes. If None, only the tolerance will
+                be used to determine co-planarity, which is usually sufficient
+                at tolerances smaller than any Face3D geometry.
 
         Returns:
             A tuple with two items.
@@ -746,23 +751,7 @@ class Door(_BaseWithShade):
             -   planes - A list of ladybug-geometry Planes for the value
                 associated with each sub-list of the grouped_doors.
         """
-        if len(doors) <= 1:
-            return ([doors], [dr.geometry.plane for dr in doors])
-        grouped_doors, planes = [[doors[0]]], [doors[0].geometry.plane]
-        for dr in doors[1:]:
-            group_found = False
-            for dr_group in grouped_doors:
-                for oth_dr in dr_group:
-                    if dr.geometry.is_coplanar(oth_dr.geometry, tolerance):
-                        dr_group.append(dr)
-                        group_found = True
-                        break
-                if group_found:
-                    break
-            if not group_found:  # the face is not coplanar with any of the others
-                grouped_doors.append([dr])  # make a new group for the face
-                planes.append(dr.geometry.plane)
-        return grouped_doors, planes
+        return Door._group_by_coplanarity(doors, tolerance, angle_tolerance)
 
     def _reset_parent_geometry(self):
         """Reset parent punched_geometry in the case that the object is transformed."""
