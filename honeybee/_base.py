@@ -1,5 +1,6 @@
 # coding: utf-8
 """Base class for all geometry objects."""
+import math
 from ladybug_geometry.geometry3d.pointvector import Point3D
 
 from .typing import valid_string
@@ -258,6 +259,64 @@ class _Base(object):
             parents.append(par_dict)
         error_dict['parents'] = [parents]
         return error_dict
+
+    @staticmethod
+    def _group_by_coplanarity(faces, tolerance=0.01, angle_tolerance=None):
+        """Group planar objects depending on whether they are coplanar with one another.
+
+        Args:
+            doors: A list of planar Honeybee objects to be grouped by their coplanarity.
+            tolerance: The minimum difference between the coordinate values of two
+                planes at which they can be considered coplanar.
+            angle_tolerance: An optional angle_tolerance in degrees for the minimum
+                angle difference at which point two geometries are considered
+                to be within different planes. If None, only the tolerance will
+                be used to determine co-planarity, which is usually sufficient
+                at tolerances smaller than any Face3D geometry.
+
+        Returns:
+            A tuple with two items.
+
+            -   grouped_faces - A list of lists of honeybee objects with
+                each sub-list representing a set of coplanar objects.
+
+            -   planes - A list of ladybug-geometry Planes for the value
+                associated with each sub-list of the grouped_faces.
+        """
+        if len(faces) <= 1:
+            return ([faces], [f.geometry.plane for f in faces])
+        grouped_faces, planes = [[faces[0]]], [faces[0].geometry.plane]
+        if angle_tolerance is not None:
+            ang_tol = math.radians(angle_tolerance)
+            for face in faces[1:]:
+                group_found = False
+                for face_group in grouped_faces:
+                    for oth_face in face_group:
+                        if face.geometry.plane.is_coplanar_tolerance(
+                                oth_face.geometry.plane, tolerance, ang_tol):
+                            face_group.append(face)
+                            group_found = True
+                            break
+                    if group_found:
+                        break
+                if not group_found:  # the face is not coplanar with any of the others
+                    grouped_faces.append([face])  # make a new group for the face
+                    planes.append(face.geometry.plane)
+        else:
+            for face in faces[1:]:
+                group_found = False
+                for face_group in grouped_faces:
+                    for oth_face in face_group:
+                        if face.geometry.is_coplanar(oth_face.geometry, tolerance):
+                            face_group.append(face)
+                            group_found = True
+                            break
+                    if group_found:
+                        break
+                if not group_found:  # the face is not coplanar with any of the others
+                    grouped_faces.append([face])  # make a new group for the face
+                    planes.append(face.geometry.plane)
+        return grouped_faces, planes
 
     @staticmethod
     def _from_dict_error_message(obj_dict, exception_obj):

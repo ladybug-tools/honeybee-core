@@ -235,7 +235,7 @@ def create_from_sync(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
     '--other-model', '-m', help='The other Model to be merged into the base model.',
-    type=click.File('w'), multiple=True)
+    type=click.File('r'), multiple=True)
 @click.option(
     '--output-file', '-f', help='Optional file to output the Model JSON string'
     ' with solved adjacency. By default it will be printed out to stdout',
