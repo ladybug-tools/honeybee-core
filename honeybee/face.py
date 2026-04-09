@@ -367,7 +367,10 @@ class Face(_BaseWithShade):
     def aperture_ratio(self):
         """Get a number between 0 and 1 for the area ratio of the apertures to the face.
         """
-        return self.aperture_area / self.area
+        try:
+            return self.aperture_area / self.area
+        except ZeroDivisionError:  # invalid zero-area Face3D
+            return 0
 
     @property
     def tilt(self):
