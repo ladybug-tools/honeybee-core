@@ -363,6 +363,24 @@ def clean_and_number_ep_string(value, existing_dict, input_name=''):
         return val
 
 
+def number_string(value, existing_dict):
+    """Add an integer to a string if it is found in the existing_dict.
+
+    Args:
+        value: The text string to be given a unique integer if it is found in
+            the existing_dict.
+        existing_dict: A dictionary where the keys are text strings of existing items
+            and the values are the number of times that the item has appeared in
+            the model already.
+    """
+    if value in existing_dict:
+        existing_dict[value] += 1
+        return value + ' ' + str(existing_dict[value])
+    else:
+        existing_dict[value] = 1
+        return value
+
+
 def truncate_and_id_string(value, truncate_len=32, uuid_len=0, input_name=''):
     """Truncate a string to a length with an option to add unique characters at the end.
 

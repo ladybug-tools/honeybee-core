@@ -375,6 +375,15 @@ def test_shade_meshes_by_identifier():
         model.shade_meshes_by_identifier(['Awning_1'])
 
 
+def test_assign_unique_names():
+    """Test the assign_unique_names method."""
+    model_json = './tests/json/model_with_adiabatic.hbjson'
+    parsed_model = Model.from_hbjson(model_json, cleanup_irrational=True)
+
+    new_model = parsed_model.duplicate()
+    new_model.assign_unique_names()
+
+
 def test_model_add_prefix():
     """Test the model add_prefix method."""
     room = Room.from_box('ShoeBoxZone', 5, 10, 3)
