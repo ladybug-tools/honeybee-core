@@ -30,7 +30,7 @@ from .aperture import Aperture
 from .door import Door
 from .shademesh import ShadeMesh
 from .typing import float_positive, invalid_dict_error, clean_string, \
-    clean_and_number_string
+    clean_and_number_string, number_string
 from .config import folders
 from .boundarycondition import Outdoors, Surface
 from .facetype import AirBoundary, Wall, Floor, RoofCeiling, face_types
@@ -1657,6 +1657,29 @@ class Model(_Base):
                                         rel_rooms[room.identifier] = room
                                         break
         return list(rel_rooms.values())
+
+    def assign_unique_names(self):
+        """Ensure all display_names of objects in the model are unique.
+
+        In the event that duplicate names are found, an integer will be automatically
+        appended to the new name to make it unique. This is similar to the routines
+        that automatically assign unique names to OpenStudio SDK objects.
+        """
+        # set up dictionaries to hold various pieces of information
+        room_dict, face_dict, ap_dict, dr_dict, shd_dict, sm_dict = {}, {}, {}, {}, {}, {}
+        # loop through the objects and change their names
+        for room in self.rooms:
+            room.display_name = number_string(room.display_name, room_dict)
+        for face in self.faces:
+            face.display_name = number_string(face.display_name, face_dict)
+        for ap in self.apertures:
+            ap.display_name = number_string(ap.display_name, ap_dict)
+        for dr in self.doors:
+            dr.display_name = number_string(dr.display_name, dr_dict)
+        for shade in self.shades:
+            shade.display_name = number_string(shade.display_name, shd_dict)
+        for shade_mesh in self.shade_meshes:
+            shade_mesh.display_name = number_string(shade_mesh.display_name, sm_dict)
 
     def add_prefix(self, prefix):
         """Change the identifier of this object and child objects by inserting a prefix.
