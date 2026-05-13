@@ -602,14 +602,38 @@ class Room(_BaseWithShade):
             north_vector: A ladybug_geometry Vector2D for the north direction.
                 Default is the Y-axis (0, 1).
         """
-        orientations = 0
-        areas = 0
+        orient_vecs = []
         for face in self._faces:
             if isinstance(face.type, Wall) and \
                     isinstance(face.boundary_condition, Outdoors):
-                orientations += face.horizontal_orientation(north_vector) * face.area
-                areas += face.area
-        return orientations / areas if areas != 0 else None
+                norm = Vector2D(face.normal.x, face.normal.y)
+                if norm.magnitude != 0:
+                    orient_vecs.append(norm * face.area)
+        if len(orient_vecs) == 0:
+            return None
+        orient_vec = orient_vecs[0]
+        for o_vec in orient_vecs[1:]:
+            orient_vec += o_vec
+        return math.degrees(north_vector.angle_clockwise(orient_vec.normalize()))
+
+    def average_cardinal_direction(self, north_vector=Vector2D(0, 1)):
+        """Get text description for the average cardinal direction of exposed walls.
+
+        Will be one of the following: ('North', 'NorthEast', 'East', 'SouthEast',
+        'South', 'SouthWest', 'West', 'NorthWest').
+
+        Args:
+            north_vector: A ladybug_geometry Vector2D for the north direction.
+                Default is the Y-axis (0, 1).
+        """
+        orient = self.average_orientation(north_vector)
+        orient_text = ('North', 'NorthEast', 'East', 'SouthEast', 'South',
+                       'SouthWest', 'West', 'NorthWest')
+        angles = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
+        for i, ang in enumerate(angles):
+            if orient < ang:
+                return orient_text[i]
+        return orient_text[0]
 
     def classified_edges(self, tolerance=0.01, angle_tolerance=None):
         """Get classified edges of this Room's Polyface3D based on Faces they adjoin.
