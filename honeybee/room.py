@@ -869,7 +869,7 @@ class Room(_BaseWithShade):
         matches = re.findall(r'{([^}]*)}', format_str)
         attributes = [get_attr_nested(self, m) for m in matches]
         for attr_name, attr_val in zip(matches, attributes):
-            format_str = format_str.replace('{{{}}}'.format(attr_name), attr_val)
+            format_str = format_str.replace('{{{}}}'.format(attr_name), str(attr_val))
         self.display_name = format_str
         return format_str
 

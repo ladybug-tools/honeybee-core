@@ -81,11 +81,17 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
                     current_obj = current_obj.get(attribute, None)
                 else:
                     current_obj = getattr(current_obj, attribute)
-            if isinstance(current_obj, float) and decimal_count:
-                val = round(current_obj, decimal_count)
-                return str(val) if cast_to_str else val
+            if isinstance(current_obj, float):
+                if decimal_count:
+                    current_obj = round(current_obj, decimal_count)
+                return current_obj
             elif callable(current_obj):
-                return str(current_obj()) if cast_to_str else current_obj()
+                val = current_obj()
+                if isinstance(val, float):
+                    if decimal_count:
+                        val = round(current_obj, decimal_count)
+                    return val
+                return str(val) if cast_to_str else val
             else:
                 return str(current_obj) if cast_to_str else current_obj
         except AttributeError as e:
@@ -96,11 +102,17 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
     else:  # honeybee-core attribute
         try:
             current_obj = getattr(obj_instance, attr_name)
-            if isinstance(current_obj, float) and decimal_count:
-                val = round(current_obj, decimal_count)
-                return str(val) if cast_to_str else val
+            if isinstance(current_obj, float):
+                if decimal_count:
+                    current_obj = round(current_obj, decimal_count)
+                return current_obj
             elif callable(current_obj):
-                return str(current_obj()) if cast_to_str else current_obj()
+                val = current_obj()
+                if isinstance(val, float):
+                    if decimal_count:
+                        val = round(current_obj, decimal_count)
+                    return val
+                return str(val) if cast_to_str else val
             else:
                 return str(current_obj) if cast_to_str else current_obj
         except AttributeError:
