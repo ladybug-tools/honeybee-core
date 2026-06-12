@@ -1,0 +1,7 @@
+honeybee.cli.lib module
+=======================
+
+.. automodule:: honeybee.cli.lib
+   :members:
+   :undoc-members:
+   :show-inheritance:
