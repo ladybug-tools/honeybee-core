@@ -43,5 +43,15 @@ class Autocalculate(_AltNumber):
     pass
 
 
+class Unassigned(_AltNumber):
+    """Object representing when a certain numerical value is has not been assigned.
+
+    Typically, this means that the value has been specified elsewhere.
+    """
+    __slots__ = ()
+    pass
+
+
 no_limit = NoLimit()
 autocalculate = Autocalculate()
+unassigned = Unassigned()
