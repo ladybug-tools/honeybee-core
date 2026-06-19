@@ -1612,9 +1612,12 @@ class Model(_Base):
             for poly in polygons:
                 faces.append(Face3D([plane.xy_to_xyz(pt) for pt in poly], plane))
             # create a joined Polyface3D and classify the edges
-            ap_polyface = Polyface3D.from_faces(faces, mul_thick)
-            sub_face_frames.extend(ap_polyface.naked_edges)
-            sub_face_mullions.extend(ap_polyface.internal_edges)
+            try:
+                ap_polyface = Polyface3D.from_faces(faces, mul_thick)
+                sub_face_frames.extend(ap_polyface.naked_edges)
+                sub_face_mullions.extend(ap_polyface.internal_edges)
+            except AssertionError:
+                pass  # all of the polygons are smaller than mullions
 
         return sub_face_frames, sub_face_mullions
 
