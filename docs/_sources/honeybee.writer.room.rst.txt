@@ -1,0 +1,7 @@
+honeybee.writer.room module
+===========================
+
+.. automodule:: honeybee.writer.room
+   :members:
+   :undoc-members:
+   :show-inheritance:
