@@ -264,7 +264,7 @@ class Aperture(_BaseWithShade):
         return math.degrees(self._geometry.altitude)
 
     @property
-    def azimuth(self):
+    def azimuth(self): 
         """Get the azimuth of the geometry, between 0 and 360.
 
         Given Y-axis as North, 0 = North, 90 = East, 180 = South, 270 = West
