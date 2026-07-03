@@ -2040,6 +2040,10 @@ class Room(_BaseWithShade):
                             nf.add_indoor_shades(in_shades)
                             nf.add_outdoor_shades(out_shades)
                         nf._parent = self
+                        nf._display_name = prop_f._display_name
+                        nf._user_data = None if self.user_data is None \
+                            else self.user_data.copy()
+                        nf._properties._duplicate_extension_attr(prop_f._properties)
                         all_faces.append(nf)
                         new_faces.append(nf)
                 else:  # faces don't overlap and were not merged
