@@ -1,8 +1,9 @@
 """Test the typing functions."""
 from honeybee.typing import clean_string, clean_rad_string, clean_ep_string, \
     float_in_range, int_in_range, float_positive, int_positive, \
-    tuple_with_length, list_with_length, normpath, \
+    tuple_with_length, list_with_length, \
     clean_and_id_string, clean_and_id_rad_string, clean_and_id_ep_string, \
+    clean_xml_tag_string, \
     float_in_range_excl, float_in_range_excl_incl, float_in_range_incl_excl, \
     invalid_dict_error, truncate_and_id_string
 
@@ -43,6 +44,17 @@ def test_clean_ep_string():
     assert clean_ep_string(correct_str) == correct_str
     assert clean_ep_string(incorrect_str) == correct_str
     assert len(clean_ep_string(long_str)) <= 100
+
+
+def test_clean_xml_tag_string():
+    """Test the clean_xml_tag_string method."""
+    correct_str = 'valid_tag-123'
+    incorrect_str = '2invalid'  # False (Cannot start with a number)
+    incorrect_str2 = 'xml-tag'  # False (Cannot start with "xml")
+
+    assert clean_xml_tag_string(correct_str) == correct_str
+    assert clean_xml_tag_string(correct_str) != incorrect_str
+    assert not clean_xml_tag_string(incorrect_str2).startswith('xml')
 
 
 def test_clean_and_id_string():
