@@ -233,6 +233,33 @@ def clean_ep_string(value, input_name=''):
     return val
 
 
+def clean_xml_tag_string(value, input_name=''):
+    """Clean a string so that it can be used as an xml tag.
+
+    This includes stripping out all illegal characters, removing trailing spaces,
+    and rasing an error if the name is not longer than 100 characters. If the input
+    has no valid characters after stripping out illegal ones, a randomly-generated
+    UUID will be returned.
+    """
+    try:
+        value = value.replace(' ', '_')  # spaces > underscores for readability
+        val = re.sub(r'[^a-zA-Z0-9._:-]', '', value)  # strip out all special characters
+    except TypeError:
+        raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
+            input_name, type(value), value))
+    # if all characters were stripped out, generate a hash from the input
+    if len(val) == 0:  # generate a unique but consistent ID from the input
+        sha256_hash = hashlib.sha256(value.encode('utf-8'))
+        hash_str = str(sha256_hash.hexdigest())
+        val = hash_str[:8] if len(hash_str) > 8 else hash_str
+    # ensure the tag doesn't start with a number or dot
+    if re.match(r'^[0-9.]', val):
+        val = '_' + val
+    if val.lower().startswith('xml'):
+        val = '_' + val[3:]
+    return val
+
+
 def clean_and_id_string(value, input_name=''):
     """Clean a string and add 8 unique characters to it to make it unique.
 
