@@ -12,6 +12,10 @@ except AttributeError:
     # python 2
     INFPOS = float('inf')
     INFNEG = float('-inf')
+# establish the illegal names for DOE-2
+ILLEGAL_DOE2 = (
+    'SPACE', 'ROOF', 'FLOOR', 'EXTERIOR-WALL', 'INTERIOR-WALL', 'WINDOW', 'DOOR'
+)
 
 
 def valid_string(value, input_name=''):
@@ -508,6 +512,8 @@ def clean_doe2_string(value, max_length=24):
         sha256_hash = hashlib.sha256(value.encode('utf-8'))
         hash_str = str(sha256_hash.hexdigest())
         return hash_str[:8] if len(hash_str) > 8 else hash_str
+    if val.upper() in ILLEGAL_DOE2:
+        return '{}.'.format(val)
     return readable_short_name(val, max_length)
 
 
