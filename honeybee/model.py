@@ -1844,38 +1844,43 @@ class Model(_Base):
     def _repair_surface_bcs(self, room_map, face_map, ap_map, dr_map):
         """Repair Surface boundary conditions across the model using dict maps."""
         for room in self.rooms:
-            for face in room.faces:
-                if isinstance(face.boundary_condition, Surface):
-                    old_objs = face.boundary_condition.boundary_condition_objects
-                    try:
-                        new_objs = (face_map[old_objs[0]], room_map[old_objs[1]])
-                    except KeyError:  # missing adjacency
-                        try:  # see if maybe the room reference is still there
-                            new_objs = (old_objs[0], room_map[old_objs[1]])
-                        except KeyError:  # just let the invalid adjacency pass
-                            continue
-                    new_bc = Surface(new_objs)
-                    face.boundary_condition = new_bc
-                    for ap in face.apertures:
-                        old_objs = ap.boundary_condition.boundary_condition_objects
+            try:
+                for face in room.faces:
+                    if isinstance(face.boundary_condition, Surface):
+                        old_objs = face.boundary_condition.boundary_condition_objects
                         try:
-                            new_objs = (ap_map[old_objs[0]], face_map[old_objs[1]],
-                                        room_map[old_objs[2]])
+                            new_objs = (face_map[old_objs[0]], room_map[old_objs[1]])
                         except KeyError:  # missing adjacency
-                            new_objs = (old_objs[0], old_objs[1],
-                                        room_map[old_objs[2]])
-                        new_bc = Surface(new_objs, True)
-                        ap.boundary_condition = new_bc
-                    for dr in face.doors:
-                        old_objs = dr.boundary_condition.boundary_condition_objects
-                        try:
-                            new_objs = (dr_map[old_objs[0]], face_map[old_objs[1]],
-                                        room_map[old_objs[2]])
-                        except KeyError:  # missing adjacency
-                            new_objs = (old_objs[0], old_objs[1],
-                                        room_map[old_objs[2]])
-                        new_bc = Surface(new_objs, True)
-                        dr.boundary_condition = new_bc
+                            try:  # see if maybe the room reference is still there
+                                new_objs = (old_objs[0], room_map[old_objs[1]])
+                            except KeyError:  # just let the invalid adjacency pass
+                                continue
+                        new_bc = Surface(new_objs)
+                        face.boundary_condition = new_bc
+                        for ap in face.apertures:
+                            old_objs = ap.boundary_condition.boundary_condition_objects
+                            try:
+                                new_objs = (ap_map[old_objs[0]], face_map[old_objs[1]],
+                                            room_map[old_objs[2]])
+                            except KeyError:  # missing adjacency
+                                new_objs = (old_objs[0], old_objs[1],
+                                            room_map[old_objs[2]])
+                            new_bc = Surface(new_objs, True)
+                            ap.boundary_condition = new_bc
+                        for dr in face.doors:
+                            old_objs = dr.boundary_condition.boundary_condition_objects
+                            try:
+                                new_objs = (dr_map[old_objs[0]], face_map[old_objs[1]],
+                                            room_map[old_objs[2]])
+                            except KeyError:  # missing adjacency
+                                new_objs = (old_objs[0], old_objs[1],
+                                            room_map[old_objs[2]])
+                            new_bc = Surface(new_objs, True)
+                            dr.boundary_condition = new_bc
+            except AttributeError as e:
+                msg = 'Room "{}" is invalid and interior boundary conditions could ' \
+                    'not be coordinated with reset IDs.\n{}'.format(room.display_name, e)
+                raise ValueError(msg)
 
     def solve_adjacency(
             self, merge_coplanar=False, intersect=False, overwrite=False,
