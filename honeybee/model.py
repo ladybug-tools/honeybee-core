@@ -15,12 +15,13 @@ except ImportError:  # wea are in cPython
 
 from ladybug_geometry.geometry2d import Polygon2D
 from ladybug_geometry.geometry3d import Vector3D, Plane, Face3D, Mesh3D, Polyface3D
+from ladybug_geometry.util import rounding_tolerance
 from ladybug_geometry.bounding import overlapping_bounding_boxes
 from ladybug_geometry.interop.stl import STL
 
 from ._base import _Base
 from .units import conversion_factor_to_meters, parse_distance_string, \
-    UNITS, UNITS_TOLERANCES
+    UNITS, UNITS_ABBREVIATIONS, UNITS_TOLERANCES
 from .checkdup import check_duplicate_identifiers, check_duplicate_identifiers_parent
 from .properties import ModelProperties
 from .room import Room
@@ -29,6 +30,7 @@ from .shade import Shade
 from .aperture import Aperture
 from .door import Door
 from .shademesh import ShadeMesh
+from .search import get_attr_nested
 from .typing import float_positive, invalid_dict_error, clean_string, \
     clean_and_number_string, number_string
 from .config import folders
@@ -107,6 +109,7 @@ class Model(_Base):
         * exterior_aperture_area
         * exterior_wall_aperture_area
         * exterior_skylight_aperture_area
+        * units_abbreviation
         * min
         * max
         * roof_to_exterior_edges
@@ -1019,6 +1022,13 @@ class Model(_Base):
                     for room in self._rooms])
 
     @property
+    def units_abbreviation(self):
+        """Get the abbreviation of the model units (eg. mm for Millimeters)."""
+        for unit, u_abbrev in zip(UNITS, UNITS_ABBREVIATIONS):
+            if self.units == unit:
+                return u_abbrev
+
+    @property
     def min(self):
         """Get a Point3D for the min bounding box vertex in the XY plane."""
         return self._calculate_min(self._all_objects())
@@ -1660,6 +1670,129 @@ class Model(_Base):
                                         rel_rooms[room.identifier] = room
                                         break
         return list(rel_rooms.values())
+
+    def rename_faces_by_attribute(
+        self,
+        format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
+        decimal_count=None
+    ):
+        """Set the display name for all of this Model's faces using a format string.
+
+        Args:
+            format_str: Text string for the pattern with which the faces will be
+                renamed. Any property of the Face class may be used (eg. gbxml_str)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.construction.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments. Properties that
+                end in 'area' will have an abbreviation of the model units appended
+                to them.
+            decimal_count: An integer to be used to round all properties to a
+                number of decimal places when they are numbers. If None,
+                the number of decimal places are determined by the model tolerance.
+        """
+        # preprocess the formatting string
+        matches, format_str, decimal_count = \
+            self._pre_process_format_str(format_str, decimal_count)
+        # get the face attributes and rename them
+        for room in self.rooms:
+            for face in room.faces:
+                ff_str = format_str
+                attributes = [get_attr_nested(face, m, decimal_count=decimal_count)
+                              for m in matches]
+                for attr_name, attr_val in zip(matches, attributes):
+                    ff_str = ff_str.replace('{{{}}}'.format(attr_name), str(attr_val))
+                face.display_name = ff_str
+
+    def rename_apertures_by_attribute(
+        self,
+        format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
+        decimal_count=None
+    ):
+        """Set the display name for all of this Model's apertures using a format string.
+
+        Args:
+            format_str: Text string for the pattern with which the apertures will be
+                renamed. Any property of the Aperture class may be used (eg. gbxml_str)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.construction.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments. Properties that
+                end in 'area' will have an abbreviation of the model units appended
+                to them.
+            decimal_count: An integer to be used to round all properties to a
+                number of decimal places when they are numbers. If None,
+                the number of decimal places are determined by the model tolerance.
+        """
+        # preprocess the formatting string
+        matches, format_str, decimal_count = \
+            self._pre_process_format_str(format_str, decimal_count)
+        # get the aperture attributes and rename them
+        for room in self.rooms:
+            for ap in room.apertures:
+                ff_str = format_str
+                attributes = [get_attr_nested(ap, m, decimal_count=decimal_count)
+                              for m in matches]
+                for attr_name, attr_val in zip(matches, attributes):
+                    ff_str = ff_str.replace('{{{}}}'.format(attr_name), str(attr_val))
+                ap.display_name = ff_str
+
+    def rename_doors_by_attribute(
+        self,
+        format_str='{parent.display_name} - {energyplus_type} - {cardinal_direction}',
+        decimal_count=None
+    ):
+        """Set the display name for all of this Model's doors using a format string.
+
+        Args:
+            format_str: Text string for the pattern with which the doors will be
+                renamed. Any property of the Door class may be used (eg. gbxml_str)
+                and each property should be put in curly brackets. Nested
+                properties can be specified by using "." to denote nesting levels
+                (eg. properties.energy.construction.display_name). Functions that
+                return string outputs can also be passed here as long as these
+                functions defaults specified for all arguments. Properties that
+                end in 'area' will have an abbreviation of the model units appended
+                to them.
+            decimal_count: An integer to be used to round all properties to a
+                number of decimal places when they are numbers. If None,
+                the number of decimal places are determined by the model tolerance.
+        """
+        # preprocess the formatting string
+        matches, format_str, decimal_count = \
+            self._pre_process_format_str(format_str, decimal_count)
+        # get the aperture attributes and rename them
+        for room in self.rooms:
+            for dr in room.doors:
+                ff_str = format_str
+                attributes = [get_attr_nested(dr, m, decimal_count=decimal_count)
+                              for m in matches]
+                for attr_name, attr_val in zip(matches, attributes):
+                    ff_str = ff_str.replace('{{{}}}'.format(attr_name), str(attr_val))
+                dr.display_name = ff_str
+
+    def _pre_process_format_str(self, format_str, decimal_count):
+        """Pre-process a format string used to rename objects in the model."""
+        # set the decimal count from the tolerance
+        if decimal_count is None:
+            decimal_count, _ = rounding_tolerance(self.tolerance)
+
+        # process the format string in a way that includes the units
+        matches = re.findall(r'{([^}]*)}', format_str)
+        for m in matches:
+            if m.endswith('area') or m.endswith('volume') or m == 'width_x_height_label':
+                u_abbrev = self.units_abbreviation
+                if m.endswith('area'):
+                    ss = '2'
+                elif m.endswith('volume'):
+                    ss = '3'
+                else:
+                    ss = ''
+                b_m = '{{{}}}'.format(m)
+                format_str = format_str.replace(b_m, '{} {}{}'.format(b_m, u_abbrev, ss))
+        return matches, format_str, decimal_count
 
     def assign_unique_names(self):
         """Ensure all display_names of objects in the model are unique.

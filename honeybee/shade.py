@@ -281,7 +281,8 @@ class Shade(_Base):
         self.properties.add_prefix(prefix)
 
     def rename_by_attribute(
-        self, format_str='{display_name} - {gbxml_type}'
+        self, format_str='{display_name} - {gbxml_type}',
+        decimal_count=2
     ):
         """Set the display name of this Shade using a format string with attributes.
 
@@ -293,9 +294,12 @@ class Shade(_Base):
                 (eg. properties.energy.construction.display_name). Functions that
                 return string outputs can also be passed here as long as these
                 functions defaults specified for all arguments.
+            decimal_count: An integer to be used to round all properties to a
+                number of decimal places when they are numbers. (Default: 2).
         """
         matches = re.findall(r'{([^}]*)}', format_str)
-        attributes = [get_attr_nested(self, m, decimal_count=2) for m in matches]
+        attributes = [get_attr_nested(self, m, decimal_count=decimal_count)
+                      for m in matches]
         for attr_name, attr_val in zip(matches, attributes):
             format_str = format_str.replace('{{{}}}'.format(attr_name), str(attr_val))
         self.display_name = format_str

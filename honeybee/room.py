@@ -921,7 +921,8 @@ class Room(_BaseWithShade):
 
     def rename_faces_by_attribute(
         self,
-        format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}'
+        format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
+        decimal_count=2
     ):
         """Set the display name for all of this Room's faces using a format string.
 
@@ -933,13 +934,16 @@ class Room(_BaseWithShade):
                 (eg. properties.energy.construction.display_name). Functions that
                 return string outputs can also be passed here as long as these
                 functions defaults specified for all arguments.
+            decimal_count: An integer to be used to round all properties to a
+                number of decimal places when they are numbers. (Default: 2).
         """
         for face in self.faces:
-            face.rename_by_attribute(format_str)
+            face.rename_by_attribute(format_str, decimal_count)
 
     def rename_apertures_by_attribute(
         self,
-        format_str='{parent.parent.display_name} - {gbxml_type} - {cardinal_direction}'
+        format_str='{parent.parent.display_name} - {gbxml_type} - {cardinal_direction}',
+        decimal_count=2
     ):
         """Set the display name for all of this Room's apertures using a format string.
 
@@ -951,13 +955,16 @@ class Room(_BaseWithShade):
                 (eg. properties.energy.construction.display_name). Functions that
                 return string outputs can also be passed here as long as these
                 functions defaults specified for all arguments.
+            decimal_count: An integer to be used to round all properties to a
+                number of decimal places when they are numbers. (Default: 2).
         """
         for ap in self.apertures:
-            ap.rename_by_attribute(format_str)
+            ap.rename_by_attribute(format_str, decimal_count)
 
     def rename_doors_by_attribute(
         self,
-        format_str='{parent.parent.display_name} - {energyplus_type} - {cardinal_direction}'
+        format_str='{parent.parent.display_name} - {energyplus_type} - {cardinal_direction}',
+        decimal_count=2
     ):
         """Set the display name for all of this Room's doors using a format string.
 
@@ -969,9 +976,11 @@ class Room(_BaseWithShade):
                 (eg. properties.energy.construction.display_name). Functions that
                 return string outputs can also be passed here as long as these
                 functions defaults specified for all arguments.
+            decimal_count: An integer to be used to round all properties to a
+                number of decimal places when they are numbers. (Default: 2).
         """
         for dr in self.doors:
-            dr.rename_by_attribute(format_str)
+            dr.rename_by_attribute(format_str, decimal_count)
 
     def remove_indoor_furniture(self):
         """Remove all indoor furniture assigned to this Room.

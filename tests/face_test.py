@@ -153,6 +153,17 @@ def test_cardinal_direction():
     assert face_4.cardinal_direction() == 'East'
 
 
+def test_width_x_height_label():
+    """Test the width_x_height_label method."""
+    pts_1 = [Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(5, 0, 3), Point3D(5, 0, 0)]
+    pts_2 = [Point3D(0, 0, 0), Point3D(0, 3, 0), Point3D(5, 3, 0), Point3D(5, 0, 0)]
+    face_1 = Face('TestFace1', Face3D(pts_1))
+    face_2 = Face('TestFace2', Face3D(pts_2))
+
+    assert face_1.width_x_height_label() == '5.0 x 3.0'
+    assert face_2.width_x_height_label() == '5.0 x 3.0'
+
+
 def test_face_add_prefix():
     """Test the face add_prefix method."""
     face_face3d = Face3D.from_rectangle(10, 10, Plane(o=Point3D(0, 0, 3)))
