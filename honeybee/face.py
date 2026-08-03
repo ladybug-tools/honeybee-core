@@ -6,6 +6,7 @@ import re
 
 from ladybug_geometry.geometry2d import Vector2D, Point2D, Polygon2D, Mesh2D
 from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, Face3D
+from ladybug_geometry.util import rounding_tolerance
 from ladybug.color import Color
 
 from ._basewithshade import _BaseWithShade
@@ -66,6 +67,9 @@ class Face(_BaseWithShade):
         * max
         * aperture_area
         * aperture_ratio
+        * aperture_count
+        * door_count
+        * subface_count
         * tilt
         * altitude
         * azimuth
@@ -373,6 +377,21 @@ class Face(_BaseWithShade):
             return 0
 
     @property
+    def aperture_count(self):
+        """Get the number of apertures assigned to this face."""
+        return len(self._apertures)
+
+    @property
+    def door_count(self):
+        """Get the number of doors assigned to this face."""
+        return len(self._doors)
+
+    @property
+    def subface_count(self):
+        """Get the number of apertures assigned to this face."""
+        return len(self.sub_faces)
+
+    @property
     def tilt(self):
         """Get the tilt of the geometry between 0 (up) and 180 (down)."""
         return math.degrees(self._geometry.tilt)
@@ -521,6 +540,34 @@ class Face(_BaseWithShade):
                 return orient_text[i]
         return orient_text[0]
 
+    def width_x_height_label(self, tolerance=0.01):
+        """Get a text string for the width x height of the Face bounding rectangle.
+
+        Args:
+            tolerance: The minimum difference in coordinate values below which
+                vertices are considered to be identical. (Default: 0.01, suitable
+                for objects in Meters).
+        """
+        # get the decimal count and Face3D
+        face_3d = self.geometry
+        decimal_count, _ = rounding_tolerance(tolerance)
+        # extract all of the rectangular geometry properties
+        rel_plane = face_3d.plane
+        llc = face_3d.lower_left_corner
+        urc = face_3d.upper_right_corner
+        origin = llc
+        if face_3d.is_horizontal(tolerance):
+            proj_x = Vector3D(1, 0, 0)
+        else:
+            proj_y = Vector3D(0, 0, 1).project(rel_plane.n)
+            proj_x = proj_y.rotate(rel_plane.n, math.pi / -2)
+        ref_plane = Plane(rel_plane.n, origin, proj_x)
+        min_2d = ref_plane.xyz_to_xy(llc)
+        max_2d = ref_plane.xyz_to_xy(urc)
+        width = round(max_2d.x - min_2d.x, decimal_count)
+        height = round(max_2d.y - min_2d.y, decimal_count)
+        return '{} x {}'.format(width, height)
+
     def add_prefix(self, prefix):
         """Change the identifier of this object and child objects by inserting a prefix.
 
@@ -550,7 +597,8 @@ class Face(_BaseWithShade):
 
     def rename_by_attribute(
         self,
-        format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}'
+        format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
+        decimal_count=2
     ):
         """Set the display name of this Face using a format string with Face attributes.
 
@@ -562,9 +610,12 @@ class Face(_BaseWithShade):
                 (eg. properties.energy.construction.display_name). Functions that
                 return string outputs can also be passed here as long as these
                 functions defaults specified for all arguments.
+            decimal_count: An integer to be used to round all properties to a
+                number of decimal places when they are numbers. (Default: 2).
         """
         matches = re.findall(r'{([^}]*)}', format_str)
-        attributes = [get_attr_nested(self, m, decimal_count=2) for m in matches]
+        attributes = [get_attr_nested(self, m, decimal_count=decimal_count)
+                      for m in matches]
         for attr_name, attr_val in zip(matches, attributes):
             format_str = format_str.replace('{{{}}}'.format(attr_name), str(attr_val))
         self.display_name = format_str

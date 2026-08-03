@@ -375,6 +375,17 @@ def test_shade_meshes_by_identifier():
         model.shade_meshes_by_identifier(['Awning_1'])
 
 
+def test_rename_faces_by_attribute():
+    """Test the rename_faces_by_attribute method."""
+    room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    model = Model('TinyHouse', [room])
+
+    test_attr = '{gbxml_type} - {cardinal_direction} - {area} - {width_x_height_label}'
+    model.rename_faces_by_attribute(test_attr)
+    for face in model.faces:
+        face.display_name.count('-') == 3
+
+
 def test_assign_unique_names():
     """Test the assign_unique_names method."""
     model_json = './tests/json/model_with_adiabatic.hbjson'
