@@ -669,6 +669,7 @@ class Room(_BaseWithShade):
         roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall = [], [], []
         exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor = [], [], []
         underground, interior = [], []
+        out_bc = (Outdoors, ad_bc.__class__) if ad_bc is not None else Outdoors
 
         # get all of the edges in a way that colinear edges are broken down
         base_edges = list(self.geometry.edges)
@@ -709,7 +710,7 @@ class Room(_BaseWithShade):
                     continue
 
             # then check for which category the edge should go into
-            ext_faces = [f for f in faces if isinstance(f.boundary_condition, Outdoors)
+            ext_faces = [f for f in faces if isinstance(f.boundary_condition, out_bc)
                          and not isinstance(f.type, AirBoundary)]
             if len(ext_faces) >= 2:  # some type of exterior edge
                 if all(isinstance(f.type, Wall) for f in ext_faces):
@@ -736,6 +737,51 @@ class Room(_BaseWithShade):
         return roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall, \
             exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor, \
             underground, interior
+
+    def face_edges(self, tolerance=0.01):
+        """Get the edges of this Room's Polyface3D along with all the Faces they adjoin.
+
+        Args:
+            tolerance: The maximum difference between point values for them to be
+                considered equivalent. (Default: 0.01, suitable for objects in meters).
+
+        Returns:
+            A tuple with two items.
+
+            -   edges - A list of LineSegment3D for the edges of the Room Polyface3D.
+
+            -   edge_faces - A list of lists where each sub-list related to an edge
+                    in the edges list and contains all Faces associated with
+                    each edge.
+        """
+        # get all of the edges in a way that colinear edges are broken down
+        base_edges = list(self.geometry.edges)
+        base_vertices = self.geometry.vertices
+        edges = []
+        for i, edge in enumerate(base_edges):
+            for pt in base_vertices:
+                if edge.distance_to_point(pt) < tolerance and \
+                        not edge.p1.distance_to_point(pt) < tolerance and \
+                        not edge.p2.distance_to_point(pt) < tolerance:
+                    # split the edge in two at the point
+                    base_edges.append(LineSegment3D.from_end_points(edge.p1, pt))
+                    base_edges.append(LineSegment3D.from_end_points(pt, edge.p2))
+                    break
+            else:  # no further subdivision needed
+                edges.append(edge)
+
+        # map the edges to room faces
+        edge_faces = [[] for _ in edges]
+        for i, edge in enumerate(edges):
+            for face in self.faces:
+                if overlapping_bounding_boxes(face.geometry, edge, tolerance):
+                    for f_edge in face.geometry.segments:
+                        if f_edge.distance_to_point(edge.p1) < tolerance and \
+                                f_edge.distance_to_point(edge.p2) < tolerance:
+                            edge_faces[i].append(face)
+                            break
+
+        return edges, edge_faces
 
     def horizontal_boundary(self, match_walls=False, tolerance=0.01):
         """Get a Face3D representing the horizontal boundary around the Room.
