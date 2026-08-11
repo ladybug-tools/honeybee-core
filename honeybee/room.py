@@ -22,10 +22,6 @@ from .boundarycondition import get_bc_from_position, Outdoors, Ground, Surface, 
     boundary_conditions
 from .orientation import angles_from_num_orient, orient_index
 from .search import get_attr_nested
-try:
-    ad_bc = boundary_conditions.adiabatic
-except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
-    ad_bc = None
 
 
 class Room(_BaseWithShade):
@@ -665,6 +661,12 @@ class Room(_BaseWithShade):
 
             -   interior - Interior faces meet.
         """
+        # try to import the adiabatic boundary condition to make use of it
+        try:
+            ad_bc = boundary_conditions.adiabatic
+        except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
+            ad_bc = None
+
         # set up lists to be populated
         roof_to_exterior, slab_to_exterior, exposed_floor_to_exterior_wall = [], [], []
         exterior_wall_to_wall, roof_ridge, exposed_floor_to_floor = [], [], []
@@ -3140,6 +3142,12 @@ class Room(_BaseWithShade):
             ground_floor: Boolean to note whether the floor faces of the bottom
                 floor should be ground or adiabatic. (Default: True).
         """
+        # try to import the adiabatic boundary condition to make use of it
+        try:
+            ad_bc = boundary_conditions.adiabatic
+        except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
+            ad_bc = None
+
         # set default identifiers if not provided
         if room_ids is None:
             room_ids = ['Room_{}'.format(str(uuid.uuid4())[:8]) for _ in footprints]
@@ -3233,6 +3241,12 @@ class Room(_BaseWithShade):
             if the Room is already an extrusion, the current Room instance will
             be returned.
         """
+        # try to import the adiabatic boundary condition to make use of it
+        try:
+            ad_bc = boundary_conditions.adiabatic
+        except AttributeError:  # honeybee_energy is not loaded and adiabatic does not exist
+            ad_bc = None
+
         # first, check whether the room is already an extrusion
         if self.is_extrusion(tolerance, angle_tolerance):
             return self
