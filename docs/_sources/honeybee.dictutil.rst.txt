@@ -1,0 +1,7 @@
+honeybee.dictutil module
+========================
+
+.. automodule:: honeybee.dictutil
+   :members:
+   :undoc-members:
+   :show-inheritance:
