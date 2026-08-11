@@ -1782,7 +1782,8 @@ class Model(_Base):
         # process the format string in a way that includes the units
         matches = re.findall(r'{([^}]*)}', format_str)
         for m in matches:
-            if m.endswith('area') or m.endswith('volume') or m == 'width_x_height_label':
+            if m.endswith('area') or m.endswith('volume') or m.endswith('perimeter') or \
+                    m == 'width_x_height_label':
                 u_abbrev = self.units_abbreviation
                 if m.endswith('area'):
                     ss = '2'
