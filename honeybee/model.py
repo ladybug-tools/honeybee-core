@@ -2872,7 +2872,6 @@ class Model(_Base):
             'Model must have a non-zero angle_tolerance to perform geometry checks.'
         tol = self.tolerance
         ang_tol = self.angle_tolerance
-        e_tol = parse_distance_string('1cm', self.units)
 
         # perform checks for duplicate identifiers, which might mess with other checks
         msgs.append(self.check_all_duplicate_identifiers(False, detailed))
@@ -2880,7 +2879,7 @@ class Model(_Base):
         # perform several checks for the Honeybee schema geometry rules
         msgs.append(self.check_planar(tol, False, detailed))
         msgs.append(self.check_self_intersecting(tol, False, detailed))
-        msgs.append(self.check_degenerate_rooms(e_tol, False, detailed))
+        msgs.append(self.check_degenerate_rooms(tol, False, detailed))
 
         # perform geometry checks related to parent-child relationships
         msgs.append(self.check_sub_faces_valid(tol, ang_tol, False, detailed))
