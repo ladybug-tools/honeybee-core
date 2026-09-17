@@ -1,0 +1,7 @@
+honeybee.cli.setconfig module
+=============================
+
+.. automodule:: honeybee.cli.setconfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
