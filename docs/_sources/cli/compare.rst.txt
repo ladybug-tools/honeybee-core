@@ -1,0 +1,6 @@
+compare
+=======
+
+.. click:: honeybee.cli.compare:compare
+   :prog: honeybee compare
+   :show-nested:

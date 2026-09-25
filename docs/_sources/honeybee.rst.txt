@@ -1,0 +1,47 @@
+honeybee package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee.cli
+   honeybee.writer
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee.altnumber
+   honeybee.aperture
+   honeybee.boundarycondition
+   honeybee.checkdup
+   honeybee.colorobj
+   honeybee.config
+   honeybee.dictutil
+   honeybee.door
+   honeybee.extensionutil
+   honeybee.face
+   honeybee.facetype
+   honeybee.logutil
+   honeybee.model
+   honeybee.orientation
+   honeybee.properties
+   honeybee.room
+   honeybee.search
+   honeybee.shade
+   honeybee.shademesh
+   honeybee.typing
+   honeybee.units
+
+Module contents
+---------------
+
+.. automodule:: honeybee
+   :members:
+   :undoc-members:
+   :show-inheritance:

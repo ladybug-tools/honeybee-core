@@ -1,0 +1,23 @@
+honeybee.cli package
+====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee.cli.compare
+   honeybee.cli.create
+   honeybee.cli.edit
+   honeybee.cli.lib
+   honeybee.cli.setconfig
+   honeybee.cli.validate
+
+Module contents
+---------------
+
+.. automodule:: honeybee.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
