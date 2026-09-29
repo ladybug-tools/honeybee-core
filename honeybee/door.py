@@ -54,6 +54,8 @@ class Door(_BaseWithShade):
         * altitude
         * azimuth
         * is_exterior
+        * gbxml_type
+        * type_abbrev
         * type_color
         * bc_color
         * user_data
@@ -284,6 +286,11 @@ class Door(_BaseWithShade):
     def gbxml_type(self):
         """Get text for the type of object this is in gbXML schema."""
         return 'NonSlidingDoor'
+
+    @property
+    def type_abbrev(self):
+        """Get a text abbreviation for the type of object in gbXML schema."""
+        return 'D'
 
     @property
     def energyplus_type(self):

@@ -46,6 +46,8 @@ class Shade(_Base):
         * tilt
         * altitude
         * azimuth
+        * gbxml_type
+        * type_abbrev
         * type_color
         * bc_color
         * user_data
@@ -252,6 +254,11 @@ class Shade(_Base):
     def gbxml_type(self):
         """Get text for the type of object this is in gbXML schema."""
         return 'Shade'
+
+    @property
+    def type_abbrev(self):
+        """Get a text abbreviation for the type of object in gbXML schema."""
+        return 'Shd'
 
     @property
     def type_color(self):

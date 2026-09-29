@@ -74,6 +74,8 @@ class Face(_BaseWithShade):
         * altitude
         * azimuth
         * is_exterior
+        * gbxml_type
+        * type_abbrev
         * type_color
         * bc_color
         * user_data
@@ -461,6 +463,52 @@ class Face(_BaseWithShade):
             elif isinstance(self.boundary_condition, Ground):
                 return 'UndergroundCeiling'
             return 'Ceiling'
+
+    @property
+    def type_abbrev(self):
+        """Get a text abbreviation for the type of object in gbXML schema.
+
+        This will always be one of the following.
+
+            * IW - InteriorWall
+            * EW - ExteriorWall
+            * UW - UndergroundWall
+            * R - Roof
+            * C - Ceiling
+            * UC - UndergroundCeiling
+            * F - InteriorFloor
+            * EF - ExposedFloor
+            * UF - UndergroundSlab
+            * GF - SlabOnGrade
+            * A - Air
+        """
+        if isinstance(self.type, AirBoundary):
+            return 'A'
+        elif isinstance(self.type, Wall):
+            bc_type = 'I'
+            if isinstance(self.boundary_condition, Outdoors):
+                bc_type = 'E'
+            elif isinstance(self.boundary_condition, Ground):
+                bc_type = 'U'
+            return bc_type + 'W'
+        elif isinstance(self.type, Floor):
+            if isinstance(self.boundary_condition, Ground):
+                if self.has_parent:
+                    for f in self.parent.faces:
+                        if isinstance(f.type, Wall) and \
+                                isinstance(f.boundary_condition, Outdoors):
+                            return 'GF'
+                return 'UF'
+            elif isinstance(self.boundary_condition, Outdoors):
+                return 'EF'
+            else:
+                return 'F'
+        else:
+            if isinstance(self.boundary_condition, Outdoors):
+                return 'R'
+            elif isinstance(self.boundary_condition, Ground):
+                return 'UC'
+            return 'C'
 
     @property
     def type_color(self):
