@@ -1,0 +1,6 @@
+edit
+====
+
+.. click:: honeybee.cli.edit:edit
+   :prog: honeybee edit
+   :show-nested:
