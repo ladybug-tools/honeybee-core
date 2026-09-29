@@ -84,12 +84,16 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
             if isinstance(current_obj, float):
                 if decimal_count:
                     current_obj = round(current_obj, decimal_count)
+                elif decimal_count == 0:
+                    current_obj = int(current_obj)
                 return current_obj
             elif callable(current_obj):
                 val = current_obj()
                 if isinstance(val, float):
                     if decimal_count:
                         val = round(current_obj, decimal_count)
+                    elif decimal_count == 0:
+                        val = int(current_obj)
                     return val
                 return str(val) if cast_to_str else val
             else:
@@ -105,12 +109,16 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
             if isinstance(current_obj, float):
                 if decimal_count:
                     current_obj = round(current_obj, decimal_count)
+                elif decimal_count == 0:
+                    current_obj = int(current_obj)
                 return current_obj
             elif callable(current_obj):
                 val = current_obj()
                 if isinstance(val, float):
                     if decimal_count:
                         val = round(current_obj, decimal_count)
+                    elif decimal_count == 0:
+                        val = int(current_obj)
                     return val
                 return str(val) if cast_to_str else val
             else:

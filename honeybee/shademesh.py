@@ -34,6 +34,8 @@ class ShadeMesh(_Base):
         * area
         * min
         * max
+        * gbxml_type
+        * type_abbrev
         * type_color
         * bc_color
         * user_data
@@ -136,6 +138,16 @@ class ShadeMesh(_Base):
     def max(self):
         """Get a Point3D for the maximum of the bounding box around the object."""
         return self._geometry.max
+
+    @property
+    def gbxml_type(self):
+        """Get text for the type of object this is in gbXML schema."""
+        return 'Shade'
+
+    @property
+    def type_abbrev(self):
+        """Get a text abbreviation for the type of object in gbXML schema."""
+        return 'Shd'
 
     @property
     def type_color(self):

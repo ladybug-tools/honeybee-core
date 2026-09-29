@@ -20,7 +20,7 @@ from ladybug_geometry.bounding import overlapping_bounding_boxes
 from ladybug_geometry.interop.stl import STL
 
 from ._base import _Base
-from .units import conversion_factor_to_meters, parse_distance_string, \
+from .units import conversion_factor_to_meters, \
     UNITS, UNITS_ABBREVIATIONS, UNITS_TOLERANCES
 from .checkdup import check_duplicate_identifiers, check_duplicate_identifiers_parent
 from .properties import ModelProperties
@@ -1674,7 +1674,7 @@ class Model(_Base):
     def rename_faces_by_attribute(
         self,
         format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
-        decimal_count=None
+        decimal_count=None, include_units=True
     ):
         """Set the display name for all of this Model's faces using a format string.
 
@@ -1689,12 +1689,14 @@ class Model(_Base):
                 end in 'area' will have an abbreviation of the model units appended
                 to them.
             decimal_count: An integer to be used to round all properties to a
-                number of decimal places when they are numbers. If None,
-                the number of decimal places are determined by the model tolerance.
+                number of decimal places when they are numbers. If None, the number of
+                decimal places are determined by the model tolerance. (Default: None).
+            include_units: Boolean for wether the units should be included in all
+                length, area and volume attributes. (Default: True).
         """
         # preprocess the formatting string
         matches, format_str, decimal_count = \
-            self._pre_process_format_str(format_str, decimal_count)
+            self._pre_process_format_str(format_str, decimal_count, include_units)
         # get the face attributes and rename them
         for room in self.rooms:
             for face in room.faces:
@@ -1708,7 +1710,7 @@ class Model(_Base):
     def rename_apertures_by_attribute(
         self,
         format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
-        decimal_count=None
+        decimal_count=None, include_units=True
     ):
         """Set the display name for all of this Model's apertures using a format string.
 
@@ -1723,12 +1725,14 @@ class Model(_Base):
                 end in 'area' will have an abbreviation of the model units appended
                 to them.
             decimal_count: An integer to be used to round all properties to a
-                number of decimal places when they are numbers. If None,
-                the number of decimal places are determined by the model tolerance.
+                number of decimal places when they are numbers. If None, the number of
+                decimal places are determined by the model tolerance. (Default: None).
+            include_units: Boolean for wether the units should be included in all
+                length, area and volume attributes. (Default: True).
         """
         # preprocess the formatting string
         matches, format_str, decimal_count = \
-            self._pre_process_format_str(format_str, decimal_count)
+            self._pre_process_format_str(format_str, decimal_count, include_units)
         # get the aperture attributes and rename them
         for room in self.rooms:
             for ap in room.apertures:
@@ -1742,7 +1746,7 @@ class Model(_Base):
     def rename_doors_by_attribute(
         self,
         format_str='{parent.display_name} - {energyplus_type} - {cardinal_direction}',
-        decimal_count=None
+        decimal_count=None, include_units=True
     ):
         """Set the display name for all of this Model's doors using a format string.
 
@@ -1757,12 +1761,14 @@ class Model(_Base):
                 end in 'area' will have an abbreviation of the model units appended
                 to them.
             decimal_count: An integer to be used to round all properties to a
-                number of decimal places when they are numbers. If None,
-                the number of decimal places are determined by the model tolerance.
+                number of decimal places when they are numbers. If None, the number of
+                decimal places are determined by the model tolerance. (Default: None).
+            include_units: Boolean for wether the units should be included in all
+                length, area and volume attributes. (Default: True).
         """
         # preprocess the formatting string
         matches, format_str, decimal_count = \
-            self._pre_process_format_str(format_str, decimal_count)
+            self._pre_process_format_str(format_str, decimal_count, include_units)
         # get the aperture attributes and rename them
         for room in self.rooms:
             for dr in room.doors:
@@ -1773,7 +1779,7 @@ class Model(_Base):
                     ff_str = ff_str.replace('{{{}}}'.format(attr_name), str(attr_val))
                 dr.display_name = ff_str
 
-    def _pre_process_format_str(self, format_str, decimal_count):
+    def _pre_process_format_str(self, format_str, decimal_count=None, include_units=True):
         """Pre-process a format string used to rename objects in the model."""
         # set the decimal count from the tolerance
         if decimal_count is None:
@@ -1781,18 +1787,19 @@ class Model(_Base):
 
         # process the format string in a way that includes the units
         matches = re.findall(r'{([^}]*)}', format_str)
-        for m in matches:
-            if m.endswith('area') or m.endswith('volume') or m.endswith('perimeter') or \
-                    m == 'width_x_height_label':
-                u_abbrev = self.units_abbreviation
-                if m.endswith('area'):
-                    ss = '2'
-                elif m.endswith('volume'):
-                    ss = '3'
-                else:
-                    ss = ''
-                b_m = '{{{}}}'.format(m)
-                format_str = format_str.replace(b_m, '{} {}{}'.format(b_m, u_abbrev, ss))
+        if include_units:
+            for m in matches:
+                if m.endswith('area') or m.endswith('volume') or \
+                        m.endswith('perimeter') or m == 'width_x_height_label':
+                    u_abbrev = self.units_abbreviation
+                    if m.endswith('area'):
+                        ss = '2'
+                    elif m.endswith('volume'):
+                        ss = '3'
+                    else:
+                        ss = ''
+                    b_m = '{{{}}}'.format(m)
+                    format_str = format_str.replace(b_m, '{} {}{}'.format(b_m, u_abbrev, ss))
         return matches, format_str, decimal_count
 
     def assign_unique_names(self):

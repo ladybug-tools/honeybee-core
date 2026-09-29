@@ -55,6 +55,8 @@ class Aperture(_BaseWithShade):
         * altitude
         * azimuth
         * is_exterior
+        * gbxml_type
+        * type_abbrev
         * type_color
         * bc_color
         * user_data
@@ -295,6 +297,23 @@ class Aperture(_BaseWithShade):
             base_type = 'Skylight'
         win_type = 'Fixed' if not self.is_operable else 'Operable'
         return win_type + base_type
+
+    @property
+    def type_abbrev(self):
+        """Get a text abbreviation for the type of object in gbXML schema.
+
+        This will always be one of the following.
+
+            * W - FixedWindow
+            * WO - OperableWindow
+            * S - FixedSkylight
+            * SO - OperableSkylight
+        """
+        base_type = 'W'
+        if self.has_parent and isinstance(self.parent.type, RoofCeiling):
+            base_type = 'S'
+        win_type = '' if not self.is_operable else 'O'
+        return base_type + win_type
 
     @property
     def type_color(self):
