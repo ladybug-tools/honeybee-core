@@ -1,0 +1,7 @@
+honeybee.altnumber module
+=========================
+
+.. automodule:: honeybee.altnumber
+   :members:
+   :undoc-members:
+   :show-inheritance:

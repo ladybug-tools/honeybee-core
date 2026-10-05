@@ -1,0 +1,7 @@
+main
+====
+
+.. click:: honeybee.cli.__init__:main
+   :prog: honeybee
+   :show-nested:
+   :commands: config ,viz
