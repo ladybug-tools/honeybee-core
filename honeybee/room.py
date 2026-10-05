@@ -2064,7 +2064,23 @@ class Room(_BaseWithShade):
                         doors.extend(f._doors)
                         in_shades.extend(f._indoor_shades)
                         out_shades.extend(f._outdoor_shades)
-                    for i, new_geo in enumerate(joined_geos):
+                    # split any faces joined into something self-intersecting
+                    cl_joined_geos = []
+                    for geo in joined_geos:
+                        if geo.is_self_intersecting:
+                            if geo.has_holes:  # too complex; just keep original
+                                cl_joined_geos = f_geos
+                                break
+                            else:  # try to split through self-intersection
+                                sps = geo.polygon2d.split_through_self_intersection(tol)
+                                for poly in sps:
+                                    p_pts = [geo.plane.xy_to_xyz(p) for p in poly]
+                                    cf = Face3D(p_pts, geo.plane)
+                                    cl_joined_geos.append(cf)
+                        else:
+                            cl_joined_geos.append(geo)
+                    # create the final joined Face objects
+                    for i, new_geo in enumerate(cl_joined_geos):
                         fid = prop_f.identifier if i == 0 else \
                             '{}_{}'.format(prop_f.identifier, i)
                         fbc = prop_f.boundary_condition if not \
