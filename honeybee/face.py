@@ -525,27 +525,30 @@ class Face(_BaseWithShade):
         except KeyError:  # extension boundary condition
             return self.BC_COLORS['Other']
 
-    def horizontal_orientation(self, north_vector=Vector2D(0, 1)):
+    def horizontal_orientation(self, north_angle=0):
         """Get a number between 0 and 360 for the orientation of the face in degrees.
 
         0 = North, 90 = East, 180 = South, 270 = West
 
         Args:
-            north_vector: A ladybug_geometry Vector2D for the north direction.
-                Default is the Y-axis (0, 1).
+            north_angle: North angle in degrees. A number between -360 and 360 for the
+                counterclockwise difference between the North and the positive Y-axis in
+                degrees. 90 is West and 270 is East (Default: 0).
         """
-        return math.degrees(
-            north_vector.angle_clockwise(Vector2D(self.normal.x, self.normal.y)))
+        north_vector = Vector2D(0, 1).rotate(math.radians(north_angle))
+        ori = north_vector.angle_clockwise(Vector2D(self.normal.x, self.normal.y))
+        return math.degrees(ori)
 
-    def cardinal_direction(self, north_vector=Vector2D(0, 1), angle_tolerance=1):
+    def cardinal_direction(self, north_angle=0, angle_tolerance=1):
         """Get text description for the cardinal direction that the face is pointing.
 
         Will be one of the following: ('North', 'NorthEast', 'East', 'SouthEast',
         'South', 'SouthWest', 'West', 'NorthWest', 'Up', 'Down').
 
         Args:
-            north_vector: A ladybug_geometry Vector2D for the north direction.
-                Default is the Y-axis (0, 1).
+            north_angle: North angle in degrees. A number between -360 and 360 for the
+                counterclockwise difference between the North and the positive Y-axis in
+                degrees. 90 is West and 270 is East (Default: 0).
             angle_tolerance: The angle tolerance in degrees used to determine if
                 the Face is perfectly Up or Down. (Default: 1).
         """
@@ -554,7 +557,7 @@ class Face(_BaseWithShade):
             return 'Up'
         elif tilt > 180 - angle_tolerance:
             return 'Down'
-        orient = self.horizontal_orientation(north_vector)
+        orient = self.horizontal_orientation(north_angle)
         orient_text = ('North', 'NorthEast', 'East', 'SouthEast', 'South',
                        'SouthWest', 'West', 'NorthWest')
         angles = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
@@ -563,15 +566,16 @@ class Face(_BaseWithShade):
                 return orient_text[i]
         return orient_text[0]
 
-    def cardinal_abbrev(self, north_vector=Vector2D(0, 1), angle_tolerance=1):
+    def cardinal_abbrev(self, north_angle=0, angle_tolerance=1):
         """Get text abbreviation for the cardinal direction that the face is pointing.
 
         Will be one of the following: ('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW',
         'Up', 'Down').
 
         Args:
-            north_vector: A ladybug_geometry Vector2D for the north direction.
-                Default is the Y-axis (0, 1).
+            north_angle: North angle in degrees. A number between -360 and 360 for the
+                counterclockwise difference between the North and the positive Y-axis in
+                degrees. 90 is West and 270 is East (Default: 0).
             angle_tolerance: The angle tolerance in degrees used to determine if
                 the Face is perfectly Up or Down. (Default: 1).
         """
@@ -580,7 +584,7 @@ class Face(_BaseWithShade):
             return 'Up'
         elif tilt > 180 - angle_tolerance:
             return 'Down'
-        orient = self.horizontal_orientation(north_vector)
+        orient = self.horizontal_orientation(north_angle)
         orient_text = ('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW')
         angles = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
         for i, ang in enumerate(angles):

@@ -186,7 +186,7 @@ def test_average_orientation():
                 [face_1, face_2, face_3, face_4, face_5, face_6], 0.01, 1)
 
     assert room.average_orientation() == 180
-    assert room.average_orientation(Vector2D(1, 0)) == 90
+    assert room.average_orientation(-90) == pytest.approx(90, rel=1e-3)
 
 
 def test_room_add_prefix():
