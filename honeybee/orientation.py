@@ -25,6 +25,8 @@ Usage:
             face.properties.energy.construction = constr
             face.properties.radiance.modifier = mat
 """
+import math
+
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 
 
@@ -64,8 +66,9 @@ def face_orient_index(face, angles, north_vector=Vector2D(0, 1)):
         input orientation. Will be None if the input Face or Aperture is perfectly
         horizontal.
     """
+    north_angle = math.degrees(Vector2D(0, 1).angle_counterclockwise(north_vector))
     try:
-        return orient_index(face.horizontal_orientation(north_vector), angles)
+        return orient_index(face.horizontal_orientation(north_angle), angles)
     except ZeroDivisionError:  # input face is perfectly horizontal
         return None
 

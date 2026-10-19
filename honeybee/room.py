@@ -587,7 +587,7 @@ class Room(_BaseWithShade):
                 pass
         return True
 
-    def average_orientation(self, north_vector=Vector2D(0, 1)):
+    def average_orientation(self, north_angle=0):
         """Get a number between 0 and 360 for the average orientation of exposed walls.
 
         0 = North, 90 = East, 180 = South, 270 = West.  Will be None if the zone has
@@ -595,8 +595,9 @@ class Room(_BaseWithShade):
         wall faces.
 
         Args:
-            north_vector: A ladybug_geometry Vector2D for the north direction.
-                Default is the Y-axis (0, 1).
+            north_angle: North angle in degrees. A number between -360 and 360 for the
+                counterclockwise difference between the North and the positive Y-axis in
+                degrees. 90 is West and 270 is East (Default: 0).
         """
         orient_vecs = []
         for face in self._faces:
@@ -610,19 +611,21 @@ class Room(_BaseWithShade):
         orient_vec = orient_vecs[0]
         for o_vec in orient_vecs[1:]:
             orient_vec += o_vec
+        north_vector = Vector2D(0, 1).rotate(math.radians(north_angle))
         return math.degrees(north_vector.angle_clockwise(orient_vec.normalize()))
 
-    def average_cardinal_direction(self, north_vector=Vector2D(0, 1)):
+    def average_cardinal_direction(self, north_angle=0):
         """Get text description for the average cardinal direction of exposed walls.
 
         Will be one of the following: ('North', 'NorthEast', 'East', 'SouthEast',
         'South', 'SouthWest', 'West', 'NorthWest').
 
         Args:
-            north_vector: A ladybug_geometry Vector2D for the north direction.
-                Default is the Y-axis (0, 1).
+            north_angle: North angle in degrees. A number between -360 and 360 for the
+                counterclockwise difference between the North and the positive Y-axis in
+                degrees. 90 is West and 270 is East (Default: 0).
         """
-        orient = self.average_orientation(north_vector)
+        orient = self.average_orientation(north_angle)
         orient_text = ('North', 'NorthEast', 'East', 'SouthEast', 'South',
                        'SouthWest', 'West', 'NorthWest')
         angles = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
@@ -2565,10 +2568,11 @@ class Room(_BaseWithShade):
                 angle ranges if a value is input for group_count.
         """
         # loop through each of the rooms and get the orientation
+        north_angle = math.degrees(Vector2D(0, 1).angle_counterclockwise(north_vector))
         orient_dict = {}
         core_rooms = []
         for room in rooms:
-            ori = room.average_orientation(north_vector)
+            ori = room.average_orientation(north_angle)
             if ori is None:
                 core_rooms.append(room)
             else:
