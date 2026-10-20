@@ -57,7 +57,12 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
             object like a Model, Room, Face, Aperture, Door, or Shade.
         attr_name: A string of an attribute that the input obj_instance should have.
             This can have '.' that separate the nested attributes from one another.
-            For example, 'properties.energy.construction'.
+            For example, 'properties.energy.construction'. Attributes within
+            user_data can be accessed by using the '.' (eg. user_data.my_property).
+            Functions that return text or numerical outputs can also be input
+            here and text or numerical arguments may be passed to these
+            functions by including them in parentheses after the function name
+            (eg. cardinal_direction(22.0)).
         decimal_count: An optional integer to be used to round the property to a
             number of decimal places if it is a float. (Default: None).
         cast_to_str: Boolean to note whether attributes with a type other than
@@ -70,58 +75,49 @@ def get_attr_nested(obj_instance, attr_name, decimal_count=None, cast_to_str=Tru
         the output will be 'None'. If the input attr_name is not valid for
         the input object, 'N/A' will be returned.
     """
-    if '.' in attr_name:  # nested attribute
-        attributes = attr_name.split('.')  # get all the sub-attributes
-        current_obj = obj_instance
-        try:
-            for attribute in attributes:
-                if current_obj is None:
-                    raise AttributeError
-                elif isinstance(current_obj, dict):
-                    current_obj = current_obj.get(attribute, None)
-                else:
-                    current_obj = getattr(current_obj, attribute)
-            if isinstance(current_obj, float):
-                if decimal_count:
-                    current_obj = round(current_obj, decimal_count)
-                elif decimal_count == 0:
-                    current_obj = int(current_obj)
-                return current_obj
-            elif callable(current_obj):
-                val = current_obj()
-                if isinstance(val, float):
-                    if decimal_count:
-                        val = round(current_obj, decimal_count)
-                    elif decimal_count == 0:
-                        val = int(current_obj)
-                    return val
-                return str(val) if cast_to_str else val
+    attributes = attr_name.split('.')  # get all the sub-attributes
+    current_obj = obj_instance
+    in_arg = None
+    try:
+        for attribute in attributes:
+            if current_obj is None:
+                raise AttributeError
+            elif isinstance(current_obj, dict):
+                current_obj = current_obj.get(attribute, None)
+            elif '(' in attribute:
+                attribute, in_arg = attribute.split('(')
+                current_obj = getattr(current_obj, attribute)
+                in_arg = in_arg.replace(')', '').split(',')
             else:
-                return str(current_obj) if cast_to_str else current_obj
-        except AttributeError as e:
-            if 'NoneType' in str(e):  # it's a valid attribute but it's not assigned
-                return 'None'
-            else:  # it's not a valid attribute
-                return 'N/A'
-    else:  # honeybee-core attribute
-        try:
-            current_obj = getattr(obj_instance, attr_name)
-            if isinstance(current_obj, float):
-                if decimal_count:
-                    current_obj = round(current_obj, decimal_count)
-                elif decimal_count == 0:
-                    current_obj = int(current_obj)
-                return current_obj
-            elif callable(current_obj):
-                val = current_obj()
-                if isinstance(val, float):
-                    if decimal_count:
-                        val = round(current_obj, decimal_count)
-                    elif decimal_count == 0:
-                        val = int(current_obj)
-                    return val
-                return str(val) if cast_to_str else val
+                current_obj = getattr(current_obj, attribute)
+        if isinstance(current_obj, float):
+            if decimal_count:
+                current_obj = round(current_obj, decimal_count)
+            elif decimal_count == 0:
+                current_obj = int(current_obj)
+            return current_obj
+        elif callable(current_obj):
+            if in_arg:
+                clean_in = []
+                for arg in in_arg:
+                    try:
+                        clean_in.append(float(arg))
+                    except ValueError:
+                        clean_in.append(arg)
+                val = current_obj(*clean_in)
             else:
-                return str(current_obj) if cast_to_str else current_obj
-        except AttributeError:
+                val = current_obj()
+            if isinstance(val, float):
+                if decimal_count:
+                    val = round(current_obj, decimal_count)
+                elif decimal_count == 0:
+                    val = int(current_obj)
+                return val
+            return str(val) if cast_to_str else val
+        else:
+            return str(current_obj) if cast_to_str else current_obj
+    except AttributeError as e:
+        if 'NoneType' in str(e):  # it's a valid attribute but it's not assigned
+            return 'None'
+        else:  # it's not a valid attribute
             return 'N/A'

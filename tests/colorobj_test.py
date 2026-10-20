@@ -11,8 +11,6 @@ from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
-import pytest
-
 
 def test_color_room():
     """Test ColorRoom."""
@@ -37,7 +35,7 @@ def test_color_room():
 
     color_room1 = ColorRoom([room_south, room_north], 'display_name')
     color_room2 = ColorRoom([room_south, room_north], 'multiplier')
-    
+
     assert len(color_room1.rooms) == len(color_room2.rooms) == 2
     assert color_room1.attr_name == color_room1.attr_name_end == 'display_name'
     assert color_room2.attr_name == color_room2.attr_name_end == 'multiplier'

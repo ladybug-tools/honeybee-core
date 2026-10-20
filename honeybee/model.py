@@ -1674,7 +1674,7 @@ class Model(_Base):
     def rename_faces_by_attribute(
         self,
         format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
-        decimal_count=None, include_units=True
+        decimal_count=None, include_units=True, north_angle=0
     ):
         """Set the display name for all of this Model's faces using a format string.
 
@@ -1693,10 +1693,19 @@ class Model(_Base):
                 decimal places are determined by the model tolerance. (Default: None).
             include_units: Boolean for wether the units should be included in all
                 length, area and volume attributes. (Default: True).
+            north_angle: An optional number for the north angle in degrees, which
+                can be specified to customize renaming of geometry attributes
+                that relate to orientation like cardinal_direction. Note that
+                horizontal_orientation is affected by this input but pure geometry
+                attributes like azimuth are not. Also note this is number should be
+                between -360 and 360 for the counterclockwise difference between
+                the North and the positive Y-axis in degrees. 90 rotates the
+                compass West and -90 rotates it East. (Default: 0).
         """
         # preprocess the formatting string
-        matches, format_str, decimal_count = \
-            self._pre_process_format_str(format_str, decimal_count, include_units)
+        matches, format_str, decimal_count = self._pre_process_format_str(
+            format_str, decimal_count, include_units, north_angle
+        )
         # get the face attributes and rename them
         for room in self.rooms:
             for face in room.faces:
@@ -1710,7 +1719,7 @@ class Model(_Base):
     def rename_apertures_by_attribute(
         self,
         format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
-        decimal_count=None, include_units=True
+        decimal_count=None, include_units=True, north_angle=0
     ):
         """Set the display name for all of this Model's apertures using a format string.
 
@@ -1729,10 +1738,19 @@ class Model(_Base):
                 decimal places are determined by the model tolerance. (Default: None).
             include_units: Boolean for wether the units should be included in all
                 length, area and volume attributes. (Default: True).
+            north_angle: An optional number for the north angle in degrees, which
+                can be specified to customize renaming of geometry attributes
+                that relate to orientation like cardinal_direction. Note that
+                horizontal_orientation is affected by this input but pure geometry
+                attributes like azimuth are not. Also note this is number should be
+                between -360 and 360 for the counterclockwise difference between
+                the North and the positive Y-axis in degrees. 90 rotates the
+                compass West and -90 rotates it East. (Default: 0).
         """
         # preprocess the formatting string
-        matches, format_str, decimal_count = \
-            self._pre_process_format_str(format_str, decimal_count, include_units)
+        matches, format_str, decimal_count = self._pre_process_format_str(
+            format_str, decimal_count, include_units, north_angle
+        )
         # get the aperture attributes and rename them
         for room in self.rooms:
             for ap in room.apertures:
@@ -1746,7 +1764,7 @@ class Model(_Base):
     def rename_doors_by_attribute(
         self,
         format_str='{parent.display_name} - {energyplus_type} - {cardinal_direction}',
-        decimal_count=None, include_units=True
+        decimal_count=None, include_units=True, north_angle=0
     ):
         """Set the display name for all of this Model's doors using a format string.
 
@@ -1765,10 +1783,19 @@ class Model(_Base):
                 decimal places are determined by the model tolerance. (Default: None).
             include_units: Boolean for wether the units should be included in all
                 length, area and volume attributes. (Default: True).
+            north_angle: An optional number for the north angle in degrees, which
+                can be specified to customize renaming of geometry attributes
+                that relate to orientation like cardinal_direction. Note that
+                horizontal_orientation is affected by this input but pure geometry
+                attributes like azimuth are not. Also note this is number should be
+                between -360 and 360 for the counterclockwise difference between
+                the North and the positive Y-axis in degrees. 90 rotates the
+                compass West and -90 rotates it East. (Default: 0).
         """
         # preprocess the formatting string
-        matches, format_str, decimal_count = \
-            self._pre_process_format_str(format_str, decimal_count, include_units)
+        matches, format_str, decimal_count = self._pre_process_format_str(
+            format_str, decimal_count, include_units, north_angle
+        )
         # get the aperture attributes and rename them
         for room in self.rooms:
             for dr in room.doors:
@@ -1779,27 +1806,39 @@ class Model(_Base):
                     ff_str = ff_str.replace('{{{}}}'.format(attr_name), str(attr_val))
                 dr.display_name = ff_str
 
-    def _pre_process_format_str(self, format_str, decimal_count=None, include_units=True):
+    def _pre_process_format_str(
+        self, format_str, decimal_count=None, include_units=True, north_angle=0
+    ):
         """Pre-process a format string used to rename objects in the model."""
         # set the decimal count from the tolerance
         if decimal_count is None:
             decimal_count, _ = rounding_tolerance(self.tolerance)
 
+        # list the attributes related to orientation
+        ori_attr = ('horizontal_orientation', 'cardinal_direction', 'cardinal_abbrev')
+
         # process the format string in a way that includes the units
         matches = re.findall(r'{([^}]*)}', format_str)
-        if include_units:
-            for m in matches:
-                if m.endswith('area') or m.endswith('volume') or \
-                        m.endswith('perimeter') or m == 'width_x_height_label':
-                    u_abbrev = self.units_abbreviation
-                    if m.endswith('area'):
-                        ss = '2'
-                    elif m.endswith('volume'):
-                        ss = '3'
-                    else:
-                        ss = ''
-                    b_m = '{{{}}}'.format(m)
-                    format_str = format_str.replace(b_m, '{} {}{}'.format(b_m, u_abbrev, ss))
+
+        for i, m in enumerate(matches):
+            if include_units and (
+                m.endswith('area') or m.endswith('volume') or
+                m.endswith('perimeter') or m == 'width_x_height_label'
+            ):
+                u_abbrev = self.units_abbreviation
+                if m.endswith('area'):
+                    ss = '2'
+                elif m.endswith('volume'):
+                    ss = '3'
+                else:
+                    ss = ''
+                b_m = '{{{}}}'.format(m)
+                format_str = format_str.replace(b_m, '{} {}{}'.format(b_m, u_abbrev, ss))
+            elif m in ori_attr:
+                b_m = '{{{}}}'.format(m)
+                n_m = '{}({})'.format(m, north_angle)
+                format_str = format_str.replace(b_m, '{{{}}}'.format(n_m))
+                matches[i] = n_m
         return matches, format_str, decimal_count
 
     def assign_unique_names(self):
