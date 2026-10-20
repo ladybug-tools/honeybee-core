@@ -267,7 +267,7 @@ class Aperture(_BaseWithShade):
         return math.degrees(self._geometry.altitude)
 
     @property
-    def azimuth(self): 
+    def azimuth(self):
         """Get the azimuth of the geometry, between 0 and 360.
 
         Given Y-axis as North, 0 = North, 90 = East, 180 = South, 270 = West
@@ -456,8 +456,10 @@ class Aperture(_BaseWithShade):
                 and each property should be put in curly brackets. Nested
                 properties can be specified by using "." to denote nesting levels
                 (eg. properties.energy.construction.display_name). Functions that
-                return string outputs can also be passed here as long as these
-                functions defaults specified for all arguments.
+                return text or numerical outputs can also be input here and
+                text or numerical arguments may be passed to these functions by
+                including them in parentheses after the function name
+                (eg. cardinal_direction(22.0)).
             decimal_count: An integer to be used to round all properties to a
                 number of decimal places when they are numbers. (Default: 2).
         """

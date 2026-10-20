@@ -378,12 +378,21 @@ def test_shade_meshes_by_identifier():
 def test_rename_faces_by_attribute():
     """Test the rename_faces_by_attribute method."""
     room = Room.from_box('TinyHouseZone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.5, 0.01)
     model = Model('TinyHouse', [room])
 
     test_attr = '{gbxml_type} - {cardinal_direction} - {area} - {width_x_height_label}'
     model.rename_faces_by_attribute(test_attr)
     for face in model.faces:
         face.display_name.count('-') == 3
+
+    win_str = '{gbxml_type} - {cardinal_direction} - {area}'
+    model.rename_apertures_by_attribute(win_str)
+    assert room.apertures[0].display_name == 'FixedWindow - South - 7.5 m2'
+
+    model.rename_apertures_by_attribute(win_str, north_angle=90)
+    assert room.apertures[0].display_name == 'FixedWindow - West - 7.5 m2'
 
 
 def test_assign_unique_names():

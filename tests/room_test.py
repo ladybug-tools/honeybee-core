@@ -2,7 +2,7 @@
 import json
 import pytest
 
-from ladybug_geometry.geometry2d import Vector2D, Polygon2D
+from ladybug_geometry.geometry2d import Polygon2D
 from ladybug_geometry.geometry3d import Point3D, Vector3D, Plane, Face3D, Polyface3D
 
 from honeybee.face import Face
@@ -229,6 +229,16 @@ def test_rename_by_attribute():
         '{cardinal_direction} - {area} m2'
     room.rename_apertures_by_attribute(win_str)
     assert room.apertures[0].display_name == 'ShoeBoxZone - FixedWindow - South - 7.5 m2'
+
+    win_str = '{parent.parent.display_name} - {gbxml_type} - ' \
+        '{cardinal_direction(90)} - {area} m2'
+    room.rename_apertures_by_attribute(win_str)
+    assert room.apertures[0].display_name == 'ShoeBoxZone - FixedWindow - West - 7.5 m2'
+
+    win_str = '{parent.parent.display_name} - {gbxml_type} - ' \
+        '{cardinal_direction(-90)} - {area} m2'
+    room.rename_apertures_by_attribute(win_str)
+    assert room.apertures[0].display_name == 'ShoeBoxZone - FixedWindow - East - 7.5 m2'
 
 
 def test_room_multiplier():

@@ -660,8 +660,10 @@ class Face(_BaseWithShade):
                 and each property should be put in curly brackets. Nested
                 properties can be specified by using "." to denote nesting levels
                 (eg. properties.energy.construction.display_name). Functions that
-                return string outputs can also be passed here as long as these
-                functions defaults specified for all arguments.
+                return text or numerical outputs can also be input here and
+                text or numerical arguments may be passed to these functions by
+                including them in parentheses after the function name
+                (eg. cardinal_direction(22.0)).
             decimal_count: An integer to be used to round all properties to a
                 number of decimal places when they are numbers. (Default: 2).
         """
