@@ -14,6 +14,7 @@ from .typing import clean_string
 from .search import get_attr_nested
 from .properties import DoorProperties
 from .boundarycondition import boundary_conditions, Outdoors, Surface
+from .facetype import RoofCeiling
 from .shade import Shade
 import honeybee.writer.door as writer
 
@@ -54,10 +55,11 @@ class Door(_BaseWithShade):
         * altitude
         * azimuth
         * is_exterior
-        * gbxml_type
+        * type
         * type_abbrev
         * type_color
         * bc_color
+        * gbxml_type
         * user_data
     """
     __slots__ = ('_geometry', '_parent', '_boundary_condition', '_is_glass')
@@ -283,14 +285,32 @@ class Door(_BaseWithShade):
         return isinstance(self.boundary_condition, Outdoors)
 
     @property
-    def gbxml_type(self):
-        """Get text for the type of object this is in gbXML schema."""
-        return 'NonSlidingDoor'
+    def type(self):
+        """Get text for the type of object.
+
+        This will always be one of the following.
+
+            * Door
+            * GlassDoor
+            * OverheadDoor
+        """
+        if self.has_parent and isinstance(self.parent.type, RoofCeiling):
+            return 'OverheadDoor'
+        return 'Door' if not self.is_glass else 'GlassDoor'
 
     @property
     def type_abbrev(self):
-        """Get a text abbreviation for the type of object in gbXML schema."""
-        return 'D'
+        """Get a text abbreviation for the type of object.
+
+        This will always be one of the following.
+
+            * D - Door
+            * DG - GlassDoor
+            * DO - OverheadDoor
+        """
+        if self.has_parent and isinstance(self.parent.type, RoofCeiling):
+            return 'DO'
+        return 'D' if not self.is_glass else 'DG'
 
     @property
     def energyplus_type(self):
@@ -306,6 +326,12 @@ class Door(_BaseWithShade):
     def bc_color(self):
         """Get a Color to be used in visualizations by boundary condition."""
         return self.BC_COLORS[self.boundary_condition.name]
+
+    @property
+    def gbxml_type(self):
+        """Get text for the type of object this is in gbXML schema. Always NonSlidingDoor.
+        """
+        return 'NonSlidingDoor'
 
     def horizontal_orientation(self, north_angle=0):
         """Get a number between 0 and 360 for the orientation of the door in degrees.
@@ -427,7 +453,7 @@ class Door(_BaseWithShade):
 
     def rename_by_attribute(
         self,
-        format_str='{parent.parent.display_name} - {energyplus_type} - {cardinal_direction}',
+        format_str='{parent.parent.display_name} - {type} - {cardinal_direction}',
         decimal_count=2
     ):
         """Set the display name of this Door using a format string with attributes.

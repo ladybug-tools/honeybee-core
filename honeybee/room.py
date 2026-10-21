@@ -949,7 +949,7 @@ class Room(_BaseWithShade):
 
     def rename_apertures_by_attribute(
         self,
-        format_str='{parent.parent.display_name} - {gbxml_type} - {cardinal_direction}',
+        format_str='{parent.parent.display_name} - {type} - {cardinal_direction}',
         decimal_count=2
     ):
         """Set the display name for all of this Room's apertures using a format string.
@@ -972,7 +972,7 @@ class Room(_BaseWithShade):
 
     def rename_doors_by_attribute(
         self,
-        format_str='{parent.parent.display_name} - {energyplus_type} - {cardinal_direction}',
+        format_str='{parent.parent.display_name} - {type} - {cardinal_direction}',
         decimal_count=2
     ):
         """Set the display name for all of this Room's doors using a format string.
