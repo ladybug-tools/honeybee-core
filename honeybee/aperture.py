@@ -288,16 +288,14 @@ class Aperture(_BaseWithShade):
 
         This will always be one of the following.
 
-            * FixedWindow
+            * Window
             * OperableWindow
-            * FixedSkylight
+            * Skylight
             * OperableSkylight
         """
-        base_type = 'Window'
         if self.has_parent and isinstance(self.parent.type, RoofCeiling):
-            base_type = 'Skylight'
-        win_type = 'Fixed' if not self.is_operable else 'Operable'
-        return win_type + base_type
+            return 'Skylight' if not self.is_operable else 'OperableSkylight'
+        return 'Window' if not self.is_operable else 'OperableWindow'
 
     @property
     def type_abbrev(self):
@@ -328,8 +326,20 @@ class Aperture(_BaseWithShade):
 
     @property
     def gbxml_type(self):
-        """Same as the type property."""
-        return self.type
+        """Get text for the type of object.
+
+        This will always be one of the following.
+
+            * FixedWindow
+            * OperableWindow
+            * FixedSkylight
+            * OperableSkylight
+        """
+        base_type = 'Window'
+        if self.has_parent and isinstance(self.parent.type, RoofCeiling):
+            base_type = 'Skylight'
+        win_type = 'Fixed' if not self.is_operable else 'Operable'
+        return win_type + base_type
 
     def horizontal_orientation(self, north_angle=0):
         """Get a number between 0 and 360 for the orientation of the aperture in degrees.
