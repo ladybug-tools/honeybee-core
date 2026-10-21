@@ -1718,7 +1718,7 @@ class Model(_Base):
 
     def rename_apertures_by_attribute(
         self,
-        format_str='{parent.display_name} - {gbxml_type} - {cardinal_direction}',
+        format_str='{parent.parent.display_name} - {type} - {cardinal_direction}',
         decimal_count=None, include_units=True, north_angle=0
     ):
         """Set the display name for all of this Model's apertures using a format string.
@@ -1763,7 +1763,7 @@ class Model(_Base):
 
     def rename_doors_by_attribute(
         self,
-        format_str='{parent.display_name} - {energyplus_type} - {cardinal_direction}',
+        format_str='{parent.parent.display_name} - {type} - {cardinal_direction}',
         decimal_count=None, include_units=True, north_angle=0
     ):
         """Set the display name for all of this Model's doors using a format string.
