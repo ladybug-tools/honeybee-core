@@ -1,0 +1,7 @@
+honeybee.search module
+======================
+
+.. automodule:: honeybee.search
+   :members:
+   :undoc-members:
+   :show-inheritance:

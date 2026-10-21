@@ -1,0 +1,7 @@
+honeybee.cli.compare module
+===========================
+
+.. automodule:: honeybee.cli.compare
+   :members:
+   :undoc-members:
+   :show-inheritance:
