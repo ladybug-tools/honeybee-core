@@ -67,10 +67,10 @@ def face_orient_index(face, angles, north_vector=Vector2D(0, 1)):
         horizontal.
     """
     north_angle = math.degrees(Vector2D(0, 1).angle_counterclockwise(north_vector))
-    try:
-        return orient_index(face.horizontal_orientation(north_angle), angles)
-    except ZeroDivisionError:  # input face is perfectly horizontal
-        return None
+    h_ori = face.horizontal_orientation(north_angle, None)
+    if h_ori is not None:
+        return orient_index(h_ori, angles)
+    return None
 
 
 def orient_index(orientation, angles):

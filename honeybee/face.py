@@ -525,7 +525,7 @@ class Face(_BaseWithShade):
         except KeyError:  # extension boundary condition
             return self.BC_COLORS['Other']
 
-    def horizontal_orientation(self, north_angle=0):
+    def horizontal_orientation(self, north_angle=0, horizontal_value=0):
         """Get a number between 0 and 360 for the orientation of the face in degrees.
 
         0 = North, 90 = East, 180 = South, 270 = West
@@ -534,10 +534,15 @@ class Face(_BaseWithShade):
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
+            horizontal_value: The value to be returned when the geometry is
+                perfectly horizontal. (Default: 0).
         """
         north_vector = Vector2D(0, 1).rotate(math.radians(north_angle))
-        ori = north_vector.angle_clockwise(Vector2D(self.normal.x, self.normal.y))
-        return math.degrees(ori)
+        try:
+            ori = north_vector.angle_clockwise(Vector2D(self.normal.x, self.normal.y))
+            return math.degrees(ori)
+        except ZeroDivisionError:  # plane is perfectly horizontal
+            return horizontal_value
 
     def cardinal_direction(self, north_angle=0, angle_tolerance=1):
         """Get text description for the cardinal direction that the face is pointing.
