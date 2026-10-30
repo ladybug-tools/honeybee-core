@@ -1,0 +1,7 @@
+honeybee.writer.shademesh module
+================================
+
+.. automodule:: honeybee.writer.shademesh
+   :members:
+   :undoc-members:
+   :show-inheritance:

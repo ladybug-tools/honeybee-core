@@ -1,0 +1,7 @@
+honeybee.typing module
+======================
+
+.. automodule:: honeybee.typing
+   :members:
+   :undoc-members:
+   :show-inheritance:
