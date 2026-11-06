@@ -1,0 +1,7 @@
+honeybee.extensionutil module
+=============================
+
+.. automodule:: honeybee.extensionutil
+   :members:
+   :undoc-members:
+   :show-inheritance:

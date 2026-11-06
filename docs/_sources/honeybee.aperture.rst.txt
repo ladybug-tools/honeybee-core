@@ -1,0 +1,7 @@
+honeybee.aperture module
+========================
+
+.. automodule:: honeybee.aperture
+   :members:
+   :undoc-members:
+   :show-inheritance:
