@@ -2948,61 +2948,36 @@ class Room(_BaseWithShade):
             return []  # no Room boundary to be found
 
         # convert the floor Face3Ds into counterclockwise Polygon2Ds
-        floor_polys, z_vals = [], []
+        floor_polys, bound_polys, hole_polys, z_vals = [], [], [], []
         for flr_geo in clean_floor_geos:
             z_vals.append(flr_geo.min.z)
             b_poly = Polygon2D([Point2D(pt.x, pt.y) for pt in flr_geo.boundary])
             floor_polys.append(b_poly)
+            bound_polys.append(b_poly)
             if flr_geo.has_holes:
                 for hole in flr_geo.holes:
                     h_poly = Polygon2D([Point2D(pt.x, pt.y) for pt in hole])
                     floor_polys.append(h_poly)
+                    hole_polys.append(h_poly)
         z_min = min(z_vals)
 
         # if the min_separation is small, use the more reliable intersection method
+        union_used = False
         if min_separation <= tolerance:
             closed_polys = Polygon2D.joined_intersected_boundary(floor_polys, tolerance)
-        else:  # otherwise, use the more intense gap crossing methods
-            # when there are a lot of points to evaluate, just use boolean union
-            max_eval_pts = 100000  # maximum points to evaluate
-            closed_polys, total_perimeter = None, 0
-            for poly in floor_polys:
-                total_perimeter += poly.perimeter
-            if total_perimeter / min_separation < max_eval_pts:
-                closed_polys = Polygon2D.gap_crossing_boundary(
-                    floor_polys, min_separation, tolerance)
-
-            # check to see if gap_crossing_boundary is a good boundary
-            if closed_polys is not None:
-                room_centers = []
-                for geo in floor_geos:
-                    center = geo.center if geo.is_convex else \
-                        geo.pole_of_inaccessibility(min_separation)
-                    room_centers.append(Point2D(center.x, center.y))
-                rooms_included = [0] * len(room_centers)
-                for poly in closed_polys:
-                    for pi, pt in enumerate(room_centers):
-                        if poly.is_point_inside_bound_rect(pt):
-                            rooms_included[pi] = 1
-                    if sum(rooms_included) >= len(rooms_included) * 0.8:
-                        break  # we have done a good job finding the boundary
-                else:
-                    closed_polys = None  # we have not found a good boundary
-
-            # if we have not gotten a result from gap_crossing_boundary, use boolean union
-            if closed_polys is None:
-                bound_polys, hole_polys = [], []
-                for geo in floor_geos:
-                    bound_polys.append(geo.boundary_polygon2d)
-                    if geo.has_holes:
-                        hole_polys.extend(geo.hole_polygon2d)
-                closed_polys = Polygon2D.offset_unioned_boundary(
-                    bound_polys, min_separation, tolerance, min_angle=math.radians(10)
-                )
-                hole_thresh = min_separation * 5
-                for hole in hole_polys:
-                    if hole.area > hole_thresh:
-                        closed_polys.append(hole)
+        else:  # otherwise, use the more intense offset union methods
+            union_used, room_centers = True, []
+            for geo in floor_geos:
+                center = geo.center if geo.is_convex else \
+                    geo.pole_of_inaccessibility(min_separation)
+                room_centers.append(Point2D(center.x, center.y))
+            closed_polys = Polygon2D.offset_unioned_boundary(
+                bound_polys, min_separation, tolerance, min_angle=math.radians(10)
+            )
+            hole_thresh = min_separation * 5
+            for hole in hole_polys:
+                if hole.area > hole_thresh:
+                    closed_polys.append(hole)
 
         # remove colinear vertices from the resulting polygons
         clean_polys = []
@@ -3023,7 +2998,18 @@ class Room(_BaseWithShade):
             for poly in clean_polys:
                 pts3d = tuple(Point3D(pt.x, pt.y, z_min) for pt in poly)
                 bound_faces.append(Face3D(pts3d))
-            return Face3D.merge_faces_to_holes(bound_faces, tolerance)
+            bound_result = Face3D.merge_faces_to_holes(bound_faces, tolerance)
+            # if boolean union was used, do an extra check to remove incorrect faces
+            if union_used:
+                correct_faces = []
+                for face in bound_result:
+                    f_poly = Polygon2D([Point2D(p.x, p.y) for p in face.boundary])
+                    for pt in room_centers:
+                        if f_poly.is_point_inside_bound_rect(pt):
+                            correct_faces.append(face)
+                            break
+                return correct_faces
+            return bound_result
 
     @staticmethod
     def rooms_from_rectangle_plan(
