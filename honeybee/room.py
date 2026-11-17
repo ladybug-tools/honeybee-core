@@ -2196,6 +2196,11 @@ class Room(_BaseWithShade):
             s_geos = s_geo.faces if isinstance(s_geo, Polyface3D) else [s_geo]
             for face_1 in self.faces:
                 for face_2 in s_geos:
+                    overlap = overlapping_bounding_boxes(
+                        face_1.geometry, face_2, tolerance
+                    )
+                    if not overlap:
+                        continue
                     if not face_1.geometry.plane.is_coplanar_tolerance(
                             face_2.plane, tolerance, ang_tol):
                         continue  # not coplanar; intersection impossible
