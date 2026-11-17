@@ -1,0 +1,6 @@
+create
+======
+
+.. click:: honeybee.cli.create:create
+   :prog: honeybee create
+   :show-nested:
