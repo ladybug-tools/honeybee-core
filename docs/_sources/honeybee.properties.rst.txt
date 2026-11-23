@@ -1,0 +1,7 @@
+honeybee.properties module
+==========================
+
+.. automodule:: honeybee.properties
+   :members:
+   :undoc-members:
+   :show-inheritance:

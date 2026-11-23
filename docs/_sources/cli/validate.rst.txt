@@ -1,0 +1,6 @@
+validate
+========
+
+.. click:: honeybee.cli.validate:validate
+   :prog: honeybee validate
+   :show-nested:

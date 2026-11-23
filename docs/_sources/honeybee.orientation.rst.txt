@@ -1,0 +1,7 @@
+honeybee.orientation module
+===========================
+
+.. automodule:: honeybee.orientation
+   :members:
+   :undoc-members:
+   :show-inheritance:
